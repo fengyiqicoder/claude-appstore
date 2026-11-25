@@ -66,6 +66,7 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
 .get{flex:none;font:700 13px/1 var(--font);letter-spacing:.02em;text-transform:uppercase;background:var(--pill);color:var(--accent);border-radius:999px;padding:7px 16px;border:0;cursor:pointer;text-decoration:none!important;display:inline-block}
 .get:hover{filter:brightness(.96)}
 .get.view{text-transform:none;font-weight:600}
+.ai{display:inline-block;font:700 10.5px/1 var(--font);letter-spacing:.02em;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:5px;padding:3px 5px;vertical-align:1px;white-space:nowrap}
 .empty{color:var(--muted);padding:20px 0}
 /* detail */
 .back{font-size:13px;display:inline-flex;gap:4px;align-items:center}
@@ -149,10 +150,13 @@ const GLYPH = {
   "focus":'<circle cx="12" cy="13" r="8" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M10 3h4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><path d="M12 13V8.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>',
   "zones":'<circle cx="12" cy="12" r="9" fill="#fff" opacity=".35"/><path d="M12 3a9 9 0 0 1 0 18z" fill="#fff"/><path d="M12 12V6.5M12 12l3.5 2" stroke="var(--g2)" stroke-width="2" stroke-linecap="round"/>',
   "jot":'<path d="M4 4h16v11l-5 5H4z" fill="#fff"/><path d="M15 20v-5h5" fill="none" stroke="var(--g2)" stroke-width="1.4"/><path d="M7.5 8.5h9M7.5 12h7" stroke="var(--g2)" stroke-width="1.8" stroke-linecap="round"/>',
+  "lingo":'<path d="M3 5h11v8H8l-3 3v-3H3z" fill="#fff"/><path d="M10 11h11v8h-2v3l-3-3h-6z" fill="#fff" opacity=".55"/><text x="8.5" y="11.3" text-anchor="middle" font-size="6.5" font-weight="800" fill="var(--g2)" font-family="Arial">A</text>',
+  "talkback":'<rect x="9" y="2.5" width="6" height="11" rx="3" fill="#fff"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>',
+  "punchline":'<path d="M3 4h18v12H9l-4 4v-4H3z" fill="#fff"/><text x="12" y="12.6" text-anchor="middle" font-size="7" font-weight="900" fill="var(--g2)" font-family="Arial Black,Arial">HA</text>',
   "school-site":'<path d="M12 3 2 8h20zM4 10h16v9H4z" fill="#fff"/><path d="M8 12v5M12 12v5M16 12v5" stroke="var(--g2)" stroke-width="1.6"/>'
 };
 function hue(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h}
-const HUES={focus:6,zones:222,jot:44};
+const HUES={focus:6,zones:222,jot:44,lingo:168,talkback:252,punchline:280};
 function grad(a){const h=a.hue??HUES[a.id]??hue(a.id);return [`hsl(${h} 78% 58%)`,`hsl(${(h+38)%360} 72% 42%)`]}
 function iconHTML(a,size){
   const [g1,g2]=grad(a);
@@ -166,7 +170,7 @@ function getBtn(a,cls=""){
     : `<a class="get view ${cls}" href="${esc(a.post)}" target="_blank" rel="noopener" aria-label="View ${esc(a.name)} on X">View</a>`;
 }
 function row(a){
-  return `<div class="item">${iconHTML(a,52)}<div class="meta" data-open="${a.id}" role="link" tabindex="0"><b>${esc(a.name)}</b><span>${esc(a.subtitle)}</span></div>${getBtn(a)}</div>`;
+  return `<div class="item">${iconHTML(a,52)}<div class="meta" data-open="${a.id}" role="link" tabindex="0"><b>${esc(a.name)}${a.ai?' <span class="ai">✦ Claude</span>':""}</b><span>${esc(a.subtitle)}</span></div>${getBtn(a)}</div>`;
 }
 function grid(list){return list.length?`<div class="grid">${list.map(row).join("")}</div>`:`<p class="empty">Nothing here yet. <a href="https://github.com/fengyiqicoder/claude-appstore/issues/new" target="_blank" rel="noopener">Submit an app</a>.</p>`}
 function fcard(a,eyebrow,blurb){
@@ -180,10 +184,10 @@ const ours = ()=>DATA.apps.filter(a=>a.maker);
 function discover(){
   const apps=DATA.apps.slice().reverse();
   const inst=installable();
-  const f1=inst.find(a=>a.id==="ai-architecture-lab")||inst[0], f2=DATA.apps.find(a=>a.id==="titan-colony")||apps[1];
-  return `<div><h1>Discover</h1><p class="lede">Artifacts people built with Claude and installed as Mac and Windows apps. Open one in Claude Desktop, then choose <b>Install as app</b>.</p></div>
-  <div class="feat">${f1?fcard(f1,"Editors' pick","Design an AI system, then keep it alive through outages, budget cuts and security reviews."):""}${f2?fcard(f2,"Made in one shader",""):""}</div>
-  ${ours().length?`<section class="sec"><div class="sec-head"><h2>Made by Claude AppStore</h2><span class="lede" style="margin:0">Built to use the desktop features</span></div>${grid(ours())}</section>`:""}
+  const f1=DATA.apps.find(a=>a.id==="lingo")||inst[0], f2=DATA.apps.find(a=>a.id==="punchline")||apps[1];
+  return `<div><h1>Discover</h1><p class="lede">AI apps that run on Claude and install on your Mac or PC. Open one in Claude Desktop, then choose <b>Install as app</b>. Apps marked <span class="ai">✦ Claude</span> use your own Claude plan.</p></div>
+  <div class="feat">${f1?fcard(f1,"New · Made by us","Paste anything. Claude translates, polishes or explains it, in a window that floats on top."):""}${f2?fcard(f2,"Game night","Claude writes the prompts, roasts your answers and picks a winner."):""}</div>
+  ${ours().length?`<section class="sec"><div class="sec-head"><h2>AI apps by Claude AppStore</h2><span class="lede" style="margin:0">Claude inside, on your own plan</span></div>${grid(ours())}</section>`:""}
   <section class="sec"><div class="sec-head"><h2>Ready to install</h2><span class="lede" style="margin:0">${inst.length} from the community</span></div>${grid(inst)}</section>
   ${Object.entries(CATS).map(([k,c])=>{const l=DATA.apps.filter(a=>a.category===k);return l.length?`<section class="sec"><div class="sec-head"><h2>${c.name}</h2><a href="#${k}">See all</a></div>${grid(l.slice(0,6))}</section>`:""}).join("")}
   <section class="sec"><div class="sec-head"><h2>Build your own</h2><a href="#guides">See all</a></div><div class="list">${DATA.prompts.map(li).join("")}</div></section>`;
@@ -205,10 +209,10 @@ function detail(id){
   const a=DATA.apps.find(x=>x.id===id); if(!a) return discover();
   const c=CATS[a.category]||{name:"Apps"};
   return `<a class="back" href="#${a.category}">‹ ${c.name}</a>
-  <div class="dhead">${iconHTML(a,128)}<div class="meta"><h1>${esc(a.name)}</h1><p>${esc(a.subtitle)}</p>${getBtn(a)}</div></div>
+  <div class="dhead">${iconHTML(a,128)}<div class="meta"><h1>${esc(a.name)}</h1>${a.ai?'<span class="ai">✦ Runs on Claude</span>':""}<p>${esc(a.subtitle)}</p>${getBtn(a)}</div></div>
   <div class="facts"><div><small>Category</small><b>${c.name}</b></div><div><small>Language</small><b>${esc(a.lang||"English")}</b></div><div><small>Developer</small><b>${a.maker?esc(a.maker):`<a href="https://x.com/${esc(a.author)}" target="_blank" rel="noopener">@${esc(a.author)}</a>`}</b></div><div><small>Added</small><b>${esc(a.added.slice(5).replace("-","/"))}</b></div></div>
   <section class="sec"><h2>About</h2><p class="prose">${esc(a.desc)}</p><p class="prose"><a href="${esc(a.post)}" target="_blank" rel="noopener">${a.maker?"View the source on GitHub ›":"See the creator's post on X ›"}</a></p></section>
-  ${a.perms?`<section class="sec"><h2>Permissions</h2><p class="prose">Installed, it asks before it uses: ${a.perms.map(esc).join(", ")}. It never reads your files or runs programs.</p></section>`:""}
+  ${a.perms?`<section class="sec"><h2>Permissions</h2><p class="prose">It asks before it uses: ${a.perms.map(esc).join(", ")}. It never reads your files or runs programs.${a.ai?" Requests to Claude count toward your own plan's usage, the same as chatting.":""}</p></section>`:""}
   <section class="sec"><h2>${a.artifact?"How to install":"Getting it"}</h2>${a.artifact
     ?`<ol class="steps"><li>Click <b>Get</b>. The artifact opens on claude.ai.</li><li>Open it in Claude for Mac or Windows, sign in if asked.</li><li>Choose <b>Install as app</b> from the artifact's title menu or <b>Share</b>. It gets its own icon and window.</li></ol>`
     :`<p class="note">The creator hasn't shared a public link yet. The post shows the app; ask them for the artifact, or ask Claude to build something like it.</p>`}</section>`;

@@ -1,0 +1,158 @@
+<title>Lingo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script type="application/json" id="claude-artifacts-manifest">{"permissions":["overlay","shortcuts"]}</script>
+<style>
+/* Layout: a small two-pane translator. Language pair and mode on top, your text above, Claude's version below, actions in a footer. */
+:root{
+  --bg:#f4f6f8; --panel:#ffffff; --fg:#121826; --muted:#687386; --line:#dde2ea; --chip:#eaeef4;
+  --accent:#0d8f7a; --accent-fg:#ffffff;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171c;--panel:#1c2027;--fg:#edf1f6;--muted:#8f99a8;--line:#2c323c;--chip:#262b33;--accent:#2cc2a8;--accent-fg:#06221d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171c;--panel:#1c2027;--fg:#edf1f6;--muted:#8f99a8;--line:#2c323c;--chip:#262b33;--accent:#2cc2a8;--accent-fg:#06221d;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 var(--font);display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding-block:8px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));flex-wrap:wrap}
+body.app .top{app-region:drag;-webkit-app-region:drag}
+body.app.inset .top{padding-left:max(80px,env(safe-area-inset-left,0px))}
+.top > *{app-region:no-drag;-webkit-app-region:no-drag}
+.top .sp{flex:1;app-region:drag;-webkit-app-region:drag}
+select{font:600 12.5px/1 var(--font);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:7px;padding:5px 6px}
+.swap{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 4px}
+.seg{display:flex;background:var(--chip);border-radius:8px;padding:2px}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 12px/1 var(--font);padding:6px 9px;border-radius:6px;cursor:pointer}
+.seg button.on{background:var(--panel);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.1)}
+main{flex:1;display:flex;flex-direction:column;gap:8px;padding-block:0 8px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));min-height:0}
+.box{flex:1;min-height:70px;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+textarea,#out{flex:1;width:100%;border:0;resize:none;background:transparent;color:var(--fg);font:15px/1.5 var(--font);padding:10px 12px;outline:none;overflow:auto}
+#out{white-space:pre-wrap;-webkit-user-select:text;user-select:text}
+#out:empty::before{content:attr(data-empty);color:var(--muted)}
+.bar{display:flex;align-items:center;gap:6px;padding:6px 8px;border-top:1px solid var(--line)}
+.bar .st{flex:1;min-width:0;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{font:600 12.5px/1 var(--font);border:0;border-radius:7px;padding:7px 11px;cursor:pointer;background:var(--chip);color:var(--fg)}
+.btn.pri{background:var(--accent);color:var(--accent-fg)}
+.btn:disabled{opacity:.5;cursor:default}
+.tones{display:flex;gap:4px}
+.tones button{border:1px solid var(--line);background:transparent;color:var(--muted);font:600 11.5px/1 var(--font);padding:5px 8px;border-radius:999px;cursor:pointer}
+.tones button.on{border-color:var(--accent);color:var(--accent)}
+.foot{font-size:11.5px;color:var(--muted);display:flex;gap:8px;align-items:center;justify-content:space-between;padding-block:0 8px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+</style>
+
+<div class="top">
+  <select id="a" aria-label="Your language"></select>
+  <button class="swap" id="swap" title="Swap languages" aria-label="Swap languages">⇄</button>
+  <select id="b" aria-label="Other language"></select>
+  <span class="sp"></span>
+  <div class="seg" role="tablist">
+    <button data-mode="tr" class="on">Translate</button>
+    <button data-mode="polish">Polish</button>
+    <button data-mode="explain">Explain</button>
+  </div>
+</div>
+<main>
+  <div class="box"><textarea id="in" placeholder="Paste or type. Pasting translates right away; ⌘↩ to run." aria-label="Text"></textarea>
+    <div class="bar"><div class="tones" id="tones" hidden><button data-tone="natural" class="on">Natural</button><button data-tone="casual">Casual</button><button data-tone="formal">Formal</button></div><span class="st" id="det"></span><button class="btn pri" id="go">✦ Run</button></div></div>
+  <div class="box"><div id="out" aria-live="polite" data-empty="Claude's version appears here."></div>
+    <div class="bar"><span class="st" id="st"></span><button class="btn" id="speak" hidden>Listen</button><button class="btn" id="copy">Copy</button></div></div>
+</main>
+<div class="foot"><span id="hint">Needs Claude: open it in the Claude app.</span><span id="act"></span></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const LANGS=["English","Chinese (Simplified)","Chinese (Traditional)","Japanese","Korean","Spanish","French","German","Portuguese","Italian","Russian","Arabic","Hindi","Indonesian","Vietnamese","Thai","Turkish","Dutch","Polish","Ukrainian"];
+const store={get(k,d){try{const v=localStorage.getItem("lingo."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("lingo."+k,JSON.stringify(v))}catch{}}};
+const nav=(navigator.language||"en").toLowerCase();
+const guess=nav.startsWith("zh")?(nav.includes("tw")||nav.includes("hk")?"Chinese (Traditional)":"Chinese (Simplified)"):({ja:"Japanese",ko:"Korean",es:"Spanish",fr:"French",de:"German",pt:"Portuguese",it:"Italian",ru:"Russian"}[nav.slice(0,2)]||"English");
+let S={a:store.get("a",guess),b:store.get("b",guess==="English"?"Chinese (Simplified)":"English"),mode:store.get("mode","tr"),tone:store.get("tone","natural")};
+for(const id of["a","b"]){$(id).innerHTML=LANGS.map(l=>`<option>${l}</option>`).join("");$(id).value=S[id];$(id).onchange=()=>{S[id]=$(id).value;store.set(id,S[id]);};}
+$("swap").onclick=()=>{[S.a,S.b]=[S.b,S.a];$("a").value=S.a;$("b").value=S.b;store.set("a",S.a);store.set("b",S.b);if($("in").value.trim())run();};
+function setMode(m){S.mode=m;store.set("mode",m);document.querySelectorAll(".seg button").forEach(b=>b.classList.toggle("on",b.dataset.mode===m));$("tones").hidden=m!=="polish";$("out").dataset.empty={tr:"The translation appears here.",polish:"A more natural version appears here.",explain:"Word-by-word notes appear here."}[m];}
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{setMode(b.dataset.mode);if($("in").value.trim())run();});
+document.querySelectorAll("#tones button").forEach(b=>b.onclick=()=>{S.tone=b.dataset.tone;store.set("tone",S.tone);document.querySelectorAll("#tones button").forEach(x=>x.classList.toggle("on",x===b));if($("in").value.trim())run();});
+document.querySelectorAll("#tones button").forEach(x=>x.classList.toggle("on",x.dataset.tone===S.tone));
+setMode(S.mode);
+
+let sample=null, tts=null, ctl=null;
+function prompt(text){
+  const pair=`The person's two languages are ${S.a} and ${S.b}.`;
+  if(S.mode==="tr") return `${pair} Translate the text below. If it is written in ${S.a}, translate it into ${S.b}; otherwise translate it into ${S.a}. Keep meaning, tone, formatting and line breaks. Output only the translation, nothing else.\n\nText:\n${text}`;
+  if(S.mode==="polish") return `${pair} Rewrite the text below so it reads like a fluent native speaker wrote it, in a ${S.tone} tone. If it is in ${S.a}, rewrite it in ${S.b}; if it is in ${S.b}, keep it in ${S.b}; otherwise rewrite it in ${S.b}. Keep the meaning and formatting. Output only the rewritten text.\n\nText:\n${text}`;
+  return `${pair} Explain the text below for a learner whose first language is ${S.a}. Write the explanation in ${S.a}. First a natural translation in one line. Then up to 8 key words or phrases, each on its own line as "phrase - meaning (part of speech) - short note on usage". Then one line on any grammar point or nuance worth knowing. Plain text, no Markdown headings.\n\nText:\n${text}`;
+}
+const ERR={rate_limited:"Claude is busy or you hit your usage limit. Try again later.",not_granted:"Claude isn't allowed for this app.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined this text.",session_expired:"Sign in to Claude again.",prompt_too_large:"That's too long. Try a shorter piece."};
+async function run(){
+  const text=$("in").value.trim(); if(!text||!sample) return;
+  ctl?.abort(); ctl=new AbortController(); const my=ctl;
+  $("out").textContent=""; $("st").textContent="Thinking…"; $("go").textContent="Stop";
+  try{
+    const {text:out,truncated}=await sample(prompt(text.slice(0,20000)),{signal:my.signal,modelTier:S.mode==="explain"?"default":"quick",onText:({text})=>{if(ctl===my){$("out").textContent=text;$("st").textContent="Writing…";}}});
+    if(ctl!==my) return;
+    $("out").textContent=out; $("st").textContent=truncated?"Cut short. Try a shorter piece.":`${S.mode==="tr"?"Translated":S.mode==="polish"?"Polished":"Explained"} by Claude`;
+  }catch(e){
+    if(ctl!==my) return;
+    $("out").textContent=e?.text||"";
+    if(e?.code!=="cancelled") $("st").textContent=ERR[e?.code]||"Something went wrong. Try again.";
+    else $("st").textContent="Stopped";
+  }finally{ if(ctl===my){$("go").textContent="✦ Run";ctl=null;} }
+}
+$("go").onclick=()=>{ if(ctl){ctl.abort();} else run(); };
+$("in").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();run();}});
+$("in").addEventListener("paste",()=>setTimeout(run,30));
+$("in").addEventListener("input",()=>{const n=$("in").value.trim().length;$("det").textContent=n?`${n} characters`:"";});
+$("copy").onclick=async()=>{const t=$("out").textContent;if(!t)return;try{await navigator.clipboard.writeText(t);$("copy").textContent="Copied";}catch{const r=document.createRange();r.selectNodeContents($("out"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("copy").textContent="Selected";}setTimeout(()=>$("copy").textContent="Copy",1200);};
+$("speak").onclick=async()=>{const t=$("out").textContent.trim();if(!t||!tts)return;$("speak").textContent="Playing…";try{await tts.speak(t.slice(0,2000));}catch(e){if(e?.code==="not_granted")$("speak").hidden=true;}$("speak").textContent="Listen";};
+
+// desktop
+let desktop=null, perms={};
+function dockIcon(){
+  const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#1fb89c");g.addColorStop(1,"#0b6f61");
+  x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
+  x.fillStyle="#fff";x.beginPath();x.roundRect(46,56,108,84,18);x.fill();
+  x.beginPath();x.moveTo(70,140);x.lineTo(62,166);x.lineTo(96,140);x.fill();
+  x.fillStyle="rgba(255,255,255,.55)";x.beginPath();x.roundRect(104,112,108,84,18);x.fill();
+  x.beginPath();x.moveTo(186,196);x.lineTo(194,222);x.lineTo(160,196);x.fill();
+  x.fillStyle="#0b6f61";x.font="bold 56px -apple-system,Helvetica,Arial";x.textAlign="center";x.textBaseline="middle";x.fillText("A",100,100);
+  x.fillStyle="#fff";x.font="bold 50px -apple-system,PingFang SC,Helvetica";x.fillText("文",158,156);
+  return c.toDataURL("image/png");
+}
+async function summon(){await desktop.window.show().catch(()=>{});const t=$("in");t.focus();t.select();}
+function applyWindow(){
+  const float=store.get("float",false)&&perms.overlay==="granted";
+  document.body.classList.toggle("inset",!float);
+  desktop.window.setOptions(float
+    ?{frame:false,alwaysOnTop:true,dragHeight:0,width:420,height:520,minWidth:320,minHeight:360,roundedCorners:true,hasShadow:true}
+    :{titleBarStyle:"hiddenInset",dragHeight:40,width:440,height:560,minWidth:340,minHeight:380}).catch(()=>{});
+}
+let sc=false;
+function setup(){
+  if(perms.shortcuts==="granted"&&!sc){sc=true;desktop.globalShortcut.register("Alt+Shift+T",summon).catch(()=>{sc=false});}
+  const act=$("act");act.replaceChildren();
+  const float=store.get("float",false)&&perms.overlay==="granted";
+  const b=document.createElement("button");b.className="btn";
+  if(!float){b.textContent="Float on top";b.onclick=async()=>{try{perms=await desktop.permissions.request(["overlay","shortcuts"]);}catch{}if(perms.overlay==="granted"){store.set("float",true);applyWindow();}setup();};}
+  else{b.textContent="Normal window";b.onclick=()=>{store.set("float",false);applyWindow();setup();};}
+  act.append(b);
+  $("hint").textContent=sc?"Option+Shift+T brings Lingo up anywhere.":"Float it on top to get the Option+Shift+T shortcut.";
+}
+(async()=>{
+  const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
+  [sample,tts,desktop]=await Promise.all([use("sample"),use("tts"),use("desktop")]);
+  $("go").disabled=!sample; $("speak").hidden=!tts;
+  if(!sample){$("hint").textContent="Open Lingo in the Claude app to translate with Claude.";}
+  if(!desktop) {if(sample)$("hint").textContent="Install from the Claude desktop app to float it with a shortcut.";return;}
+  if(!desktop.tray){
+    const st=await desktop.install.state().catch(()=>"unavailable");
+    if(st==="available"){const b=document.createElement("button");b.className="btn pri";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("act").replaceChildren(b);$("hint").textContent="Install it to float on top with a shortcut.";}
+    else if(sample) $("hint").textContent=st==="installed"?"Installed. Open Lingo from Applications or Start.":"Install from the Claude desktop app to float it with a shortcut.";
+    return;
+  }
+  document.body.classList.add("app");
+  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  try{perms=await desktop.permissions.state();}catch{}
+  applyWindow();setup();
+})();
+</script>

@@ -12,6 +12,7 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1817;--fg:#f6ece6;--muted:#a3938b;--line:#382e2a;--chip:#2b2321;--focus:#ff6a52;--short:#46c393;--long:#6d97ff;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#1d1817;--fg:#f6ece6;--muted:#a3938b;--line:#382e2a;--chip:#2b2321;--focus:#ff6a52;--short:#46c393;--long:#6d97ff;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 var(--font);-webkit-user-select:none;user-select:none}
 .drag{height:30px;app-region:drag;-webkit-app-region:drag}
@@ -33,6 +34,18 @@ body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 var(--font);-we
 .dots{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:12px}
 .dots i{width:8px;height:8px;border-radius:50%;background:var(--line);display:block}
 .dots i.on{background:var(--focus)}
+.plan{width:100%;max-width:340px;display:flex;flex-direction:column;gap:8px}
+.plan textarea{font:inherit;width:100%;min-height:64px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);color:var(--fg);-webkit-user-select:text;user-select:text}
+.plan .bar2{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.plan .small{font:600 12.5px/1 var(--font);border:0;border-radius:999px;padding:8px 12px;cursor:pointer;background:var(--chip);color:var(--fg)}
+.plan .small.pri{background:var(--accent);color:#fff}
+.plan .st{font-size:12px;color:var(--muted)}
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.tasks li{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px}
+.tasks li.cur{background:var(--chip)}
+.tasks li.done span{text-decoration:line-through;color:var(--muted)}
+.tasks li span{flex:1;min-width:0}
+.tasks li small{color:var(--muted);font-variant-numeric:tabular-nums}
 details{width:100%;max-width:300px;color:var(--muted);font-size:12.5px}
 summary{cursor:pointer;text-align:center;list-style:none}
 summary::-webkit-details-marker{display:none}
@@ -62,6 +75,12 @@ summary::-webkit-details-marker{display:none}
     <button class="btn ghost" id="skip" title="Skip to next">Skip</button>
   </div>
   <div class="dots" id="dots" aria-label="Sessions today"></div>
+  <section class="plan" id="plan" hidden>
+    <div id="dump"><textarea id="brain" placeholder="What do you want to get done today? Dump it all here, messy is fine." aria-label="What to get done"></textarea>
+      <div class="bar2"><span class="st" id="pst">Claude turns it into focus sessions.</span><button class="small pri" id="mk">✦ Plan my sessions</button></div></div>
+    <div id="tl" hidden><ul class="tasks" id="tasks"></ul>
+      <div class="bar2"><span class="st" id="tst"></span><button class="small" id="clear">New plan</button></div></div>
+  </section>
   <details>
     <summary>Settings</summary>
     <div class="set">
@@ -95,7 +114,8 @@ function paint(){
   document.documentElement.style.setProperty("--accent",`var(--${S.mode})`);
   $("t").textContent=fmt(r);
   $("bar").style.strokeDashoffset=(276.46*(1-Math.max(0,r)/total)).toFixed(2);
-  $("lbl").textContent=S.running?(S.mode==="focus"?"Focusing":"On a break"):(r<total?"Paused":S.mode==="focus"?"Ready to focus":"Time for a break");
+  const ct=curTask();
+  $("lbl").textContent=S.mode==="focus"&&ct?ct.task:(S.running?(S.mode==="focus"?"Focusing":"On a break"):(r<total?"Paused":S.mode==="focus"?"Ready to focus":"Time for a break"));
   $("go").textContent=S.running?"Pause":(r<total?"Resume":"Start");
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.mode===S.mode));
   const n=Math.max(4,S.done);
@@ -116,7 +136,7 @@ function setTray(){
   const r=remaining(), total=S.dur[S.mode]*60;
   desktop.tray.set({
     icon:trayIcon(), title:S.running?fmt(r):"",
-    toolTip:S.running?`${NAMES[S.mode]}: ${fmt(r)} left`:`${S.done} sessions today`,
+    toolTip:(S.running?`${NAMES[S.mode]}: ${fmt(r)} left`:`${S.done} sessions today`)+(curTask()?` · ${curTask().task}`:""),
     menu:[
       {label:S.running?"Pause":(r<total?"Resume":"Start "+NAMES[S.mode]),click:toggle},
       {label:"Reset",click:reset,enabled:r<total},
@@ -138,10 +158,11 @@ function nextMode(){return S.mode!=="focus"?"focus":(S.done%4===0?"long":"short"
 function skip(){setMode(nextMode(),false)}
 function finish(){
   const was=S.mode;
-  if(was==="focus"){S.done++;save();}
+  const finishedTask=was==="focus"?curTask():null;
+  if(was==="focus"){S.done++;save();if(finishedTask){finishedTask.spent=(finishedTask.spent||0)+1;if(finishedTask.spent>=finishedTask.sessions)finishedTask.done=true;saveTasks();renderTasks();}}
   chime();
   const next=nextMode();
-  const msg=was==="focus"?`Focus session done. ${S.done} today. Time for a ${next==="long"?"long":"short"} break.`:"Break's over. Ready for the next focus session?";
+  const msg=was==="focus"?`Focus session done${finishedTask?` on "${finishedTask.task.slice(0,80)}"`:""}. ${S.done} today. Time for a ${next==="long"?"long":"short"} break.`:"Break's over. Ready for the next focus session?";
   notify(msg);
   setMode(next,S.auto);
 }
@@ -154,6 +175,38 @@ function chime(){
   try{ac=ac||new AudioContext();const t=ac.currentTime;[0,0.18,0.36].forEach((d,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=[784,988,1175][i];g.gain.setValueAtTime(0.0001,t+d);g.gain.exponentialRampToValueAtTime(0.18,t+d+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+d+0.5);o.connect(g).connect(ac.destination);o.start(t+d);o.stop(t+d+0.55);});}catch{}
 }
 setInterval(()=>{if(S.running&&remaining()<=0){finish();}else if(S.running)paint();},250);
+
+// AI planning
+let tasks=store.get("tasks",[]);
+const saveTasks=()=>store.set("tasks",tasks);
+function curTask(){return tasks.find(t=>!t.done)}
+function renderTasks(){
+  $("dump").hidden=!!tasks.length;$("tl").hidden=!tasks.length;
+  const c=curTask();
+  $("tasks").innerHTML=tasks.map((t,i)=>`<li class="${t.done?"done":""} ${t===c?"cur":""}"><input type="checkbox" id="tk${i}" data-t="${i}" ${t.done?"checked":""} aria-label="Done"><span></span><small>${t.spent||0}/${t.sessions}</small></li>`).join("");
+  [...$("tasks").querySelectorAll("li span")].forEach((el,i)=>el.textContent=tasks[i].task);
+  const left=tasks.filter(t=>!t.done).reduce((a,t)=>a+Math.max(0,t.sessions-(t.spent||0)),0);
+  $("tst").textContent=left?`${left} session${left===1?"":"s"} left, about ${Math.round(left*(S.dur.focus+S.dur.short)/6)/10} h`:"All done. Nice work.";
+}
+$("tasks").addEventListener("change",e=>{const i=e.target.dataset.t;if(i==null)return;tasks[+i].done=e.target.checked;saveTasks();renderTasks();paint();});
+$("clear").onclick=()=>{tasks=[];saveTasks();renderTasks();paint();$("brain").focus();};
+let sample=null;
+$("mk").onclick=async()=>{
+  const dump=$("brain").value.trim();
+  if(!dump){$("pst").textContent="Write what you want to get done first.";return;}
+  $("mk").disabled=true;$("pst").textContent="Thinking…";
+  try{
+    const out=await sample.json(`You plan pomodoro work. A focus session is ${S.dur.focus} minutes. Turn the person's notes into an ordered list of concrete tasks, most important or most blocking first, each with how many focus sessions it needs (1 to 4). Split vague items into doable steps, drop duplicates, keep the person's language, keep each task under 60 characters. Reply with only a JSON array like [{"task":"Draft the intro","sessions":2}].\n\nNotes:\n${dump.slice(0,8000)}`,{modelTier:"default",cache:false});
+    const list=(Array.isArray(out)?out:[]).filter(t=>t&&t.task).slice(0,12).map(t=>({task:String(t.task).slice(0,80),sessions:Math.min(4,Math.max(1,Math.round(+t.sessions||1))),spent:0,done:false}));
+    if(!list.length) throw {code:"empty_completion"};
+    tasks=list;saveTasks();renderTasks();paint();$("pst").textContent="Claude turns it into focus sessions.";
+  }catch(e){
+    $("pst").textContent={rate_limited:"Claude is busy or you hit your usage limit. Try later.",not_granted:"Claude isn't allowed for this app.",refused:"Claude declined this one. Try rewording."}[e?.code]||"Couldn't make a plan. Try again.";
+    if(e?.code==="not_granted"||e?.code==="sampling_disabled") $("plan").hidden=true;
+  }finally{$("mk").disabled=false;}
+};
+renderTasks();
+(async()=>{sample=window.claude?.use?await window.claude.use("sample").catch(()=>null):null;$("plan").hidden=!sample&&!tasks.length;if(!sample)$("dump").hidden=true;})();
 
 // icons
 function dockIcon(){

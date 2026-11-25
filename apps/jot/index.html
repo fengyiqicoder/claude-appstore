@@ -13,6 +13,7 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--y:#3d3820;--p:#43282f;--g:#243a25;--b:#1f2f45;--ink:#f3eedb;--muted:rgba(243,238,219,.55);--strip:rgba(255,255,255,.06);color-scheme:dark}}
 :root[data-theme="dark"]{--y:#3d3820;--p:#43282f;--g:#243a25;--b:#1f2f45;--ink:#f3eedb;--muted:rgba(243,238,219,.55);--strip:rgba(255,255,255,.06);color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 var(--font);display:flex;flex-direction:column;transition:background .2s}
 .strip{display:flex;align-items:center;gap:8px;padding-block:8px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));background:var(--strip)}
@@ -27,6 +28,12 @@ body.inset .strip{padding-left:max(78px,env(safe-area-inset-left,0px))}
 textarea{flex:1;width:100%;border:0;resize:none;background:transparent;color:var(--ink);font:20px/1.45 var(--hand);padding-block:10px 6px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));outline:none}
 textarea::placeholder{color:var(--muted)}
 .foot{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:11.5px;color:var(--muted);padding-block:4px 8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ai{position:relative;app-region:no-drag;-webkit-app-region:no-drag}
+.ai .tool{color:var(--ink)}
+.menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--paper);border:1px solid var(--strip);box-shadow:0 8px 24px rgba(0,0,0,.18);border-radius:10px;padding:4px;display:flex;flex-direction:column;min-width:190px;z-index:5;filter:brightness(1.03)}
+.menu button{border:0;background:transparent;color:var(--ink);font:13px/1.2 var(--font);text-align:left;padding:8px 10px;border-radius:7px;cursor:pointer}
+.menu button:hover,.menu button:focus{background:var(--strip)}
+.busy textarea{opacity:.75}
 .foot button{border:0;background:var(--strip);color:var(--ink);font:600 11.5px/1 var(--font);padding:6px 10px;border-radius:999px;cursor:pointer}
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 </style>
@@ -35,6 +42,14 @@ textarea::placeholder{color:var(--muted)}
 <div class="strip">
   <div class="dots" id="dots"></div>
   <span class="sp"></span>
+  <div class="ai" id="ai" hidden><button class="tool" id="aibtn" aria-haspopup="true" title="Ask Claude to rework this note">✦ AI</button>
+    <div class="menu" id="menu" hidden>
+      <button data-ai="list">Turn into a checklist</button>
+      <button data-ai="clean">Clean up the writing</button>
+      <button data-ai="sum">Summarize</button>
+      <button data-ai="next">Suggest next steps</button>
+      <button data-ai="tr">Translate</button>
+    </div></div>
   <button class="tool" id="copy" title="Copy this note">Copy</button>
   <button class="tool" id="hide" title="Hide (Option+Shift+J brings it back)" hidden>Hide</button>
 </div>
@@ -57,6 +72,41 @@ let tm=0;
 $("t").addEventListener("input",e=>{notes[cur]=e.target.value;info();clearTimeout(tm);tm=setTimeout(()=>store.set("notes",notes),250);});
 $("dots").addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;store.set("notes",notes);cur=+b.dataset.i;store.set("cur",cur);paint();$("t").focus();});
 $("copy").onclick=async()=>{try{await navigator.clipboard.writeText(notes[cur]);$("copy").textContent="Copied";}catch{$("t").select();$("copy").textContent="Selected";}setTimeout(()=>$("copy").textContent="Copy",1200);};
+// AI
+let sample=null, ctl=null, undo=null;
+const LANG=(navigator.language||"en").startsWith("zh")?"Chinese":"English";
+const PROMPTS={
+  list:"Rewrite this note as a clean checklist. One item per line starting with \"- [ ] \". Keep every task, merge duplicates, keep the note's language. Output only the checklist.",
+  clean:"Fix spelling, grammar and flow in this note. Keep its meaning, language, tone and line breaks. Output only the revised note.",
+  sum:"Summarize this note in at most 3 short bullet points starting with \"- \". Keep the note's language. Output only the bullets.",
+  next:"Read this note and append 3 concrete next steps as \"- [ ] \" lines under a line \"Next steps:\". Keep the note's language. Output the original note unchanged, then a blank line, then the next steps.",
+  tr:`Translate this note. If it is mostly in ${LANG}, translate it into ${LANG==="English"?"Chinese":"English"}; otherwise translate it into ${LANG}. Keep line breaks and checklist markers. Output only the translation.`
+};
+const ERR={rate_limited:"Claude is busy or you hit your usage limit. Try again later.",not_granted:"Claude isn't allowed for this app.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined this note.",session_expired:"Sign in to Claude again."};
+function say(t){$("info").textContent=t;}
+async function runAI(kind){
+  $("menu").hidden=true;
+  const src=notes[cur].trim();
+  if(!src){say("Write something first.");return;}
+  ctl?.abort();ctl=new AbortController();
+  undo={i:cur,text:notes[cur]};
+  document.body.classList.add("busy");say("Thinking…");
+  try{
+    const {text}=await sample(PROMPTS[kind]+"\n\nNote:\n"+src.slice(0,12000),{signal:ctl.signal,cache:false,modelTier:"quick",onText:({text})=>{if(cur===undo.i){$("t").value=text;}}});
+    notes[undo.i]=text.trim();store.set("notes",notes);paint();
+    const u=document.createElement("button");u.textContent="Undo";u.onclick=()=>{notes[undo.i]=undo.text;store.set("notes",notes);undo=null;paint();u.remove();if(desktop?.tray)setup();};
+    $("act").replaceChildren(u);say("Done");
+  }catch(e){
+    if(undo&&cur===undo.i) $("t").value=undo.text;
+    if(e?.code==="not_granted"||e?.code==="sampling_disabled") $("ai").hidden=true;
+    if(e?.code!=="cancelled") say(ERR[e?.code]||"Something went wrong. Try again.");
+  }finally{document.body.classList.remove("busy");}
+}
+$("aibtn").onclick=e=>{e.stopPropagation();$("menu").hidden=!$("menu").hidden;};
+$("menu").addEventListener("click",e=>{const b=e.target.closest("[data-ai]");if(b)runAI(b.dataset.ai);});
+document.addEventListener("click",e=>{if(!e.target.closest("#ai"))$("menu").hidden=true;});
+(async()=>{sample=window.claude?.use?await window.claude.use("sample").catch(()=>null):null;if(sample)$("ai").hidden=false;})();
+
 window.addEventListener("beforeunload",()=>store.set("notes",notes));
 paint();
 

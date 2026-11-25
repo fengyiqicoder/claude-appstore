@@ -48,7 +48,7 @@ def links(items):
 
 parts = [f"""# Claude AppStore [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 
-> Claude artifacts you can install as desktop apps on Mac and Windows, plus the docs, prompts and teardowns that explain how they work.
+> AI apps that run on Claude and install on your Mac or PC: our own Claude-powered tools, plus the best artifacts the community has shared.
 
 **Browse the store: [appstore.000ooo.ooo]({STORE})**, or install the store itself as an app: [open it in Claude](ARTIFACT_URL) and choose *Install as app*.
 

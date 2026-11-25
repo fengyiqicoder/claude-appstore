@@ -1,0 +1,186 @@
+<title>Talkback</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one lesson card at a time. Settings row on top, the passage with listen controls, then a speaking panel where Claude checks what you said. */
+:root{
+  --bg:#f7f5ff; --panel:#ffffff; --fg:#1b1733; --muted:#6f6a8a; --line:#e4e0f5; --chip:#eeebfb;
+  --accent:#5b45e0; --accent-fg:#ffffff; --good:#1f9d6b; --warn:#c7531c;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+  --read:"Literata","Iowan Old Style","Georgia",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15131f;--panel:#1e1b2b;--fg:#efecfb;--muted:#9d97b8;--line:#2f2b42;--chip:#29253a;--accent:#8f7dff;--accent-fg:#140f2e;--good:#3cc68e;--warn:#f08a5d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15131f;--panel:#1e1b2b;--fg:#efecfb;--muted:#9d97b8;--line:#2f2b42;--chip:#29253a;--accent:#8f7dff;--accent-fg:#140f2e;--good:#3cc68e;--warn:#f08a5d;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 var(--font)}
+.drag{height:32px;app-region:drag;-webkit-app-region:drag}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:14px;padding-block:4px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+h1{font:700 22px/1 var(--font);margin:0;letter-spacing:-.01em}
+.streak{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.opts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select{font:600 12.5px/1 var(--font);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:8px;padding:6px 8px}
+.btn{font:600 13px/1 var(--font);border:0;border-radius:999px;padding:10px 16px;cursor:pointer;background:var(--chip);color:var(--fg)}
+.btn.pri{background:var(--accent);color:var(--accent-fg)}
+.btn:disabled{opacity:.5;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.card h2{font:700 17px/1.25 var(--font);margin:0}
+.eyebrow{font:700 11px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.passage{font:19px/1.6 var(--read);margin:0;-webkit-user-select:text;user-select:text}
+.trans{color:var(--muted);font-size:13.5px;margin:0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.phr{display:flex;flex-wrap:wrap;gap:6px}
+.phr span{background:var(--chip);border-radius:8px;padding:5px 8px;font-size:12.5px}
+.phr b{font-weight:600}
+.said{min-height:52px;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;font:16px/1.5 var(--read)}
+.said:empty::before{content:attr(data-empty);color:var(--muted);font-family:var(--font);font-size:13.5px}
+.said .live{color:var(--muted)}
+textarea{font:16px/1.5 var(--read);width:100%;min-height:70px;resize:vertical;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--fg)}
+.mic.on{background:var(--warn);color:#fff}
+.score{display:flex;align-items:baseline;gap:8px}
+.score b{font:700 34px/1 var(--font);font-variant-numeric:tabular-nums}
+.fix{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.fix li{font-size:13.5px}
+.fix s{color:var(--warn)}
+.fix ins{color:var(--good);text-decoration:none;font-weight:600}
+.st{font-size:12.5px;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:30px 10px;display:flex;flex-direction:column;gap:12px;align-items:center}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500&display=swap">
+
+<div class="drag"></div>
+<div class="wrap">
+  <header><h1>Talkback</h1><span class="streak" id="streak"></span></header>
+  <div class="opts">
+    <select id="lang" aria-label="Language to practice"></select>
+    <select id="level" aria-label="Level"><option value="A2">Beginner (A2)</option><option value="B1">Intermediate (B1)</option><option value="B2">Upper intermediate (B2)</option><option value="C1">Advanced (C1)</option></select>
+    <select id="topic" aria-label="Topic"><option>Daily life</option><option>Travel</option><option>Work and meetings</option><option>Job interview</option><option>Food and cooking</option><option>Tech news</option><option>Small talk</option><option>Surprise me</option></select>
+    <button class="btn pri" id="new">✦ New lesson</button>
+  </div>
+  <div id="lesson"></div>
+  <p class="st" id="st"></p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const LANGS=[["English","en"],["Spanish","es"],["French","fr"],["German","de"],["Japanese","ja"],["Korean","ko"],["Chinese (Mandarin)","zh"],["Italian","it"],["Portuguese","pt"]];
+const store={get(k,d){try{const v=localStorage.getItem("talkback."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("talkback."+k,JSON.stringify(v))}catch{}}};
+const NATIVE=(()=>{const n=(navigator.language||"en").toLowerCase();return n.startsWith("zh")?"Chinese":({ja:"Japanese",ko:"Korean",es:"Spanish",fr:"French",de:"German",pt:"Portuguese",it:"Italian"}[n.slice(0,2)]||"English")})();
+$("lang").innerHTML=LANGS.map(([n,c])=>`<option value="${c}">${n}</option>`).join("");
+$("lang").value=store.get("lang",NATIVE==="English"?"es":"en");
+$("level").value=store.get("level","B1");$("topic").value=store.get("topic","Daily life");
+for(const id of["lang","level","topic"])$(id).onchange=()=>store.set(id,$(id).value);
+const langName=()=>LANGS.find(l=>l[1]===$("lang").value)[0];
+let L=store.get("lesson",null), sample=null, tts=null, dict=null, said="", ctl=null;
+
+function streak(){
+  const s=store.get("streak",{n:0,last:""});const t=new Date().toISOString().slice(0,10);
+  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  const n=(s.last===t||s.last===y)?s.n:0;
+  $("streak").textContent=n?`${n}-day streak`:"";
+  return {s,t,y};
+}
+function bump(){const {s,t,y}=streak();if(s.last===t)return;store.set("streak",{n:s.last===y?s.n+1:1,last:t});streak();}
+function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function render(){
+  if(!L){
+    $("lesson").innerHTML=`<div class="card empty"><b style="color:var(--fg);font-size:16px">A short lesson, read aloud, then your turn to speak.</b><span>Claude writes a passage at your level, reads it to you, and checks how you repeat it or answer its question.</span>${sample?"":`<span>Open Talkback in the Claude app to start.</span>`}</div>`;
+    return;
+  }
+  $("lesson").innerHTML=`<div class="card">
+    <div class="eyebrow">${esc(L.langName)} · ${esc(L.level)} · ${esc(L.topic)}</div>
+    <h2>${esc(L.title)}</h2>
+    <p class="passage">${esc(L.passage)}</p>
+    <details><summary class="st" style="cursor:pointer">Show translation</summary><p class="trans">${esc(L.translation)}</p></details>
+    <div class="row">${tts?`<button class="btn pri" id="play">▶ Listen</button><button class="btn" id="slow">Slow</button>`:`<span class="st">Listening needs the Claude app.</span>`}</div>
+    <div class="phr">${(L.phrases||[]).map(p=>`<span><b>${esc(p.phrase)}</b> · ${esc(p.meaning)}</span>`).join("")}</div>
+  </div>
+  <div class="card">
+    <div class="eyebrow">Your turn</div>
+    <div class="row"><select id="task" aria-label="What to say"><option value="shadow">Repeat the passage</option><option value="answer">Answer: ${esc(L.question)}</option></select></div>
+    ${dict?`<div class="said" id="said" data-empty="Press Speak and talk. Your words appear here."></div>`:`<textarea id="typed" placeholder="Speaking needs dictation in the Claude app or Chrome. You can type what you would say instead."></textarea>`}
+    <div class="row">${dict?`<button class="btn mic" id="mic">● Speak</button>`:""}<button class="btn pri" id="check">✦ Check</button><button class="btn" id="redo" hidden>Clear</button></div>
+    <div id="fb"></div>
+  </div>`;
+  wire();
+}
+async function speak(text,rate){ if(!tts) return; try{await tts.speak(text,{rate,language:$("lang").value});}catch(e){if(e?.code==="not_granted"){tts=null;render();}} }
+function wire(){
+  $("play")&& ($("play").onclick=()=>speak(L.passage,1));
+  $("slow")&& ($("slow").onclick=()=>speak(L.passage,0.75));
+  const mic=$("mic");
+  if(mic){
+    mic.onclick=()=>{
+      if(mic.classList.contains("on")){dict.stop().catch(()=>{});return;}
+      said="";$("said").textContent="";
+      dict.start({language:L.lang}).catch(e=>{ if(e?.code!=="stopped") $("st").textContent=e?.code==="not_granted"?"Microphone use was declined. You can type instead.":"Dictation isn't available here."; if(e?.code==="not_granted"||e?.code==="unavailable"){dict=null;render();} });
+    };
+  }
+  $("redo").onclick=()=>{said="";if($("said"))$("said").textContent="";if($("typed"))$("typed").value="";$("fb").innerHTML="";$("redo").hidden=true;};
+  $("check").onclick=check;
+}
+function onDict(){
+  if(!dict) return;
+  dict.onPartial(({text})=>{const el=$("said");if(el){el.innerHTML=esc(said)+`<span class="live">${esc(text)}</span>`;}});
+  dict.onFinal(({text})=>{said=(said+" "+text).trim();const el=$("said");if(el)el.textContent=said;});
+  dict.onState(({state})=>{const m=$("mic");if(!m)return;const on=state==="listening"||state==="starting";m.classList.toggle("on",on);m.textContent=on?"■ Stop":"● Speak";});
+}
+const ERR={rate_limited:"Claude is busy or you hit your usage limit. Try again later.",not_granted:"Claude isn't allowed for this app.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined that one. Try another topic.",session_expired:"Sign in to Claude again."};
+$("new").onclick=async()=>{
+  if(!sample) return;
+  $("new").disabled=true;$("st").textContent="Writing your lesson…";
+  const lang=$("lang").value, ln=langName(), level=$("level").value, topic=$("topic").value;
+  try{
+    const r=await sample.json(`Write a short speaking lesson in ${ln} for a ${level} learner whose first language is ${NATIVE}. Topic: ${topic==="Surprise me"?"anything everyday and interesting":topic}. The passage is 50-90 words, natural spoken ${ln}, the kind of thing a person would actually say, at ${level} level. Reply with only JSON: {"title": short title in ${ln}, "passage": the passage, "translation": translation into ${NATIVE}, "phrases": [up to 4 {"phrase": useful phrase from the passage, "meaning": meaning in ${NATIVE}}], "question": one open question in ${ln} the learner can answer aloud in 2-4 sentences}.`,{modelTier:"default",cache:false});
+    if(!r?.passage) throw {code:"empty_completion"};
+    L={lang,langName:ln,level,topic,title:String(r.title||topic),passage:String(r.passage),translation:String(r.translation||""),phrases:(Array.isArray(r.phrases)?r.phrases:[]).slice(0,4).map(p=>({phrase:String(p.phrase||""),meaning:String(p.meaning||"")})),question:String(r.question||"")};
+    store.set("lesson",L);said="";render();$("st").textContent="";
+    if(tts) speak(L.passage,1);
+  }catch(e){$("st").textContent=ERR[e?.code]||"Couldn't write a lesson. Try again.";}
+  finally{$("new").disabled=false;}
+};
+async function check(){
+  const attempt=(dict?said:($("typed")?.value||"")).trim();
+  if(!attempt){$("st").textContent=dict?"Press Speak and say something first.":"Type what you would say first.";return;}
+  const task=$("task").value;
+  $("check").disabled=true;$("fb").innerHTML=`<p class="st">Checking…</p>`;
+  try{
+    const r=await sample.json(task==="shadow"
+      ?`A ${L.level} learner of ${L.langName} tried to repeat this passage aloud. Speech recognition turned their speech into text, so ignore punctuation and capitalization, and treat small recognition slips gently.\nPassage: ${L.passage}\nWhat they said: ${attempt}\nScore how close and fluent it is from 0 to 100. Give feedback in ${NATIVE}, 1-2 sentences, warm and specific. List up to 4 corrections where they said something different. Reply with only JSON: {"score": number, "feedback": string, "fixes": [{"said": string, "better": string}], "model": the passage}.`
+      :`A ${L.level} learner of ${L.langName} answered this question aloud. Speech recognition turned their speech into text, so ignore punctuation and treat small recognition slips gently.\nQuestion: ${L.question}\nTheir answer: ${attempt}\nScore it from 0 to 100 for clarity and correctness at their level. Give feedback in ${NATIVE}, 1-2 sentences, warm and specific. List up to 4 corrections of grammar or word choice. Then write a better version of their answer in ${L.langName}, same ideas, at ${L.level} level. Reply with only JSON: {"score": number, "feedback": string, "fixes": [{"said": string, "better": string}], "model": string}.`,
+      {modelTier:"default",cache:false});
+    const sc=Math.max(0,Math.min(100,Math.round(+r?.score||0)));
+    $("fb").innerHTML=`<div class="score"><b style="color:${sc>=80?"var(--good)":sc>=55?"var(--accent)":"var(--warn)"}">${sc}</b><span class="st">/ 100</span></div>
+      <p style="margin:0">${esc(r?.feedback)}</p>
+      ${(r?.fixes||[]).length?`<ul class="fix">${r.fixes.slice(0,4).map(f=>`<li><s>${esc(f.said)}</s> → <ins>${esc(f.better)}</ins></li>`).join("")}</ul>`:""}
+      ${task==="answer"&&r?.model?`<div class="eyebrow" style="margin-top:6px">A more natural answer</div><p class="passage" style="font-size:17px">${esc(r.model)}</p>${tts?`<div class="row"><button class="btn" id="playm">▶ Listen</button></div>`:""}`:""}`;
+    if($("playm")) $("playm").onclick=()=>speak(String(r.model),0.9);
+    $("redo").hidden=false; bump();
+  }catch(e){$("fb").innerHTML=`<p class="st">${esc(ERR[e?.code]||"Couldn't check that. Try again.")}</p>`;}
+  finally{$("check").disabled=false;}
+}
+
+function dockIcon(){
+  const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#7a63ff");g.addColorStop(1,"#4330c4");
+  x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
+  x.fillStyle="#fff";x.beginPath();x.roundRect(98,52,60,104,30);x.fill();
+  x.strokeStyle="#fff";x.lineWidth=12;x.lineCap="round";x.beginPath();x.arc(128,118,52,0.15*Math.PI,0.85*Math.PI);x.stroke();
+  x.beginPath();x.moveTo(128,172);x.lineTo(128,200);x.stroke();
+  x.lineWidth=9;x.globalAlpha=.6;x.beginPath();x.arc(128,104,92,-0.2*Math.PI,0.2*Math.PI);x.stroke();x.beginPath();x.arc(128,104,92,0.8*Math.PI,1.2*Math.PI);x.stroke();
+  return c.toDataURL("image/png");
+}
+streak();render();
+(async()=>{
+  const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
+  let desktop;
+  [sample,tts,dict,desktop]=await Promise.all([use("sample"),use("tts"),use("dictation"),use("desktop")]);
+  $("new").disabled=!sample;onDict();render();
+  if(!sample) $("st").textContent="Open Talkback in the Claude app to practice with Claude.";
+  if(desktop?.tray){desktop.app.dock.setIcon(dockIcon()).catch(()=>{});desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:32,width:620,height:760,minWidth:380,minHeight:520}).catch(()=>{});}
+  else if(desktop&&await desktop.install.state().catch(()=>"")==="available"){const b=document.createElement("button");b.className="btn";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});document.querySelector("header").append(b);}
+})();
+</script>

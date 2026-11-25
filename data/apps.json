@@ -159,9 +159,9 @@
   {
    "id": "focus",
    "name": "Focus",
-   "subtitle": "Pomodoro timer in your menu bar",
+   "subtitle": "Claude plans your day into pomodoros",
    "category": "work",
-   "desc": "A pomodoro timer with focus, short and long breaks. Installed, it counts down in your menu bar and Dock, sends a notification when a session ends, and starts or pauses from anywhere with Option+Shift+P.",
+   "desc": "Dump everything you need to do and Claude turns it into ordered tasks with the number of focus sessions each needs. The timer works through them, counts down in your menu bar and Dock, notifies you when a session ends, and starts or pauses from anywhere with Option+Shift+P.",
    "author": "",
    "maker": "Claude AppStore",
    "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/focus",
@@ -169,17 +169,19 @@
    "lang": "",
    "added": "2026-11-25",
    "perms": [
+    "Claude",
     "Menu bar",
     "Notifications",
     "Shortcut"
-   ]
+   ],
+   "ai": true
   },
   {
    "id": "zones",
    "name": "Zones",
-   "subtitle": "World clock and meeting planner",
+   "subtitle": "Ask Claude when to meet",
    "category": "work",
-   "desc": "Keep the cities you work with side by side, each with a day and night band. Drag one slider to see what time a meeting lands everywhere. Installed, the city you pick stays in your menu bar.",
+   "desc": "Keep the cities you work with side by side, each with a day and night band. Ask in plain words, like \"best time for a call with London and Tokyo\", and Claude answers and moves the time slider there. Installed, the city you pick stays in your menu bar.",
    "author": "",
    "maker": "Claude AppStore",
    "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/zones",
@@ -187,15 +189,17 @@
    "lang": "",
    "added": "2026-11-25",
    "perms": [
+    "Claude",
     "Menu bar"
-   ]
+   ],
+   "ai": true
   },
   {
    "id": "jot",
    "name": "Jot",
-   "subtitle": "Sticky notes that float on top",
+   "subtitle": "Sticky notes Claude can tidy",
    "category": "work",
-   "desc": "Four colored sticky notes in one small window. Installed, it can float above every other window, and Option+Shift+J hides it or brings it back. Notes stay on your computer.",
+   "desc": "Four colored sticky notes in one small window. Claude can turn a messy note into a checklist, clean up the writing, summarize it, suggest next steps or translate it, with one-click undo. Installed, it floats above every window and Option+Shift+J hides it or brings it back.",
    "author": "",
    "maker": "Claude AppStore",
    "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/jot",
@@ -203,9 +207,67 @@
    "lang": "",
    "added": "2026-11-25",
    "perms": [
+    "Claude",
     "Floating window",
     "Shortcut"
-   ]
+   ],
+   "ai": true
+  },
+  {
+   "id": "lingo",
+   "name": "Lingo",
+   "subtitle": "Floating translator powered by Claude",
+   "category": "work",
+   "desc": "Paste text and Claude translates it between your two languages, polishes it so it sounds native in a natural, casual or formal tone, or explains the key words and grammar. It reads the result aloud. Installed, it floats on top and Option+Shift+T brings it up anywhere.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/lingo",
+   "artifact": "https://claude.ai/artifact/4YWGk1DexyfRdcmLWD7Wfa",
+   "lang": "",
+   "added": "2026-11-25",
+   "perms": [
+    "Claude",
+    "Voice",
+    "Floating window",
+    "Shortcut"
+   ],
+   "ai": true
+  },
+  {
+   "id": "talkback",
+   "name": "Talkback",
+   "subtitle": "Speaking coach that listens",
+   "category": "learn",
+   "desc": "Claude writes a short spoken passage at your level in one of 9 languages and reads it to you. Repeat it or answer its question out loud, and Claude scores what you said, corrects it and reads back a more natural version.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/talkback",
+   "artifact": "https://claude.ai/artifact/UuqPyQ25QRBtGaT7E9h3ZD",
+   "lang": "",
+   "added": "2026-11-25",
+   "perms": [
+    "Claude",
+    "Voice",
+    "Dictation"
+   ],
+   "ai": true
+  },
+  {
+   "id": "punchline",
+   "name": "Punchline",
+   "subtitle": "Party game hosted by Claude",
+   "category": "play",
+   "desc": "A pass-and-play party game for 3 to 8 friends on one screen. Claude writes the prompts, everyone answers in secret and votes for the funniest, then Claude teases every answer and picks its own favorite for bonus points.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/punchline",
+   "artifact": "https://claude.ai/artifact/3VqFRic6tuyhhd8mNCTwru",
+   "lang": "",
+   "added": "2026-11-25",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true
   }
  ],
  "official": [

@@ -12,6 +12,7 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--panel:#1b1e24;--fg:#eef1f5;--muted:#8d95a1;--line:#2b3038;--day:#d9a94a;--dusk:#b9714a;--night:#0b1020;--now:#5b9dff;--accent:#5b9dff;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#121418;--panel:#1b1e24;--fg:#eef1f5;--muted:#8d95a1;--line:#2b3038;--day:#d9a94a;--dusk:#b9714a;--night:#0b1020;--now:#5b9dff;--accent:#5b9dff;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 var(--font)}
 .drag{height:30px;app-region:drag;-webkit-app-region:drag}
@@ -44,6 +45,12 @@ h1{font:700 22px/1 var(--num);margin:0}
 .plan b{font-weight:600}
 .plan button{font:600 12px/1 var(--font);border:0;background:var(--bg);color:var(--fg);border-radius:999px;padding:6px 10px;cursor:pointer}
 input[type=range]{width:100%;accent-color:var(--accent)}
+.ask{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.ask form{display:flex;gap:8px}
+.ask input{flex:1;min-width:0;font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+.ask button{font:600 12.5px/1 var(--font);border:0;border-radius:8px;padding:0 12px;background:var(--accent);color:#fff;cursor:pointer}
+.ask p{margin:0;font-size:13px;color:var(--fg);white-space:pre-wrap}
+.ask p:empty{display:none}
 .foot{font-size:12px;color:var(--muted);text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
 .install{font:600 12.5px/1 var(--font);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:8px 14px;cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -55,6 +62,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <div class="add"><input id="q" type="search" placeholder="Add a city" autocomplete="off" aria-label="Add a city"><div class="sugg" id="sugg" hidden></div></div>
   </header>
   <div class="list" id="list"></div>
+  <div class="ask" id="ask" hidden>
+    <form id="askf"><input id="aq" placeholder="Ask: best time for a 30-min call with London and Tokyo?" aria-label="Ask about times"><button type="submit">✦ Ask</button></form>
+    <p id="aa" aria-live="polite"></p>
+  </div>
   <div class="plan">
     <div class="top"><b id="planlbl">Now</b><button id="now" hidden>Back to now</button></div>
     <input id="shift" type="range" min="-720" max="720" step="15" value="0" aria-label="Shift time to plan a meeting">
@@ -131,6 +142,29 @@ $("shift").addEventListener("input",e=>{shift=+e.target.value;render();});
 $("now").onclick=()=>{shift=0;$("shift").value=0;render();};
 render();
 setInterval(render,15000);
+
+// AI: answer time questions and move the slider
+let sample=null;
+$("askf").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const q=$("aq").value.trim(); if(!q) return;
+  const now=new Date();
+  const ctx=list.map(c=>{const p=parts(c.tz,now);return `${c.name} (${c.tz}): now ${p.wd} ${p.md} ${p.label}, UTC offset ${tzOff(c.tz,now)/60}h`}).join("\n");
+  $("aa").textContent="Thinking…";
+  try{
+    const r=await sample.json(`You help someone plan across time zones. Their cities, with current local times:\n${ctx}\nThe first city is where they are. Assume working hours are 9:00-18:00 local unless they say otherwise. Answer their question in 1-3 short sentences in the language they used, naming the local time in each relevant city. If a specific moment is the answer, also give shiftMinutes: minutes from now to that moment (between -720 and 720, multiple of 15); otherwise use null. If they mention a city not in the list, answer anyway and add it to addCities as {name, tz} with an IANA zone. Reply with only JSON: {"answer": string, "shiftMinutes": number|null, "addCities": []}.\n\nQuestion: ${q.slice(0,500)}`,{modelTier:"default",cache:false});
+    for(const c of (Array.isArray(r?.addCities)?r.addCities:[])){try{new Intl.DateTimeFormat("en",{timeZone:c.tz});if(c.name&&!list.some(x=>x.tz===c.tz&&x.name===c.name))list.push({name:String(c.name).slice(0,40),tz:c.tz});}catch{}}
+    save();
+    const sh=Number(r?.shiftMinutes);
+    if(Number.isFinite(sh)&&r?.shiftMinutes!==null){shift=Math.max(-720,Math.min(720,Math.round(sh/15)*15));$("shift").value=shift;}
+    render();
+    $("aa").textContent=String(r?.answer||"").slice(0,600)||"No answer.";
+  }catch(err){
+    $("aa").textContent={rate_limited:"Claude is busy or you hit your usage limit. Try later.",not_granted:"Claude isn't allowed for this app.",refused:"Claude declined this one."}[err?.code]||"Couldn't answer that. Try again.";
+    if(err?.code==="not_granted"||err?.code==="sampling_disabled") $("ask").hidden=true;
+  }
+});
+(async()=>{sample=window.claude?.use?await window.claude.use("sample").catch(()=>null):null;$("ask").hidden=!sample;})();
 
 function dockIcon(){
   const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
