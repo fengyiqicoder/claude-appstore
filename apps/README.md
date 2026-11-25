@@ -2,6 +2,22 @@
 
 Stop paying for apps.
 
+## Batch 1: cancel these subscriptions
+
+Each one opens the files you already have and saves back to the same formats. How they were built and accepted: [BUILD_GUIDE.md](BUILD_GUIDE.md).
+
+| App | Instead of | Artifact |
+|---|---|---|
+| [AI Document Editor](document-editor/index.html) | Copilot in Word, WPS AI | https://claude.ai/artifact/NfDBTqMg5uTBSpbvMvf4Zw |
+| [AI Spreadsheet](spreadsheet/index.html) | Copilot in Excel, GPT for Sheets | https://claude.ai/artifact/4SB49FbrDt6LG1HrKbowmG |
+| [AI Slide Maker](slide-maker/index.html) | Copilot in PowerPoint, Gamma | https://claude.ai/artifact/CKCAhZfduiQF7XHuseNrtb |
+| [PDF Chat](pdf-chat/index.html) | Acrobat AI Assistant, ChatPDF | https://claude.ai/artifact/WDynWFxX4ePs39Ys5kovKJ |
+| [Grammar Checker](grammar-checker/index.html) | Grammarly Premium, QuillBot | https://claude.ai/artifact/MnfxjBccYQ8PrxtUjnerDj |
+| [Mind Map](mind-map/index.html) | Xmind Pro, MindNode Plus | https://claude.ai/artifact/2Yo7wHmHtEqnGfvP1rpcxN |
+| [Image to Text](image-to-text/index.html) | TextSniper, Prizmo | https://claude.ai/artifact/VG2QZ4DAUhXRSYfyDcxHpM |
+
+## More apps
+
 Each folder is one artifact, published to Claude and listed in the store. Open the artifact link in Claude for Mac or Windows and choose *Install as app*. Apps call Claude on the viewer's own plan and ask before the first call.
 
 | App | What Claude does | Desktop features | Artifact |

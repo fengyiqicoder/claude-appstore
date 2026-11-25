@@ -133,6 +133,181 @@
    "added": "2026-11-25"
   },
   {
+   "id": "signal-operator",
+   "name": "Signal Operator",
+   "subtitle": "Run every traffic light by hand",
+   "category": "play",
+   "desc": "You switch every light at one intersection by hand. Change too early and cars crash, too late and they back up; by evening there are right-turning cars, buses and ambulances. The game ends when any direction has 8 cars waiting.",
+   "author": "fighthub_jp",
+   "post": "https://x.com/fighthub_jp/status/2125545039849824687",
+   "artifact": "https://claude.ai/artifact/3tLMQDE56DHFmahcMwZ1Au",
+   "lang": "Japanese",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "exact-birthday",
+   "name": "Exact Birthday Calculator",
+   "subtitle": "Your birthday, to the orbit",
+   "category": "learn",
+   "desc": "Works out the exact moment of your birthday as a whole number of trips around the sun, not a calendar date. Made by an MIT professor for people who live in a different time zone from where they were born, or were born on February 29.",
+   "author": "fredodurand",
+   "post": "https://x.com/fredodurand/status/2125610055982866917",
+   "artifact": "https://claude.ai/artifact/FzmS8QF45CN7JmLFmeghku",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "walking-while-texting",
+   "name": "Watch Out! Walking While Texting",
+   "subtitle": "A walk with your phone out",
+   "category": "play",
+   "desc": "A short simulation about the danger of walking while looking at your phone. Free, no sign-up, works on phone or PC; the same post links a companion game, Walk Beside Me, and the author also has Japanese versions of both.",
+   "author": "s_young_sb29",
+   "post": "https://x.com/s_young_sb29/status/2125609332205289478",
+   "artifact": "https://claude.ai/artifact/V5TFihpFWc5HLBU1vCkFnC",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "document-editor",
+   "name": "AI Document Editor",
+   "subtitle": "Edit .docx files with Claude",
+   "category": "work",
+   "desc": "Open your .docx files and keep working with headings, lists, tables, images, comments, footnotes and tracked changes intact. Ask Claude to draft, rewrite, shorten, change tone, proofread, translate or turn text into a table; every AI edit is a tracked change you accept or reject. Opens PDFs too, and exports back to Word, PDF, Markdown, HTML or text.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/document-editor",
+   "artifact": "https://claude.ai/artifact/NfDBTqMg5uTBSpbvMvf4Zw",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Copilot in Word, WPS AI",
+   "batch": 1
+  },
+  {
+   "id": "spreadsheet",
+   "name": "AI Spreadsheet",
+   "subtitle": "Excel files, Claude built in",
+   "category": "work",
+   "desc": "Open .xlsx, .xls and .csv files with all sheets, formulas, formatting, charts and images. Ask questions in plain words and get the exact number plus the formula behind it. Clean, classify, translate or summarize thousands of rows, build pivots, charts and highlights, and save back to Excel with nothing missing.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/spreadsheet",
+   "artifact": "https://claude.ai/artifact/4SB49FbrDt6LG1HrKbowmG",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Copilot in Excel, GPT for Sheets, Formula Bot",
+   "batch": 1
+  },
+  {
+   "id": "slide-maker",
+   "name": "AI Slide Maker",
+   "subtitle": "Decks from a topic or your .pptx",
+   "category": "work",
+   "desc": "Describe a talk, paste notes or drop in a .pptx, .docx or PDF. Edit the outline, then Claude writes the slides in smart layouts and themes. Edit inline, present with speaker notes, and export editable PowerPoint, PDF or images; slides you didn't touch come back exactly as they were.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/slide-maker",
+   "artifact": "https://claude.ai/artifact/CKCAhZfduiQF7XHuseNrtb",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Copilot in PowerPoint, Gamma, Beautiful.ai",
+   "batch": 1
+  },
+  {
+   "id": "pdf-chat",
+   "name": "PDF Chat",
+   "subtitle": "Chat with PDFs, cited pages",
+   "category": "work",
+   "desc": "Open PDFs, Word, PowerPoint or text files and ask questions. Every answer cites its pages; click a citation to jump there and see the exact words highlighted. Summaries, outlines, table extraction to Excel, translation, comparing documents and notes are built in, and your files stay on your device.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/pdf-chat",
+   "artifact": "https://claude.ai/artifact/WDynWFxX4ePs39Ys5kovKJ",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude",
+    "Read aloud"
+   ],
+   "ai": true,
+   "replaces": "Adobe Acrobat AI Assistant, ChatPDF",
+   "batch": 1
+  },
+  {
+   "id": "grammar-checker",
+   "name": "Grammar Checker",
+   "subtitle": "Grammar, clarity and tone fixes",
+   "category": "work",
+   "desc": "Write or paste text and get live underlines for correctness, clarity, engagement and delivery, each with an explanation and one-click Accept. Rewrite any sentence shorter, clearer, more formal or friendlier, paraphrase it in 9 modes, and set goals, voice and a house style guide. Opens and saves .docx, .md and .txt, and floats on top of other apps with Option+Shift+G.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/grammar-checker",
+   "artifact": "https://claude.ai/artifact/MnfxjBccYQ8PrxtUjnerDj",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude",
+    "Floating window",
+    "Shortcut"
+   ],
+   "ai": true,
+   "replaces": "Grammarly Premium, QuillBot, Wordtune",
+   "batch": 1
+  },
+  {
+   "id": "mind-map",
+   "name": "Mind Map",
+   "subtitle": "Opens your Xmind and MindNode maps",
+   "category": "work",
+   "desc": "Map ideas with Xmind and MindNode keyboard shortcuts, in seven layouts with themes, notes, markers, relationships, boundaries and summaries. Open your .xmind, .opml, .mm and Markdown files directly and save back to the same formats. Claude can draft a whole map from a sentence or an article, expand any topic, summarize a branch or turn the map into an article.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/mind-map",
+   "artifact": "https://claude.ai/artifact/2Yo7wHmHtEqnGfvP1rpcxN",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Xmind Pro, MindNode Plus, MindMeister",
+   "batch": 1
+  },
+  {
+   "id": "image-to-text",
+   "name": "Image to Text",
+   "subtitle": "Copy text from any image",
+   "category": "work",
+   "desc": "Paste a screenshot, drop photos or open a PDF, and get text you can edit, copy, read aloud or export. It keeps the layout, writes Markdown, turns tables into Excel or CSV, translates, and pulls receipts and business cards into fields. QR codes and barcodes are read on your computer.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/image-to-text",
+   "artifact": "https://claude.ai/artifact/VG2QZ4DAUhXRSYfyDcxHpM",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude (reads images)",
+    "Read aloud",
+    "Floating window",
+    "Shortcut"
+   ],
+   "ai": true,
+   "replaces": "TextSniper, Prizmo",
+   "batch": 1
+  },
+  {
    "id": "translator",
    "name": "AI Translator",
    "subtitle": "Translate, polish and explain any text",
@@ -244,42 +419,6 @@
     "Shortcut"
    ],
    "ai": true
-  },
-  {
-   "id": "signal-operator",
-   "name": "Signal Operator",
-   "subtitle": "Run every traffic light by hand",
-   "category": "play",
-   "desc": "You switch every light at one intersection by hand. Change too early and cars crash, too late and they back up; by evening there are right-turning cars, buses and ambulances. The game ends when any direction has 8 cars waiting.",
-   "author": "fighthub_jp",
-   "post": "https://x.com/fighthub_jp/status/2125545039849824687",
-   "artifact": "https://claude.ai/artifact/3tLMQDE56DHFmahcMwZ1Au",
-   "lang": "Japanese",
-   "added": "2026-11-26"
-  },
-  {
-   "id": "exact-birthday",
-   "name": "Exact Birthday Calculator",
-   "subtitle": "Your birthday, to the orbit",
-   "category": "learn",
-   "desc": "Works out the exact moment of your birthday as a whole number of trips around the sun, not a calendar date. Made by an MIT professor for people who live in a different time zone from where they were born, or were born on February 29.",
-   "author": "fredodurand",
-   "post": "https://x.com/fredodurand/status/2125610055982866917",
-   "artifact": "https://claude.ai/artifact/FzmS8QF45CN7JmLFmeghku",
-   "lang": "",
-   "added": "2026-11-26"
-  },
-  {
-   "id": "walking-while-texting",
-   "name": "Watch Out! Walking While Texting",
-   "subtitle": "A walk with your phone out",
-   "category": "play",
-   "desc": "A short simulation about the danger of walking while looking at your phone. Free, no sign-up, works on phone or PC; the same post links a companion game, Walk Beside Me, and the author also has Japanese versions of both.",
-   "author": "s_young_sb29",
-   "post": "https://x.com/s_young_sb29/status/2125609332205289478",
-   "artifact": "https://claude.ai/artifact/V5TFihpFWc5HLBU1vCkFnC",
-   "lang": "",
-   "added": "2026-11-26"
   }
  ],
  "official": [
