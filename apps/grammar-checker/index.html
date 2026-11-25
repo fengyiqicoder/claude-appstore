@@ -1,6 +1,6 @@
 <title>Grammar Checker</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<script type="application/json" id="claude-artifacts-manifest">{"permissions":["overlay","shortcuts"]}</script>
+<script type="application/json" id="claude-artifacts-manifest">{"permissions":["overlay","shortcuts","menu-bar"]}</script>
 <style>
 /* Layout: top bar (documents, title, goals, score, file actions); editor column with live underlines; right panel with Review / Rewrite / Write tabs; footer counter + check status. Narrow windows move the panel into a drawer. */
 :root{
@@ -198,6 +198,58 @@ body.nolines .mirror mark:not(.on):not(.rw){background:none}
 .toast button{border:0;background:transparent;color:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
 .drop{position:fixed;inset:8px;border:2px dashed var(--accent);border-radius:16px;background:color-mix(in srgb,var(--accent) 8%,transparent);z-index:90;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--accent);pointer-events:none}
 .fab{display:none}
+.mirror mark.syn{--mc:var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.mirror mark.speak{--mc:var(--c-engagement);background:color-mix(in srgb,var(--c-engagement) 14%,transparent)}
+#counter{white-space:nowrap;flex:none}
+.foot .ib{flex:none;border:0;background:transparent;color:var(--muted);cursor:pointer;padding:5px 6px;border-radius:6px;display:inline-flex;align-items:center;gap:5px;font-size:12px}
+.foot .ib:hover{background:var(--hover);color:var(--fg)}
+.foot .ib.on{color:var(--accent);background:var(--accent-soft)}
+.foot .ib.on .ico{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+#langSel{flex:none;font-size:12px;padding:4px 6px;border-color:transparent;background:transparent;color:var(--muted);max-width:150px;cursor:pointer}
+#langSel:hover{background:var(--hover);color:var(--fg)}
+.syns{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.syns .chip{font-size:13px}
+
+/* Citations */
+.cform{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.cform label{display:block;font-size:11.5px;color:var(--muted);margin:8px 0 3px}
+.cform label:first-child{margin-top:0}
+.cform input,.cform select,.cform textarea{width:100%}
+.cform textarea{min-height:48px;resize:vertical}
+.cform .two{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.cform .unsure input,.cform .unsure textarea{border-color:var(--c-style);background:color-mix(in srgb,var(--c-style) 8%,var(--paper))}
+.cform .unsure label::after{content:" · check this";color:var(--c-style);font-weight:600}
+.cprev{font-size:13px;line-height:1.5;margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--chip);overflow-wrap:anywhere}
+.cprev small{display:block;color:var(--muted);margin-top:4px}
+.citem{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13px;line-height:1.5}
+.citem .ref{overflow-wrap:anywhere;padding-left:1.6em;text-indent:-1.6em}
+.citem .acts{margin-top:8px}
+.citem.warn{border-color:color-mix(in srgb,var(--c-style) 50%,var(--line))}
+.citem .w{font-size:11.5px;color:var(--c-style);margin-top:4px}
+
+/* Quick fix layer */
+.quick{position:fixed;inset:0;z-index:70;background:var(--bg);display:flex;flex-direction:column}
+.quick .qtop{display:flex;align-items:center;gap:8px;height:46px;flex:none;border-bottom:1px solid var(--line);padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+body.app .quick .qtop{app-region:drag;-webkit-app-region:drag}
+body.app.inset .quick .qtop{padding-left:max(80px,env(safe-area-inset-left,0px))}
+.quick .qtop > *{app-region:no-drag;-webkit-app-region:no-drag}
+.quick .qtop h2{font-size:14px;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;app-region:drag;-webkit-app-region:drag}
+.quick .qbody{flex:1;overflow:auto;padding:12px max(14px,env(safe-area-inset-right,0px)) 12px max(14px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:10px;min-height:0}
+.quick .modes{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.quick .modes .chip{padding:5px 10px;font-size:12px}
+.quick textarea#qIn{width:100%;min-height:120px;flex:1 1 140px;resize:none;font:15px/1.55 var(--font);border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--paper);color:var(--fg);outline:none}
+.quick textarea#qIn:focus{border-color:var(--accent)}
+.quick .qout{flex:1 1 140px;min-height:100px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--paper);overflow:auto;white-space:pre-wrap;font-size:15px;line-height:1.55;overflow-wrap:anywhere}
+.quick .qout del{color:var(--del);text-decoration:line-through}
+.quick .qout ins{text-decoration:none;font-weight:650;color:var(--ins)}
+.quick .qfoot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:none;border-top:1px solid var(--line);padding:10px max(14px,env(safe-area-inset-right,0px)) 10px max(14px,env(safe-area-inset-left,0px))}
+.quick .qfoot .st{flex:1;min-width:120px;font-size:12px;color:var(--muted)}
+.steps{margin:0;padding-left:20px;font-size:13.5px;line-height:1.7}
+.permrow{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.permrow span{flex:1}
+.permrow b{font-size:12px;font-weight:600}
+.ok{color:var(--c-engagement)} .bad{color:var(--del)}
 
 @media (max-width:980px){
   .side{position:fixed;top:0;right:0;bottom:0;width:min(380px,100vw);z-index:55;box-shadow:var(--shadow);transform:translateX(105%);transition:transform .18s ease;padding-right:env(safe-area-inset-right,0px)}
@@ -214,6 +266,9 @@ body.nolines .mirror mark:not(.on):not(.rw){background:none}
   .top .sp{flex:0}
   .grp{grid-template-columns:1fr}
   .stats{grid-template-columns:1fr}
+  .foot{gap:4px}
+  #langSel{max-width:92px}
+  .foot .st{display:none}
 }
 </style>
 
@@ -229,6 +284,8 @@ body.nolines .mirror mark:not(.on):not(.rw){background:none}
       <button data-a="new">New document<span class="k">⌥⌘N</span></button>
       <button data-a="open">Open file…<span class="k">⌘O</span></button>
       <button data-a="sample">Try sample text</button>
+      <button data-a="quick">Quick fix panel<span class="k">⌘⇧K</span></button>
+      <button data-a="everywhere">Use in any app…</button>
       <hr><div class="lbl">Download</div>
       <button data-a="docx" class="needdl">Word document (.docx)<span class="k">⌘S</span></button>
       <button data-a="md" class="needdl">Markdown (.md)</button>
@@ -260,6 +317,9 @@ body.nolines .mirror mark:not(.on):not(.rw){background:none}
     <div class="foot">
       <span class="dot" id="stDot" style="background:var(--faint)"></span>
       <span class="st" id="status">Ready</span>
+      <select id="langSel" title="Language and dialect" aria-label="Language and dialect"></select>
+      <button class="ib" id="micBtn" title="Dictate (⌘⇧E)" aria-label="Dictate" hidden><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5"/><path d="M3 7.5a5 5 0 0010 0M8 12.5v2"/></svg><span class="hide-s" id="micLab">Dictate</span></button>
+      <button class="ib" id="ttsBtn" title="Read aloud from the cursor, or the selection (⌘⇧U)" aria-label="Read aloud" hidden><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 6h2.5l3.5-3v10L5 10H2.5z"/><path d="M11 5.5a3.5 3.5 0 010 5M12.8 3.5a6 6 0 010 9"/></svg><span class="hide-s" id="ttsLab">Read aloud</span></button>
       <button class="btn sm" id="checkBtn" title="Check now (⌘↵)">Check now</button>
       <button id="counter" title="Click to change the counter">0 words</button>
     </div>
@@ -269,11 +329,13 @@ body.nolines .mirror mark:not(.on):not(.rw){background:none}
     <div class="tabs" role="tablist">
       <button data-tab="review" class="on" role="tab">Review <span class="badge" id="nBadge">0</span></button>
       <button data-tab="rewrite" role="tab" class="needai">Rewrite</button>
-      <button data-tab="write" role="tab" class="needai">Write with AI</button>
+      <button data-tab="write" role="tab" class="needai">Write</button>
+      <button data-tab="cite" role="tab">Cite</button>
     </div>
     <div class="pane" id="pReview"></div>
     <div class="pane" id="pRewrite" hidden></div>
     <div class="pane" id="pWrite" hidden></div>
+    <div class="pane" id="pCite" hidden></div>
   </aside>
 </div>
 
@@ -285,6 +347,15 @@ body.nolines .mirror mark:not(.on):not(.rw){background:none}
 </nav>
 <div class="modal" id="modal" hidden><div class="dlg" id="dlg" role="dialog" aria-modal="true"></div></div>
 <div class="drop" id="dropZone" hidden>Drop a .docx, .txt, .md, .odt, .rtf or .html file to open it</div>
+<div class="quick" id="quick" hidden role="dialog" aria-label="Quick fix">
+  <div class="qtop"><h2>Quick fix</h2><button class="btn ghost sm hide-s" id="qHelp" title="How to use it in any app">Use in any app</button><button class="btn sm" id="qEditor" title="Open this text in the full editor">Open in editor</button><button class="btn ghost sm" id="qClose" title="Close (Esc)" aria-label="Close">✕</button></div>
+  <div class="qbody">
+    <div class="modes" id="qModes"></div>
+    <textarea id="qIn" spellcheck="false" placeholder="Paste text here (⌘V). It is fixed right away."></textarea>
+    <div class="qout" id="qOut" hidden></div>
+  </div>
+  <div class="qfoot"><span class="st" id="qSt">Copy text in any app, paste it here, then copy the fix back.</span><button class="btn" id="qGo">Fix</button><button class="btn pri" id="qCopy" disabled>Copy result</button></div>
+</div>
 <div class="toast" id="toast" hidden></div>
 <input type="file" id="file" accept=".docx,.txt,.md,.markdown,.odt,.rtf,.html,.htm,text/plain" hidden>
 <input type="file" id="dictFile" accept=".txt,.dic,.csv,text/plain" hidden>
@@ -307,8 +378,15 @@ const GOAL_OPTS={
   intent:{label:"Intent",opts:["Inform","Describe","Convince","Tell a story"],hint:{"":"Optional. What are you trying to do?",Inform:"Explain facts clearly.",Describe:"Paint a vivid picture.",Convince:"Persuade the reader to act or agree.","Tell a story":"Keep the reader engaged with narrative."}},
   audience:{label:"Audience",opts:["General","Knowledgeable","Expert"],hint:{General:"Easy for anyone to read.",Knowledgeable:"Requires focus to read and understand.",Expert:"Specialist terms are fine; skip basics."}},
   formality:{label:"Formality",opts:["Informal","Neutral","Formal"],hint:{Informal:"Contractions and casual words are fine.",Neutral:"Restricts slang but allows standard casual expressions.",Formal:"No slang, no contractions, polite and precise."}},
-  variant:{label:"Language",opts:["American","British","Canadian","Australian","Indian","Any language"],hint:{American:"American English spelling and usage.",British:"British English spelling and usage.",Canadian:"Canadian English: -our, -re, -ize.",Australian:"Australian English spelling and usage.",Indian:"Indian English spelling and usage.","Any language":"Checks text in whatever language you write."}}
+  variant:{label:"Language",opts:["American","British","Canadian","Australian","Indian","Any language"],hint:{American:"American English spelling and usage.",British:"British English spelling and usage.",Canadian:"Canadian English: -our, -re, -ize.",Australian:"Australian English spelling and usage.",Indian:"Indian English spelling and usage.","New Zealand":"New Zealand English spelling and usage.","South African":"South African English spelling and usage.","Any language":"Detects the language of each paragraph and checks it in that language."}}
 };
+// Languages and dialects. English values keep their old names so saved documents still work.
+const LANGS=[["American","English (US)","en-US"],["British","English (UK)","en-GB"],["Canadian","English (Canada)","en-CA"],["Australian","English (Australia)","en-AU"],["Indian","English (India)","en-IN"],["New Zealand","English (New Zealand)","en-NZ"],["South African","English (South Africa)","en-ZA"],
+  ["German","German (Germany)","de-DE"],["German (Austria)","German (Austria)","de-AT"],["German (Switzerland)","German (Switzerland)","de-CH"],["French","French (France)","fr-FR"],["French (Canada)","French (Canada)","fr-CA"],["Spanish","Spanish (Spain)","es-ES"],["Spanish (Latin America)","Spanish (Latin America)","es-419"],["Portuguese (Brazil)","Portuguese (Brazil)","pt-BR"],["Portuguese (Portugal)","Portuguese (Portugal)","pt-PT"],["Italian","Italian","it-IT"],["Dutch","Dutch","nl-NL"],["Catalan","Catalan","ca-ES"],["Polish","Polish","pl-PL"],["Czech","Czech","cs-CZ"],["Slovak","Slovak","sk-SK"],["Romanian","Romanian","ro-RO"],["Hungarian","Hungarian","hu-HU"],["Swedish","Swedish","sv-SE"],["Danish","Danish","da-DK"],["Norwegian","Norwegian (Bokmål)","nb-NO"],["Finnish","Finnish","fi-FI"],["Greek","Greek","el-GR"],["Russian","Russian","ru-RU"],["Ukrainian","Ukrainian","uk-UA"],["Turkish","Turkish","tr-TR"],["Arabic","Arabic","ar"],["Hebrew","Hebrew","he-IL"],["Persian","Persian","fa-IR"],["Hindi","Hindi","hi-IN"],["Indonesian","Indonesian","id-ID"],["Vietnamese","Vietnamese","vi-VN"],["Thai","Thai","th-TH"],["Chinese (Simplified)","Chinese (Simplified)","zh-CN"],["Chinese (Traditional)","Chinese (Traditional)","zh-TW"],["Japanese","Japanese","ja-JP"],["Korean","Korean","ko-KR"],["Irish","Irish","ga-IE"],["Esperanto","Esperanto","eo"],
+  ["Any language","Detect language","" ]];
+const LANG=Object.fromEntries(LANGS.map(([v,l,b])=>[v,{label:l,bcp:b,en:b.startsWith("en")}]));
+const langOf=v=>LANG[v]||LANG.American;
+const isEN=v=>langOf(v).en;
 const SAMPLE=`Dear Ms. Patel,
 
 I hope this email find you well. I wanted to reach out in order to follow up on the proposal we discussed last week. Our team have reviewed the the requirements carefully, and we beleive we can deliver the project ahead of schedule.
@@ -321,11 +399,12 @@ Best regards,
 Sam`;
 
 /* ---------- state ---------- */
-let S={tab:"review",cat:"all",counter:store.get("counter","words"),depth:store.get("depth","fast"),auto:store.get("auto",true),lines:store.get("lines",true),theme:store.get("theme","system"),serif:store.get("serif",false),showGoals:store.get("showGoals",true)};
+let S={sumFmt:store.get("sumFmt","points"),sumLen:store.get("sumLen","Medium"),trLang:store.get("trLang","Spanish"),citeStyle:store.get("citeStyle","apa"),hotkey:store.get("hotkey","Alt+Shift+G"),qMode:store.get("qMode","fix"),tab:"review",cat:"all",counter:store.get("counter","words"),depth:store.get("depth","fast"),auto:store.get("auto",true),lines:store.get("lines",true),theme:store.get("theme","system"),serif:store.get("serif",false),showGoals:store.get("showGoals",true)};
 let dict=store.get("dict",[]); // personal dictionary
 let styleRules=store.get("style",[]); // [{find,replace,note}]
 let snippets=store.get("snippets",[]); // [{trigger,text}]
 let index=store.get("index",[]); // [{id,title,updated,words}]
+let synR=null, speakR=null, dictAt=null, synCtl=null;
 let doc=null, lastText="", local=[], activeId=null, inflight=[], failed=new Set(), rwCards=[], genAnchor=null, genSel=null;
 let sample=null, downloads=null, desktop=null, aiOK=true;
 const ed=$("ed"), mirror=$("mirror");
@@ -334,7 +413,7 @@ function applyTheme(){if(S.theme==="system")document.documentElement.removeAttri
 applyTheme();
 
 /* ---------- documents ---------- */
-function newDocObj(text="",title=""){return {id:uid(),title,text,sugg:[],checked:[],dismissed:[],goals:{...GOALS_DEF,...store.get("goalsDefault",{})},created:Date.now(),updated:Date.now()};}
+function newDocObj(text="",title=""){return {id:uid(),title,text,sugg:[],checked:[],dismissed:[],cites:[],goals:{...GOALS_DEF,...store.get("goalsDefault",{})},created:Date.now(),updated:Date.now()};}
 function saveDoc(){
   if(!doc) return;
   if(!doc.text.trim()&&!doc.title){if(index.some(d=>d.id===doc.id)){index=index.filter(d=>d.id!==doc.id);store.set("index",index);store.del("doc."+doc.id);}return;}
@@ -357,10 +436,10 @@ function openDocObj(d){
   if(doc) saveDoc();
   ctlAll();
   doc=Object.assign(newDocObj(),d); doc.goals={...GOALS_DEF,...(d.goals||{})};
-  inflight=[];failed.clear();rwCards=[];activeId=null;genAnchor=null;
+  inflight=[];failed.clear();rwCards=[];activeId=null;genAnchor=null;cEdit=null;cErr="";synR=null;speakR=null;
   ed.value=doc.text; lastText=doc.text;
   $("title").value=doc.title||"";
-  runLocal(); render(); renderRewrite(); renderWrite();
+  runLocal(); render(); renderRewrite(); renderWrite(); applyLang(); if(S.tab==="cite")renderCite();
   store.set("current",doc.id);
   scheduleCheck(300);
 }
@@ -392,7 +471,8 @@ function onEdit(){
   doc.checked=doc.checked.filter(r=>shiftRange(r,s,oe,nl,nt));
   for(const u of inflight) if(!u.dead&&!shiftRange(u,s,oe,nl,nt)) u.dead=true;
   for(const c of rwCards) if(!c.dead&&!shiftRange(c,s,oe,nl,nt)) c.dead=true;
-  for(const g of [genAnchor,genSel]) if(g&&!g.dead&&!shiftRange(g,s,oe,nl,nt)) g.dead=true;
+  for(const g of [genAnchor,genSel,synR,speakR,dictAt]) if(g&&!g.dead&&!shiftRange(g,s,oe,nl,nt)) g.dead=true;
+  if(synR?.dead){synR=null;hidePop();}
   lastText=nt; doc.text=nt;
   runLocal(); render(); scheduleSave(); scheduleCheck();
   if(rwCards.some(c=>c.dead&&!c.deadShown)) renderRewrite();
@@ -414,17 +494,18 @@ const US_UK=[["color","colour"],["favorite","favourite"],["honor","honour"],["la
 const IZE="organiz|realiz|recogniz|apologiz|summariz|prioritiz|minimiz|maximiz|optimiz|emphasiz|categoriz|customiz|finaliz|normaliz|standardiz|utiliz|analyz|paralyz|criticiz|memoriz|visualiz|authoriz";
 function matchCase(src,rep){if(!rep)return rep;if(src===src.toUpperCase()&&src.length>1)return rep.toUpperCase();if(src[0]===src[0].toUpperCase()&&src[0]!==src[0].toLowerCase())return rep[0].toUpperCase()+rep.slice(1);return rep;}
 const inDict=w=>{const l=w.toLowerCase();return dict.some(d=>d.toLowerCase()===l);};
-function runLocal(){
-  const t=doc.text, out=[];
+function runLocal(){local=runLocalOn(doc.text,doc.goals);}
+function runLocalOn(t,goals){
+  const out=[];
   const add=(start,end,replacement,cat,title,expl,kind)=>out.push({id:"L"+start+"-"+end+"-"+kind,start,end,original:t.slice(start,end),replacement,cat,title,expl,src:"local"});
   let m;
   const re1=/\b([\p{L}']+)(\s+)\1\b/giu;
   while((m=re1.exec(t))){if(/\n/.test(m[2])) continue; if(/^(had|that|is|very|bye|so|no)$/i.test(m[1])) continue; add(m.index,m.index+m[0].length,m[1],"correctness","Remove the repeated word",`"${m[1]}" appears twice in a row.`,"rep");}
   const re2=/(\S)( {2,})(?=\S)/g;
   while((m=re2.exec(t))) add(m.index+1,m.index+1+m[2].length," ","correctness","Remove the extra space","There is more than one space between these words.","sp");
-  const EN=doc.goals.variant!=="Any language";
+  const EN=isEN(goals.variant);
   const re3=/([\p{L}\p{N})"”’])( +)([,.;:!?])(?!\.)/gu;
-  while(EN&&(m=re3.exec(t))){const st=m.index+m[1].length;add(st,st+m[2].length+1,m[3],"correctness","Remove the space before punctuation","Punctuation attaches to the word before it.","sb");}
+  while(EN&&(m=re3.exec(t))){const st=m.index+m[1].length;add(st,st+m[2].length+1,m[3]+(/[,;:]/.test(m[3])&&/\p{L}/u.test(t[st+m[2].length+1]||"")?" ":""),"correctness","Remove the space before punctuation","Punctuation attaches to the word before it.","sb");}
   const re4=/([\p{Ll}]),(?=[\p{L}])/gu;
   while((m=re4.exec(t))){const st=m.index+1;add(st,st+1,", ","correctness","Add a space after the comma","A comma is followed by a space.","sa");}
   const re5=/(^|[^.]\w[.!?]["”’)]?\s+)(\p{Ll})/gmu;
@@ -441,14 +522,14 @@ function runLocal(){
   while(EN&&(m=re9.exec(t))){const r=VERY[m[2].toLowerCase()];if(r)add(m.index,m.index+m[0].length,matchCase(m[0],r),"engagement","Choose a stronger word",`“${r}” is more vivid than “${m[0].toLowerCase()}”.`,"v");}
   const re10=/\b(I just wanted to|I was just wondering if|Just checking in|I'm no expert, but|Sorry to bother you, but|I think that maybe)\b/gi;
   while(EN&&(m=re10.exec(t))){const rep={"i just wanted to":"I want to","i was just wondering if":"Could","just checking in":"Following up","i'm no expert, but":"","sorry to bother you, but":"","i think that maybe":"Perhaps"}[m[0].toLowerCase()];add(m.index,m.index+m[0].length,rep,"delivery","Sound more confident","Hedging language can make you sound unsure.","h");}
-  const v=doc.goals.variant;
-  if(v!=="Any language"){
+  const v=goals.variant;
+  if(EN){
     const toUK=v!=="American";
-    for(const [us,uk] of US_UK){if(toUK&&(us==="program"||us==="dialog"))continue;const from=toUK?us:uk,to=toUK?uk:us;const r=new RegExp(`\\b${from}(s|ed|ing|ful|ite|ites)?\\b`,"gi");while((m=r.exec(t))){if(inDict(m[0]))continue;add(m.index,m.index+m[0].length,matchCase(m[0],to+(m[1]||"")),"correctness",`Use ${v} spelling`,`“${to+(m[1]||"")}” is the ${v} English spelling.`,"var");}}
+    for(const [us,uk] of US_UK){if(toUK&&(us==="program"||us==="dialog"))continue;const from=toUK?us:uk,to=toUK?uk:us;const r=new RegExp(`\\b${from}(s|ed|ing|ful|ite|ites)?\\b`,"gi");while((m=r.exec(t))){if(inDict(m[0]))continue;add(m.index,m.index+m[0].length,matchCase(m[0],to+(m[1]||"")),"correctness",`Use ${langOf(v).label.replace(/^English \((.*)\)$/,"$1")} spelling`,`“${to+(m[1]||"")}” is the ${langOf(v).label} spelling.`,"var");}}
     if(v==="American"){const r2=new RegExp(`\\b(${IZE.replace(/z/g,"s")})(e|es|ed|ing|ation|ations)\\b`,"gi");while((m=r2.exec(t))){if(inDict(m[0]))continue;const rep=m[1].replace(/s$/,"z")+m[2];add(m.index,m.index+m[0].length,matchCase(m[0],rep),"correctness","Use American spelling",`American English uses “${rep.toLowerCase()}”.`,"ize");}}
   }
   for(const rule of styleRules){if(!rule.find)continue;const r=new RegExp(`(?<![\\p{L}\\p{N}])${rule.find.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}(?![\\p{L}\\p{N}])`,rule.cs?"gu":"giu");while((m=r.exec(t))){if(rule.replace&&m[0]===rule.replace)continue;add(m.index,m.index+m[0].length,rule.replace==null?"":(rule.cs?rule.replace:matchCase(m[0],rule.replace)),"style",rule.replace?`Use “${rule.replace}”`:`Avoid “${rule.find}”`,rule.note||"Your style guide prefers this.","st"+rule.find);if(m[0].length===0)r.lastIndex++;}}
-  const seen=new Set(); local=out.filter(x=>{const k=x.start+":"+x.end;if(seen.has(k))return false;seen.add(k);return true;});
+  const seen=new Set(); return out.filter(x=>{const k=x.start+":"+x.end;if(seen.has(k))return false;seen.add(k);return true;});
 }
 
 /* ---------- merged suggestion list ---------- */
@@ -482,7 +563,7 @@ function dirtyUnits(){
 let checkT=0;
 function scheduleCheck(ms=1400){clearTimeout(checkT);if(!S.auto||!sample||!aiOK)return;checkT=setTimeout(()=>pump(false),ms);}
 let running=0, lastErr="";
-function goalsText(){const g=doc.goals;return `Domain: ${g.domain}. Audience: ${g.audience}. Formality: ${g.formality}.${g.intent?` Intent: ${g.intent}.`:""} ${g.variant==="Any language"?"Check the text in whatever language it is written in.":`If the text is English, use ${g.variant} English spelling and conventions; if it is another language, check it in that language.`}${g.voice?` The writer's voice: ${g.voice}.`:""}`;}
+function goalsText(){const g=doc.goals;return `Domain: ${g.domain}. Audience: ${g.audience}. Formality: ${g.formality}.${g.intent?` Intent: ${g.intent}.`:""} ${g.variant==="Any language"?"Detect the language of each paragraph and check it in that language.":isEN(g.variant)?`If the text is English, use ${langOf(g.variant).label} spelling and conventions; if it is another language, check it in that language.`:`The text is written in ${langOf(g.variant).label}: check it against ${langOf(g.variant).label} spelling, grammar, punctuation and typography conventions (parts in another language are checked in their own language). Write "title" and "explanation" in English.`}${g.voice?` The writer's voice: ${g.voice}.`:""}`;}
 function rulesText(){let s="";if(dict.length)s+=`\nPersonal dictionary (these words are correct, never flag them): ${dict.slice(0,400).join(", ")}`;const sr=styleRules.filter(r=>r.find);if(sr.length)s+=`\nHouse style guide:\n${sr.slice(0,60).map(r=>`- ${r.replace?`write "${r.replace}" instead of "${r.find}"`:`avoid "${r.find}"`}${r.note?` (${r.note})`:""}`).join("\n")}`;return s;}
 function checkPrompt(batch){
   return `You are an expert copy editor doing a premium writing check (correctness, clarity, engagement, delivery). Review each numbered paragraph and report every real issue.
@@ -584,6 +665,8 @@ function stats(t){
   const wc=words.length+cjk;
   return {chars:t.length,noSpace:t.replace(/\s/g,"").length,words:wc,sentences:sents.length,paragraphs:paras,read:wc/238*60,speak:wc/183*60,wordLen:words.length?words.reduce((a,w)=>a+w.length,0)/words.length:0,sentLen:W/Sn,fre:Math.round(Math.max(0,Math.min(100,fre))),grade:Math.max(0,grade),uniq:words.length?uniq/words.length:0,rare:words.length?long/words.length:0,sentList:sents};
 }
+const STOP=new Set("a an the and or but if then so of to in on at by for with from as is are was were be been being it its this that these those i you he she we they me him her us them my your his our their not no do does did have has had will would can could should may might must there here what which who whom when where why how all any each more most some such than too very just also about into over after before up down out off again once only own same other s t don't i'm it's that's der die das und ist ein eine le la les et est un une el los las y es de que en".split(" "));
+function topWords(t){const m={};for(const w of t.toLowerCase().match(/[\p{L}][\p{L}'’-]+/gu)||[]){if(w.length<3||STOP.has(w))continue;m[w]=(m[w]||0)+1;}return Object.entries(m).filter(([,n])=>n>1).sort((a,b)=>b[1]-a[1]).slice(0,10);}
 const fmtT=s=>s<60?`${Math.max(1,Math.round(s))} sec`:`${Math.floor(s/60)} min ${Math.round(s%60)} sec`;
 function score(list,words){
   if(words<3) return null;
@@ -613,12 +696,16 @@ function render(){
 }
 function renderMirror(){
   const t=doc.text; let html="", pos=0;
-  const marks=[];
-  for(const s of cached){if(s.start>=pos&&s.end>s.start){marks.push(s);pos=s.end;}}
-  for(const c of rwCards){if(!c.dead&&c.state!=="applied"&&c.hl)marks.push({start:c.start,end:c.end,rw:true,id:"rw"+c.id});}
+  const marks=[], spec=[];
+  if(synR&&!synR.dead) spec.push({start:synR.start,end:synR.end,k:"syn",id:"syn"});
+  if(speakR&&!speakR.dead&&speakR.end>speakR.start) spec.push({start:speakR.start,end:speakR.end,k:"speak",id:"speak"});
+  for(const c of rwCards){if(!c.dead&&c.state!=="applied"&&c.hl)spec.push({start:c.start,end:c.end,k:"rw",id:"rw"+c.id});}
+  const hitsSpec=s=>spec.some(x=>x.start<s.end&&s.start<x.end);
+  for(const s of cached){if(s.start>=pos&&s.end>s.start&&!hitsSpec(s)){marks.push(s);pos=s.end;}}
+  marks.push(...spec);
   marks.sort((a,b)=>a.start-b.start);
   pos=0;
-  for(const s of marks){if(s.start<pos)continue;html+=esc(t.slice(pos,s.start));html+=`<mark class="${s.rw?"rw":s.cat}${s.id===activeId?" on":""}" data-id="${s.id}">${esc(t.slice(s.start,s.end))}</mark>`;pos=s.end;}
+  for(const s of marks){if(s.start<pos)continue;html+=esc(t.slice(pos,s.start));html+=`<mark class="${s.k||s.cat}${s.id===activeId?" on":""}" data-id="${s.id}">${esc(t.slice(s.start,s.end))}</mark>`;pos=s.end;}
   html+=esc(t.slice(pos))+"​\n";
   mirror.innerHTML=html;
 }
@@ -769,9 +856,36 @@ function showPop(id){
   const w=pop.offsetWidth; let left=r.left-paper.left; left=Math.max(12,Math.min(left,paper.width-w-12));
   pop.style.left=left+"px"; pop.style.top=(r.bottom-paper.top+8)+"px";
 }
-function hidePop(){$("pop").hidden=true;}
-function hidePopIfStale(){const p=$("pop");if(!p.hidden&&!byId(p.dataset.id))hidePop();}
-$("pop").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.x){hidePop();return;}if(b.dataset.acc)accept(b.dataset.acc);else if(b.dataset.dis)dismiss(b.dataset.dis);else if(b.dataset.ign)dismiss(b.dataset.ign,"all");else if(b.dataset.dict){addToDict(b.dataset.dict);hidePop();}});
+function hidePop(){$("pop").hidden=true;if(synR){synR=null;synCtl?.abort();renderMirror();}}
+function hidePopIfStale(){const p=$("pop");if(p.hidden)return;if(p.dataset.id==="syn"?!(synR&&!synR.dead):!byId(p.dataset.id))hidePop();}
+function placePop(m){const pop=$("pop"), paper=pop.parentElement.getBoundingClientRect(), r=m.getBoundingClientRect();const w=pop.offsetWidth; let left=r.left-paper.left; left=Math.max(12,Math.min(left,paper.width-w-12));pop.style.left=left+"px"; pop.style.top=(r.bottom-paper.top+8)+"px";}
+/* synonyms: double-click a word */
+ed.addEventListener("dblclick",()=>{
+  if(!sample||!aiOK) return;
+  const a=ed.selectionStart,b=ed.selectionEnd, w=doc.text.slice(a,b);
+  if(!/^[\p{L}][\p{L}'’-]*$/u.test(w)||w.length>40) return;
+  showSyn(a,b,w);
+});
+async function showSyn(a,b,w){
+  synCtl?.abort(); synR={start:a,end:b,word:w,dead:false}; renderMirror();
+  const m=mirror.querySelector('mark[data-id="syn"]'); if(!m) return;
+  const pop=$("pop"); pop.className="pop"; pop.dataset.id="syn";
+  const head=`<div class="hd"><span>Synonyms for “${esc(w)}”</span><button class="btn ghost sm" style="margin-left:auto" data-x="1" aria-label="Close">✕</button></div>`;
+  pop.innerHTML=head+`<div class="note"><span class="spin"></span> Finding words that fit this sentence…</div>`; pop.hidden=false; placePop(m);
+  const t=doc.text, ps=Math.max(t.lastIndexOf("\n",a-1)+1,a-300), pe=(()=>{let e=t.indexOf("\n",b);if(e<0)e=t.length;return Math.min(e,b+300);})();
+  const ctx=t.slice(ps,a)+"[["+w+"]]"+t.slice(b,pe);
+  const ac=new AbortController(); synCtl=ac; const my=synR;
+  try{
+    const r=await sample.json(`Give up to 8 synonyms for the word in [[double brackets]] that fit this exact sentence: same meaning here, same part of speech and grammatical form (tense, number, case), same language as the text, ordered from best fit. Add a short meaning label (1-3 words) if the word has several senses here. Return only JSON: {"synonyms":["..."]}
+Text: ${ctx}`,{modelTier:"quick",signal:ac.signal});
+    if(synR!==my) return;
+    const list=(Array.isArray(r?.synonyms)?r.synonyms:[]).filter(x=>typeof x==="string"&&x.trim()&&x.toLowerCase()!==w.toLowerCase()).slice(0,8);
+    pop.innerHTML=head+(list.length?`<div class="syns">${list.map(x=>`<button class="chip" data-syn="${esc(x.trim())}">${esc(x.trim())}</button>`).join("")}</div>`:`<p class="note">No good synonyms for this word here.</p>`);
+    placePop(m);
+  }catch(e){if(e?.code==="cancelled"||synR!==my)return;pop.innerHTML=head+`<p class="note err">${esc(ERR[e?.code]||"Couldn't find synonyms. Try again.")}</p>`;}
+}
+$("pop").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.x){hidePop();return;}
+  if(b.dataset.syn&&synR){const r=synR;if(doc.text.slice(r.start,r.end)===r.word){const rep=matchCase(r.word,b.dataset.syn);hidePop();replaceRange(r.start,r.end,rep);ed.setSelectionRange(r.start,r.start+rep.length);toast(`Replaced “${r.word}” with “${rep}”.`,()=>{ed.focus();document.execCommand("undo");});}else hidePop();return;}if(b.dataset.acc)accept(b.dataset.acc);else if(b.dataset.dis)dismiss(b.dataset.dis);else if(b.dataset.ign)dismiss(b.dataset.ign,"all");else if(b.dataset.dict){addToDict(b.dataset.dict);hidePop();}});
 
 /* ---------- Rewrite & paraphrase ---------- */
 const QUICK=[["shorter","Shorter","Make it shorter and more concise. Cut filler and repetition but keep every key fact."],["clearer","Clearer","Make it clearer and easier to read: simpler structure, precise words, active voice."],["formal","More formal","Make it more formal and professional. No slang or contractions."],["friendly","Friendlier","Make it warmer and friendlier while staying professional."],["confident","More confident","Make it sound more confident and direct. Remove hedging and unnecessary apologies."],["persuasive","More persuasive","Make it more persuasive and compelling, with a clear call to action where it fits."],["simple","Simpler","Rewrite it in plain language that a 12-year-old can follow."],["expand","Expand","Expand it with a little more detail and smoother transitions. Do not invent facts, names or numbers."],["fix","Fix grammar only","Fix only spelling, grammar and punctuation. Change nothing else."]];
@@ -889,12 +1003,15 @@ $("pRewrite").addEventListener("keydown",e=>{if(e.target.id==="rwCustom"&&e.key=
 function openRewrite(kind){if(kind)rwTarget=kind;setTab("rewrite");openSide();}
 
 /* ---------- Write with AI ---------- */
-const IDEAS=[["Improve it","Improve this document: fix errors, tighten wording and make it flow better. Output the full improved text."],["Identify any gaps","Point out gaps, unanswered questions or weak points in this document, as a short bulleted list of practical fixes."],["Write an intro","Write a short opening paragraph for this document."],["Write a conclusion","Write a short closing paragraph for this document."],["Summarize","Summarize this document in 3 to 5 bullet points."],["Make an outline","Turn this into a clear outline with headings and bullet points."],["Write a reply","Write a reply to the message in this document. Keep it concise."],["Continue writing","Continue the text from where it ends, in the same voice, for about one paragraph."],["Suggest titles","Suggest 5 titles or subject lines for this document."],["Reader reactions","Predict how the intended reader will react to this document: what they will understand, what may confuse or annoy them, and what they will likely do next. Then list the 3 most useful changes."],["Grade it","Grade this document like a strict teacher or editor: give a letter grade, then scores out of 10 for clarity, structure, argument or purpose, style and correctness, each with one sentence of reasoning and one concrete fix."],["Expert review","Review this document as a domain expert in its subject: flag claims that are vague, unsupported or likely wrong, and missing points an expert reader would expect. Short bulleted list."]];
+const IDEAS=[["Improve it","Improve this document: fix errors, tighten wording and make it flow better. Output the full improved text."],["Identify any gaps","Point out gaps, unanswered questions or weak points in this document, as a short bulleted list of practical fixes."],["Write an intro","Write a short opening paragraph for this document."],["Write a conclusion","Write a short closing paragraph for this document."],["Summarize","Summarize this document in 3 to 5 bullet points."],["Make an outline","Turn this into a clear outline with headings and bullet points."],["Write a reply","Write a reply to the message in this document. Keep it concise."],["Continue writing","Continue the text from where it ends, in the same voice, for about one paragraph."],["Suggest titles","Suggest 5 titles or subject lines for this document."],["Reader reactions","Predict how the intended reader will react to this document: what they will understand, what may confuse or annoy them, and what they will likely do next. Then list the 3 most useful changes."],["Grade it","Grade this document like a strict teacher or editor: give a letter grade, then scores out of 10 for clarity, structure, argument or purpose, style and correctness, each with one sentence of reasoning and one concrete fix."],["Find claims to cite","List the factual claims, statistics and quotes in this document that a careful reader would expect to see sourced. For each: quote the claim briefly, say what kind of source would support it, and name one or two well-known, real sources that likely cover it (only ones you are confident exist; say 'search for' plus a query otherwise). End with one line reminding the writer to open and verify each source before citing it."],["Expert review","Review this document as a domain expert in its subject: flag claims that are vague, unsupported or likely wrong, and missing points an expert reader would expect. Short bulleted list."]];
 let genCtl=null, genOut="", genErr="";
 function renderWrite(){
   if(!doc) return;
   const hasSel=ed.selectionEnd>ed.selectionStart;
   $("pWrite").innerHTML=`<div class="sec"><h5>What do you want to do?</h5><div class="chips">${IDEAS.map(([l],i)=>`<button class="chip" data-idea="${i}">${l}</button>`).join("")}</div></div>
+  <div class="sec"><h5>Summarize</h5><div class="row" style="flex-wrap:wrap"><select id="sumFmt" style="flex:1 1 110px"><option value="points"${S.sumFmt==="points"?" selected":""}>Key points</option><option value="para"${S.sumFmt==="para"?" selected":""}>Paragraph</option><option value="tldr"${S.sumFmt==="tldr"?" selected":""}>One sentence</option></select><select id="sumLen" style="flex:1 1 90px">${["Short","Medium","Long"].map(l=>`<option${S.sumLen===l?" selected":""}>${l}</option>`).join("")}</select><button class="btn" data-tool="sum">Summarize</button></div></div>
+  <div class="sec"><h5>Translate</h5><div class="row"><select id="trLang" style="flex:1">${LANGS.filter(([v])=>v!=="Any language").map(([v,l])=>`<option value="${esc(v)}"${S.trLang===v?" selected":""}>${esc(l)}</option>`).join("")}</select><button class="btn" data-tool="tr">Translate</button></div><p class="note">${hasSel?"Translates your selection.":"Translates the whole document."} Insert or replace the result below.</p></div>
+  <div class="sec"><h5>AI writing check</h5><div class="row"><span class="note" style="flex:1;margin:0">Estimates which parts read as AI-generated. A rough signal, not proof.</span><button class="btn" data-tool="ai">Check</button></div></div>
   <div class="sec ask"><h5>Tell Claude to…</h5><textarea class="field" id="genIn" placeholder="e.g. Draft a polite email asking for a deadline extension. Uses your goals and voice.">${esc(store.get("genLast",""))}</textarea>
   <div class="row"><span class="note" style="flex:1">${hasSel?"Uses your selected text.":"Uses the whole document as context."}</span><button class="btn pri" id="genGo">${genCtl?"Stop":"Generate"}</button></div></div>
   <div id="genBox" ${genOut||genCtl||genErr?"":"hidden"}><div class="gen" id="genOut">${esc(genOut)}</div>${genErr?`<p class="note err">${esc(genErr)}</p>`:""}
@@ -917,7 +1034,7 @@ Document${ctx.trim()?"":" (empty)"}:
 """${ctx}"""
 
 If the request asks for text to put in the document, output only that text, ready to paste, in the document's language, with no preface or notes. If it asks for feedback or a list, output it plainly and briefly. Plain text; Markdown bullets are fine.`;
-  genOut="";genErr="";const ac=new AbortController();genCtl=ac;renderWrite();
+  genOut="";genErr="";const ac=new AbortController();genCtl=ac;renderWrite();setTimeout(()=>$("genBox")?.scrollIntoView({block:"nearest",behavior:"smooth"}),30);
   try{
     const r=await sample(prompt,{signal:ac.signal,modelTier:"default",cache:false,onText:({text})=>{genOut=text;const o=$("genOut");if(o){o.textContent=text;o.scrollTop=o.scrollHeight;}}});
     genOut=r.text; if(r.truncated) genErr="The answer was cut short.";
@@ -927,6 +1044,13 @@ If the request asks for text to put in the document, output only that text, read
 $("pWrite").addEventListener("click",e=>{
   const b=e.target.closest("button"); if(!b) return;
   if(b.dataset.idea){const [l,p]=IDEAS[+b.dataset.idea];$("genIn").value=l;generate(p);return;}
+  if(b.dataset.tool){
+    const t=b.dataset.tool;
+    if(t==="sum"){S.sumFmt=$("sumFmt").value;S.sumLen=$("sumLen").value;store.set("sumFmt",S.sumFmt);store.set("sumLen",S.sumLen);const len={Short:"very brief",Medium:"moderately detailed",Long:"detailed"}[S.sumLen];const f={points:`as ${S.sumLen==="Short"?"3":S.sumLen==="Medium"?"5":"8"} key-point bullets ("- " at line start), each one sentence`,para:`as one ${len} paragraph`,tldr:"as a single sentence"}[S.sumFmt];store.set("genLast",$("genIn").value=`Summarize (${$("sumFmt").selectedOptions[0].text.toLowerCase()}, ${S.sumLen.toLowerCase()})`);generate(`Summarize the text ${f}. Keep the original language, keep key facts, names and numbers exact, add nothing that is not in the text. Output only the summary.`);}
+    if(t==="tr"){S.trLang=$("trLang").value;store.set("trLang",S.trLang);const L=langOf(S.trLang).label;store.set("genLast",$("genIn").value=`Translate into ${L}`);generate(`Translate the text into ${L}. Keep the meaning, tone, formatting, line breaks and Markdown markers. Keep names, numbers, URLs and code unchanged. Output only the translation.`);}
+    if(t==="ai"){store.set("genLast",$("genIn").value="AI writing check");generate(`Estimate whether this text was written by AI, by a person, or by a person with AI help. Start with one line: "Estimate: about N% of this text reads as AI-generated" (a whole number). Then list up to 6 sentences or phrases that read most machine-like (quote them briefly) with a few words on why (stock phrases, uniform rhythm, vague hedging, list-like structure). Then 2-3 tips to make it sound more like the writer. End with: "This is an estimate. No detector can prove who wrote a text." Plain text.`);}
+    return;
+  }
   if(b.id==="genGo"){const v=$("genIn").value.trim();if(!v&&!genCtl){$("genIn").focus();return;}store.set("genLast",v);generate(v);return;}
   if(b.dataset.a==="goals"){openGoals();return;}
   if(b.dataset.snip){const s=snippets[+b.dataset.snip];const p=ed.selectionEnd;replaceRange(ed.selectionStart,p,s.text);return;}
@@ -938,8 +1062,224 @@ $("pWrite").addEventListener("click",e=>{
 });
 $("pWrite").addEventListener("keydown",e=>{if(e.target.id==="genIn"&&e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();$("genGo").click();}});
 
+/* ---------- Citations (APA 7, MLA 9, Chicago author-date, Harvard) ---------- */
+const CSTYLES=[["apa","APA 7","References"],["mla","MLA 9","Works Cited"],["chicago","Chicago","References"],["harvard","Harvard","Reference list"]];
+const CTYPES=[["website","Web page"],["article","Journal article"],["news","News or magazine"],["book","Book"],["video","Video"],["report","Report"]];
+const CFIELDS={website:["authors","title","container","publisher","date","url","accessed"],article:["authors","title","container","year","volume","issue","pages","doi","url"],news:["authors","title","container","date","pages","url","accessed"],book:["authors","title","edition","publisher","place","year","doi","url"],video:["authors","title","container","date","url","accessed"],report:["authors","title","publisher","place","year","url","accessed"]};
+const CLAB={authors:"Authors (one per line: Last, First, or an organization)",title:"Title",container:{website:"Website name",article:"Journal",news:"Publication",video:"Platform (e.g. YouTube)"},publisher:"Publisher",place:"Place of publication (Chicago, Harvard)",year:"Year",volume:"Volume",issue:"Issue",pages:"Pages",doi:"DOI",url:"URL",accessed:"Date accessed",edition:"Edition"};
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MON_MLA=["Jan.","Feb.","Mar.","Apr.","May","June","July","Aug.","Sept.","Oct.","Nov.","Dec."];
+const IO="\u0001", IC="\u0002", it=s=>s?IO+s+IC:"";
+const bare=s=>s.replace(/[\u0001\u0002]/g,"");
+const endP=s=>{s=s.trim();return !s?"":/[.?!]$/.test(bare(s))?s:s+".";};
+const ORGW=/\b(Inc|LLC|Ltd|GmbH|University|Institute|Association|Organi[sz]ation|Society|Department|Agency|Council|Foundation|Center|Centre|Company|Group|News|Times|Press|Bank|Office|Ministry|Committee|Commission|Board|Service|Network|Corporation|Team|Staff|Editors|Wikipedia|Government|School|College|Museum|Library|Club|Bureau|Fund|Trust)\b|^(WHO|UN|NASA|OECD|BBC|CDC|NHS|IMF|EU)$/i;
+function parseName(x){
+  x=x.trim();
+  if(/^\{.*\}$/.test(x)) return {org:x.slice(1,-1)};
+  if(/,/.test(x)&&!ORGW.test(x)){const [f,...g]=x.split(",");return {family:f.trim(),given:g.join(",").trim()};}
+  const w=x.split(/\s+/);
+  if(w.length>=2&&w.length<=4&&!ORGW.test(x)&&w.every(p=>/^[\p{Lu}][\p{L}.'’-]*$/u.test(p)||/^(de|van|von|der|den|da|di|le|la|du|del|bin|al|ter)$/i.test(p))) return {family:w.pop(),given:w.join(" ")};
+  return {org:x};
+}
+const people=c=>(c.authors||"").split("\n").map(x=>x.trim()).filter(Boolean).map(parseName);
+const ini=g=>(g||"").split(/\s+/).filter(Boolean).map(p=>p.replace(/\.$/,"").split("-").map(q=>q[0]?q[0].toUpperCase()+".":"").join("-")).join(" ");
+const ordinal=e=>{e=String(e||"").trim();if(!/^\d+$/.test(e))return e;const n=+e,s=n%100>10&&n%100<14?"th":({1:"st",2:"nd",3:"rd"}[n%10]||"th");return n+s;};
+const dash=p=>(p||"").trim().replace(/\s*[-–—]\s*/g,"–");
+const noProto=u=>(u||"").replace(/^https?:\/\//,"").replace(/\/$/,"");
+const doiUrl=d=>{d=(d||"").trim();if(!d)return "";const m=/10\.\d{4,9}\/\S+/.exec(d);return m?"https://doi.org/"+m[0].replace(/[.,;]$/,""):d;};
+function cdate(c){const y=(c.year||"").trim(),m=+c.month||0,d=+c.day||0;return {y,m,d};}
+function accParts(c){if(!c.accessed)return null;const [y,m,d]=c.accessed.split("-").map(Number);return y?{y,m,d}:null;}
+function joinList(a,sep,last){return a.length<=1?(a[0]||""):a.slice(0,-1).join(sep)+last+a[a.length-1];}
+function formatRef(c,st){
+  const P=people(c), {y,m,d}=cdate(c), T=(c.title||"").trim(), C=(c.container||"").trim(), url=(c.url||"").trim(), doi=doiUrl(c.doi), link=doi||url, ty=c.type;
+  const acc=accParts(c), pages=dash(c.pages), ed=c.edition?ordinal(c.edition):"";
+  const italTitle=["website","book","video","report"].includes(ty);
+  if(st==="apa"){
+    const nm=p=>p.org||(p.given?`${p.family}, ${ini(p.given)}`:p.family);
+    let au=P.length>20?P.slice(0,19).map(nm).join(", ")+", . . . "+nm(P[P.length-1]):P.length===2?`${nm(P[0])}, & ${nm(P[1])}`:joinList(P.map(nm),", ",", & ");
+    const dt=y?(["website","news","video"].includes(ty)&&m?`(${y}, ${MONTHS[m-1]}${d?" "+d:""})`:`(${y})`):"(n.d.)";
+    const tt=ty==="video"?it(T)+" [Video]":ty==="book"&&ed?it(T)+` (${ed} ed.)`:italTitle?it(T):T;
+    let src="";
+    if(ty==="article"){src=it(C)+(c.volume?", "+it(c.volume)+(c.issue?`(${c.issue})`:""):"")+(pages?", "+pages:"");}
+    else if(ty==="news") src=it(C);
+    else if(ty==="website") src=C&&C!==bare(au)?C:"";
+    else if(ty==="video") src=C;
+    else src=c.publisher&&c.publisher!==bare(au)?c.publisher:"";
+    const parts=au?[endP(au),dt+".",endP(tt)]:[endP(tt),dt+"."];
+    if(src) parts.push(endP(src));
+    if(link) parts.push(link);
+    return parts.join(" ");
+  }
+  if(st==="mla"){
+    const fl=p=>p.org||(p.given?`${p.family}, ${p.given}`:p.family), gf=p=>p.org||(p.given?`${p.given} ${p.family}`:p.family);
+    const au=P.length>=3?fl(P[0])+", et al":P.length===2?`${fl(P[0])}, and ${gf(P[1])}`:P.length?fl(P[0]):"";
+    const dt=y?((d&&m?d+" ":"")+(m?MON_MLA[m-1]+" ":"")+y):"";
+    const tt=(ty==="book"||ty==="report")?it(T):(T?`“${endP(T)}”`:"");
+    const el=[];
+    if(C&&ty!=="book"&&ty!=="report") el.push(it(C));
+    if(ty==="book"&&ed) el.push(ed+" ed.");
+    if(c.volume) el.push("vol. "+c.volume); if(c.issue) el.push("no. "+c.issue);
+    if(c.publisher&&c.publisher!==C&&c.publisher!==bare(au)) el.push(c.publisher);
+    if(dt) el.push(dt); if(pages) el.push((/[–,]/.test(pages)?"pp. ":"p. ")+pages);
+    if(doi) el.push(doi); else if(url) el.push(noProto(url));
+    let s=(au?endP(au)+" ":"")+(tt?(/[”]$/.test(tt)?tt:endP(tt))+" ":"")+(el.length?endP(el.join(", ")):"");
+    if(acc&&!dt&&(ty==="website"||ty==="video")) s+=` Accessed ${acc.d?acc.d+" ":""}${MON_MLA[acc.m-1]||""} ${acc.y}.`;
+    return s.trim();
+  }
+  if(st==="chicago"){
+    const fl=p=>p.org||(p.given?`${p.family}, ${p.given}`:p.family), gf=p=>p.org||(p.given?`${p.given} ${p.family}`:p.family);
+    const L=P.length>10?P.slice(0,7):P; let au=L.length?(L.length===1?fl(L[0]):L.length===2?`${fl(L[0])}, and ${gf(L[1])}`:fl(L[0])+", "+joinList(L.slice(1).map(gf),", ",", and ")):"";
+    if(P.length>10) au+=", et al";
+    const yr=y||"n.d.", md=m?MONTHS[m-1]+(d?" "+d:""):"";
+    const tq=T?`“${endP(T)}”`:"";
+    let parts=[];
+    if(au) parts.push(endP(au),endP(yr));
+    if(ty==="article"){parts.push(tq,it(C)+(c.volume?" "+c.volume:"")+(c.issue?` (${c.issue})`:"")+(pages?": "+pages:"")+".");}
+    else if(ty==="news"){parts.push(tq,endP(it(C)+(md?", "+md:"")));}
+    else if(ty==="website"){parts.push(tq);if(C)parts.push(endP(C));if(md)parts.push(md+".");else if(acc)parts.push(`Accessed ${MONTHS[acc.m-1]} ${acc.d}, ${acc.y}.`);}
+    else if(ty==="video"){parts.push(tq,endP((C?C+" video":"Video")+(md?", "+md:"")));}
+    else {parts.push(endP(it(T)));if(ed)parts.push(ed+" ed.");const pub=[c.place,c.publisher].filter(Boolean).join(": ");if(pub)parts.push(endP(pub));}
+    if(!au){parts.unshift(endP(yr));parts.unshift(parts.splice(1,1)[0]);}
+    if(link) parts.push(endP(link));
+    return parts.filter(Boolean).join(" ");
+  }
+  // Harvard (Cite Them Right)
+  const nm=p=>p.org||(p.given?`${p.family}, ${ini(p.given)}`:p.family);
+  const au=P.length>=4?nm(P[0])+" et al.":joinList(P.map(nm),", "," and ");
+  const yr=y?`(${y})`:"(no date)";
+  const accS=acc?` (Accessed: ${acc.d} ${MONTHS[acc.m-1]} ${acc.y})`:"";
+  let s=au?`${au} ${yr} `:"";
+  if(ty==="article"||ty==="news"){s+=(T?`‘${T}’`:"")+(au?"":" "+yr)+", "+it(C)+(ty==="article"?(c.volume?", "+c.volume+(c.issue?`(${c.issue})`:""):""):(m?`, ${d?d+" ":""}${MONTHS[m-1]}`:""))+(pages?`, ${/[–,]/.test(pages)?"pp.":"p."} ${pages}`:"")+".";}
+  else {s+=endP(it(T)+(au?"":" "+yr));if(ty==="book"&&ed)s+=` ${ed} edn.`;const pub=[c.place,c.publisher].filter(Boolean).join(": ");if(pub&&ty!=="website"&&ty!=="video")s+=" "+endP(pub);else if(C&&ty==="video")s+=" "+endP(C);}
+  if(doi) s+=` Available at: ${doi}.`; else if(url) s+=` Available at: ${url}${accS}.`;
+  return s.replace(/\s+/g," ").trim();
+}
+function formatInText(c,st){
+  const P=people(c), y=(c.year||"").trim(), fam=p=>p.org||p.family;
+  const shortT=(c.title||"Untitled").split(/[:.?!]/)[0].split(/\s+/).slice(0,4).join(" ").replace(/(\s+(a|an|the|to|of|for|and|in|on|at|with|by|from))+$/i,"");
+  const quoted=["article","news","website","video"].includes(c.type)&&st!=="apa"||["article","news"].includes(c.type);
+  const anon=quoted?`“${shortT}”`:it(shortT);
+  if(st==="mla"){const a=P.length>=3?fam(P[0])+" et al.":P.length===2?`${fam(P[0])} and ${fam(P[1])}`:P.length?fam(P[0]):anon;return `(${a})`;}
+  if(st==="chicago"){const a=P.length>=4?fam(P[0])+" et al.":P.length?joinList(P.map(fam),", ",P.length>2?", and ":" and "):anon;return `(${a} ${y||"n.d."})`;}
+  if(st==="harvard"){const a=P.length>=4?fam(P[0])+" et al.":P.length?joinList(P.map(fam),", "," and "):anon;return `(${a}, ${y||"no date"})`;}
+  const a=P.length>=3?fam(P[0])+" et al.":P.length===2?`${fam(P[0])} & ${fam(P[1])}`:P.length?fam(P[0]):anon;return `(${a}, ${y||"n.d."})`;
+}
+const toHTML=s=>esc(s).replace(/\u0001/g,"<i>").replace(/\u0002/g,"</i>");
+const toMD=s=>s.replace(/\u0001/g,"*").replace(/\u0002/g,"*");
+let cEdit=null, cBusy=null, cErr="";
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;};
+function guessInput(q){
+  q=q.trim(); const doi=/10\.\d{4,9}\/\S+/.exec(q), url=/^https?:\/\/\S+$/i.test(q)||/^[\w-]+(\.[\w-]+)+\/\S*$/.test(q), isbn=/^(?:ISBN[-: ]*)?[\d -]{9,17}[\dXx]$/.test(q)&&q.replace(/\D/g,"").length>=10;
+  const c={id:uid(),type:"website",authors:"",title:"",container:"",publisher:"",place:"",year:"",month:"",day:"",volume:"",issue:"",pages:"",doi:"",url:"",accessed:today(),edition:"",unsure:[],isNew:true};
+  if(doi){c.type="article";c.doi=doi[0];c.accessed="";}
+  else if(isbn){c.type="book";c.accessed="";}
+  else if(url){c.url=/^https?:/i.test(q)?q:"https://"+q;try{const h=new URL(c.url).hostname.replace(/^www\./,"");c.container=h;}catch{}}
+  else c.title=q;
+  return {c,kind:doi?"DOI":isbn?"ISBN":url?"URL":"title or description"};
+}
+async function autoCite(){
+  const q=$("cQ").value.trim(); if(!q){$("cQ").focus();return;}
+  const {c,kind}=guessInput(q);
+  if(!sample||!aiOK){c.unsure=["authors","title","date","year"];cEdit=c;cErr="";renderCite();toast("Fill in the details. Claude isn't available to look them up.");return;}
+  cBusy?.abort(); const ac=new AbortController(); cBusy=ac; cErr=""; renderCite();
+  try{
+    const r=await sample.json(`Build a citation record for this source. You cannot open web pages: rely only on what you reliably know about this exact source, and on what the input itself shows (a URL's domain and path, a DOI, an ISBN). Never invent authors, dates, volumes or pages: leave a field "" when you are not sure, and list every field you guessed or left empty in "unsure".
+Input (${kind}): ${q}
+Return only JSON in this shape:
+{"type":"website|article|news|book|video|report","authors":[{"family":"","given":""}],"organization":"","title":"","container":"","publisher":"","place":"","year":"","month":"","day":"","volume":"","issue":"","pages":"","doi":"","url":"","edition":"","unsure":["field names"]}
+"container" is the website, journal, newspaper or platform name. "organization" is a group author when there is no person. "month" and "day" are numbers. Use the title's original capitalization.`,{modelTier:"default",signal:ac.signal});
+    if(cBusy!==ac) return;
+    const S2=v=>typeof v==="string"||typeof v==="number"?String(v).trim():"";
+    if(CFIELDS[r?.type]) c.type=r.type;
+    const au=(Array.isArray(r?.authors)?r.authors:[]).filter(a=>a&&(a.family||a.given)).map(a=>S2(a.given)?`${S2(a.family)}, ${S2(a.given)}`:`{${S2(a.family)}}`);
+    if(!au.length&&S2(r?.organization)) au.push(S2(r.organization));
+    c.authors=au.join("\n");
+    for(const k of ["title","container","publisher","place","year","volume","issue","pages","doi","edition"]) if(S2(r?.[k])) c[k]=S2(r[k]);
+    const mo=+S2(r?.month); if(mo>=1&&mo<=12) c.month=String(mo); const dy=+S2(r?.day); if(dy>=1&&dy<=31) c.day=String(dy);
+    if(S2(r?.url)&&!c.url&&/^https?:\/\//.test(S2(r.url))) c.url=S2(r.url);
+    if(!["website","video","news","report"].includes(c.type)) c.accessed="";
+    c.unsure=(Array.isArray(r?.unsure)?r.unsure:[]).map(String).map(x=>x==="month"||x==="day"?"date":x);
+    for(const f of CFIELDS[c.type]) if(f!=="accessed"&&f!=="doi"&&f!=="place"&&f!=="edition"&&f!=="url"&&f!=="publisher"&&!(f==="date"?c.year:c[f])&&!c.unsure.includes(f)) c.unsure.push(f);
+    c.ai=true; cEdit=c; $("cQ").value="";
+  }catch(e){if(e?.code==="cancelled")return;cErr=ERR[e?.code]||"Couldn't look that up. Enter the details manually.";cEdit=c;if(["not_granted","sampling_disabled"].includes(e?.code)){aiOK=false;applyAI();}}
+  finally{if(cBusy===ac)cBusy=null;renderCite();}
+}
+function fieldHTML(c,f){
+  const un=(c.unsure||[]).includes(f)?" unsure":"";
+  if(f==="date"||f==="year"){return `<div class="${(c.unsure||[]).some(x=>x==="date"||x==="year")?"unsure":""}"><label>${f==="date"?"Date published":"Year"}</label><div class="two"><input type="text" data-f="year" inputmode="numeric" placeholder="Year" value="${esc(c.year)}">${f==="date"?`<select data-f="month"><option value="">Month</option>${MONTHS.map((n,i)=>`<option value="${i+1}"${+c.month===i+1?" selected":""}>${n}</option>`).join("")}</select><input type="text" data-f="day" inputmode="numeric" placeholder="Day" value="${esc(c.day)}">`:""}</div></div>`;}
+  const lab=f==="container"?CLAB.container[c.type]:CLAB[f];
+  if(f==="authors") return `<div class="${un}"><label>${lab}</label><textarea class="field" data-f="authors" placeholder="Smith, Jane&#10;World Health Organization">${esc(c.authors)}</textarea></div>`;
+  if(f==="accessed") return `<div class="${un}"><label>${lab}</label><input type="date" data-f="accessed" value="${esc(c.accessed)}"></div>`;
+  return `<div class="${un}"><label>${lab}</label><input type="text" data-f="${f}" value="${esc(c[f]||"")}"${f==="url"?' placeholder="https://…"':f==="doi"?' placeholder="10.xxxx/…"':""}></div>`;
+}
+function previewHTML(c){const st=S.citeStyle;return `${toHTML(formatRef(c,st))}<small>In text: ${toHTML(formatInText(c,st))}</small>`;}
+function renderCite(){
+  if(!doc) return;
+  const st=S.citeStyle, list=(doc.cites||[]).slice().sort((a,b)=>bare(formatRef(a,st)).localeCompare(bare(formatRef(b,st))));
+  let h=`<div class="sec"><h5>Citation style</h5><div class="target">${CSTYLES.map(([k,l])=>`<button data-cs="${k}" class="${st===k?"on":""}">${l}</button>`).join("")}</div></div>`;
+  if(!cEdit) h+=`<div class="sec"><h5>Add a source</h5><div class="row"><input type="text" id="cQ" placeholder="Paste a URL, DOI, ISBN or title"${cBusy?" disabled":""}><button class="btn pri" data-c="auto"${cBusy?" disabled":""}>${cBusy?'<span class="spin"></span>':"Cite"}</button></div>${cErr?`<p class="note err">${esc(cErr)}</p>`:""}<div class="row" style="margin-top:6px"><button class="btn ghost sm" data-c="manual">Enter details manually</button>${cBusy?'<button class="btn ghost sm" data-c="stop">Stop</button>':""}</div></div>`;
+  else{
+    const c=cEdit;
+    h+=`<div class="cform" id="cForm"><label>Source type</label><select data-f="type">${CTYPES.map(([k,l])=>`<option value="${k}"${c.type===k?" selected":""}>${l}</option>`).join("")}</select>
+    ${CFIELDS[c.type].map(f=>fieldHTML(c,f)).join("")}
+    ${c.ai?`<p class="note" style="color:var(--c-style)">Filled in by Claude from what it knows. It can't open web pages, so check each field against the source, especially the highlighted ones.</p>`:""}${cErr?`<p class="note err">${esc(cErr)}</p>`:""}
+    <div class="cprev" id="cPrev">${previewHTML(c)}</div>
+    <div class="acts" style="margin-top:10px"><button class="btn pri sm" data-c="save">${c.isNew?"Add to list":"Save"}</button><button class="btn sm" data-c="copyone">Copy</button><button class="btn ghost sm" data-c="cancel">Cancel</button></div></div>`;
+  }
+  h+=`<div class="sec"><h5 style="display:flex;align-items:center">Sources in this document · ${list.length}</h5>`;
+  if(!list.length) h+=`<p class="note">No sources yet. Paste a link, DOI, ISBN or title above. Your list is saved with this document.</p>`;
+  for(const c of list){const warn=(c.unsure||[]).length&&c.ai&&!c.checked;h+=`<div class="citem${warn?" warn":""}" data-cid="${c.id}"><div class="ref">${toHTML(formatRef(c,st))}</div>${warn?`<div class="w">Check: ${esc([...new Set(c.unsure)].join(", "))}</div>`:""}<div class="acts"><button class="btn sm" data-ci="intext" title="Insert ${esc(bare(formatInText(c,st)))} at the cursor">Insert ${esc(bare(formatInText(c,st)))}</button><button class="btn ghost sm" data-ci="copy">Copy</button><button class="btn ghost sm" data-ci="edit">Edit</button><button class="btn ghost sm" data-ci="del">Delete</button></div></div>`;}
+  if(list.length) h+=`<div class="acts"><button class="btn pri sm" data-c="bib">Insert ${CSTYLES.find(x=>x[0]===st)[2]} at end</button><button class="btn sm" data-c="copyall">Copy all</button><button class="btn sm needdl" data-c="dl">Download .txt</button></div>`;
+  h+=`</div>`;
+  $("pCite").innerHTML=h; applyDL();
+}
+async function copyRich(html,plain){
+  try{if(!window.ClipboardItem)throw 0;await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([plain],{type:"text/plain"})})]);toast("Copied with formatting.");}
+  catch{copyText(plain);}
+}
+function bibBlock(){
+  const st=S.citeStyle, head=CSTYLES.find(x=>x[0]===st)[2];
+  const refs=(doc.cites||[]).map(c=>formatRef(c,st)).sort((a,b)=>bare(a).localeCompare(bare(b)));
+  return {head,refs};
+}
+$("pCite").addEventListener("input",e=>{const f=e.target.dataset.f;if(!f||!cEdit)return;if(f==="type")return;cEdit[f]=e.target.value;$("cPrev").innerHTML=previewHTML(cEdit);});
+$("pCite").addEventListener("change",e=>{const f=e.target.dataset.f;if(!f||!cEdit)return;cEdit[f]=e.target.value;if(f==="type"){if(["website","video","news","report"].includes(cEdit.type)&&!cEdit.accessed)cEdit.accessed=today();renderCite();}else $("cPrev").innerHTML=previewHTML(cEdit);});
+$("pCite").addEventListener("keydown",e=>{if(e.target.id==="cQ"&&e.key==="Enter"){e.preventDefault();autoCite();}});
+$("pCite").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.cs){S.citeStyle=b.dataset.cs;store.set("citeStyle",S.citeStyle);renderCite();return;}
+  const a=b.dataset.c;
+  if(a==="auto"){autoCite();return;}
+  if(a==="stop"){cBusy?.abort();cBusy=null;renderCite();return;}
+  if(a==="manual"){const q=$("cQ")?.value.trim()||"";cEdit=q?guessInput(q).c:guessInput("").c;cErr="";renderCite();setTimeout(()=>$("cForm")?.querySelector("textarea,input")?.focus(),0);return;}
+  if(a==="cancel"){cEdit=null;cErr="";renderCite();return;}
+  if(a==="copyone"&&cEdit){const r=formatRef(cEdit,S.citeStyle);copyRich(toHTML(r),bare(r));return;}
+  if(a==="save"&&cEdit){
+    if(!cEdit.title.trim()&&!cEdit.authors.trim()){toast("Add at least a title.");$("cForm").querySelector('[data-f="title"]')?.focus();return;}
+    const c={...cEdit}; const isNew=c.isNew; delete c.isNew; if(c.ai) c.checked=!isNew||c.checked; doc.cites=doc.cites||[];
+    const i=doc.cites.findIndex(x=>x.id===c.id); if(i<0) doc.cites.push(c); else doc.cites[i]=c;
+    cEdit=null; scheduleSave(); renderCite(); toast(isNew?"Added to your sources.":"Saved."); return;
+  }
+  if(a==="copyall"){const {head,refs}=bibBlock();copyRich(`<p><b>${esc(head)}</b></p>`+refs.map(r=>`<p style="padding-left:2em;text-indent:-2em">${toHTML(r)}</p>`).join(""),head+"\n\n"+refs.map(bare).join("\n\n"));return;}
+  if(a==="dl"){const {head,refs}=bibBlock();save(fname("txt").replace(/\.txt$/," "+head.toLowerCase()+".txt"),head+"\n\n"+refs.map(bare).join("\n\n")+"\n");return;}
+  if(a==="bib"){
+    const {head,refs}=bibBlock(); const t=doc.text;
+    const block=`## ${head}\n\n`+refs.map(toMD).join("\n\n");
+    const re=new RegExp(`(^|\\n)#{1,3} (${CSTYLES.map(x=>x[2]).join("|")}|Bibliography)\\s*\\n`); const m=re.exec(t);
+    if(m){const st=m.index+(m[1]?1:0);replaceRange(st,t.length,block);toast(`Updated the ${head} section.`,()=>{ed.focus();document.execCommand("undo");});}
+    else{const pre=t.trimEnd().length; const sep=pre?"\n\n":""; replaceRange(pre,t.length,sep+block);toast(`Added ${head} at the end.`,()=>{ed.focus();document.execCommand("undo");});}
+    $("scroller").scrollTop=$("scroller").scrollHeight; return;
+  }
+  const card=b.closest("[data-cid]"); const c=card&&(doc.cites||[]).find(x=>x.id===card.dataset.cid); if(!c) return;
+  const x=b.dataset.ci;
+  if(x==="copy"){const r=formatRef(c,S.citeStyle);copyRich(toHTML(r),bare(r));}
+  if(x==="intext"){const p=ed.selectionEnd, before=doc.text[p-1];const s=toMD(formatInText(c,S.citeStyle));const ins=(before&&!/\s|\(/.test(before)?" ":"")+s;replaceRange(p,ed.selectionStart===p?p:ed.selectionEnd,ins);ed.setSelectionRange(p+ins.length,p+ins.length);toast("Citation inserted.",()=>{ed.focus();document.execCommand("undo");});}
+  if(x==="edit"){cEdit={...c,isNew:false};c.checked=true;renderCite();$("pCite").scrollTop=0;}
+  if(x==="del"){const i=doc.cites.indexOf(c);doc.cites.splice(i,1);scheduleSave();renderCite();toast("Source deleted.",()=>{doc.cites.splice(i,0,c);scheduleSave();renderCite();});}
+});
+
 /* ---------- tabs & side ---------- */
-function setTab(t){S.tab=t;document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));$("pReview").hidden=t!=="review";$("pRewrite").hidden=t!=="rewrite";$("pWrite").hidden=t!=="write";if(t==="rewrite")renderRewrite();if(t==="write")renderWrite();if(t==="review")renderReview();}
+function setTab(t){S.tab=t;document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));$("pReview").hidden=t!=="review";$("pRewrite").hidden=t!=="rewrite";$("pWrite").hidden=t!=="write";$("pCite").hidden=t!=="cite";if(t==="cite")renderCite();if(t==="rewrite")renderRewrite();if(t==="write")renderWrite();if(t==="review")renderReview();}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 function openSide(){if(narrow()){document.body.classList.add("sideopen");hidePop();}}
 function closeSide(){document.body.classList.remove("sideopen");}
@@ -953,11 +1293,12 @@ function openGoals(){
   const g={...doc.goals};
   const draw=()=>{
     $("dlg").innerHTML=`<header><h2>Set goals</h2><button class="btn ghost sm" data-x>✕</button></header><div class="body"><p class="note" style="margin-top:0">Get suggestions tailored to your audience and purpose. Goals apply to this document.</p>
-    ${Object.entries(GOAL_OPTS).map(([k,o])=>`<div class="grp"><b>${o.label}</b><div><div class="chips">${o.opts.map(v=>`<button class="chip${g[k]===v?" on":""}" data-k="${k}" data-v="${esc(v)}">${v}</button>`).join("")}</div><div class="hint">${esc(o.hint[g[k]]||o.hint[""]||"")}</div></div></div>`).join("")}
+    ${Object.entries(GOAL_OPTS).map(([k,o])=>`<div class="grp"><b>${o.label}</b><div><div class="chips">${o.opts.map(v=>`<button class="chip${g[k]===v?" on":""}" data-k="${k}" data-v="${esc(v)}">${k==="variant"?esc(langOf(v).label.replace(/^English \((.*)\)$/,"$1")):v}</button>`).join("")}</div>${k==="variant"?`<select id="gLang" style="margin-top:8px;width:100%"><option value="">Other language or dialect…</option>${LANGS.filter(([v])=>!o.opts.includes(v)).map(([v,l])=>`<option value="${esc(v)}"${g.variant===v?" selected":""}>${esc(l)}</option>`).join("")}</select>`:""}<div class="hint">${esc(k==="variant"&&!o.hint[g[k]]?(isEN(g[k])?`${langOf(g[k]).label} spelling and usage.`:`Checks spelling, grammar and punctuation in ${langOf(g[k]).label}. The built-in offline rules cover English only.`):(o.hint[g[k]]||o.hint[""]||""))}</div></div></div>`).join("")}
     <div class="grp"><b>Voice</b><div><input type="text" id="gVoice" style="width:100%" value="${esc(g.voice||"")}" placeholder="e.g. warm, direct, short sentences, no jargon"><div class="hint">Used for rewrites and generated text.</div></div></div></div>
     <footer><label class="note" style="margin-right:auto;display:flex;gap:6px;align-items:center"><input type="checkbox" id="gDef"> Use for new documents</label><button class="btn ghost" data-reset>Reset to defaults</button><button class="btn pri" data-done>Done</button></footer>`;
   };
   draw(); showModal();
+  $("dlg").onchange=e=>{if(e.target.id==="gLang"&&e.target.value){g.voice=$("gVoice").value;g.variant=e.target.value;draw();}};
   $("dlg").onclick=e=>{
     const b=e.target.closest("button"); if(!b) return;
     if(b.dataset.k){g.voice=$("gVoice").value;g[b.dataset.k]=(b.dataset.k==="intent"&&g.intent===b.dataset.v)?"":b.dataset.v;draw();return;}
@@ -968,11 +1309,21 @@ function openGoals(){
       const changed=JSON.stringify(g)!==JSON.stringify(doc.goals);
       if($("gDef").checked) store.set("goalsDefault",g);
       doc.goals=g; hideModal();
-      if(changed){doc.checked=[];doc.sugg=[];failed.clear();runLocal();render();scheduleSave();if(sample&&aiOK)pump(true);toast("Goals updated. Rechecking with your new goals.");}
+      if(changed){goalsChanged();toast("Goals updated. Rechecking with your new goals.");}
     }
   };
 }
 $("goalsBtn").onclick=openGoals;
+
+function goalsChanged(){doc.checked=[];doc.sugg=[];failed.clear();runLocal();render();scheduleSave();applyLang();if(sample&&aiOK)pump(true);}
+function applyLang(){
+  const v=doc.goals.variant, L=langOf(v);
+  const sel=$("langSel");
+  if(!sel.options.length) sel.innerHTML=LANGS.map(([val,l])=>`<option value="${esc(val)}">${esc(l)}</option>`).join("");
+  sel.value=LANG[v]?v:"American";
+  ed.lang=L.bcp||""; $("qIn").lang=L.bcp||"";
+}
+$("langSel").onchange=()=>{doc.goals={...doc.goals,variant:$("langSel").value};store.set("goalsDefault",{...store.get("goalsDefault",{}),variant:doc.goals.variant});goalsChanged();toast(`Checking in ${langOf(doc.goals.variant).label}.`);ed.focus();};
 
 /* ---------- Performance ---------- */
 function openPerf(){
@@ -986,6 +1337,7 @@ function openPerf(){
   <div class="sec"><h5>Readability</h5><div class="stats"><div>Word length<b>${st.wordLen.toFixed(1)}</b></div><div>Sentence length<b>${st.sentLen.toFixed(1)}</b></div><div>Readability score<b>${st.fre}</b></div><div>Grade level<b>${st.grade.toFixed(1)}</b></div></div><p class="note">Flesch reading ease ${st.fre}: ${level}. Aim for 60 or higher for a general audience.</p>
   ${longest.length?`<p class="note">Long sentences (30+ words) to consider splitting:</p><div class="list">${longest.map(s=>`<div class="li"><span>${esc(s.slice(0,160))}${s.length>160?"…":""}</span></div>`).join("")}</div>`:""}</div>
   <div class="sec"><h5>Vocabulary</h5><div class="stats"><div>Unique words<b>${Math.round(st.uniq*100)}%</b></div><div>Rare or long words<b>${Math.round(st.rare*100)}%</b></div></div><p class="note">Unique words measures variety; long words (9+ letters) hint at how specialized the vocabulary is.</p></div>
+  ${(()=>{const tw=topWords(doc.text);return tw.length?`<div class="sec"><h5>Most used words</h5><div class="chips">${tw.map(([w,n])=>`<span class="chip" style="cursor:default">${esc(w)} <b style="color:var(--muted)">${n}</b></span>`).join("")}</div><p class="note">Common filler words are left out. Repeating a word many times can feel monotonous.</p></div>`:""})()}
   <div class="sec"><h5>Open suggestions</h5><div class="stats">${Object.keys(CATS).map(c=>`<div>${CATS[c]}<b>${counts[c]||0}</b></div>`).join("")}</div></div>
   ${tones.length?`<div class="sec"><h5>Tone</h5><p class="note">${tones.map(t=>`${esc(t.name)} ${Math.round(t.score*100)}%`).join(" · ")}</p></div>`:""}
   </div><footer><button class="btn needdl" data-rep>Download PDF report</button><button class="btn pri" data-x>Close</button></footer>`;
@@ -1049,12 +1401,12 @@ $("dictFile").onchange=async()=>{
   store.set("dict",dict); runLocal(); render(); openSettings("dict"); toast(`Imported ${n} new word${n===1?"":"s"}.`);
 };
 const MOD=IS_MAC?"⌘":"Ctrl+", ALT=IS_MAC?"⌥":"Alt+", SHIFT=IS_MAC?"⇧":"Shift+";
-function shortcutsHTML(){return `<div class="sk">${[["Check now",MOD+"↵"],["Next / previous suggestion","F8 / "+SHIFT+"F8"],["Accept the open suggestion",ALT+"↵"],["Dismiss the open suggestion",ALT+SHIFT+"↵"],["Rewrite selection or paragraph",MOD+"K"],["Write with AI",MOD+"J"],["Expand a snippet","Tab"],["Undo / redo",MOD+"Z / "+MOD+SHIFT+"Z"],["Open file",MOD+"O"],["Download as Word",MOD+"S"],["New document",ALT+MOD+"N"],["Documents",MOD+SHIFT+"D"],["Performance",MOD+SHIFT+"I"],["Settings",MOD+","],["Shortcuts",MOD+"/"],["Summon from anywhere (installed app)",ALT+SHIFT+"G"]].map(([a,k])=>`<span>${a}</span><span><span class="kbd">${k}</span></span>`).join("")}</div>`;}
+function shortcutsHTML(){return `<div class="sk">${[["Check now",MOD+"↵"],["Next / previous suggestion","F8 / "+SHIFT+"F8"],["Accept the open suggestion",ALT+"↵"],["Dismiss the open suggestion",ALT+SHIFT+"↵"],["Rewrite selection or paragraph",MOD+"K"],["Write with AI",MOD+"J"],["Expand a snippet","Tab"],["Undo / redo",MOD+"Z / "+MOD+SHIFT+"Z"],["Open file",MOD+"O"],["Download as Word",MOD+"S"],["New document",ALT+MOD+"N"],["Documents",MOD+SHIFT+"D"],["Performance",MOD+SHIFT+"I"],["Settings",MOD+","],["Shortcuts",MOD+"/"],["Synonyms for a word","Double-click it"],["Quick fix panel",MOD+SHIFT+"K"],["Quick fix from any app (installed app)",keyLabel(S.hotkey)],["Copy fix and hide (Quick fix)",MOD+"↵"],["Dictate",MOD+SHIFT+"E"],["Read aloud",MOD+SHIFT+"U"]].map(([a,k])=>`<span>${a}</span><span><span class="kbd">${k}</span></span>`).join("")}</div>`;}
 function openKeys(){$("dlg").innerHTML=`<header><h2>Keyboard shortcuts</h2><button class="btn ghost sm" data-x>✕</button></header><div class="body">${shortcutsHTML()}</div><footer><button class="btn pri" data-x>Done</button></footer>`;showModal();$("dlg").onclick=e=>{if(e.target.closest("[data-x]"))hideModal();};}
 
 let lastFocus=null;
 function showModal(){if($("modal").hidden)lastFocus=document.activeElement;$("modal").hidden=false;setTimeout(()=>{const f=$("dlg").querySelector("input[type=text],button.pri");f?.focus();},0);}
-function hideModal(){$("modal").hidden=true;$("dlg").onclick=null;lastFocus?.focus?.();}
+function hideModal(){$("modal").hidden=true;$("dlg").onclick=null;$("dlg").onchange=null;lastFocus?.focus?.();}
 $("modal").addEventListener("mousedown",e=>{if(e.target===$("modal"))hideModal();});
 
 /* ---------- Documents drawer ---------- */
@@ -1160,6 +1512,14 @@ async function odtToText(buf){
 }
 async function openFile(f){
   if(!f) return;
+  const name=f.name;
+  const text=await fileToText(f); if(text==null) return;
+  if(!$("quick").hidden){$("qIn").value=text;runQuick();return;}
+  newDocument(text,name.replace(/\.[^.]+$/,""));
+  toast(`Opened “${name}”.`);
+  ed.setSelectionRange(0,0); $("scroller").scrollTop=0;
+}
+async function fileToText(f){
   const name=f.name, ext=(name.split(".").pop()||"").toLowerCase();
   try{
     let text;
@@ -1167,13 +1527,10 @@ async function openFile(f){
     else if(ext==="odt"){if(!window.JSZip)throw new Error("lib");text=await odtToText(await f.arrayBuffer());}
     else if(ext==="rtf") text=rtfToText(await f.text());
     else if(ext==="html"||ext==="htm") text=htmlToText(await f.text());
-    else if(ext==="doc"||ext==="pdf"||ext==="pages"){toast(`.${ext} files can't be opened here. Save it as .docx or .txt first.`);return;}
+    else if(ext==="doc"||ext==="pdf"||ext==="pages"){toast(`.${ext} files can't be opened here. Save it as .docx or .txt first.`);return null;}
     else text=await f.text();
-    text=text.replace(/\r\n?/g,"\n").replace(/ /g," ");
-    newDocument(text,name.replace(/\.[^.]+$/,""));
-    toast(`Opened “${name}”.`);
-    ed.setSelectionRange(0,0); $("scroller").scrollTop=0;
-  }catch(e){toast(e?.message==="lib"?"The file reader didn't load. Check your connection and reopen the app.":`Couldn't read “${name}”. Is it a valid .${ext} file?`);}
+    return text.replace(/\r\n?/g,"\n").replace(/\u00a0/g," ");
+  }catch(e){toast(e?.message==="lib"?"The file reader didn't load. Check your connection and reopen the app.":`Couldn't read “${name}”. Is it a valid .${ext} file?`);return null;}
 }
 $("file").onchange=()=>{const f=$("file").files[0];$("file").value="";openFile(f);};
 let dragN=0;
@@ -1266,6 +1623,8 @@ function doAction(a){
   else if(a==="sample") {if(doc.text.trim())newDocument(SAMPLE,"Sample email");else{ed.focus();ed.select();document.execCommand("insertText",false,SAMPLE);if(!doc.title){doc.title="Sample email";$("title").value=doc.title;}}scheduleCheck(100);}
   else if(["docx","md","txt","report"].includes(a)) exportAs(a);
   else if(a==="copy") copyText(doc.text);
+  else if(a==="quick") {const x=ed.selectionStart,y=ed.selectionEnd;openQuick(y>x?doc.text.slice(x,y):undefined);}
+  else if(a==="everywhere") openEverywhere();
   else if(a==="goals") openGoals();
   else if(a==="settings") openSettings("general");
   else if(a==="keys") openKeys();
@@ -1285,9 +1644,13 @@ function toast(msg,undo){const t=$("toast");t.innerHTML=`<span>${esc(msg)}</span
 /* ---------- keyboard ---------- */
 document.addEventListener("keydown",e=>{
   const mod=e.metaKey||e.ctrlKey, k=e.key;
-  if(k==="Escape"){if(!$("modal").hidden){hideModal();return;}if(!$("fileMenu").hidden){$("fileMenu").hidden=true;return;}if(!$("drawer").hidden){closeDrawer();return;}if(!$("pop").hidden){hidePop();return;}if(document.body.classList.contains("sideopen")){closeSide();return;}if(activeId){activeId=null;renderMirror();renderReview();}return;}
+  if(!$("quick").hidden){if(k==="Escape"){e.preventDefault();closeQuick();}return;}
+  if(k==="Escape"){const P=()=>e.preventDefault();if(!$("modal").hidden){P();hideModal();return;}if(!$("fileMenu").hidden){P();$("fileMenu").hidden=true;return;}if(!$("drawer").hidden){P();closeDrawer();return;}if(!$("pop").hidden){P();hidePop();return;}if(document.body.classList.contains("sideopen")){P();closeSide();return;}if(activeId){P();activeId=null;renderMirror();renderReview();}return;}
   if(!$("modal").hidden) return;
   if(mod&&k==="Enter"&&document.activeElement?.id!=="genIn"){e.preventDefault();lastErr="";pump(true);return;}
+  if(mod&&e.shiftKey&&e.code==="KeyK"){e.preventDefault();const a=ed.selectionStart,b=ed.selectionEnd;openQuick(b>a?doc.text.slice(a,b):undefined);return;}
+  if(mod&&e.shiftKey&&e.code==="KeyE"){e.preventDefault();toggleDict();return;}
+  if(mod&&e.shiftKey&&e.code==="KeyU"){e.preventDefault();toggleRead();return;}
   if(mod&&!e.shiftKey&&!e.altKey&&k.toLowerCase()==="k"){e.preventDefault();openRewrite("auto");return;}
   if(mod&&!e.shiftKey&&k.toLowerCase()==="j"){e.preventDefault();setTab("write");openSide();setTimeout(()=>$("genIn")?.focus(),0);return;}
   if(mod&&!e.shiftKey&&k.toLowerCase()==="o"){e.preventDefault();$("file").click();return;}
@@ -1314,11 +1677,166 @@ ed.addEventListener("keydown",e=>{
 function applyAI(){
   const on=!!sample&&aiOK;
   document.querySelectorAll(".needai").forEach(el=>el.hidden=!on);
-  if(!on&&S.tab!=="review") setTab("review");
+  if(!on&&(S.tab==="rewrite"||S.tab==="write")) setTab("review");
   ed.spellcheck=!on; // fall back to the system spell checker when Claude isn't available
   status();
 }
 function applyDL(){document.querySelectorAll(".needdl").forEach(el=>el.hidden=!downloads);}
+
+/* ---------- dictation ---------- */
+let dictation=null, tts=null, dictNoLang=false;
+function dictBcp(){const b=langOf(doc.goals.variant).bcp;return b&&!dictNoLang?b:"";}
+function toggleDict(){
+  if(!dictation) return;
+  if(dictation.active()){dictation.stop().catch(()=>{});return;}
+  const p=ed.selectionEnd; dictAt={start:p,end:p,dead:false};
+  const lang=dictBcp();
+  dictation.start(lang?{language:lang}:undefined).catch(e=>{
+    const c=e?.code;
+    if(c==="not_granted"){toast("Microphone use was declined. You can turn dictation on in this app's Permissions menu.");dictation=null;applyMedia();}
+    else if(c==="unavailable"){if(lang){dictNoLang=true;toast(`Dictation isn't available in ${langOf(doc.goals.variant).label}. Press Dictate again to use your default language.`);}else{toast("Dictation isn't available here.");dictation=null;applyMedia();}}
+    else if(c==="rate_limited") toast("Dictation is busy. Try again in a moment.");
+    else if(c==="upstream_error") toast("The microphone or speech service failed. Try again.");
+  });
+}
+function insertDictated(text){
+  text=(text||"").trim(); if(!text) return;
+  let p=dictAt&&!dictAt.dead?dictAt.start:ed.selectionEnd;
+  const before=doc.text.slice(0,p), after=doc.text[p];
+  const startOfSentence=!before.trim()||/[.!?]\s*$/.test(before)||/\n\s*$/.test(before);
+  if(startOfSentence&&/^\p{Ll}/u.test(text)) text=text[0].toUpperCase()+text.slice(1);
+  const ins=(before&&!/\s$/.test(before)&&!/^[,.;:!?)]/.test(text)?" ":"")+text+(after&&!/\s/.test(after)&&!/^[,.;:!?)]/.test(after)?" ":"");
+  replaceRange(p,p,ins);
+  const np=p+ins.length-(after&&!/\s/.test(after)?1:0); dictAt={start:np,end:np,dead:false}; ed.setSelectionRange(np,np);
+}
+function setupDictation(){
+  if(!dictation) return;
+  dictation.onPartial(({text})=>{if(text)$("status").textContent="Listening: "+text;});
+  dictation.onFinal(({text})=>{insertDictated(text);status();});
+  dictation.onState(({state,reason})=>{
+    const on=state!=="idle"; $("micBtn").classList.toggle("on",on); $("micLab").textContent=on?(state==="finishing"?"Finishing…":"Stop"):"Dictate";
+    if(on&&state==="listening"){$("status").textContent="Listening… speak now. Press Stop when you're done.";$("stDot").style.background="var(--c-correctness)";}
+    if(!on){status();if(reason==="not_granted"){dictation=null;applyMedia();}else if(reason==="time_limit")toast("Dictation stopped after 60 minutes. Press Dictate to continue.");else if(reason==="upstream_error")toast("Dictation stopped: the microphone or speech service failed.");}
+  });
+}
+/* ---------- read aloud ---------- */
+let reading=false, readLines=[];
+function toggleRead(){
+  if(!tts) return;
+  if(reading){tts.stop().catch(()=>{});return;}
+  const t=doc.text; let a=ed.selectionStart,b=ed.selectionEnd;
+  if(b<=a){a=t.lastIndexOf("\n",a-1)+1; if(a>=t.trimEnd().length) a=0; b=t.length;}
+  readLines=[]; let pos=a;
+  for(const para of t.slice(a,b).split("\n")){
+    const ps=pos; pos+=para.length+1;
+    if(!/[\p{L}\p{N}]/u.test(para)) continue;
+    let s=0; while(s<para.length){let e=Math.min(para.length,s+1800);if(e<para.length){const cut=Math.max(para.lastIndexOf(". ",e),para.lastIndexOf("? ",e),para.lastIndexOf("! ",e));if(cut>s+200)e=cut+2;}const seg=para.slice(s,e);if(seg.trim())readLines.push({start:ps+s,end:ps+e,text:seg.replace(/^#{1,6}\s+|^\s*[-*]\s+|^>\s?/,"")});s=e;}
+    if(readLines.length>=100) break;
+  }
+  if(!readLines.length){toast("There's no text to read. Put the cursor where reading should start.");return;}
+  const lang=langOf(doc.goals.variant).bcp;
+  tts.speak(readLines.slice(0,100).map((l,i)=>({text:l.text,id:String(i)})),lang?{language:lang}:{}).catch(e=>{
+    const c=e?.code;
+    if(c==="not_granted"||c==="unavailable"){tts=null;applyMedia();toast("Reading aloud isn't available here.");}
+    else if(c==="rate_limited") toast("You've used reading aloud a lot just now. Try again later.");
+    else if(c==="busy") toast("The microphone is in use. Stop dictation first.");
+    else if(c==="no_gesture") toast("Press Read aloud again to start.");
+  });
+}
+function setupTTS(){
+  if(!tts) return;
+  tts.onLine(({id})=>{const l=readLines[+id];speakR=l&&doc.text.slice(l.start,l.end).includes(l.text.slice(0,24))?{start:l.start,end:l.end,dead:false}:null;renderMirror();const m=mirror.querySelector('mark[data-id="speak"]');if(m){const sr=$("scroller").getBoundingClientRect(),mr=m.getBoundingClientRect();if(mr.top<sr.top+30||mr.bottom>sr.bottom-30)$("scroller").scrollBy({top:mr.top-sr.top-sr.height/3,behavior:"smooth"});}});
+  tts.onState(({state,reason})=>{
+    reading=state!=="idle"; $("ttsBtn").classList.toggle("on",reading); $("ttsLab").textContent=reading?"Stop reading":"Read aloud";
+    if(!reading){speakR=null;renderMirror();if(reason==="not_granted"||reason==="unavailable"){tts=null;applyMedia();}else if(reason==="rate_limited")toast("You've used reading aloud a lot just now. Try again later.");}
+  });
+}
+function applyMedia(){$("micBtn").hidden=!dictation;$("ttsBtn").hidden=!tts;}
+$("micBtn").onclick=toggleDict;
+$("ttsBtn").onclick=toggleRead;
+
+/* ---------- Quick fix (paste, fix, copy back) ---------- */
+const QMODES=[["fix","Fix grammar","Fix only spelling, grammar, punctuation and capitalization. Keep the wording, tone and formatting otherwise."],["clear","Clearer","Make it clearer and easier to read: simpler structure, precise words, active voice. Keep the meaning."],["short","Shorter","Make it shorter and more concise. Cut filler but keep every key fact."],["formal","Formal","Make it more formal and professional, and fix any errors."],["friendly","Friendly","Make it warmer and friendlier while staying professional, and fix any errors."],["para","Paraphrase","Paraphrase it fluently: same meaning and length, new wording."],["tr","Translate",""]];
+let qCtl=null, qRes="", qSrc="", qPrev=null;
+function renderQModes(){
+  $("qModes").innerHTML=QMODES.map(([k,l])=>`<button class="chip${S.qMode===k?" on":""}" data-qm="${k}">${l}</button>`).join("")+(S.qMode==="tr"?`<select id="qLang" aria-label="Translate into">${LANGS.filter(([v])=>v!=="Any language").map(([v,l])=>`<option value="${esc(v)}"${S.trLang===v?" selected":""}>${esc(l)}</option>`).join("")}</select>`:`<span class="note" style="margin:0 0 0 auto">${esc(langOf(doc.goals.variant).label)}</span>`);
+}
+function inApp(){return !!desktop?.tray&&document.body.classList.contains("app");}
+function openQuick(text){
+  $("quick").hidden=false; closeDrawer(); hidePop(); if(!$("modal").hidden) hideModal();
+  renderQModes();
+  if(text!=null&&text!==$("qIn").value){$("qIn").value=text;qStale();}
+  $("qCopy").textContent=inApp()?"Copy & hide":"Copy result";
+  $("qCopy").title=(inApp()?"Copy the result and hide this window":"Copy the result")+` (${MOD}↵)`;
+  setTimeout(()=>{$("qIn").focus();$("qIn").select();},0);
+}
+async function closeQuick(){
+  qCtl?.abort(); $("quick").hidden=true;
+  if(qPrev&&desktop?.window){const b=qPrev;qPrev=null;await desktop.window.setBounds(b).catch(()=>{});}
+  ed.focus();
+}
+function qStale(){qRes="";$("qOut").hidden=true;$("qCopy").disabled=true;$("qSt").textContent=$("qIn").value.trim()?`Press Fix (${MOD}↵) to check this text.`:"Copy text in any app, paste it here, then copy the fix back.";}
+function localFix(t){
+  const list=runLocalOn(t,doc.goals).sort((a,b)=>b.start-a.start); let out=t, last=Infinity, n=0;
+  for(const s of list){if(s.end>last)continue;out=out.slice(0,s.start)+s.replacement+out.slice(s.end);last=s.start;n++;}
+  return {out,n};
+}
+function countChanges(a,b){const h=wordDiff(a,b);return (h.match(/<(del|ins)>/g)||[]).length-(h.match(/<\/del><ins>/g)||[]).length;}
+async function runQuick(){
+  const t=$("qIn").value; if(!t.trim()){$("qIn").focus();return;}
+  qCtl?.abort(); qSrc=t; qRes="";
+  const out=$("qOut"); out.hidden=false; $("qCopy").disabled=true;
+  if(!sample||!aiOK){
+    if(S.qMode!=="fix"){out.textContent="";$("qSt").textContent="Rewriting and translating need Claude. Open this app in the Claude app.";return;}
+    const {out:o,n}=localFix(t); qRes=o; out.innerHTML=wordDiff(t,o); $("qCopy").disabled=false;
+    $("qSt").textContent=n?`${n} fix${n>1?"es":""} from the built-in checks. Full grammar checks need the Claude app.`:"The built-in checks found nothing. Full grammar checks need the Claude app.";
+    return;
+  }
+  const m=QMODES.find(x=>x[0]===S.qMode)||QMODES[0];
+  const instr=m[0]==="tr"?`Translate the text into ${langOf(S.trLang).label}. Keep the meaning, tone and formatting; keep names, numbers, URLs and code unchanged.`:m[2];
+  const prompt=`${instr}
+Writing goals: ${goalsText()}${rulesText()}
+${m[0]==="tr"?"":"Keep the same language as the original. "}Keep line breaks, lists and Markdown markers. If nothing needs changing, return the text unchanged. Output only the resulting text, with no preface, quotes or notes.
+
+Text:
+${t}`;
+  const ac=new AbortController(); qCtl=ac; $("qGo").textContent="Stop"; $("qSt").innerHTML=`<span class="spin" style="vertical-align:-3px"></span> ${m[0]==="fix"?"Checking":"Working"}…`;
+  out.textContent="";
+  try{
+    const r=await sample(prompt,{signal:ac.signal,modelTier:t.length>1500||S.depth==="thorough"?"default":"quick",onText:({text})=>{if(qCtl===ac){out.textContent=text;}}});
+    if(qCtl!==ac) return;
+    let res=r.text.replace(/^\s*(["“])([\s\S]*)(["”])\s*$/,(all,a,b,c)=>/^["“]/.test(t.trim())?all:b);
+    const lead=t.match(/^\s*/)[0], trail=t.match(/\s*$/)[0]; res=lead+res.trim()+trail;
+    qRes=res; out.innerHTML=m[0]==="tr"?esc(res):wordDiff(t,res); $("qCopy").disabled=false;
+    const n=m[0]==="tr"?0:countChanges(t,res);
+    $("qSt").textContent=(m[0]==="tr"?"Translated.":res===t?"Looks good. No changes needed.":`${n} change${n===1?"":"s"}.`)+` Press ${MOD}↵ to ${inApp()?"copy and hide":"copy"}.`+(r.truncated?" The answer was cut short.":"");
+  }catch(e){
+    if(e?.code==="cancelled"){$("qSt").textContent="Stopped.";out.hidden=!out.textContent;return;}
+    $("qSt").textContent=ERR[e?.code]||"Couldn't fix this. Try again.";
+    if(["not_granted","sampling_disabled"].includes(e?.code)){aiOK=false;applyAI();}
+  }finally{if(qCtl===ac){qCtl=null;$("qGo").textContent="Fix";}}
+}
+async function qCopyOut(){
+  if(!qRes) return;
+  try{await navigator.clipboard.writeText(qRes);}catch{const ta=document.createElement("textarea");ta.value=qRes;document.body.append(ta);ta.select();try{document.execCommand("copy");}catch{}ta.remove();}
+  if(inApp()){$("qSt").textContent=`Copied. Paste it with ${MOD}V.`;await desktop.window.hide().catch(()=>{});}
+  else toast(`Copied. Paste it back with ${MOD}V.`);
+  const h=store.get("qHist",[]);h.unshift({t:Date.now(),src:qSrc.slice(0,4000),res:qRes.slice(0,4000)});store.set("qHist",h.slice(0,10));
+}
+$("qModes").addEventListener("click",e=>{const b=e.target.closest("[data-qm]");if(!b)return;S.qMode=b.dataset.qm;store.set("qMode",S.qMode);renderQModes();if($("qIn").value.trim())runQuick();else $("qIn").focus();});
+$("qModes").addEventListener("change",e=>{if(e.target.id==="qLang"){S.trLang=e.target.value;store.set("trLang",S.trLang);if($("qIn").value.trim())runQuick();}});
+$("qIn").addEventListener("paste",()=>setTimeout(()=>{if($("qIn").value.trim())runQuick();},0));
+$("qIn").addEventListener("input",()=>{if(qRes&&$("qIn").value!==qSrc)qStale();});
+$("qGo").onclick=()=>{if(qCtl){qCtl.abort();return;}runQuick();};
+$("qCopy").onclick=qCopyOut;
+$("qClose").onclick=closeQuick;
+$("qEditor").onclick=()=>{const t=qRes||$("qIn").value;closeQuick();if(t.trim())newDocument(t,"Quick fix");};
+$("qHelp").onclick=()=>openEverywhere();
+$("quick").addEventListener("keydown",e=>{
+  if(e.key==="Escape"){e.preventDefault();e.stopPropagation();if(qCtl)qCtl.abort();else closeQuick();return;}
+  if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();e.stopPropagation();if(qRes&&$("qIn").value===qSrc)qCopyOut();else runQuick();return;}
+  e.stopPropagation();
+});
 
 /* ---------- desktop ---------- */
 let perms={};
@@ -1331,7 +1849,23 @@ function dockIcon(){
   x.strokeStyle="#7ef0c9";x.lineWidth=16;x.lineJoin="round";x.beginPath();x.moveTo(122,186);x.lineTo(148,210);x.lineTo(200,156);x.stroke();
   return c.toDataURL("image/png");
 }
-async function summon(){await desktop.window.show().catch(()=>{});ed.focus();}
+function trayIcon(){
+  const c=document.createElement("canvas");c.width=c.height=36;const x=c.getContext("2d");
+  x.fillStyle="#000";x.beginPath();x.roundRect(5,7,26,4,2);x.fill();x.beginPath();x.roundRect(5,15,17,4,2);x.fill();
+  x.strokeStyle="#000";x.lineWidth=3;x.lineCap="round";x.lineJoin="round";x.beginPath();x.moveTo(17,26);x.lineTo(22,31);x.lineTo(32,19);x.stroke();
+  x.lineWidth=2;x.beginPath();x.moveTo(5,25);x.lineTo(8,28);x.lineTo(11,25);x.stroke();
+  return c.toDataURL("image/png");
+}
+const HOTKEYS=["Alt+Shift+G","Control+Shift+G","Alt+Shift+Space","Alt+Shift+F"];
+function keyLabel(a){return IS_MAC?a.replace("Control+","⌃").replace("Alt+","⌥").replace("Shift+","⇧").replace("CmdOrCtrl+","⌘"):a.replace("CmdOrCtrl","Ctrl");}
+async function summonQuick(){
+  if(!$("quick").hidden&&document.hasFocus()){desktop.window.hide().catch(()=>{});return;}
+  const float=store.get("float",false)&&perms.overlay==="granted";
+  if(!float&&!qPrev&&$("quick").hidden){qPrev=await desktop.window.getBounds().catch(()=>null);}
+  await desktop.window.show().catch(()=>{});
+  if(!float&&qPrev) await desktop.window.place({anchor:"center",width:620,height:600}).catch(()=>{});
+  openQuick();
+}
 function applyWindow(){
   const float=store.get("float",false)&&perms.overlay==="granted";
   document.body.classList.toggle("inset",!float);
@@ -1339,16 +1873,59 @@ function applyWindow(){
     ?{frame:false,alwaysOnTop:true,dragHeight:0,width:460,height:640,minWidth:360,minHeight:420,roundedCorners:true,hasShadow:true}
     :{titleBarStyle:"hiddenInset",dragHeight:48,width:1180,height:800,minWidth:380,minHeight:460}).catch(()=>{});
 }
-let sc=false;
-function setupDesk(){
-  if(perms.shortcuts==="granted"&&!sc){sc=true;desktop.globalShortcut.register("Alt+Shift+G",summon).catch(()=>{sc=false;});}
+let regKey=null, trayOn=false;
+async function setupDesk(){
+  if(perms.shortcuts==="granted"&&regKey!==S.hotkey){
+    if(regKey) await desktop.globalShortcut.unregister(regKey).catch(()=>{});
+    const ok=await desktop.globalShortcut.register(S.hotkey,summonQuick).catch(()=>false);
+    regKey=ok?S.hotkey:null;
+    if(!ok) toast(`${keyLabel(S.hotkey)} is already used by another app. Pick another shortcut in Use in any app.`);
+  }
+  if(perms["menu-bar"]==="granted"){
+    trayOn=await desktop.tray.set({icon:trayIcon(),toolTip:`Quick fix: ${keyLabel(S.hotkey)}`,menu:[
+      {label:`Quick fix…   ${keyLabel(S.hotkey)}`,click:()=>summonQuick()},
+      {label:"Open Grammar Checker",click:async()=>{await desktop.window.show().catch(()=>{});if(!$("quick").hidden)closeQuick();}},
+      {label:"New document",click:async()=>{await desktop.window.show().catch(()=>{});if(!$("quick").hidden)closeQuick();newDocument();}},
+      {type:"separator"},
+      {label:"Use in any app…",click:async()=>{await desktop.window.show().catch(()=>{});openEverywhere();}}
+    ]}).catch(()=>false);
+  }
   const float=store.get("float",false)&&perms.overlay==="granted";
-  $("deskMenu").innerHTML=`<hr>${float?`<button data-d="normal">Normal window</button><button data-d="hide">Copy all and hide<span class="k">${ALT}${SHIFT}G shows it again</span></button>`:`<button data-d="float">Float on top<span class="k">${ALT}${SHIFT}G</span></button>`}`;
+  $("deskMenu").innerHTML=`<hr>${float?`<button data-d="normal">Normal window</button><button data-d="hide">Copy all and hide<span class="k">${keyLabel(S.hotkey)} shows it</span></button>`:`<button data-d="float">Float on top</button>`}`;
+}
+const PSTATE={granted:["On","ok"],prompt:["Not set up yet",""],denied:["Turned off","bad"],unavailable:["Not available","bad"]};
+async function openEverywhere(){
+  if(!$("quick").hidden) $("quick").hidden=true;
+  const app=!!desktop?.tray;
+  let st="unavailable"; if(!app&&desktop?.install) st=await desktop.install.state().catch(()=>"unavailable");
+  if(app){try{perms=await desktop.permissions.state();}catch{}}
+  const row=(k,l,d)=>{const [t,c]=PSTATE[perms[k]||"unavailable"];return `<div class="permrow"><span><b>${l}</b><br><span class="note" style="margin:0">${d}</span></span><b class="${c}">${t}</b></div>`;};
+  const need=app&&(perms.shortcuts==="prompt"||perms["menu-bar"]==="prompt"), denied=app&&(perms.shortcuts==="denied"||perms["menu-bar"]==="denied"||perms.overlay==="denied");
+  $("dlg").innerHTML=`<header><h2>Use in any app</h2><button class="btn ghost sm" data-x>✕</button></header><div class="body">
+  <p class="note" style="margin-top:0">Fix text from your email, chat, browser or any other app without switching documents.</p>
+  <ol class="steps"><li>Select text in any app and press <span class="kbd">${MOD}C</span>.</li><li>Press <span class="kbd">${keyLabel(S.hotkey)}</span>${app?" or pick Quick fix from the menu bar icon":" (installed app)"}. The Quick fix window opens.</li><li>Press <span class="kbd">${MOD}V</span>. Your text is fixed right away. Pick Clearer, Shorter, Formal, Paraphrase or Translate if you want more.</li><li>Press <span class="kbd">${MOD}↵</span> to copy the result${app?" and hide the window":""}, then <span class="kbd">${MOD}V</span> in your app.</li></ol>
+  ${app?`<div class="sec" style="margin-top:14px"><h5>Permissions</h5>${row("shortcuts","Global shortcut","Opens Quick fix from any app.")}${row("menu-bar","Menu bar icon","Quick fix and your documents one click away.")}${row("overlay","Float on top (optional)","Keeps the window above other apps. The window reloads once when you switch.")}</div>
+  <div class="grp"><b>Shortcut</b><div><select id="hkSel">${HOTKEYS.map(h=>`<option value="${h}"${S.hotkey===h?" selected":""}>${keyLabel(h)}</option>`).join("")}</select><div class="hint">If a shortcut does nothing, another app may already use it. Pick another.</div></div></div>`
+  :st==="available"?`<p class="note">This needs the installed app: it can listen for a shortcut and sit in your menu bar. Install it, then open this dialog again from the app.</p>`
+  :`<p class="note">The shortcut and menu bar icon work in the installed app. Open this page in the Claude desktop app and choose Install as app. Here you can still use the Quick fix panel: paste, fix, copy.</p>`}
+  </div><footer>${app?`${denied?'<button class="btn" data-e="manage">Open permissions</button>':""}<button class="btn" data-e="float">${store.get("float",false)&&perms.overlay==="granted"?"Stop floating":"Float on top"}</button>${need?'<button class="btn pri" data-e="on">Turn on</button>':'<button class="btn pri" data-e="try">Try Quick fix</button>'}`:`<button class="btn" data-e="try">Open Quick fix panel</button>${st==="available"?'<button class="btn pri" data-e="install">Install as app</button>':'<button class="btn pri" data-x>Done</button>'}`}</footer>`;
+  showModal();
+  $("dlg").onchange=async e=>{if(e.target.id==="hkSel"){S.hotkey=e.target.value;store.set("hotkey",S.hotkey);await setupDesk();if(regKey===S.hotkey)toast(`Quick fix is now ${keyLabel(S.hotkey)}.`);openEverywhere();}};
+  $("dlg").onclick=async e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    if(b.hasAttribute("data-x")){hideModal();return;}
+    const a=b.dataset.e;
+    if(a==="install"){const r=await desktop.install.request().catch(()=>"failed");if(r==="installed")hideModal();else if(r==="failed"||r==="unavailable")toast("Couldn't install the app here.");return;}
+    if(a==="try"){hideModal();openQuick();return;}
+    if(a==="manage"){await desktop.permissions.manage().catch(()=>{});try{perms=await desktop.permissions.state();}catch{}await setupDesk();openEverywhere();return;}
+    if(a==="on"){try{perms=await desktop.permissions.request(["shortcuts","menu-bar"]);}catch{toast("Click Turn on again while the window is in front.");}await setupDesk();openEverywhere();if(regKey)toast(`Ready. Press ${keyLabel(S.hotkey)} in any app.`);return;}
+    if(a==="float"){if(store.get("float",false)&&perms.overlay==="granted"){store.set("float",false);applyWindow();setupDesk();hideModal();return;}try{perms=await desktop.permissions.request(["overlay"]);}catch{}if(perms.overlay==="granted"){store.set("float",true);applyWindow();setupDesk();hideModal();}else{toast("Floating needs the overlay permission.");openEverywhere();}return;}
+  };
 }
 $("deskMenu").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-d]"); if(!b) return; $("fileMenu").hidden=true;
   if(b.dataset.d==="install"){desktop.install.request().catch(()=>{});return;}
-  if(b.dataset.d==="float"){try{perms=await desktop.permissions.request(["overlay","shortcuts"]);}catch{}if(perms.overlay==="granted"){store.set("float",true);applyWindow();}else toast("Floating needs the overlay permission.");setupDesk();}
+  if(b.dataset.d==="float"){try{perms=await desktop.permissions.request(["overlay"]);}catch{}if(perms.overlay==="granted"){store.set("float",true);applyWindow();}else toast("Floating needs the overlay permission.");setupDesk();}
   if(b.dataset.d==="normal"){store.set("float",false);applyWindow();setupDesk();}
   if(b.dataset.d==="hide"){await copyText(doc.text);desktop.window.hide().catch(()=>{});}
 });
@@ -1364,13 +1941,14 @@ window.addEventListener("beforeunload",()=>saveDoc());
 document.addEventListener("visibilitychange",()=>{if(document.hidden)saveDoc();});
 (async()=>{
   const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
-  [sample,downloads,desktop]=await Promise.all([use("sample"),use("downloads"),use("desktop")]);
+  [sample,downloads,desktop,tts,dictation]=await Promise.all([use("sample"),use("downloads"),use("desktop"),use("tts"),use("dictation")]);
+  setupTTS(); setupDictation(); applyMedia();
   applyAI(); applyDL(); render();
   if(sample&&aiOK) scheduleCheck(400);
   if(!desktop) return;
   if(!desktop.tray){
     const st=await desktop.install.state().catch(()=>"unavailable");
-    if(st==="available") $("deskMenu").innerHTML=`<hr><button data-d="install">Install as app<span class="k">Float + ${ALT}${SHIFT}G</span></button>`;
+    if(st==="available") $("deskMenu").innerHTML=`<hr><button data-d="install">Install as app<span class="k">Fix text in any app</span></button>`;
     return;
   }
   document.body.classList.add("app");

@@ -1,18 +1,18 @@
 <title>Image to Text</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<script type="application/json" id="claude-artifacts-manifest">{"permissions":["overlay","shortcuts"]}</script>
+<script type="application/json" id="claude-artifacts-manifest">{"permissions":["overlay","shortcuts","menu-bar","notifications"]}</script>
 <style>
 /* Layout: image on the left, Claude's text on the right (stacked on narrow windows).
    Modes on top, a thumbnail strip for batches under the image, actions under the text. */
 :root{
   --bg:#f3f4f7; --panel:#ffffff; --fg:#14171f; --muted:#69717f; --line:#dfe2e8; --chip:#eceef2; --hover:#e4e7ec;
   --accent:#2f6bec; --accent-fg:#ffffff; --accent-soft:rgba(47,107,236,.12); --ok:#1d9a5b; --bad:#d23f3f;
-  --check:#f7f8fa; --check2:#eef0f3; --shadow:0 8px 28px rgba(16,24,40,.14),0 1px 3px rgba(16,24,40,.08);
+  --check:#f7f8fa; --check2:#eef0f3; --live-sel:rgba(47,107,236,.32); --live-hover:rgba(47,107,236,.07); --live-glow:rgba(47,107,236,.18); --shadow:0 8px 28px rgba(16,24,40,.14),0 1px 3px rgba(16,24,40,.08);
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#131519;--panel:#1b1e24;--fg:#eceff4;--muted:#8d95a3;--line:#2b3038;--chip:#252a32;--hover:#2d333c;--accent:#6b9bff;--accent-fg:#0b1530;--accent-soft:rgba(107,155,255,.16);--ok:#43c486;--bad:#ff6b6b;--check:#1f232a;--check2:#1a1d23;--shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#131519;--panel:#1b1e24;--fg:#eceff4;--muted:#8d95a3;--line:#2b3038;--chip:#252a32;--hover:#2d333c;--accent:#6b9bff;--accent-fg:#0b1530;--accent-soft:rgba(107,155,255,.16);--ok:#43c486;--bad:#ff6b6b;--check:#1f232a;--check2:#1a1d23;--shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#131519;--panel:#1b1e24;--fg:#eceff4;--muted:#8d95a3;--line:#2b3038;--chip:#252a32;--hover:#2d333c;--accent:#6b9bff;--accent-fg:#0b1530;--accent-soft:rgba(107,155,255,.16);--ok:#43c486;--bad:#ff6b6b;--check:#1f232a;--check2:#1a1d23;--live-sel:rgba(107,155,255,.38);--live-hover:rgba(107,155,255,.1);--live-glow:rgba(107,155,255,.22);--shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#131519;--panel:#1b1e24;--fg:#eceff4;--muted:#8d95a3;--line:#2b3038;--chip:#252a32;--hover:#2d333c;--accent:#6b9bff;--accent-fg:#0b1530;--accent-soft:rgba(107,155,255,.16);--ok:#43c486;--bad:#ff6b6b;--check:#1f232a;--check2:#1a1d23;--live-sel:rgba(107,155,255,.38);--live-hover:rgba(107,155,255,.1);--live-glow:rgba(107,155,255,.22);--shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
@@ -160,8 +160,45 @@ h3.sub{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--
 #veil div{background:var(--panel);color:var(--fg);border:2px dashed var(--accent);border-radius:16px;padding:26px 34px;font-weight:650;font-size:16px;box-shadow:var(--shadow)}
 #toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:70;background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:9px;font-size:13px;box-shadow:var(--shadow);max-width:calc(100vw - 32px);text-align:center}
 :focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+/* Live Text: an invisible, selectable text layer over the image */
+#live{position:absolute;inset:0;pointer-events:none;z-index:1}
+body.livetext #live{pointer-events:auto}
+body.livetext .stage{cursor:default}
+#live .ln{position:absolute;display:block;white-space:pre;color:transparent;transform-origin:0 0;cursor:text;user-select:text;-webkit-user-select:text;border-radius:3px;font-family:var(--font)}
+#live .ln:hover{background:var(--live-hover)}
+#live.glow .ln{animation:glow 1.3s ease-out}
+@keyframes glow{0%{background:var(--live-glow);box-shadow:0 0 0 1px var(--accent)}100%{background:transparent;box-shadow:0 0 0 0 transparent}}
+#live .ln::selection{background:var(--live-sel);color:transparent}
+#live .ln a{color:transparent;text-decoration:underline 2px var(--accent);text-underline-offset:3px}
+.btn.on{background:var(--accent-soft);color:var(--accent)}
+#lsel{position:fixed;z-index:45;display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;box-shadow:var(--shadow)}
+#lsel .btn{padding:6px 9px}
+.found{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 10px 4px 8px;font:500 12.5px/1.2 var(--font);color:var(--fg);cursor:pointer;min-width:0}
+.chip:hover{border-color:var(--accent)}
+.chip b{font:700 10px/1 var(--font);text-transform:uppercase;letter-spacing:.05em;color:var(--accent);flex:none}
+.chip span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu a.mi{display:flex;justify-content:space-between;gap:10px;padding:7px 9px;border-radius:6px;font-size:13px;color:inherit;text-decoration:none}
+.menu a.mi:hover,.menu a.mi:focus-visible{background:var(--accent);color:var(--accent-fg);outline:none}
+.menu a.mi small{opacity:.6}
+.menu .tr{padding:8px 9px;font-size:13.5px;white-space:pre-wrap;max-height:260px;overflow:auto;user-select:text;-webkit-user-select:text}
+/* quick capture banner */
+#cap{position:fixed;z-index:65;left:50%;top:calc(10px + env(safe-area-inset-top,0px));transform:translateX(-50%);width:min(460px,calc(100vw - 24px));background:var(--panel);border:1.5px solid var(--accent);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px;display:flex;gap:12px;align-items:center}
+#cap .ci{width:36px;height:36px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+#cap .ct{flex:1;min-width:0}
+#cap .ct b{display:block;font-size:14px}
+#cap .ct span{display:block;font-size:12px;color:var(--muted)}
+/* video frame picker */
+#vid{position:fixed;inset:0;z-index:62;background:rgba(10,14,24,.55);display:grid;place-items:center;padding:16px}
+#vid .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);width:min(760px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden}
+#vid video{display:block;width:100%;max-height:65vh;background:#000}
+#vid .vb{display:flex;gap:6px;align-items:center;padding:8px 10px;flex-wrap:wrap}
+#vid .vb .sp{flex:1}
 @media (max-width:760px){
   #split{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(170px,40%) minmax(0,1fr)}
+  .found{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .found::-webkit-scrollbar{display:none}
+  .chip{flex:none;max-width:240px}
 }
 @media (max-width:480px){
   .btn .k{display:none}
@@ -189,8 +226,8 @@ h3.sub{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--
     <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose images">
       <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M8 9h8M8 12h8M8 15h5"/></svg></div>
       <h1>Paste, drop or choose an image</h1>
-      <p>Screenshots, photos, scans and PDFs. Several at once is fine. Claude reads the text; QR codes and barcodes are read right here on your computer.</p>
-      <div class="keys"><span><kbd>⌘</kbd> <kbd>V</kbd> paste</span><span><kbd>⌘</kbd> <kbd>O</kbd> choose files</span><span><kbd>⌃</kbd><kbd>⇧</kbd><kbd>⌘</kbd><kbd>4</kbd> copies part of your screen on a Mac</span></div>
+      <p>Screenshots, photos, scans, PDFs and video frames. Several at once is fine. Claude reads the text; QR codes, barcodes and quick offline reads happen right here on your computer.</p>
+      <div class="keys"><span><kbd>⌘</kbd> <kbd>V</kbd> paste</span><span><kbd>⌘</kbd> <kbd>O</kbd> choose files</span><span><kbd>⌃</kbd><kbd>⇧</kbd><kbd>⌘</kbd><kbd>4</kbd> copies part of your screen on a Mac</span><span id="hkTip" hidden></span></div>
       <button class="btn pri" id="chooseBtn" type="button">Choose images</button>
     </div>
     <div class="recent" id="recent" hidden><h2><span>Recent</span><button class="btn ghost" id="allHist" type="button">All history</button></h2><div class="rgrid" id="rgrid"></div></div>
@@ -198,9 +235,9 @@ h3.sub{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--
 
   <section id="split" hidden>
     <div class="pane">
-      <div class="phead"><span class="t" id="imgInfo"></span><span class="batch" id="batch"></span><button class="btn ghost" id="zoomBtn" title="Zoom (Z)">Actual size</button></div>
+      <div class="phead"><span class="t" id="imgInfo"></span><span class="batch" id="batch"></span><button class="btn ghost" id="liveBtn" title="Select text right on the image, like Live Text (T)" aria-pressed="false">Select text</button><button class="btn ghost" id="zoomBtn" title="Zoom (Z)">Actual size</button></div>
       <div class="viewer" id="viewer">
-        <div class="stage" id="stage"><img id="pic" alt="Image being read"><div id="sel" hidden></div></div>
+        <div class="stage" id="stage"><img id="pic" alt="Image being read"><div id="live" aria-label="Text on the image"></div><div id="sel" hidden></div></div>
         <div class="selbar" id="selbar" hidden><button class="btn pri" id="readSel">Read selected area</button><button class="btn" id="cancelSel">Cancel</button></div>
         <div class="vtip" id="vtip">Drag over the image to read just one area</div>
       </div>
@@ -236,7 +273,17 @@ h3.sub{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--
 <div class="menu" id="menu" hidden role="menu"></div>
 <div id="veil" hidden><div>Drop to read the text</div></div>
 <div id="toast" hidden role="status"></div>
-<input type="file" id="file" multiple accept="image/*,.pdf,application/pdf" hidden>
+<div id="lsel" hidden><button class="btn" id="lsCopy">Copy</button><button class="btn" id="lsTr">Translate</button><a class="btn" id="lsSearch" target="_blank" rel="noopener noreferrer">Search</a></div>
+<div id="cap" hidden role="dialog" aria-label="Quick capture">
+  <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M9 10h6M9 14h4"/></svg></div>
+  <div class="ct"><b id="capT">Press ⌘V to read your screenshot</b><span id="capS">No screenshot yet? Press ⌃⇧⌘4, drag over the text, then ⌘V here. The text is copied for you.</span></div>
+  <button class="btn ghost" id="capX">Cancel</button>
+</div>
+<div id="vid" hidden role="dialog" aria-label="Pick a video frame"><div class="box">
+  <video id="vidEl" controls playsinline muted></video>
+  <div class="vb"><span class="st" id="vidInfo">Pause on the frame with the text.</span><span class="sp"></span><button class="btn" id="vidClose">Close</button><button class="btn pri" id="vidGrab">Read this frame</button></div>
+</div></div>
+<input type="file" id="file" multiple accept="image/*,.pdf,application/pdf,video/*" hidden>
 
 <script>
 "use strict";
@@ -257,7 +304,7 @@ const MODES=[
   {id:"codes",label:"QR & barcode",run:"Scan codes",empty:"QR codes and barcodes are decoded on your computer, without Claude."}
 ];
 const MODE=Object.fromEntries(MODES.map(m=>[m.id,m]));
-const S={mode:store.get("mode","text"),lang:store.get("lang",guess==="English"?"English":guess),ftype:store.get("ftype","auto"),hint:store.get("hint","Auto"),breaks:store.get("breaks","keep"),auto:store.get("auto",true),autocopy:store.get("autocopy",false),best:store.get("best",false),stack:store.get("stack",false),keep:store.get("keep",true)};
+const S={mode:store.get("mode","text"),lang:store.get("lang",guess==="English"?"English":guess),ftype:store.get("ftype","auto"),hint:store.get("hint","Auto"),breaks:store.get("breaks","keep"),auto:store.get("auto",true),autocopy:store.get("autocopy",false),best:store.get("best",false),stack:store.get("stack",false),keep:store.get("keep",true),engine:store.get("engine","claude"),hotkey:store.get("hotkey","Alt+Shift+O"),hideAfter:store.get("hideAfter",true)};
 if(!MODE[S.mode]) S.mode="text";
 const setS=(k,v)=>{S[k]=v;store.set(k,v);};
 
@@ -271,7 +318,7 @@ let toastT;
 function toast(msg){const t=$("toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2600);}
 const scripts={};
 function loadScript(src){return scripts[src]??=new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>{delete scripts[src];rej(new Error("load"))};document.head.appendChild(s);});}
-const LIB={zxing:"https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js",jsqr:"https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js",xlsx:"https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",pdf:"https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js",pdfw:"https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"};
+const LIB={zxing:"https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js",jsqr:"https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js",xlsx:"https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",pdf:"https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js",pdfw:"https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js",ocrad:"https://cdn.jsdelivr.net/npm/ocrad.js@0.0.1/ocrad.js",jszip:"https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"};
 const baseName=n=>(String(n||"image").replace(/\.[a-z0-9]{2,5}$/i,"").replace(/[\\/:*?"<>|]+/g,"-").trim().slice(0,60))||"image";
 const stamp=()=>{const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}.${p(d.getMinutes())}`;};
 function canvasOf(w,h){const c=document.createElement("canvas");c.width=Math.max(1,Math.round(w));c.height=Math.max(1,Math.round(h));return c;}
@@ -334,11 +381,12 @@ async function pdfItems(file){
   setHint();
   return out;
 }
-async function addFiles(files,{auto=true}={}){
+async function addFiles(files,{auto=true,capture=false}={}){
   const list=[...files];if(!list.length)return;
   const added=[];
   for(const f of list){
     if(f.type==="application/pdf"||/\.pdf$/i.test(f.name||"")){added.push(...await pdfItems(f));continue;}
+    if(f.type?.startsWith("video/")||/\.(mp4|m4v|mov|webm|ogv)$/i.test(f.name||"")){openVideo(f);continue;}
     if(f.type&&!f.type.startsWith("image/")){toast(`${f.name||"That file"} isn't an image or PDF.`);continue;}
     const it=await makeItem(f,f.name&&f.name!=="image.png"?f.name:`Pasted ${stamp()}`);if(it)added.push(it);
   }
@@ -346,7 +394,8 @@ async function addFiles(files,{auto=true}={}){
   items.push(...added);
   select(added[0]);
   for(const it of added){persist(it,true);scanQueue(it);}
-  if(auto&&S.auto&&S.mode!=="codes"&&sample&&limits?.images) enqueue(added,false);
+  if(capture){if(S.mode==="codes"||!canRead(S.mode))setMode("text");if(canRead(S.mode))enqueue(added,false,{capture:true});return;}
+  if(auto&&S.auto&&canRead(S.mode)) enqueue(added,false);
 }
 function removeItem(it){
   const i=items.indexOf(it);if(i<0)return;
@@ -365,6 +414,7 @@ function select(it){
   if(!it.url)it.url=URL.createObjectURL(it.blob);
   const pic=$("pic");pic.src=it.url;zoom=false;$("zoomBtn").textContent="Actual size";
   fit();renderStrip();renderResult();
+  if(liveOn){liveJob?.ctl.abort();liveJob=null;$("lsel").hidden=true;renderLive();ensureLive(it);liveTip();}
   $("imgInfo").innerHTML=`<b>${esc(it.name)}</b> · ${it.w}×${it.h}`;
 }
 let zoom=false;
@@ -373,6 +423,7 @@ function fit(){
   const vw=v.clientWidth-16,vh=v.clientHeight-16;
   const s=zoom?1:Math.min(1,vw/cur.w,vh/cur.h);
   st.style.width=Math.max(1,Math.round(cur.w*s))+"px";st.style.height=Math.max(1,Math.round(cur.h*s))+"px";
+  if(liveOn)renderLive();
 }
 new ResizeObserver(()=>fit()).observe($("viewer"));
 $("zoomBtn").onclick=()=>{zoom=!zoom;$("zoomBtn").textContent=zoom?"Fit":"Actual size";clearSel();fit();};
@@ -420,7 +471,7 @@ function renderModes(){
 }
 function setMode(m,user){
   setS("mode",m);renderModes();renderStrip();renderResult();
-  if(user&&cur&&S.auto&&!cur.results[rkey()]&&!(m==="codes")&&sample&&limits?.images&&!job) enqueue([cur],false);
+  if(user&&cur&&S.auto&&!cur.results[rkey()]&&canRead(m)&&!job) enqueue([cur],false);
   if(m==="codes"&&cur)scanQueue(cur);
   seg.querySelector(".on")?.scrollIntoView({block:"nearest",inline:"nearest"});
 }
@@ -436,12 +487,12 @@ function renderResult(){
   renderCodes();
   $("tidyBtn").hidden=!(m==="text"||m==="translate");
   $("undoBtn").hidden=!(r?.prev?.length);
-  $("runBtn").textContent=busy?"Stop":(r||cur.err[key]?(m==="codes"?"Scan again":"Read again"):MODE[m].run);
-  $("runBtn").disabled=m!=="codes"&&!busy&&!(sample&&limits?.images);
+  $("runBtn").textContent=busy?"Stop":(r?.engine==="local"&&claudeOK()?"Read with Claude":r||cur.err[key]?(m==="codes"?"Scan again":"Read again"):MODE[m].run);
+  $("runBtn").disabled=m!=="codes"&&!busy&&!canRead(m);
   $("listenBtn").hidden=!tts||m==="codes";
   out.classList.toggle("mono",m==="layout");
   const name={text:"Text",layout:"Layout",md:"Markdown",table:"Tables",translate:`Translation into ${S.lang}`,explain:`Explanation in ${S.lang}`,fields:"Fields",codes:"Codes"}[m];
-  $("rInfo").innerHTML=`<b>${esc(name)}</b>`+(r?.at?` · ${esc(fmtDate(r.at))}${r.edited?" · edited":""}`:"");
+  $("rInfo").innerHTML=`<b>${esc(name)}</b>`+(r?.at?` · ${esc(fmtDate(r.at))}${r.engine==="local"?" · read offline":""}${r.edited?" · edited":""}`:"");
   ph.hidden=true;
   if(TEXTY(m)){
     rich.hidden=true;out.hidden=false;
@@ -463,10 +514,11 @@ function showPh(kind){
   if(kind==="busy"){ph.innerHTML=`<div class="spin"></div><div>${esc(S.mode==="table"?"Reading the table…":S.mode==="fields"?"Finding the fields…":"Reading…")}</div>`;return;}
   if(kind==="wait"){ph.innerHTML=`<div>Waiting for the images before it…</div>`;return;}
   const err=cur.err[rkey()];
-  const d=document.createElement("div");d.textContent=err||(sample?(limits?.images?MODE[S.mode].empty:"This view can't send images to Claude. Open Image to Text in the Claude desktop app or claude.ai."):"Reading text needs Claude: open Image to Text in the Claude app. QR codes and barcodes still work here.");
+  const local=engineFor(S.mode)==="local";
+  const d=document.createElement("div");d.textContent=err||(canRead(S.mode)?MODE[S.mode].empty+(local&&!claudeOK()?" Reading offline here: printed English text only. Open the app in Claude for any language and handwriting.":""):sample?"This view can't send images to Claude. Open Image to Text in the Claude desktop app or claude.ai.":"This mode needs Claude: open Image to Text in the Claude app. Text, QR codes and barcodes also work offline here.");
   if(err)d.style.color="var(--bad)";
   ph.append(d);
-  if(sample&&limits?.images){const b=document.createElement("button");b.className="btn pri";b.textContent=err?"Try again":MODE[S.mode].run;b.onclick=()=>enqueue([cur],!!err);ph.append(b);}
+  if(canRead(S.mode)){const b=document.createElement("button");b.className="btn pri";b.textContent=err?"Try again":MODE[S.mode].run;b.onclick=()=>enqueue([cur],!!err);ph.append(b);}
 }
 function status(msg,isErr){
   const st=$("st");st.classList.toggle("err",!!isErr);
@@ -483,7 +535,8 @@ function status(msg,isErr){
 }
 
 /* text editing */
-$("out").addEventListener("input",()=>{const r=curResult();if(!r||$("out").readOnly)return;r.text=$("out").value;r.edited=true;persist(cur);status();});
+let foundT;
+$("out").addEventListener("input",()=>{const r=curResult();if(!r||$("out").readOnly)return;r.text=$("out").value;r.edited=true;persist(cur);status();clearTimeout(foundT);foundT=setTimeout(renderCodes,600);});
 function pushPrev(r){r.prev=r.prev||[];r.prev.push(JSON.parse(JSON.stringify({text:r.text,tables:r.tables,data:r.data})));if(r.prev.length>10)r.prev.shift();}
 $("undoBtn").onclick=()=>{const r=curResult();if(!r?.prev?.length)return;const p=r.prev.pop();Object.assign(r,p);r.edited=true;persist(cur);renderResult();toast("Restored the earlier version");};
 
@@ -550,8 +603,9 @@ function codeRow(c){
 }
 function renderCodes(){
   const box=$("codes");box.replaceChildren();
-  const show=S.mode!=="codes"&&cur?.codes?.length;box.hidden=!show;
-  if(show)cur.codes.slice(0,3).forEach(c=>box.append(codeRow(c)));
+  if(S.mode!=="codes"&&cur?.codes?.length)cur.codes.slice(0,3).forEach(c=>box.append(codeRow(c)));
+  renderFound(box);
+  box.hidden=!box.childElementCount;
 }
 function renderCodesPane(){
   const rich=$("rich");rich.replaceChildren();
@@ -590,10 +644,18 @@ async function scanCodes(it,force){
 /* ---------- area selection ---------- */
 let drag=null,selRect=null;
 const stage=$("stage");
-stage.addEventListener("pointerdown",e=>{if(e.button!==0||!cur)return;const b=stage.getBoundingClientRect();drag={x:e.clientX-b.left,y:e.clientY-b.top,b};stage.setPointerCapture(e.pointerId);$("selbar").hidden=true;});
+stage.addEventListener("pointerdown",e=>{if(e.button!==0||!cur||liveOn)return;const b=stage.getBoundingClientRect();drag={x:e.clientX-b.left,y:e.clientY-b.top,b};stage.setPointerCapture(e.pointerId);$("selbar").hidden=true;});
 stage.addEventListener("pointermove",e=>{if(!drag)return;const b=drag.b;const x=Math.max(0,Math.min(b.width,e.clientX-b.left)),y=Math.max(0,Math.min(b.height,e.clientY-b.top));selRect={x:Math.min(x,drag.x),y:Math.min(y,drag.y),w:Math.abs(x-drag.x),h:Math.abs(y-drag.y),bw:b.width,bh:b.height};const s=$("sel");s.hidden=false;Object.assign(s.style,{left:selRect.x+"px",top:selRect.y+"px",width:selRect.w+"px",height:selRect.h+"px"});});
 stage.addEventListener("pointerup",()=>{if(!drag)return;drag=null;if(!selRect||selRect.w<8||selRect.h<8){clearSel();return;}$("selbar").hidden=false;$("vtip").hidden=true;$("readSel").focus();});
 function clearSel(){selRect=null;$("sel").hidden=true;$("selbar").hidden=true;$("vtip").hidden=false;}
+const claudeOK=()=>!!(sample&&limits?.images);
+const LOCALM=["text","live"];
+function engineFor(mode,force){
+  if(force==="claude")return claudeOK()?"claude":null;
+  if(LOCALM.includes(mode)&&ocrState!=="no"&&(S.engine==="local"||!claudeOK()))return"local";
+  return claudeOK()?"claude":null;
+}
+const canRead=m=>m!=="codes"&&!!engineFor(m);
 $("cancelSel").onclick=clearSel;
 $("readSel").onclick=async()=>{
   if(!selRect||!cur)return;const src=cur,r=selRect;clearSel();
@@ -603,15 +665,256 @@ $("readSel").onclick=async()=>{
   const it=await makeItem(await toBlob(c),`${baseName(src.name)} (area)`);if(!it)return;
   items.splice(items.indexOf(src)+1,0,it);select(it);persist(it,true);scanQueue(it);
   if(S.mode==="codes")return;
-  if(sample&&limits?.images)enqueue([it],false);
+  if(canRead(S.mode))enqueue([it],false);
 };
 
+/* ---------- reading on this computer (ocrad.js: one script, no network after it loads) ---------- */
+let ocrState="unknown"; // unknown | ok | no
+async function ocrReady(){
+  if(ocrState!=="unknown")return ocrState==="ok";
+  try{await loadScript(LIB.ocrad);if(typeof window.OCRAD!=="function")throw 0;window.OCRAD(canvasOf(8,8));ocrState="ok";}catch{ocrState="no";}
+  return ocrState==="ok";
+}
+// grey → Otsu threshold → black text on white (light text on dark backgrounds is flipped)
+function binarize(src,sx,sy,sw,sh,scale){
+  const c=canvasOf(sw*scale,sh*scale),x=c.getContext("2d",{willReadFrequently:true});x.imageSmoothingQuality="high";x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(src,sx,sy,sw,sh,0,0,c.width,c.height);
+  const d=x.getImageData(0,0,c.width,c.height),p=d.data,n=p.length/4,g=new Uint8Array(n),h=new Float64Array(256);
+  for(let i=0;i<n;i++){const v=(p[i*4]*299+p[i*4+1]*587+p[i*4+2]*114)/1000|0;g[i]=v;h[v]++;}
+  let tot=0;for(let i=0;i<256;i++)tot+=i*h[i];let sB=0,wB=0,mx=-1,t=128;
+  for(let i=0;i<256;i++){wB+=h[i];if(!wB)continue;const wF=n-wB;if(!wF)break;sB+=i*h[i];const mB=sB/wB,mF=(tot-sB)/wF,b=wB*wF*(mB-mF)**2;if(b>mx){mx=b;t=i;}}
+  let below=0;for(let i=0;i<=t;i++)below+=h[i];const darkBg=below>n/2;
+  for(let i=0;i<n;i++){const v=(darkBg?g[i]>t:g[i]<=t)?0:255;p[i*4]=p[i*4+1]=p[i*4+2]=v;p[i*4+3]=255;}
+  x.putImageData(d,0,0);return c;
+}
+const ocrScale=(w,h)=>{let s=Math.max(w,h)<=2200?2:1;while(s>.5&&w*h*s*s>16e6)s/=1.5;return s;};
+function fixOcr(t){
+  return String(t||"").split("\n").map(l=>l.replace(/[ \t]+/g," ").replace(/(^|[\s(\d])1 (?=\d)/g,"$11").replace(/^[_\s]+$/,"").trim())
+    .join("\n").replace(/\n{3,}/g,"\n\n").trim();
+}
+async function localText(it){
+  if(!await ocrReady())throw Object.assign(new Error("local"),{code:"local_unavailable"});
+  const bmp=await createImageBitmap(it.blob);
+  try{const s=ocrScale(bmp.width,bmp.height);const c=binarize(bmp,0,0,bmp.width,bmp.height,s);await new Promise(r=>setTimeout(r,0));return fixOcr(window.OCRAD(c));}
+  finally{bmp.close?.();}
+}
+// Where the lines of text are: rows with many light/dark edges form bands; big gaps split a band into columns.
+function inkSegments(bmp){
+  const s=Math.min(1,1600/Math.max(bmp.width,bmp.height)),c=canvasOf(bmp.width*s,bmp.height*s),x=c.getContext("2d",{willReadFrequently:true});
+  x.drawImage(bmp,0,0,c.width,c.height);
+  const W=c.width,H=c.height,p=x.getImageData(0,0,W,H).data,g=new Uint8Array(W*H),E=new Uint8Array(W*H);
+  for(let i=0;i<W*H;i++)g[i]=(p[i*4]*299+p[i*4+1]*587+p[i*4+2]*114)/1000|0;
+  for(let y=1;y<H;y++)for(let xx=1;xx<W;xx++){const i=y*W+xx;if(Math.abs(g[i]-g[i-1])>34||Math.abs(g[i]-g[i-W])>34)E[i]=1;}
+  const rowT=new Uint16Array(H);
+  for(let y=0;y<H;y++){let n=0,prev=0;for(let xx=0;xx<W;xx++){const e=E[y*W+xx];if(e&&!prev)n++;prev=e;}rowT[y]=n;}
+  const bands=[];let y0=-1,gap=0;
+  for(let y=0;y<=H;y++){const on=y<H&&rowT[y]>=3;if(on){if(y0<0)y0=y;gap=0;}else if(y0>=0){if(++gap>1||y===H){const y1=y-gap;if(y1-y0+1>=5&&y1-y0+1<H*.3)bands.push([y0,y1]);y0=-1;gap=0;}}}
+  const segs=[];
+  for(const[a,b]of bands){
+    const bh=b-a+1,col=new Uint8Array(W);
+    for(let y=a;y<=b;y++)for(let xx=0;xx<W;xx++)if(E[y*W+xx])col[xx]=1;
+    const runs=[];let s0=-1;for(let xx=0;xx<=W;xx++){if(xx<W&&col[xx]){if(s0<0)s0=xx;}else if(s0>=0){runs.push([s0,xx-1]);s0=-1;}}
+    const merged=[];for(const r of runs){const l=merged[merged.length-1];if(l&&r[0]-l[1]<=Math.max(4,bh*1.1))l[1]=r[1];else merged.push([...r]);}
+    for(const[l,r]of merged){if(r-l+1<bh*.45)continue;
+      let t=b,bt=a;for(let y=a;y<=b;y++)for(let xx=l;xx<=r;xx++)if(E[y*W+xx]){if(y<t)t=y;if(y>bt)bt=y;break;}
+      const pad=Math.max(1,(bt-t+1)*.12);
+      segs.push({x0:Math.max(0,(l-pad)/W),y0:Math.max(0,(t-pad)/H),x1:Math.min(1,(r+1+pad)/W),y1:Math.min(1,(bt+1+pad)/H)});}
+  }
+  return segs;
+}
+function snapLines(lines,segs){
+  return lines.map(ln=>{
+    const[l,t,r,b]=ln.box,h=b-t;let u=null;
+    for(const s of segs){const cy=(s.y0+s.y1)/2,sh=s.y1-s.y0;if(cy<t-h*.35||cy>b+h*.35||sh>h*2.6||sh<h*.3)continue;
+      const ov=Math.min(r,s.x1)-Math.max(l,s.x0);if(ov<(s.x1-s.x0)*.35)continue;
+      u=u?[Math.min(u[0],s.x0),Math.min(u[1],s.y0),Math.max(u[2],s.x1),Math.max(u[3],s.y1)]:[s.x0,s.y0,s.x1,s.y1];}
+    return u?{...ln,box:u}:ln;
+  });
+}
+
+/* ---------- Live Text: select words right on the image ---------- */
+let liveOn=false,liveJob=null;
+function normLive(d){
+  const arr=Array.isArray(d?.lines)?d.lines:Array.isArray(d)?d:[];
+  return arr.map(l=>{const b=Array.isArray(l?.box)?l.box.map(Number):[];if(b.length!==4||b.some(v=>!isFinite(v)))return null;
+    let[x0,y0,x1,y1]=b.map(v=>Math.max(0,Math.min(1000,v))/1000);if(x1<x0)[x0,x1]=[x1,x0];if(y1<y0)[y0,y1]=[y1,y0];
+    const text=String(l?.text??"").replace(/\s*\n\s*/g," ").trim();return text&&x1-x0>.002&&y1-y0>.002?{text,box:[x0,y0,x1,y1]}:null;}).filter(Boolean);
+}
+async function liveLines(it,ctl){
+  const bmp=await createImageBitmap(it.blob);let segs=[];
+  try{segs=inkSegments(bmp);
+    if(engineFor("live")==="claude"){
+      const[img]=await tilesFor(it,1);
+      const data=await sample.json(`The attached image is a screenshot, photo or scan. Find every line of text in it. Reply with only JSON of this shape: {"lines":[{"text":"exact text of the line","box":[left,top,right,bottom]}]}. box is the tight bounding box of that line, as integers from 0 to 1000 measured across the image's full width (left, right) and full height (top, bottom). One entry per visual line; where a wide gap separates columns or table cells, make separate entries. List entries in natural reading order. Keep the text exactly as written, including handwriting; do not translate or correct. If there is no text, reply {"lines":[]}.`,{images:[img],modelTier:S.best?"default":"quick",signal:ctl.signal});
+      return{lines:snapLines(normLive(data),segs),engine:"claude"};
+    }
+    if(!await ocrReady())throw Object.assign(new Error("local"),{code:"local_unavailable"});
+    const lines=[];
+    for(const s of segs){
+      if(ctl.signal.aborted)throw{code:"cancelled"};
+      const sx=s.x0*bmp.width,sy=s.y0*bmp.height,sw=(s.x1-s.x0)*bmp.width,sh=(s.y1-s.y0)*bmp.height;
+      const sc=Math.max(2,Math.min(4,56/sh));
+      const c=binarize(bmp,Math.max(0,sx-4),Math.max(0,sy-4),sw+8,sh+8,sc);
+      const text=fixOcr(window.OCRAD(c)).replace(/\s*\n\s*/g," ").trim();
+      if(/[\p{L}\p{N}]{2,}/u.test(text))lines.push({text,box:[s.x0,s.y0,s.x1,s.y1]});
+    }
+    return{lines,engine:"local"};
+  }finally{bmp.close?.();}
+}
+async function ensureLive(it){
+  if(!liveOn||!it)return;
+  if(it.results.live?.lines){renderLive(true);return;}
+  if(!engineFor("live")){toast(sample?ERR.images_unavailable:"Selecting text on the image needs Claude here. Open Image to Text in the Claude app.");setLive(false);return;}
+  if(liveJob?.it===it)return;
+  liveJob?.ctl.abort();
+  const ctl=new AbortController();liveJob={it,ctl};
+  $("vtip").textContent="Finding the text on the image…";$("vtip").hidden=false;$("liveBtn").disabled=false;
+  try{
+    const{lines,engine}=await liveLines(it,ctl);
+    it.results.live={lines,engine,at:Date.now(),prev:[]};persist(it);
+    if(cur===it){renderLive(true);if(!lines.length)toast("No text found on this image.");}
+  }catch(e){
+    if(e?.code!=="cancelled"&&cur===it){toast(ERR[e?.code]||"Couldn't find the text on this image. Try again.");if(e?.code==="local_unavailable")setLive(false);}
+  }finally{if(liveJob?.ctl===ctl)liveJob=null;if(cur===it)liveTip();}
+}
+function liveTip(){const v=$("vtip");v.hidden=!!selRect;v.textContent=liveOn?(cur?.results.live?.lines?.length?"Drag across the words to select them · ⌘C copies":liveJob?"Finding the text on the image…":"No text found"):"Drag over the image to read just one area";}
+function setLive(on){
+  liveOn=on;document.body.classList.toggle("livetext",on);
+  $("liveBtn").classList.toggle("on",on);$("liveBtn").setAttribute("aria-pressed",String(on));$("liveBtn").textContent=on?"Done selecting":"Select text";
+  if(on){clearSel();ensureLive(cur);}else{liveJob?.ctl.abort();liveJob=null;getSelection().removeAllRanges();$("lsel").hidden=true;}
+  renderLive();liveTip();
+}
+function renderLive(glow){
+  const L=$("live");L.replaceChildren();L.classList.remove("glow");
+  const lines=liveOn&&cur?cur.results.live?.lines:null;if(!lines?.length)return;
+  const st=$("stage"),SW=st.clientWidth,SH=st.clientHeight,spans=[];
+  for(const ln of lines){
+    const[x0,y0,x1,y1]=ln.box,h=(y1-y0)*SH,w=(x1-x0)*SW;
+    const sp=document.createElement("span");sp.className="ln";sp.textContent=ln.text;sp.title="";
+    Object.assign(sp.style,{left:x0*SW+"px",top:y0*SH+"px",height:h+"px",fontSize:Math.max(3,h*.8)+"px",lineHeight:h+"px"});
+    sp._w=w;L.append(sp);spans.push(sp);
+  }
+  const ws=spans.map(sp=>sp.getBoundingClientRect().width);
+  spans.forEach((sp,i)=>{if(ws[i]>0)sp.style.transform=`scaleX(${sp._w/ws[i]})`;});
+  if(glow){void L.offsetWidth;L.classList.add("glow");}
+}
+function liveSelText(){
+  const sel=getSelection();if(!sel.rangeCount||sel.isCollapsed)return"";
+  const r=sel.getRangeAt(0);if(!$("live").contains(r.commonAncestorContainer)&&r.commonAncestorContainer!==$("live"))return"";
+  const out=[];
+  for(const sp of $("live").querySelectorAll(".ln")){if(!r.intersectsNode(sp))continue;const t=sp.firstChild;if(!t)continue;let a=0,b=t.length;if(r.startContainer===t)a=r.startOffset;if(r.endContainer===t)b=r.endOffset;const s=t.data.slice(a,b);if(s)out.push(s);}
+  return out.join("\n");
+}
+document.addEventListener("copy",e=>{if(!liveOn)return;const t=liveSelText();if(!t)return;e.preventDefault();e.clipboardData.setData("text/plain",t);toast("Copied");});
+let lselT;
+document.addEventListener("selectionchange",()=>{clearTimeout(lselT);lselT=setTimeout(placeLsel,120);});
+function placeLsel(){
+  const box=$("lsel"),t=liveOn?liveSelText():"";
+  if(!t){box.hidden=true;return;}
+  const rr=getSelection().getRangeAt(0).getBoundingClientRect();
+  $("lsSearch").href="https://www.google.com/search?q="+encodeURIComponent(t.slice(0,300));
+  $("lsTr").hidden=!sample;
+  box.hidden=false;const bw=box.offsetWidth,bh=box.offsetHeight;
+  let top=rr.top-bh-8;if(top<8)top=rr.bottom+8;
+  box.style.left=Math.max(8,Math.min(innerWidth-bw-8,rr.left+rr.width/2-bw/2))+"px";box.style.top=Math.min(innerHeight-bh-8,top)+"px";
+}
+$("lsCopy").onclick=async()=>{const t=liveSelText();if(t)await copyText(t,"Copied");};
+$("lsTr").onclick=()=>translateSnippet(liveSelText(),$("lsTr"));
+$("liveBtn").onclick=()=>setLive(!liveOn);
+function selectAllLive(){const L=$("live");if(!L.firstChild)return;const r=document.createRange();r.setStartBefore(L.firstChild);r.setEndAfter(L.lastChild);const s=getSelection();s.removeAllRanges();s.addRange(r);}
+let trCtl=null;
+async function translateSnippet(text,anchor){
+  if(!text)return;if(!sample){toast("Translating needs Claude: open Image to Text in the Claude app.");return;}
+  trCtl?.abort();const ctl=new AbortController();trCtl=ctl;
+  const out=document.createElement("div");out.className="tr";out.textContent="Translating…";
+  const pick=document.createElement("div");pick.className="row";const lb=document.createElement("span");lb.textContent="Into";const sl=document.createElement("select");sl.innerHTML=LANGS.map(l=>`<option>${esc(l)}</option>`).join("");sl.value=S.lang;pick.append(lb,sl);
+  const tools=document.createElement("div");tools.className="row";const cp=document.createElement("button");cp.className="btn";cp.textContent="Copy translation";cp.style.width="auto";tools.append(cp);
+  let done="";cp.onclick=()=>{if(done)copyText(done,"Translation copied");};
+  const run=async()=>{
+    done="";out.textContent="Translating…";
+    try{const r=await sample(`Translate the following text into ${sl.value}. Keep line breaks, names, numbers and URLs. If it is already in ${sl.value}, return it unchanged. Output only the translation.\n"""\n${text.slice(0,20000)}\n"""`,{modelTier:"quick",signal:ctl.signal,onText:({text})=>{out.textContent=text;}});done=cleanText(r.text);out.textContent=done||"Nothing to translate.";}
+    catch(e){if(e?.code!=="cancelled")out.textContent=ERR[e?.code]||"Couldn't translate. Try again.";}
+  };
+  sl.onchange=()=>{setS("lang",sl.value);$("lang").value=sl.value;run();};
+  openMenu(anchor,[{h:"Translation"},{node:pick},{node:out},{node:tools}]);
+  run();
+}
+
+/* ---------- data detectors: links, emails, phones, dates, addresses ---------- */
+const MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+const MONRE="(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\.?";
+const US=/^en-(us|ca|ph)/i.test(navigator.language||"en-US");
+function withTime(t,end,date){
+  const m=t.slice(end,end+24).match(/^,?\s*(?:at|@|from|,)?\s*(\d{1,2})(?::(\d{2}))?\s*([ap])\.?\s?m\.?|^,?\s*(?:at|@|from|,)?\s*(\d{1,2}):(\d{2})(?!\d)/i);
+  if(!m)return{date,allDay:true,len:0};
+  let h=+(m[1]??m[4]),mi=+(m[2]??m[5]??0);const ap=m[3]?.toLowerCase();
+  if(ap==="p"&&h<12)h+=12;if(ap==="a"&&h===12)h=0;if(h>23||mi>59)return{date,allDay:true,len:0};
+  const d=new Date(date);d.setHours(h,mi,0,0);return{date:d,allDay:false,len:m[0].length};
+}
+function mkDate(y,mo,d){if(y!=null&&y<100)y+=2000;const now=new Date();let dt=new Date(y??now.getFullYear(),mo,d);if(y==null&&dt<new Date(now.getFullYear(),now.getMonth(),now.getDate()-30))dt=new Date(now.getFullYear()+1,mo,d);return dt.getMonth()===mo&&dt.getDate()===d?dt:null;}
+function findDates(t){
+  const out=[];const push=(m,dt)=>{if(!dt)return;const x=withTime(t,m.index+m[0].length,dt);out.push({type:"date",val:t.slice(m.index,m.index+m[0].length+x.len).trim().replace(/[.,;:]+$/,""),date:x.date,allDay:x.allDay,at:m.index});};
+  for(const m of t.matchAll(new RegExp(`\\b${MONRE}\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?\\b`,"gi")))push(m,mkDate(m[3]?+m[3]:null,MON[m[1].slice(0,3).toLowerCase()],+m[2]));
+  for(const m of t.matchAll(new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?${MONRE}(?:,?\\s+(\\d{4}))?\\b`,"gi")))push(m,mkDate(m[3]?+m[3]:null,MON[m[2].slice(0,3).toLowerCase()],+m[1]));
+  for(const m of t.matchAll(/\b(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\b/g))push(m,mkDate(+m[1],+m[2]-1,+m[3]));
+  for(const m of t.matchAll(/\b(\d{1,2})[/.](\d{1,2})[/.](\d{4}|\d{2})\b/g)){let a=+m[1],b=+m[2];const us=US?a<=12:b>12&&a<=12;push(m,us?mkDate(+m[3],a-1,b):mkDate(+m[3],b-1,a));}
+  for(const m of t.matchAll(/(?:(\d{4})\s*年\s*)?(\d{1,2})\s*月\s*(\d{1,2})\s*[日号]/g))push(m,mkDate(m[1]?+m[1]:null,+m[2]-1,+m[3]));
+  out.sort((a,b)=>a.at-b.at);return out.filter((d,i)=>!out.slice(0,i).some(o=>d.at<o.at+o.val.length));
+}
+function detect(t){
+  t=String(t||"").slice(0,60000);const out=[],seen=new Set();
+  const add=d=>{const k=d.type+":"+d.val.toLowerCase();if(seen.has(k)||out.length>=24)return;seen.add(k);out.push(d);};
+  const strip=s=>s.replace(/[.,;:!?)\]}'"»”’]+$/,"");
+  const emails=[...t.matchAll(/[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi)].map(m=>strip(m[0]));
+  emails.forEach(e=>add({type:"email",val:e}));
+  const rest=t.replace(/[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/gi," ");
+  for(const m of rest.matchAll(/\b(?:https?:\/\/|www\.)[^\s<>"'`]+|\b(?:[a-z0-9-]+\.)+(?:com|org|net|io|ai|app|dev|co|gov|edu|me|info|cn|uk|de|jp|fr|ly|so|xyz|tv|us|ca|au|in|eu|link|site|shop)\b(?:\/[^\s<>"'`]*)?/gi)){
+    const u=strip(m[0]);if(u.length<5)continue;add({type:"link",val:u,href:/^https?:\/\//i.test(u)?u:"https://"+u});}
+  for(const m of rest.matchAll(/(?<![\w/.:-])(?:\+\d{1,3}[\s.-]?)?(?:\(\d{1,4}\)[\s.-]?)?\d{2,4}(?:[\s.-]\d{2,5}){1,4}(?![\w/:-])|(?<!\d)1[3-9]\d{9}(?!\d)|(?<![\w])\+\d{8,14}(?!\d)/g)){
+    const v=m[0].trim(),n=v.replace(/\D/g,"").length;
+    if(n<7||n>15||/^\d{4}[-.]\d{1,2}[-.]\d{1,2}$/.test(v)||/^\d{1,2}[.-]\d{1,2}[.-]\d{2,4}$/.test(v)||/^\d+\.\d+$/.test(v))continue;
+    if(!/[+(]/.test(v)&&!/[\s.-]/.test(v)&&n<11)continue;
+    add({type:"phone",val:v});}
+  for(const d of findDates(t))add(d);
+  const SUF="Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Lane|Ln|Drive|Dr|Way|Court|Ct|Place|Pl|Parkway|Pkwy|Square|Sq|Terrace|Ter|Highway|Hwy|Circle|Cir|Plaza|Alley|Strasse|Straße";
+  for(const m of t.matchAll(new RegExp(`\\b\\d{1,6}\\s+(?:[A-Z][\\w.'-]*\\s+){0,5}(?:${SUF})\\b\\.?(?:,?\\s*(?:Suite|Ste|Apt|Unit|Floor|Fl|#)\\.?\\s*\\w+)?(?:,\\s*[A-Z][a-z][\\w.'-]*(?:\\s[A-Z][a-z][\\w.'-]*){0,3}){0,2}(?:,?\\s+[A-Z]{2}\\s+\\d{5}(?:-\\d{4})?)?(?=[\\s,.;]|$)`,"g")))add({type:"address",val:strip(m[0].trim())});
+  for(const m of t.matchAll(/[\u4e00-\u9fa5]{2,}(?:省|市|区|县)[\u4e00-\u9fa5\d]{1,24}(?:路|街|道|巷|弄)[\d\u4e00-\u9fa5号楼栋室层-]{0,16}/g))add({type:"address",val:m[0]});
+  return out;
+}
+const DTYPE={link:"Link",email:"Email",phone:"Phone",date:"Date",address:"Address"};
+const pad2=n=>String(n).padStart(2,"0");
+const icsDate=(d,day)=>`${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}`+(day?"":`T${pad2(d.getHours())}${pad2(d.getMinutes())}00`);
+function eventTitle(){const t=(plainOf(cur)||"").split("\n").map(s=>s.trim()).find(s=>s.length>2)||cur?.name||"Event";return t.slice(0,80);}
+function icsOf(d,title){
+  const end=new Date(d.date);if(d.allDay)end.setDate(end.getDate()+1);else end.setHours(end.getHours()+1);
+  const e=s=>String(s).replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/([,;])/g,"\\$1");
+  return["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Image to Text//EN","BEGIN:VEVENT",`UID:${uid()}@image-to-text`,`DTSTAMP:${icsDate(new Date())}`,d.allDay?`DTSTART;VALUE=DATE:${icsDate(d.date,1)}`:`DTSTART:${icsDate(d.date)}`,d.allDay?`DTEND;VALUE=DATE:${icsDate(end,1)}`:`DTEND:${icsDate(end)}`,`SUMMARY:${e(title)}`,`DESCRIPTION:${e("From "+(cur?.name||"an image")+": "+d.val)}`,"END:VEVENT","END:VCALENDAR"].join("\r\n")+"\r\n";
+}
+function detectMenu(d){
+  const L=[{h:`${DTYPE[d.type]} · ${d.val.length>40?d.val.slice(0,40)+"…":d.val}`}],enc=encodeURIComponent;
+  if(d.type==="link")L.push({label:"Open link",hint:"browser",href:d.href},{label:"Copy link",fn:()=>copyText(d.href,"Link copied")});
+  if(d.type==="email")L.push({label:"Copy address",fn:()=>copyText(d.val,"Email address copied")},{label:"Write an email",hint:"mail app",href:"mailto:"+d.val});
+  if(d.type==="phone")L.push({label:"Copy number",fn:()=>copyText(d.val,"Phone number copied")},{label:"Call",hint:"phone app",href:"tel:"+d.val.replace(/[^\d+]/g,"")});
+  if(d.type==="date"){const title=eventTitle();const end=new Date(d.date);if(d.allDay)end.setDate(end.getDate()+1);else end.setHours(end.getHours()+1);
+    L.push({label:"Add to Google Calendar",hint:"browser",href:`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(title)}&dates=${icsDate(d.date,d.allDay)}/${icsDate(end,d.allDay)}&details=${enc(d.val)}`},
+      {label:"Save calendar event",hint:".ics",fn:()=>save(baseName(title)+".ics",icsOf(d,title))},{label:"Copy date",fn:()=>copyText(d.val,"Date copied")});}
+  if(d.type==="address")L.push({label:"Open in Apple Maps",hint:"browser",href:"https://maps.apple.com/?q="+enc(d.val)},{label:"Open in Google Maps",hint:"browser",href:"https://www.google.com/maps/search/?api=1&query="+enc(d.val)},{label:"Copy address",fn:()=>copyText(d.val,"Address copied")});
+  return L;
+}
+function renderFound(box){
+  if(!cur||S.mode==="codes")return;
+  const found=detect(plainOf(cur));if(!found.length)return;
+  const w=document.createElement("div");w.className="found";
+  for(const d of found.slice(0,12)){const c=document.createElement("button");c.type="button";c.className="chip";c.title=d.val;c.innerHTML=`<b>${esc(DTYPE[d.type])}</b><span></span>`;c.querySelector("span").textContent=d.val;c.onclick=()=>openMenu(c,detectMenu(d));w.append(c);}
+  box.append(w);
+}
+
 /* ---------- Claude ---------- */
-const ERR={rate_limited:"Claude is busy or you've reached your usage limit. Try again in a little while.",not_granted:"Claude isn't allowed for this app. Allow it from the app's menu to read images.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined to read this image.",session_expired:"Sign in to Claude again, then try once more.",prompt_too_large:"That image is too much to read at once. Select a smaller area and try again.",images_unavailable:"This view can't send images to Claude. Open the app in the Claude desktop app or claude.ai.",image_rejected:"Claude couldn't open this image. Save it as PNG or JPEG and try again.",invalid_json:"Claude's answer didn't come back in the expected shape. Click Read again.",network_error:"Lost the connection to Claude. Check your network and try again."};
-function enqueue(its,fresh){
-  if(!sample||!limits?.images){toast(sample?ERR.images_unavailable:"Reading text needs Claude: open Image to Text in the Claude app.");return;}
+const ERR={rate_limited:"Claude is busy or you've reached your usage limit. Try again in a little while.",not_granted:"Claude isn't allowed for this app. Allow it from the app's menu to read images.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined to read this image.",session_expired:"Sign in to Claude again, then try once more.",prompt_too_large:"That image is too much to read at once. Select a smaller area and try again.",images_unavailable:"This view can't send images to Claude. Open the app in the Claude desktop app or claude.ai.",image_rejected:"Claude couldn't open this image. Save it as PNG or JPEG and try again.",invalid_json:"Claude's answer didn't come back in the expected shape. Click Read again.",network_error:"Lost the connection to Claude. Check your network and try again.",local_unavailable:"Reading on this computer isn't available in this window. Open Image to Text in the Claude app to read with Claude."};
+function enqueue(its,fresh,extra={}){
   const mode=S.mode;if(mode==="codes")return;
-  for(const it of its){const key=rkey(mode);if(!fresh&&it.results[key])continue;if(queue.some(q=>q.it===it&&q.key===key)||(job?.it===it&&job.key===key))continue;queue.push({it,fresh,mode,key,lang:S.lang,ftype:S.ftype,hint:S.hint});}
+  const engine=engineFor(mode,extra.force);
+  if(!engine){toast(sample?ERR.images_unavailable:"This mode needs Claude: open Image to Text in the Claude app. Text, QR codes and barcodes also work offline.");return;}
+  for(const it of its){const key=rkey(mode);if(!fresh&&it.results[key]){if(extra.capture&&it===its[0])deliverCapture(it,{mode,key});continue;}if(queue.some(q=>q.it===it&&q.key===key)||(job?.it===it&&job.key===key))continue;queue.push({it,fresh,mode,key,lang:S.lang,ftype:S.ftype,hint:S.hint,engine,capture:!!extra.capture});}
   renderStrip();if(cur)renderResult();pump();
 }
 async function pump(){
@@ -672,6 +975,11 @@ async function runOne(q){
   const tier=json||q.mode==="explain"||S.best?"default":"quick";
   const opt={signal:ctl.signal,modelTier:tier};if(q.fresh)opt.cache=false;
   try{
+    if(q.engine==="local"){
+      live(null,"Reading on this computer…");
+      let text=await localText(it);if(S.breaks==="join")text=joinLines(text);
+      setResult(it,q.key,{text,engine:"local"});
+    }else{
     const tiles=await tilesFor(it,json?max:max*4);
     if(json){
       live(null,q.mode==="table"?"Reading the table…":"Finding the fields…");
@@ -692,10 +1000,13 @@ async function runOne(q){
       setResult(it,q.key,{text,truncated:trunc});
       if(trunc&&cur===it)toast("The answer was cut short. Select a smaller area to read the rest.");
     }
-    if(S.autocopy&&cur===it&&rkey()===q.key){await copyCurrent(true);}
+    }
+    if(q.capture)await deliverCapture(it,q);
+    else if(S.autocopy&&cur===it&&rkey()===q.key){await copyCurrent(true);}
   }catch(e){
     const code=e?.code;
-    if(code==="cancelled"){if(e.text&&TEXTY(q.mode)&&!it.results[q.key])setResult(it,q.key,{text:cleanText(e.text),partial:true});}
+    if(code==="local_unavailable"&&claudeOK()){queue.unshift({...q,engine:"claude",fresh:true});}
+    else if(code==="cancelled"){if(e.text&&TEXTY(q.mode)&&!it.results[q.key])setResult(it,q.key,{text:cleanText(e.text),partial:true});}
     else{
       if(e?.text&&TEXTY(q.mode)&&code!=="refused"&&!it.results[q.key])setResult(it,q.key,{text:cleanText(e.text),partial:true});
       it.err[q.key]=ERR[code]||(e instanceof Error?"Couldn't prepare this image. Try another file.":"Something went wrong. Try again.");
@@ -800,10 +1111,11 @@ function renderStack(){const s=$("stackInfo");s.hidden=!S.stack;if(!S.stack)retu
 
 async function save(filename,data){
   if(!downloads){toast("Saving files needs the Claude app. Use Copy instead.");return;}
-  if(/\.vcf$/i.test(filename)){
-    // .vcf isn't on the download allowlist: ship it inside a .zip; opening the zip gives a .vcf Contacts can import
-    try{await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");const z=new window.JSZip();z.file(filename,data);data=await z.generateAsync({type:"uint8array"});filename=filename.replace(/\.vcf$/i,"")+" (vCard).zip";}
-    catch{toast("Couldn't package the contact. Use Copy vCard instead.");return;}
+  if(/\.(vcf|ics)$/i.test(filename)){
+    // .vcf and .ics aren't on the download allowlist: ship them inside a .zip; opening the zip gives a file Contacts or Calendar can import
+    const ics=/\.ics$/i.test(filename);
+    try{await loadScript(LIB.jszip);const z=new window.JSZip();z.file(filename,data);data=await z.generateAsync({type:"uint8array"});filename=filename.replace(/\.(vcf|ics)$/i,"")+(ics?" (calendar event).zip":" (vCard).zip");}
+    catch{toast(ics?"Couldn't package the event. Use Google Calendar instead.":"Couldn't package the contact. Use Copy vCard instead.");return;}
   }
   try{await downloads.save({filename,data});toast(`Saved ${filename}`);}
   catch(e){toast({declined:"Save cancelled.",rejected_extension:"This file type can't be saved here. Use Copy instead.",extension_not_enabled:"That file type isn't available here.",rate_limited:"Another save is still open. Try again in a moment.",too_large:"That file is too large to save here."}[e?.code]||"Couldn't save the file.");}
@@ -819,6 +1131,7 @@ function exportMenu(){
   const it=cur;if(!it)return[];const m=S.mode,r=it.results[rkey()],b=baseName(it.name),L=[];
   if(TEXTY(m)){const t=r?.text||"";if(!t)return[{h:"Nothing to export yet"}];
     L.push({label:"Plain text",hint:".txt",fn:()=>save(b+".txt",t)},{label:"Markdown",hint:".md",fn:()=>save(b+".md",t)});
+    L.push({label:"Search the web for this text",hint:"browser",href:"https://www.google.com/search?q="+encodeURIComponent(t.replace(/\s+/g," ").trim().slice(0,300))});
     if(m==="md")L.push({label:"Web page",hint:".html",fn:()=>save(b+".html",`<!doctype html><meta charset="utf-8"><title>${esc(b)}</title><pre style="white-space:pre-wrap;font:15px/1.5 system-ui">${esc(t)}</pre>`)});
   }else if(m==="table"){const T=r?.tables||[];if(!T.length)return[{h:"Nothing to export yet"}];
     L.push({label:"Excel workbook",hint:".xlsx",fn:async()=>{const d=await xlsx(T.map((t,i)=>[t.title||`Table ${i+1}`,t.rows]));if(d)save(b+".xlsx",d);}});
@@ -871,6 +1184,7 @@ function openMenu(anchor,list){
     if(x.sep){m.append(document.createElement("hr"));continue;}
     if(x.h){const d=document.createElement("div");d.className="mh";d.textContent=x.h;m.append(d);continue;}
     if(x.node){m.append(x.node);continue;}
+    if(x.href){const a=document.createElement("a");a.className="mi";a.role="menuitem";a.href=x.href;a.target="_blank";a.rel="noopener noreferrer";a.innerHTML=`<span>${esc(x.label)}</span>${x.hint?`<small>${esc(x.hint)}</small>`:""}`;a.onclick=()=>setTimeout(closeMenu,0);m.append(a);continue;}
     const b=document.createElement("button");b.role="menuitem";b.innerHTML=`<span>${esc(x.label)}</span>${x.hint?`<small>${esc(x.hint)}</small>`:""}`;
     b.onclick=()=>{closeMenu();x.fn();};m.append(b);
   }
@@ -878,18 +1192,25 @@ function openMenu(anchor,list){
   const r=anchor.getBoundingClientRect(),mw=m.offsetWidth,mh=m.offsetHeight;
   let left=Math.min(Math.max(8,r.right-mw),innerWidth-mw-8),top=r.bottom+4;if(top+mh>innerHeight-8)top=Math.max(8,r.top-mh-4);
   m.style.left=left+"px";m.style.top=top+"px";
-  m.querySelector("button,input,select")?.focus({preventScroll:true});
+  m.querySelector("button,a,input,select")?.focus({preventScroll:true});
 }
 function closeMenu(){$("menu").hidden=true;menuFrom=null;}
 document.addEventListener("pointerdown",e=>{if(!$("menu").hidden&&!$("menu").contains(e.target)&&e.target!==menuFrom&&!menuFrom?.contains(e.target))closeMenu();});
-$("menu").addEventListener("keydown",e=>{const bs=[...$("menu").querySelectorAll("button")];const i=bs.indexOf(document.activeElement);if(e.key==="ArrowDown"){e.preventDefault();bs[(i+1)%bs.length]?.focus();}if(e.key==="ArrowUp"){e.preventDefault();bs[(i-1+bs.length)%bs.length]?.focus();}});
+$("menu").addEventListener("keydown",e=>{const bs=[...$("menu").querySelectorAll("button,a.mi")];const i=bs.indexOf(document.activeElement);if(e.key==="ArrowDown"){e.preventDefault();bs[(i+1)%bs.length]?.focus();}if(e.key==="ArrowUp"){e.preventDefault();bs[(i-1+bs.length)%bs.length]?.focus();}});
 
 /* settings */
+function hotkeySel(){
+  const d=document.createElement("div");d.className="row";const s=document.createElement("span");s.textContent="Shortcut";const x=document.createElement("select");
+  x.innerHTML=HOTKEYS.map(([v,t])=>`<option value="${esc(v)}">${esc(t)}</option>`).join("");x.value=S.hotkey;
+  x.onchange=async()=>{const old=S.hotkey;setS("hotkey",x.value);if(perms.shortcuts==="granted"){if(await registerHotkey()){setTray();setupDesktop();toast(`${hkLabel(x.value)} now reads a copied screenshot`);}else{setS("hotkey",old);x.value=old;await registerHotkey();}}};
+  d.append(s,x);return{node:d};
+}
 $("setBtn").onclick=()=>{
   const chk=(k,label,help,after)=>{const l=document.createElement("label");const i=document.createElement("input");i.type="checkbox";i.checked=!!S[k];i.onchange=()=>{setS(k,i.checked);after?.();};const s=document.createElement("span");s.innerHTML=`${esc(label)}${help?`<br><small style="color:var(--muted)">${esc(help)}</small>`:""}`;l.append(i,s);return{node:l};};
   const sel=(label,k,opts)=>{const d=document.createElement("div");d.className="row";const s=document.createElement("span");s.textContent=label;const x=document.createElement("select");x.innerHTML=opts.map(([v,t])=>`<option value="${esc(v)}">${esc(t)}</option>`).join("");x.value=S[k];x.onchange=()=>setS(k,x.value);d.append(s,x);return{node:d};};
+  const selR=(...a)=>{const n=sel(...a);n.node.querySelector("select").addEventListener("change",()=>{if(cur)renderResult();});return n;};
   const help=document.createElement("div");help.className="help";
-  help.innerHTML=`<kbd>⌘V</kbd> paste an image · <kbd>⌘O</kbd> open files · <kbd>⌘↩</kbd> read again · <kbd>⌘⇧C</kbd> copy · <kbd>⌘S</kbd> export · <kbd>⌘1</kbd>–<kbd>⌘8</kbd> modes · <kbd>⌘Y</kbd> history · <kbd>←</kbd><kbd>→</kbd> previous / next image · <kbd>Esc</kbd> stop`+(sc?` · <kbd>⌥⇧O</kbd> bring this window up from anywhere`:"");
+  help.innerHTML=`<kbd>⌘V</kbd> paste an image · <kbd>⌘O</kbd> open files · <kbd>⌘↩</kbd> read again · <kbd>⌘⇧C</kbd> copy · <kbd>⌘S</kbd> export · <kbd>⌘1</kbd>–<kbd>⌘8</kbd> modes · <kbd>⌘Y</kbd> history · <kbd>←</kbd><kbd>→</kbd> previous / next image · <kbd>Esc</kbd> stop`+` · <kbd>T</kbd> select text on the image`+(scKey?` · <kbd>${esc(hkLabel(scKey))}</kbd> read a copied screenshot from any app`:"");
   openMenu($("setBtn"),[
     {h:"Reading"},
     chk("auto","Read as soon as an image is added","Paste, drop or open and the text appears"),
@@ -897,9 +1218,11 @@ $("setBtn").onclick=()=>{
     chk("best","Best accuracy in every mode","Slower. Text, Layout and Translate use the fast model otherwise"),
     sel("Text language","hint",[["Auto","Detect"],...LANGS.map(l=>[l,l])]),
     sel("Line breaks","breaks",[["keep","Keep as in the image"],["join","Join into paragraphs"]]),
+    ...(ocrState==="no"?[]:[selR("Text engine","engine",[["claude","Claude (best)"],["local","Offline (English)"]])]),
     {sep:1},{h:"Clipboard & history"},
     chk("stack","Clipboard stack","Each Copy adds to what you copied before, so you can collect text from several images",renderStack),
     chk("keep","Keep history on this computer","Images and results are saved only in this app's local storage",()=>{if(S.keep)items.forEach(it=>persist(it,true));}),
+    ...(desktop?.globalShortcut?[{sep:1},{h:"Quick capture"},hotkeySel(),chk("hideAfter","Hide the window after copying","So you can paste right back where you were")]:[]),
     {node:help}
   ]);
 };
@@ -961,7 +1284,7 @@ $("runBtn").onclick=()=>{
   if(!cur)return;const key=rkey();
   if(job?.it===cur&&job.key===key){job.ctl.abort();return;}
   if(S.mode==="codes"){scanQueue(cur,true);return;}
-  enqueue([cur],true);
+  enqueue([cur],true,curResult()?.engine==="local"&&claudeOK()?{force:"claude"}:{});
 };
 $("openBtn").onclick=()=>$("file").click();
 $("chooseBtn").onclick=e=>{e.stopPropagation();$("file").click();};
@@ -973,7 +1296,8 @@ document.addEventListener("paste",e=>{
   const files=[...dt.files].filter(f=>f.type.startsWith("image/")||f.type==="application/pdf");
   if(!files.length)for(const i of dt.items||[])if(i.kind==="file"){const f=i.getAsFile();if(f&&(f.type.startsWith("image/")||f.type==="application/pdf"))files.push(f);}
   const inField=e.target.closest?.("textarea,input,[contenteditable]");
-  if(files.length){e.preventDefault();addFiles(files);return;}
+  if(files.length){e.preventDefault();if(capture){disarm();addFiles(files,{capture:true});}else addFiles(files);return;}
+  if(capture&&!inField){toast("That's text, not a screenshot. Press ⌃⇧⌘4 to copy part of your screen, then ⌘V.");return;}
   if(!inField&&dt.getData("text/plain"))toast("That's text, not an image. Copy a screenshot or image first.");
 });
 let dragDepth=0;
@@ -984,7 +1308,7 @@ addEventListener("drop",e=>{dragDepth=0;$("veil").hidden=true;if(e.dataTransfer?
 document.addEventListener("keydown",e=>{
   const mod=e.metaKey||e.ctrlKey,k=e.key.toLowerCase();
   const editing=e.target.closest?.("textarea,input,select,[contenteditable]");
-  if(e.key==="Escape"){if(!$("menu").hidden){closeMenu();return;}if(!$("drawer").hidden){closeHist();return;}if(selRect){clearSel();return;}if(job||queue.length){stopAll();return;}return;}
+  if(e.key==="Escape"){if(!$("menu").hidden){closeMenu();return;}if(!$("vid").hidden){closeVideo();return;}if(capture){disarm();return;}if(liveOn&&!$("lsel").hidden){getSelection().removeAllRanges();return;}if(!$("drawer").hidden){closeHist();return;}if(selRect){clearSel();return;}if(job||queue.length){stopAll();return;}if(liveOn){setLive(false);return;}return;}
   if(mod&&!e.shiftKey&&k==="o"){e.preventDefault();$("file").click();return;}
   if(mod&&!e.shiftKey&&k==="y"){e.preventDefault();$("drawer").hidden?openHist():closeHist();return;}
   if(mod&&e.key==="Enter"){e.preventDefault();$("runBtn").click();return;}
@@ -992,7 +1316,9 @@ document.addEventListener("keydown",e=>{
   if(mod&&!e.shiftKey&&k==="s"){e.preventDefault();if(cur){const m=exportMenu().find(x=>x.fn);m?m.fn():toast("Nothing to export yet.");}return;}
   if(mod&&!e.shiftKey&&!e.altKey&&/^[1-8]$/.test(e.key)){e.preventDefault();setMode(MODES[+e.key-1].id,true);return;}
   if(!editing&&!mod&&cur&&(e.key==="ArrowRight"||e.key==="ArrowLeft")){const i=items.indexOf(cur)+(e.key==="ArrowRight"?1:-1);if(items[i]){e.preventDefault();select(items[i]);}return;}
-  if(!editing&&!mod&&k==="z"&&cur){$("zoomBtn").click();}
+  if(!editing&&!mod&&k==="z"&&cur){$("zoomBtn").click();return;}
+  if(!editing&&!mod&&!e.altKey&&k==="t"&&cur){setLive(!liveOn);return;}
+  if(!editing&&mod&&!e.shiftKey&&k==="a"&&liveOn){e.preventDefault();selectAllLive();return;}
 });
 $("lang").innerHTML=LANGS.map(l=>`<option>${esc(l)}</option>`).join("");$("lang").value=S.lang;
 $("lang").onchange=()=>{setS("lang",$("lang").value);setMode(S.mode,true);};
@@ -1009,13 +1335,92 @@ function dockIcon(){
   [[40,84,40,40,84,40],[172,40,216,40,216,84],[216,172,216,216,172,216],[84,216,40,216,40,172]].forEach(p=>{x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[2],p[3]);x.lineTo(p[4],p[5]);x.stroke();});
   return c.toDataURL("image/png");
 }
-let sc=false;
+/* ---------- quick capture: shortcut → ⌘V a screenshot → text is on the clipboard ---------- */
+const HOTKEYS=[["Alt+Shift+O","⌥⇧O"],["Control+Shift+T","⌃⇧T"],["Alt+Shift+T","⌥⇧T"],["CmdOrCtrl+Shift+E","⌘⇧E"]];
+const hkLabel=a=>(HOTKEYS.find(h=>h[0]===a)||[0,a])[1];
+let scKey=null,capture=false,capTimer=null,lastClip="";
+const WIN=/win/i.test(navigator.userAgentData?.platform||navigator.platform||"");
+function armCapture(){
+  capture=true;$("cap").hidden=false;
+  if(WIN){$("capT").textContent="Press Ctrl+V to read your screenshot";$("capS").textContent="No screenshot yet? Press Win+Shift+S, drag over the text, then Ctrl+V here. The text is copied for you.";}
+  clearTimeout(capTimer);capTimer=setTimeout(disarm,90000);
+  tryClipboardImage();
+}
+function disarm(){capture=false;$("cap").hidden=true;clearTimeout(capTimer);}
+$("capX").onclick=disarm;
+// Most windows refuse to read the clipboard; ⌘V always works, so this is only a shortcut when it is allowed.
+async function tryClipboardImage(){
+  if(!navigator.clipboard?.read||!desktop?.tray)return;
+  try{
+    const list=await Promise.race([navigator.clipboard.read(),new Promise((_,rej)=>setTimeout(()=>rej(0),800))]);
+    for(const ci of list){const t=ci.types.find(x=>x.startsWith("image/"));if(!t)continue;
+      const b=await ci.getType(t);const sig=b.size+":"+t;if(sig===lastClip||!capture)return;lastClip=sig;
+      disarm();addFiles([new File([b],`Screenshot ${stamp()}.png`,{type:t})],{capture:true});return;}
+  }catch{}
+}
 async function summon(){
   await desktop.window.show().catch(()=>{});
-  closeMenu();closeHist();
-  if(!cur){$("drop").focus();}else document.activeElement?.blur?.();
-  toast("Press ⌘V to read a copied screenshot");
+  closeMenu();closeHist();closeVideo();
+  armCapture();
 }
+async function deliverCapture(it,q){
+  const t=plainOf(it,q.mode,q.key).trim();
+  if(!t){toast("No text found in that screenshot.");return;}
+  const ok=await writeClip(t);
+  const msg=ok?`Copied ${t.length.toLocaleString()} characters. Paste them anywhere.`:"Read. Press ⌘⇧C to copy the text.";
+  toast(msg);if(cur===it)status(msg);
+  if(ok&&S.hideAfter&&desktop?.window&&!(store.get("float",false)&&perms.overlay==="granted")){
+    setTimeout(()=>desktop.window.hide().catch(()=>{}),1100);
+    if(perms.notifications==="granted")desktop.notification.show({body:`Copied: ${t.replace(/\s+/g," ").slice(0,200)}`}).catch(()=>{});
+  }
+}
+async function registerHotkey(){
+  if(!desktop?.globalShortcut||perms.shortcuts!=="granted")return false;
+  if(scKey===S.hotkey)return true;
+  if(scKey){await desktop.globalShortcut.unregister(scKey).catch(()=>{});scKey=null;}
+  const ok=await desktop.globalShortcut.register(S.hotkey,summon).catch(()=>false);
+  if(ok)scKey=S.hotkey;else toast(`${hkLabel(S.hotkey)} is taken by another app. Pick another shortcut in Settings.`);
+  return ok;
+}
+function trayIcon(){
+  const c=canvasOf(36,36),x=c.getContext("2d");x.strokeStyle="#000";x.fillStyle="#000";x.lineWidth=3.2;x.lineCap="round";x.lineJoin="round";
+  [[4,12,4,4,12,4],[24,4,32,4,32,12],[32,24,32,32,24,32],[12,32,4,32,4,24]].forEach(p=>{x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[2],p[3]);x.lineTo(p[4],p[5]);x.stroke();});
+  [[11,12,14],[11,17,14],[11,22,9]].forEach(([a,b,w])=>{x.beginPath();x.roundRect(a,b,w,2.8,1.4);x.fill();});
+  return c.toDataURL("image/png");
+}
+function setTray(){
+  if(perms["menu-bar"]!=="granted"||!desktop?.tray)return;
+  desktop.tray.set({icon:trayIcon(),toolTip:"Read the text in a copied screenshot",menu:[
+    {label:"Read copied screenshot"+(scKey?"   "+hkLabel(scKey):""),click:summon},
+    {label:"Open Image to Text",click:()=>{desktop.window.show().catch(()=>{});}},
+    {type:"separator"},
+    {label:"History",click:async()=>{await desktop.window.show().catch(()=>{});openHist();}}
+  ]}).catch(()=>{});
+}
+
+/* ---------- video frames ---------- */
+let vidURL=null,vidName="";
+function openVideo(f){
+  closeVideo();vidURL=URL.createObjectURL(f);vidName=baseName(f.name||"Video");
+  const v=$("vidEl");$("vidInfo").textContent="Pause on the frame with the text, then read it.";$("vidInfo").classList.remove("err");
+  v.onerror=()=>{$("vidInfo").textContent="This video can't be played here. Try an MP4, or take a screenshot of the frame.";$("vidInfo").classList.add("err");};
+  v.src=vidURL;$("vid").hidden=false;$("vidGrab").focus();
+}
+function closeVideo(){
+  if($("vid").hidden)return;const v=$("vidEl");v.pause();v.removeAttribute("src");v.load();
+  if(vidURL)URL.revokeObjectURL(vidURL);vidURL=null;$("vid").hidden=true;
+}
+$("vidClose").onclick=closeVideo;
+$("vidGrab").onclick=async()=>{
+  const v=$("vidEl");if(!v.videoWidth){toast("The video isn't ready yet.");return;}
+  v.pause();const c=canvasOf(v.videoWidth,v.videoHeight);c.getContext("2d").drawImage(v,0,0,c.width,c.height);
+  const t=v.currentTime,lab=`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,"0")}`;
+  const it=await makeItem(await toBlob(c),`${vidName} at ${lab}`);if(!it)return;
+  items.push(it);select(it);persist(it,true);scanQueue(it);
+  if(S.auto&&canRead(S.mode))enqueue([it],false);
+  $("vidInfo").textContent=`Added the frame at ${lab}. Pick another, or Close.`;
+};
+
 function applyWindow(){
   const float=store.get("float",false)&&perms.overlay==="granted";
   document.body.classList.toggle("inset",!float);
@@ -1023,16 +1428,20 @@ function applyWindow(){
     ?{frame:false,alwaysOnTop:true,dragHeight:0,width:460,height:620,minWidth:360,minHeight:420,roundedCorners:true,hasShadow:true}
     :{titleBarStyle:"hiddenInset",dragHeight:40,width:980,height:660,minWidth:380,minHeight:460}).catch(()=>{});
 }
-function setupDesktop(){
-  if(perms.shortcuts==="granted"&&!sc){sc=true;desktop.globalShortcut.register("Alt+Shift+O",summon).then(ok=>{if(!ok){sc=false;setupDesktop();}}).catch(()=>{sc=false;});}
+async function setupDesktop(){
+  await registerHotkey();setTray();
   const act=$("act");act.replaceChildren();
   const float=store.get("float",false)&&perms.overlay==="granted";
   const b=document.createElement("button");b.className="btn";
-  if(!float){b.textContent="Float on top";b.title="Keep this window above other apps and turn on the ⌥⇧O shortcut";b.onclick=async()=>{try{perms=await desktop.permissions.request(["overlay","shortcuts"]);}catch{}if(perms.overlay==="granted"){store.set("float",true);applyWindow();}else toast("Floating wasn't allowed. You can change this in the app's Permissions.");setupDesktop();};}
+  if(!float){b.textContent="Float on top";b.title="Keep this window above other apps";b.onclick=async()=>{try{perms=await desktop.permissions.request(["overlay"]);}catch{}if(perms.overlay==="granted"){store.set("float",true);applyWindow();}else toast("Floating wasn't allowed. You can change this in the app's Permissions.");setupDesktop();};}
   else{b.textContent="Normal window";b.onclick=()=>{store.set("float",false);applyWindow();setupDesktop();};}
+  const need=["shortcuts","menu-bar","notifications"].filter(p=>perms[p]==="prompt");
+  if(need.length){const q=document.createElement("button");q.className="btn pri";q.textContent="Set up quick capture";q.title=`A shortcut (${hkLabel(S.hotkey)}) and a menu bar item that read a copied screenshot and put the text on your clipboard`;
+    q.onclick=async()=>{try{perms=await desktop.permissions.request(need);}catch{}await setupDesktop();toast(scKey?`Ready. Copy a screenshot with ⌃⇧⌘4, then press ${hkLabel(scKey)} from any app.`:"The shortcut wasn't allowed. You can still paste screenshots here.");};act.append(q);}
+  else if(perms.shortcuts==="denied"){const q=document.createElement("button");q.className="btn";q.textContent="Turn on the shortcut";q.onclick=()=>desktop.permissions.manage().catch(()=>{});act.append(q);}
   act.append(b);
-  if(!sc&&perms.shortcuts!=="granted"&&perms.shortcuts!=="unavailable"){const s=document.createElement("button");s.className="btn";s.textContent="Turn on ⌥⇧O";s.title="Bring this window up from any app with Option+Shift+O";s.onclick=async()=>{try{perms=await desktop.permissions.request(["shortcuts"]);}catch{}if(perms.shortcuts!=="granted")toast("The shortcut wasn't allowed.");setupDesktop();};act.append(s);}
-  baseHint=sc?"⌥⇧O brings Image to Text up from any app. Then ⌘V.":"Tip: copy part of your screen with ⌃⇧⌘4, then ⌘V here.";setHint();
+  $("hkTip").hidden=!scKey;if(scKey)$("hkTip").innerHTML=`<kbd>${esc(hkLabel(scKey))}</kbd> from any app, then <kbd>⌘</kbd> <kbd>V</kbd>`;
+  baseHint=scKey?`${hkLabel(scKey)} from any app, then ⌘V a screenshot: the text is copied for you.`:"Tip: copy part of your screen with ⌃⇧⌘4, then ⌘V here.";setHint();
 }
 
 /* ---------- start ---------- */
@@ -1042,7 +1451,7 @@ renderModes();select(null);
   const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
   [sample,tts,downloads,desktop]=await Promise.all([use("sample"),use("tts"),use("downloads"),use("desktop")]);
   if(sample)limits=await sample.limits().catch(()=>null);
-  if(!sample){baseHint="Reading text needs Claude: open Image to Text in the Claude app. QR codes and barcodes work anywhere.";setHint();}
+  if(!sample){baseHint="Open Image to Text in the Claude app to read with Claude. Text (printed English), QR codes and barcodes also work offline here.";setHint();}
   else if(!limits?.images){baseHint="This view can't send images to Claude. Open it in the Claude desktop app or claude.ai.";setHint();}
   $("listenBtn").hidden=!tts;
   if(cur)renderResult();
