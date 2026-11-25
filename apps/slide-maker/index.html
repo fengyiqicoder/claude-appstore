@@ -73,7 +73,7 @@ select.s,input.s{border:1px solid var(--line);background:var(--panel);border-rad
 .sec h2{font-size:16px;margin:0}
 .recent{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
 .rc{cursor:pointer;border-radius:12px;position:relative}
-.rc .tw{border-radius:10px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/9;position:relative;background:var(--chip)}
+.rc .tw{border-radius:10px;overflow:hidden;border:1px solid var(--line);aspect-ratio:var(--ar,16/9);position:relative;background:var(--chip)}
 .rc:hover .tw{border-color:var(--accent)}
 .rc .nm{font-weight:600;margin-top:8px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:28px}
 .rc .dt{font-size:12px;color:var(--muted)}
@@ -98,7 +98,7 @@ select.s,input.s{border:1px solid var(--line);background:var(--panel);border-rad
 .themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .thc{border:2px solid transparent;border-radius:12px;padding:4px;cursor:pointer;background:transparent;text-align:left}
 .thc.on{border-color:var(--accent)}
-.thc .tw{border-radius:8px;overflow:hidden;aspect-ratio:16/9;position:relative;border:1px solid var(--line)}
+.thc .tw{border-radius:8px;overflow:hidden;aspect-ratio:var(--ar,16/9);position:relative;border:1px solid var(--line)}
 .thc span{display:block;font-size:12.5px;font-weight:600;padding:5px 2px 1px}
 .skel{height:64px;border-radius:12px;margin-bottom:10px;background:linear-gradient(90deg,var(--chip),var(--panel),var(--chip));background-size:200% 100%;animation:sh 1.2s linear infinite}
 @keyframes sh{to{background-position:-200% 0}}
@@ -110,7 +110,7 @@ select.s,input.s{border:1px solid var(--line);background:var(--panel);border-rad
 #thumbs{flex:1;overflow:auto;padding:4px 10px 20px;outline:none}
 .th{display:flex;gap:6px;align-items:flex-start;margin-bottom:10px;position:relative}
 .th .n{width:16px;font-size:11px;color:var(--muted);text-align:right;padding-top:2px;flex:none}
-.th .tw{touch-action:pan-y;flex:1;aspect-ratio:16/9;border-radius:6px;overflow:hidden;position:relative;border:2px solid transparent;box-shadow:0 0 0 1px var(--line);cursor:pointer;background:var(--chip)}
+.th .tw{touch-action:pan-y;flex:1;aspect-ratio:var(--ar,16/9);border-radius:6px;overflow:hidden;position:relative;border:2px solid transparent;box-shadow:0 0 0 1px var(--line);cursor:pointer;background:var(--chip)}
 .th.cur .tw{border-color:var(--accent);box-shadow:none}
 .th.drag{opacity:.4}
 .th.hid .tw{opacity:.4}
@@ -156,7 +156,7 @@ select.s,input.s{border:1px solid var(--line);background:var(--panel);border-rad
 @media (max-width:560px){.lgrid{grid-template-columns:repeat(2,1fr)}}
 .lgrid button{border:2px solid transparent;background:transparent;border-radius:9px;padding:3px;cursor:pointer;text-align:left}
 .lgrid button.on{border-color:var(--accent)}
-.lgrid .tw{aspect-ratio:16/9;border-radius:6px;overflow:hidden;position:relative;box-shadow:0 0 0 1px var(--line)}
+.lgrid .tw{aspect-ratio:var(--ar,16/9);border-radius:6px;overflow:hidden;position:relative;box-shadow:0 0 0 1px var(--line)}
 .lgrid span{display:block;font-size:12px;font-weight:600;padding:4px 2px 0}
 .igrid{display:grid;grid-template-columns:repeat(6,40px);gap:4px;padding:6px}
 .igrid button{width:40px;height:40px;border:0;background:transparent;border-radius:8px;cursor:pointer;color:var(--fg);padding:9px}
@@ -234,6 +234,10 @@ body.aiwork #toast{bottom:70px}
 #slideWrap.drawing #slideBox *{cursor:crosshair!important}
 #slideWrap.inking{cursor:crosshair}
 #selLayer,#guideLayer,#gridLayer{position:absolute;inset:0;pointer-events:none}
+#rulerH{position:absolute;left:0;top:-20px;pointer-events:none;border-radius:2px}#rulerV{position:absolute;top:0;left:-20px;pointer-events:none;border-radius:2px}
+#stage.rulers{padding:30px 20px 16px 32px}
+.edit .otbl td.rsel{box-shadow:inset 0 0 0 9999px rgba(108,104,240,.25)}
+.anbadge.path{background:#1c7ed6}.anc.path{background:#1c7ed6}.fxb.path{border-left:3px solid #1c7ed6}
 #gridLayer{background-image:linear-gradient(to right,rgba(120,120,140,.22) 1px,transparent 1px),linear-gradient(to bottom,rgba(120,120,140,.22) 1px,transparent 1px)}
 .sl .ob{position:absolute}
 .sl .otb{display:flex;flex-direction:column}
@@ -339,14 +343,14 @@ body.master #thumbs .th.mth0{opacity:1}
 #sortGrid{flex:1;overflow:auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;align-content:start}
 .sorth{grid-column:1/-1;font-weight:700;font-size:13px;margin-top:6px}
 .sortc{cursor:pointer;user-select:none;touch-action:none;position:relative}
-.sortc .tw{aspect-ratio:16/9;border-radius:8px;overflow:hidden;position:relative;border:2px solid transparent;box-shadow:0 0 0 1px var(--line);background:var(--chip)}
+.sortc .tw{aspect-ratio:var(--ar,16/9);border-radius:8px;overflow:hidden;position:relative;border:2px solid transparent;box-shadow:0 0 0 1px var(--line);background:var(--chip)}
 .sortc.cur .tw{border-color:var(--accent);box-shadow:none}.sortc.hid .tw{opacity:.45}.sortc.drag{opacity:.4}
 .sortc span{display:block;font-size:12px;color:var(--muted);margin-top:5px}
 .sortc.ins-l::before,.sortc.ins-r::after{content:"";position:absolute;top:0;width:3px;height:calc(100% - 18px);background:var(--accent);border-radius:2px}
 .sortc.ins-l::before{left:-11px}.sortc.ins-r::after{right:-11px}
 #editor{position:relative}
 .verrow{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
-.verrow .tw{width:112px;flex:none;aspect-ratio:16/9;border-radius:6px;overflow:hidden;position:relative;box-shadow:0 0 0 1px var(--line)}
+.verrow .tw{width:112px;flex:none;aspect-ratio:var(--ar,16/9);border-radius:6px;overflow:hidden;position:relative;box-shadow:0 0 0 1px var(--line)}
 .frg{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center}
 .frout{max-height:260px;overflow:auto;border-top:1px solid var(--line);padding-top:6px}
 .zoomg .btn{min-width:30px;justify-content:center}
@@ -445,7 +449,7 @@ body.master #thumbs .th.mth0{opacity:1}
     <div id="main">
       <div id="masterBar" hidden><span>Editing the slide master. Objects you add here appear on every slide and are saved into the PowerPoint master.</span><span style="flex:1"></span><button class="btn sm" id="masterHf">Header &amp; footer…</button><button class="btn sm pri" id="masterClose">Close master</button></div>
       <div id="obar" hidden role="toolbar" aria-label="Format object"></div>
-      <div id="stage"><div id="slideWrap"><div id="slideBox"></div><div id="gridLayer" hidden></div><div id="guideLayer"></div><div id="selLayer"></div></div></div>
+      <div id="stage"><div id="slideWrap"><canvas id="rulerH" hidden></canvas><canvas id="rulerV" hidden></canvas><div id="slideBox"></div><div id="gridLayer" hidden></div><div id="guideLayer"></div><div id="selLayer"></div></div></div>
       <div class="sbar">
         <div class="grp">
           <button class="btn ghost" id="layoutBtn"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M10 9.5v10"/></svg><span class="tb-label">Layout</span></button>
@@ -497,7 +501,7 @@ body.master #thumbs .th.mth0{opacity:1}
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const W=1280,H=720;
+let W=1280,H=720,PXI=1/96;
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -687,7 +691,9 @@ function coerce(s,layout,blank){
 }
 
 /* build a slide into positioned elements (1280x720 space) — shared by screen, PNG/PDF and PowerPoint */
-function build(s,th){
+function build(s,th){if(s.layout==="free"||W===1280&&H===720)return build0(s,th);const W1=W,H1=H;let E;W=1280;H=720;try{E=build0(s,th)}finally{W=W1;H=H1}const fx=W/1280,fy=H/720,fu=Math.min(fx,fy);
+  for(const e of E){if(e.k==="logo"){e.x=W-28-e.w;e.y=H-16-e.h;continue}const cx=(e.x+e.w/2)*fx,cy=(e.y+e.h/2)*fy;if(e.ellipse||e.k==="icon"||e.k==="label"){e.w*=fu;e.h*=fu;if(e.size&&e.k==="label")e.size*=fu}else{e.w*=fx;e.h*=fy}e.x=cx-e.w/2;e.y=cy-e.h/2}return E}
+function build0(s,th){
   const E=[],A=th.accent,F=th.fg,Mu=th.muted,a2=th.accent2,on=onColor(A),L=s.layout;
   const shape=(x,y,w,h,o)=>E.push({k:"shape",x,y,w,h,...o});
   const text=(path,x,y,w,h,o)=>E.push({k:"text",path,x,y,w,h,font:th.bf,color:F,size:24,lh:1.25,align:"left",valign:"top",...o});
@@ -766,7 +772,7 @@ const getPath=(o,p)=>p.reduce((a,k)=>a==null?a:a[k],o);
 function setPath(o,p,v){let a=o;for(let i=0;i<p.length-1;i++){if(a[p[i]]==null)a[p[i]]=typeof p[i+1]==="number"?[]:{};a=a[p[i]]}a[p[p.length-1]]=v}
 
 /* ---------- render to DOM ---------- */
-const SLIDE_CSS=`.sl{position:relative;overflow:hidden;width:1280px;height:720px;-webkit-font-smoothing:antialiased}
+const SLIDE_CSS=`.sl{position:relative;overflow:hidden;-webkit-font-smoothing:antialiased}
 .sl *{box-sizing:border-box}
 .sl .el{position:absolute}
 .sl .tb{display:flex;flex-direction:column;overflow:hidden}
@@ -845,10 +851,10 @@ function chartSvg(c,w,h,th){
 }
 /* scaled, static thumbnail of a slide */
 function thumb(s,th,width){
-  const wrap=document.createElement("div");wrap.className="sc";const k=width/W;wrap.style.transform=`scale(${k})`;
+  const wrap=document.createElement("div");wrap.className="sc";wrap.dataset.w=W;const k=width/W;wrap.style.transform=`scale(${k})`;
   const n=renderSlide(s,th,"static");wrap.append(n);return wrap;
 }
-function scaleThumbs(root){for(const tw of root.querySelectorAll(".tw")){const sc=tw.querySelector(":scope > .sc");if(sc&&tw.clientWidth)sc.style.transform=`scale(${tw.clientWidth/W})`}}
+function scaleThumbs(root){for(const tw of root.querySelectorAll(".tw")){const sc=tw.querySelector(":scope > .sc");if(sc&&tw.clientWidth)sc.style.transform=`scale(${tw.clientWidth/(+sc.dataset.w||W)})`}}
 function settle(root){requestAnimationFrame(()=>{scaleThumbs(root);root.querySelectorAll(".sl").forEach(fitAll)})}
 
 /* ---------- storage (IndexedDB, falls back to memory) ---------- */
@@ -878,8 +884,8 @@ function deckTheme(d){return {...brandTheme(themeOf(d?.theme),d?.brand),master:d
 function th(){return deck?deckTheme(deck):themeOf()}
 function deckMedia(d){const out=[];const w=o=>{if(o.mediaId)out.push(o.mediaId);(o.kids||[]).forEach(w)};for(const s of d?.slides||[])(s.objs||[]).forEach(w);(d?.master?.objs||[]).forEach(w);return out}
 function checkpoint(){if(!deck)return;hist.u.push(JSON.stringify(deck));if(hist.u.length>100)hist.u.shift();hist.r=[];updUndo()}
-function undo(){if(!hist.u.length)return;hist.r.push(JSON.stringify(deck));deck=JSON.parse(hist.u.pop());cur=clamp(cur,0,deck.slides.length-1);changed(true);updUndo()}
-function redo(){if(!hist.r.length)return;hist.u.push(JSON.stringify(deck));deck=JSON.parse(hist.r.pop());cur=clamp(cur,0,deck.slides.length-1);changed(true);updUndo()}
+function undo(){if(!hist.u.length)return;hist.r.push(JSON.stringify(deck));deck=JSON.parse(hist.u.pop());setDeckSize(deck);cur=clamp(cur,0,deck.slides.length-1);changed(true);updUndo()}
+function redo(){if(!hist.r.length)return;hist.u.push(JSON.stringify(deck));deck=JSON.parse(hist.r.pop());setDeckSize(deck);cur=clamp(cur,0,deck.slides.length-1);changed(true);updUndo()}
 function updUndo(){$("undoBtn").disabled=!hist.u.length;$("redoBtn").disabled=!hist.r.length}
 function changed(full){if(!deck)return;deck.updated=Date.now();$("saved").textContent="Saving…";clearTimeout(saveT);saveT=setTimeout(saveNow,500);if(full){renderRail();renderStage()}}
 async function saveNow(){clearTimeout(saveT);if(!deck)return;try{await DB.put(clone(deck));$("saved").textContent=DB.bad?"Not saved on this device":"Saved";maybeSnap()}catch(e){$("saved").textContent="Storage full";toast("This device is out of storage for decks. Export as .json or .pptx to keep a copy, or delete old decks.")}}
@@ -989,7 +995,7 @@ async function renderRecent(){
   if(!list.length){box.innerHTML='<div class="empty" style="grid-column:1/-1">Your presentations appear here. They are saved on this computer only.</div>';return}
   for(const d of list.slice(0,60)){
     const c=document.createElement("div");c.className="rc";c.tabIndex=0;
-    const tw=document.createElement("div");tw.className="tw";if(d.slides?.[0])tw.append(thumb(d.slides[0],deckTheme(d),260));
+    const tw=document.createElement("div");tw.className="tw";setDeckSize(d);tw.style.aspectRatio=`${W}/${H}`;if(d.slides?.[0])tw.append(thumb(d.slides[0],deckTheme(d),260));setDeckSize(null);
     c.append(tw);c.insertAdjacentHTML("beforeend",`<div class="nm">${esc(d.title)}</div><div class="dt">${d.slides?.length||0} slides · ${ago(d.updated)}</div>`);
     const m=document.createElement("button");m.className="ib more";m.setAttribute("aria-label","Deck options");m.innerHTML='<svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/></svg>';
     m.onclick=e=>{e.stopPropagation();openPop(m,p=>{mi(p,"Open",()=>openDeck(d.id),{icon:"file"});mi(p,"Duplicate",async()=>{const x=clone(d);x.id=uid();x.title=d.title+" copy";x.updated=Date.now();x.slides.forEach(s=>s.id=uid());await DB.put(x);renderRecent()},{icon:"dup"});msep(p);
@@ -1002,7 +1008,7 @@ async function renderRecent(){
 function ago(t){const s=(Date.now()-t)/1000;if(s<60)return "just now";if(s<3600)return Math.round(s/60)+" min ago";if(s<86400)return Math.round(s/3600)+" h ago";if(s<86400*7)return Math.round(s/86400)+" d ago";return new Date(t).toLocaleDateString()}
 async function openDeck(id){const d=await DB.get(id);if(!d){toast("That deck is gone.");renderRecent();return}deck=d;deck.slides=deck.slides.map(s=>coerce(s,s.layout));hist.u=[];hist.r=[];cur=0;openEditor()}
 
-function setView(v){if(v!=="editor"){if(masterMode){masterMode=false;document.body.classList.remove("master");$("masterBar").hidden=true}SEL=[];drawMode=null;$("obar").hidden=true;$("sorter").hidden=true;$("selLayer").replaceChildren()}view=v;$("home").hidden=v!=="home";$("outline").hidden=v!=="outline";$("editor").hidden=v!=="editor";
+function setView(v){if(v!=="editor"){setDeckSize(null);if(masterMode){masterMode=false;document.body.classList.remove("master");$("masterBar").hidden=true}SEL=[];drawMode=null;$("obar").hidden=true;$("sorter").hidden=true;$("selLayer").replaceChildren()}view=v;$("home").hidden=v!=="home";$("outline").hidden=v!=="outline";$("editor").hidden=v!=="editor";
   $("homeBtn").hidden=v==="home";$("brand").hidden=v!=="home";$("deckTitle").hidden=v!=="editor";$("edTools").hidden=v!=="editor";$("saved").hidden=v!=="editor";closePop();
   if(v==="home"){deck&&saveNow();renderRecent()}}
 $("homeBtn").onclick=async()=>{if(view==="editor")await saveNow();if(aiCtl)aiCtl.abort();setView("home")};
@@ -1163,7 +1169,7 @@ Reply with only JSON: {"slides":[ ...${b-a} slide objects... ]}`;
 let pending=new Set();
 
 /* ---------- editor ---------- */
-function openEditor(){masterMode=false;document.body.classList.remove("master");$("masterBar").hidden=true;SEL=[];cropMode=false;drawMode=null;dataObj=null;zoomK=1;setView("editor");$("deckTitle").value=deck.title;updUndo();renderRail();renderStage();$("saved").textContent="Saved"}
+function openEditor(){setDeckSize(deck);masterMode=false;document.body.classList.remove("master");$("masterBar").hidden=true;SEL=[];cropMode=false;drawMode=null;dataObj=null;zoomK=1;setView("editor");$("deckTitle").value=deck.title;updUndo();renderRail();renderStage();$("saved").textContent="Saved"}
 $("deckTitle").addEventListener("focus",()=>checkpoint());
 $("deckTitle").oninput=()=>{deck.title=$("deckTitle").value;changed()};
 $("deckTitle").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("deckTitle").blur()}};
@@ -1197,7 +1203,7 @@ let fitScale=1;
 function layoutStage(){const st=$("stage"),box=$("slideBox"),wrap=$("slideWrap");if(!st.clientWidth)return;fitScale=Math.max(.05,Math.min((st.clientWidth-40)/W,(st.clientHeight-32)/H));slideScale=Math.max(.05,fitScale*zoomK);
   const w=W*slideScale,h=H*slideScale;box.style.width=w+"px";box.style.height=h+"px";wrap.style.width=w+"px";wrap.style.height=h+"px";const sc=box.firstChild;if(sc)sc.style.transform=`scale(${slideScale})`;
   const g=$("gridLayer");g.hidden=!VIEW.grid;if(VIEW.grid){const gs=VIEW.gridSize*slideScale;g.style.backgroundSize=`${gs}px ${gs}px`}
-  $("zoomLab").textContent=zoomK===1?"Fit":Math.round(slideScale*100)+"%"}
+  $("zoomLab").textContent=zoomK===1?"Fit":Math.round(slideScale*100)+"%";drawRulers()}
 function renderStage(){
   const box=$("slideBox");box.replaceChildren();if(!deck||!deck.slides.length){$("cnt").textContent="0 slides";return}
   cur=clamp(cur,0,deck.slides.length-1);const s=curS();
@@ -1535,7 +1541,7 @@ $("exportBtn").onclick=()=>openPop($("exportBtn"),p=>{
   msep(p);mi(p,"Copy outline as text",async()=>{try{await navigator.clipboard.writeText(deckMD());toast("Outline copied.")}catch{toast("Couldn't copy. Use Outline (.md) instead.")}},{icon:"copy"});
   const d=document.createElement("div");d.className="hint";d.style.padding="6px 10px 4px";d.textContent="PowerPoint files keep real, editable text boxes, charts, tables and speaker notes. They open in Keynote and Google Slides too.";p.append(d);
 },{right:true});
-const px2in=v=>+(v/96).toFixed(3);
+const px2in=v=>+(v*PXI).toFixed(3);
 function measureHost(){return $("measure")}
 function measuredSlide(s,t){const host=measureHost();const node=renderSlide(s,t,"static");host.replaceChildren(node);fitAll(node);return node}
 const iconCache=new Map();
@@ -1611,7 +1617,7 @@ async function setNotes(out,gen,path,i,text,st){
   const np=await copyPart(gen,out,resolvePath(gp,gn.getAttribute("Target")),{map:{[gp]:path},redirect:st.redirectNotes});
   addRel(rd,RT("notesSlide"),relTarget(path,np));out.zip.file(relsPathOf(path),ser(rd));
 }
-function exportPlan(){const fid=deck.src?.fileId;return deck.slides.map(s=>{if(!fid||!s.orig?.path||s.orig.fileId!==fid)return "gen";if(sigOf(s)===s.orig.sig)return "keep";if(s.layout==="free"&&sigOf(s,true)===s.orig.tsig)return "patch";return "gen"})}
+function exportPlan(){const fid=deck.src?.fileId;return deck.slides.map(s=>{if(!fid||!s.orig?.path||s.orig.fileId!==fid)return "gen";if(sigOf(s)===s.orig.sig)return "keep";if(s.layout==="free"&&(sigOf(s,true)===s.orig.tsig||sigOf(s,true,true)===s.orig.tsig))return "patch";return "gen"})}
 function linkedLayout(s){return deck.src&&s.orig?.fileId===deck.src.fileId&&s.orig.layoutPath?s.orig.layoutPath:null}
 function canSave(){if(downloads)return true;toast("Saving files needs the Claude app. Open AI Slide Maker in Claude to export.");return false}
 async function exportPPTX(){if(!canSave())return;
@@ -1638,9 +1644,9 @@ async function exportPNG(single){if(!canSave())return;
 }
 async function exportPDF(){if(!canSave())return;
   try{const jp=await waitFor(()=>window.jspdf?.jsPDF,"PDF library");const t=th();
-    const doc=new jp({orientation:"landscape",unit:"pt",format:[960,540],compress:true});
+    const PH0=Math.round(960*H/W);const doc=new jp({orientation:W>=H?"landscape":"portrait",unit:"pt",format:[960,PH0],compress:true});
     const list=deck.slides.filter(s=>!s.hidden);
-    for(let i=0;i<list.length;i++){aiBar(`Rendering page ${i+1} of ${list.length}…`);const c=await rasterSlide(list[i],t,2);if(i)doc.addPage([960,540],"landscape");doc.addImage(c.toDataURL("image/jpeg",.92),"JPEG",0,0,960,540,undefined,"FAST");
+    for(let i=0;i<list.length;i++){aiBar(`Rendering page ${i+1} of ${list.length}…`);const c=await rasterSlide(list[i],t,2);if(i)doc.addPage([960,PH0],W>=H?"landscape":"portrait");doc.addImage(c.toDataURL("image/jpeg",.92),"JPEG",0,0,960,PH0,undefined,"FAST");
       // invisible text layer so the PDF is searchable (Latin text only; other scripts stay as images)
       const txt=slideText(list[i]).filter(x=>/^[\x20-\xFF]*$/.test(x));if(txt.length){doc.setFontSize(10);doc.setTextColor(255,255,255);txt.slice(0,40).forEach((line,k)=>doc.text(line.slice(0,200),10,14+k*12,{renderingMode:"invisible"}))}
       if(list[i].notes){}}
@@ -1673,11 +1679,11 @@ async function importFile(f,mode){
   try{
     if(ext==="key"){toast("Keynote files can't be read here. In Keynote choose File > Export To > PowerPoint, then import the .pptx.");return}
     if(ext==="ppt"||ext==="doc"){toast(`Old .${ext} files can't be read. Save as .${ext}x in Office first.`);return}
-    if(ext==="pptx"){aiBar("Reading PowerPoint file…");const d=await readPptx(f);aiDone();if(!d.slides.length){toast("No slides found in that file.");return}
+    if(ext==="pptx"){aiBar("Reading PowerPoint file…");const d=await readPptx(f,mode==="append"&&!!deck);aiDone();if(!d.slides.length){toast("No slides found in that file.");return}
       const fileId=uid();d.slides.forEach(x=>{if(x.orig)x.orig.fileId=fileId});
       if(mode==="append"&&deck){checkpoint();deck.slides.splice(cur+1,0,...d.slides);cur=cur+1;changed(true);toast(`Added ${d.slides.length} slides.`,"Undo",undo);return}
-      deck=newDeck(d.title||f.name.replace(/\.pptx$/i,""));deck.brand=undefined;deck.slides=d.slides;deck.sections=d.sections||[];
-      try{await DB.putFile(fileId,await f.arrayBuffer());deck.src={fileId,name:f.name,layouts:d.layouts}}catch{toast("Couldn't keep a copy of the original file; exports will be rebuilt from scratch.")}
+      deck=newDeck(d.title||f.name.replace(/\.pptx$/i,""));deck.brand=undefined;deck.slides=d.slides;deck.sections=d.sections||[];if(d.size)deck.size=d.size;
+      try{await DB.putFile(fileId,await f.arrayBuffer());deck.src={fileId,name:f.name,layouts:d.layouts,theme:d.theme,map:d.map,sz:d.sz}}catch{toast("Couldn't keep a copy of the original file; exports will be rebuilt from scratch.")}
       hist.u=[];hist.r=[];cur=0;openEditor();saveNow();
       const nf=d.slides.filter(x=>x.layout==="free").length;
       if(nf)toast(`Opened ${d.slides.length} slides with their original design.`,"Restyle with a theme",restyleAll,9000);else toast(`Opened ${d.slides.length} slides in the ${th().name} theme. Pick another under Theme.`,null,null,7000);return}
@@ -1814,26 +1820,35 @@ function readFreeText(sp,ch,C,role,phType,phIdx,box){
   if(!any)return null;
   while(paras.length&&!stripTags(paras[paras.length-1].html).trim())paras.pop();
   const il=ins.l*C.S,ir=ins.r*C.S,it=ins.t*C.S,ib=ins.b*C.S;
-  return {k:"ftext",x:box.x+il,y:box.y+it,w:Math.max(10,box.w-il-ir),h:Math.max(10,box.h-it-ib),valign:anchor==="ctr"?"middle":anchor==="b"?"bottom":"top",paras,role};
+  const out={k:"ftext",x:box.x+il,y:box.y+it,w:Math.max(10,box.w-il-ir),h:Math.max(10,box.h-it-ib),valign:anchor==="ctr"?"middle":anchor==="b"?"bottom":"top",paras,role};
+  {const rp=byTag(tb,"rPr").find(r=>r.namespaceURI===NS_A);if(rp){const wa={};const gf=kid(rp,"gradFill");if(gf){const g=parseGrad(gf,C);if(g&&g.stops.length>1)wa.grad=[g.stops[0].color,g.stops.at(-1).color]}
+    const l=kid(rp,"ln");if(l&&!kid(l,"noFill")){const c=hexOnly(colorOf(kid(l,"solidFill"),C));if(c)wa.outline={c,w:Math.max(1,(+(l.getAttribute("w")||12700))*C.S)}}if(kid(rp,"noFill"))wa.fillNone=true;
+    const ef=kid(rp,"effectLst");if(ef){const gl=kid(ef,"glow");if(gl){const c=hexOnly(colorOf(gl,C));if(c)wa.glow={c,r:Math.max(2,(+(gl.getAttribute("rad")||63500))*C.S)}}if(kid(ef,"outerShdw"))wa.shadow=true}
+    if(Object.keys(wa).length)out.wa=wa}}
+  return out;
 }
 async function readFreeSlide(doc,path,C,opt={}){
   const ch=await slideChain(C,path,opt.asLayout);const Cx={...C,colors:ch.colors,clrMap:ch.clrMap,fonts:ch.fonts};
   // background
   let bg=null,bgImage=null,bgGrad=null;
   const links={};for(const [id,r] of Object.entries(await C.relsOf(path)))if(/hyperlink$/.test(r.type))links[id]=r.target;Cx.links=links;
-  const spList=byTag(doc,"sp"),cxList=byTag(doc,"cxnSp"),picList=byTag(doc,"pic"),gfList=byTag(doc,"graphicFrame"),grpList=byTag(doc,"grpSp");const units={},spid={};
+  const spList=byTag(doc,"sp"),cxList=byTag(doc,"cxnSp"),picList=byTag(doc,"pic"),gfList=byTag(doc,"graphicFrame"),grpList=byTag(doc,"grpSp"),acList=byTag(doc,"AlternateContent");const units={},spid={};
   const unit=(sid,n,box,x,gsc)=>{units[sid]={px:{x:box.x,y:box.y,w:box.w,h:box.h},px0:{x:box.x,y:box.y,w:box.w,h:box.h},emu:{x:x.x,y:x.y,w:x.w,h:x.h},k:[C.S*gsc[0],C.S*gsc[1]]};const ci=cNvPrOf(n)?.getAttribute("id");if(ci)spid[ci]=sid};
   const cropOf=bf=>{const r=bf&&kid(bf,"srcRect");if(!r)return null;const v=k=>+(r.getAttribute(k)||0)/100000;const c={l:v("l"),t:v("t"),r:v("r"),b:v("b")};return (c.l||c.t||c.r||c.b)?c:null};
   for(const [d,part] of [[doc,path],[ch.layout,ch.layoutPath],[ch.master,ch.masterPath]]){if(!d||bg||bgImage)continue;const b=byTag(d,"bg")[0];if(!b)continue;
     const pr=kid(b,"bgPr");if(pr){const sf=kid(pr,"solidFill");if(sf)bg=hexOnly(colorOf(sf,Cx));const bf=kid(pr,"blipFill");if(bf){bgImage=await partImage(C,part,RID(kid(bf,"blip")))}const gf=kid(pr,"gradFill");if(gf&&!bg){const g=parseGrad(gf,Cx);if(g){bgGrad=g;bg=g.stops[0].color}}}
     const ref=kid(b,"bgRef");if(ref&&!bg)bg=hexOnly(colorOf(ref,Cx))}
   if(!bg)bg=ch.colors[ch.clrMap.bg1||"lt1"]||"FFFFFF";
-  const els=[];let table=null,chart=null;
+  const els=[];let table=null,chart=null,tmerge=null;
   // master/layout decoration that is not a placeholder (logos, bands) — only pictures and filled shapes
   const deco=async(d,part)=>{if(!d)return;const tree=byTag(d,"spTree")[0];if(tree)await walk(tree,part,id=>id,true)};
   const T0=v=>v;
   async function walk(tree,part,tf,decoOnly,gsc=[1,1],gsid=null){
     for(const n of tree.children){const ln=n.localName;
+      if(ln==="AlternateContent"){const fb=kid(n,"Fallback");if(!fb)continue;let g=gsid;
+        if(!g&&part===path&&!decoOnly&&!opt.asLayout){const inner=fb.firstElementChild;let x=inner&&xfrmOf(inner);if(!x&&inner){const xf=kid(inner,"xfrm"),off=kid(xf,"off"),ext=kid(xf,"ext");if(off&&ext)x={x:+off.getAttribute("x"),y:+off.getAttribute("y"),w:+ext.getAttribute("cx"),h:+ext.getAttribute("cy")}}
+          if(x){g="ac:"+acList.indexOf(n);const e=tf(x);unit(g,n,{x:C.ox+e.x*C.S,y:C.oy+e.y*C.S,w:e.w*C.S,h:e.h*C.S},x,gsc)}}
+        await walk(fb,part,tf,decoOnly,gsc,g);continue}
       if(ln==="grpSp"){const x=xfrmOf(n);if(!x)continue;const sx=x.chw?x.w/x.chw:1,sy=x.chh?x.h/x.chh:1;const prev=tf;
         let g=gsid;if(!g&&part===path&&!decoOnly&&!opt.asLayout){g="grp:"+grpList.indexOf(n);const e=tf(x);unit(g,n,{x:C.ox+e.x*C.S,y:C.oy+e.y*C.S,w:e.w*C.S,h:e.h*C.S},x,gsc)}else if(g){const ci=cNvPrOf(n)?.getAttribute("id");if(ci)spid[ci]=g}
         await walk(n,part,b=>prev({x:x.x+(b.x-x.chx)*sx,y:x.y+(b.y-x.chy)*sy,w:b.w*sx,h:b.h*sy}),decoOnly,[gsc[0]*sx,gsc[1]*sy],g);continue}
@@ -1865,7 +1880,8 @@ async function readFreeSlide(doc,path,C,opt={}){
       }else if(ln==="graphicFrame"&&!decoOnly){
         const xf=kid(n,"xfrm");const off=kid(xf,"off"),ext=kid(xf,"ext");if(!off||!ext)continue;
         const gx={x:+off.getAttribute("x"),y:+off.getAttribute("y"),w:+ext.getAttribute("cx"),h:+ext.getAttribute("cy")};const box=toPx(gx);const gsid0=gsid;const gsid2=part===path&&!opt.asLayout?(gsid0||"gf:"+gfList.indexOf(n)):null;
-        const tbl=byTag(n,"tbl")[0];if(tbl){if(!table){table=byTag(tbl,"tr").map(tr=>byTag(tr,"tc").map(tc=>byTag(tc,"p").map(paraRuns).filter(Boolean).join(" ")));const nc=Math.max(...table.map(r=>r.length));table=table.map(r=>{while(r.length<nc)r.push("");return r});els.push({k:"table",...box,sid:gsid2||undefined});if(gsid2&&!gsid0)unit(gsid2,n,box,gx,gsc)}continue}
+        const tbl=byTag(n,"tbl")[0];if(tbl){let rows=byTag(tbl,"tr").map(tr=>byTag(tr,"tc").map(tc=>byTag(tc,"p").map(paraRuns).filter(Boolean).join(" ")));const nc=Math.max(...rows.map(r=>r.length));rows=rows.map(r=>{while(r.length<nc)r.push("");return r});const tm=readTableMerges(tbl);
+          if(!table){table=rows;tmerge=tm}els.push({k:"table",...box,rows:clone(rows),tmerge:Object.keys(tm).length?tm:undefined,sid:gsid2||undefined});if(gsid2&&!gsid0)unit(gsid2,n,box,gx,gsc);continue}
         const cn=byTag(n,"chart")[0];if(cn&&!chart){const rels=await C.relsOf(part);const r=rels[RID(cn)];const cx=r&&await C.get(resolvePath(part,r.target));if(cx){chart=parseChartXml(xml(cx));if(chart){els.push({k:"chart",...box,sid:gsid2||undefined});if(gsid2&&!gsid0)unit(gsid2,n,box,gx,gsc)}}}
       }
     }
@@ -1875,12 +1891,14 @@ async function readFreeSlide(doc,path,C,opt={}){
   if(showM)await deco(ch.master,ch.masterPath);
   if(!opt.asLayout&&doc.documentElement.getAttribute("showMasterSp")!=="0")await deco(ch.layout,ch.layoutPath);
   const tree=byTag(doc,"spTree")[0];if(tree)await walk(tree,path,T0,false);
-  return {free:{bg,bgImage,bgGrad,els,units},table,chart,spid};
+  return {free:{bg,bgImage,bgGrad,els,units},table,chart,spid,tmerge};
 }
-async function readPptx(file){
+async function readPptx(file,keepSize){
   const Z=await waitFor(()=>window.JSZip,"Zip library");const zip=await Z.loadAsync(await file.arrayBuffer());
-  const get=p=>zip.file(p)?.async("string");const FC=await pptxCtx(zip);
-  const pres=xml(await get("ppt/presentation.xml")||"<x/>");const prels=relsMap(xml(await get("ppt/_rels/presentation.xml.rels")||"<x/>"));
+  const get=p=>zip.file(p)?.async("string");
+  const pres=xml(await get("ppt/presentation.xml")||"<x/>");let size=null,sz0=null;{const z=byTag(pres,"sldSz")[0];const cx=+(z?.getAttribute("cx")||12192000),cy=+(z?.getAttribute("cy")||6858000);sz0={cx,cy};
+    if(!keepSize){const hin=cy/914400;size={w:Math.round(720*cx/cy),h:720,pxi:hin/720,win:+(cx/914400).toFixed(3),hin:+hin.toFixed(3)};setDeckSize({size})}}
+  const FC=await pptxCtx(zip);let theme=null;try{theme=await readThemeInfo(zip)}catch{}const prels=relsMap(xml(await get("ppt/_rels/presentation.xml.rels")||"<x/>"));
   let order=byTag(pres,"sldId").map(n=>{const rid=n.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships","id")||n.getAttribute("r:id");return prels[rid]&&resolvePath("ppt/presentation.xml",prels[rid].target)}).filter(Boolean);
   if(!order.length)order=Object.keys(zip.files).filter(p=>/^ppt\/slides\/slide\d+\.xml$/.test(p)).sort((a,b)=>parseInt(a.match(/\d+/))-parseInt(b.match(/\d+/)));
   let title="";try{const core=xml(await get("docProps/core.xml")||"<x/>");title=byTag(core,"title")[0]?.textContent?.trim()||""}catch{}
@@ -1927,7 +1945,7 @@ async function readPptx(file){
       else{s.bullets=bulletsFrom(bodies);if(!s.bullets.length&&s.title)coerce(s,"section");else coerce(s,"bullets")}
       if(image&&!s.image&&s.layout!=="image")s.image=image;
     }
-    try{const f=await readFreeSlide(doc,path,FC);if(f.free.els.length){s.free=f.free;if(!s.table&&f.table)s.table=f.table;if(!s.chart&&f.chart)s.chart=f.chart;s.semLayout=s.layout;s.layout="free";
+    try{const f=await readFreeSlide(doc,path,FC);if(f.free.els.length){s.free=f.free;if(f.tmerge&&Object.keys(f.tmerge).length)s.tmerge=f.tmerge;if(!s.table&&f.table)s.table=f.table;if(!s.chart&&f.chart)s.chart=f.chart;s.semLayout=s.layout;s.layout="free";
       const map={};for(const [id,sid] of Object.entries(f.spid||{}))map[id]="o:"+sid;const an=readTiming(doc,map);if(an?.length)s.anims=an}}catch(err){console.warn("design import",err)}
     try{const cms=[];for(const r of Object.values(rels)){if(!/\/comments$/.test(r.type))continue;const cx=await get(resolvePath(path,r.target));if(!cx)continue;const cd=xml(cx);cms.push(...(/2018/.test(r.type)?readModernComments(cd,authors):readLegacyComments(cd,authors)))}if(cms.length)s.comments=cms}catch(err){console.warn("comments",err)}
     if(s.layout==="free"&&s.hideMaster==null&&doc.documentElement.getAttribute("showMasterSp")==="0")s.hideMaster=true;
@@ -1939,7 +1957,7 @@ async function readPptx(file){
   }
   const layouts=[];for(const lp of Object.keys(zip.files).filter(n=>/^ppt\/slideLayouts\/slideLayout\d+\.xml$/.test(n)).sort((a,b)=>parseInt(a.match(/\d+/))-parseInt(b.match(/\d+/)))){const d=xml(await get(lp));layouts.push({path:lp,name:byTag(d,"cSld")[0]?.getAttribute("name")||lp.split("/").pop(),type:d.documentElement.getAttribute("type")||""})}
   let sections=[];try{sections=readSections(pres,slides,slideIds)}catch{}
-  return {title,slides,layouts,sections};
+  return {title,slides,layouts,sections,size,theme,sz:sz0,map:{S:FC.S,ox:FC.ox,oy:FC.oy}};
 }
 function parseChartXml(d){
   const kinds=[["barChart","column"],["bar3DChart","column"],["lineChart","line"],["line3DChart","line"],["pieChart","pie"],["pie3DChart","pie"],["doughnutChart","doughnut"],["areaChart","line"]];
@@ -2018,7 +2036,7 @@ function endPresent(){if(!P.on)return;P.on=false;clearInterval(P.tick);clearTime
 function tickPV(){const e=Math.floor((Date.now()-P.t0)/1000);$("pvTimer").textContent=`${String(Math.floor(e/60)).padStart(2,"0")}:${String(e%60).padStart(2,"0")}`;$("pvClock").textContent=new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}
 let hudT=null;function hudShow(){$("hud").classList.add("show");$("pst").classList.add("cur");clearTimeout(hudT);hudT=setTimeout(()=>{$("hud").classList.remove("show");$("pst").classList.remove("cur")},2200)}
 $("pres").addEventListener("mousemove",hudShow);
-$("pst").addEventListener("click",e=>{if(e.target.closest(".hud,video,audio"))return;pgo(1)});
+$("pst").addEventListener("click",e=>{if(e.target.closest(".hud,video,audio"))return;const tn=e.target.closest(".sl [data-t]");const T=tn&&P.trig?.[tn.dataset.t];if(T){if(T.i>=T.steps.length)return;runStep(P.root,T.steps[T.i++]);return}pgo(1)});
 $("hPrev").onclick=()=>pgo(-1);$("hNext").onclick=()=>pgo(1);$("hExit").onclick=endPresent;$("hPv").onclick=()=>{P.pv=true;renderPres()};
 $("pvPrev").onclick=()=>pgo(-1);$("pvNextB").onclick=()=>pgo(1);$("pvExit").onclick=endPresent;$("pvAud").onclick=()=>{P.pv=false;renderPres()};$("pvReset").onclick=()=>{P.t0=Date.now();tickPV()};
 $("pvFont").onclick=e=>{P.nfs=P.nfs>=32?16:P.nfs+4;store.set("nfs",P.nfs);renderPres()};
@@ -2104,7 +2122,7 @@ addEventListener("keydown",e=>{
 /* ======================= objects layer (text boxes, shapes, pictures, tables, charts, diagrams, media, ink) ======================= */
 const EMU=9525;
 let masterMode=false,SEL=[],cropMode=false,drawMode=null,objClip=null,styleClip=null,zoomK=1;
-const VIEW={grid:store.get("grid",false),snapGrid:store.get("snapGrid",false),guides:store.get("guides",true),gridSize:40};
+const VIEW={rulers:store.get("rulers",false),rulerUnit:store.get("rulerUnit","in"),grid:store.get("grid",false),snapGrid:store.get("snapGrid",false),guides:store.get("guides",true),gridSize:40};
 function curS(){return masterMode?deck.master:deck.slides[cur]}
 const STD_COLORS=["000000","404040","7F7F7F","BFBFBF","FFFFFF","C00000","FF0000","FFC000","FFFF00","92D050","00B050","00B0F0","0070C0","002060","7030A0"];
 function themeColors(t){return [t.fg,t.bg,t.accent,t.accent2,t.muted,t.card,mix(t.accent,"000000",.35),mix(t.accent,"FFFFFF",.5)].filter((c,i,a)=>c&&a.indexOf(c)===i)}
@@ -2163,7 +2181,7 @@ function objNode(o,t,mode,path,ox=0,oy=0){
     tb.style.cssText=`position:absolute;left:${ins[0]}px;top:${ins[1]}px;right:${ins[2]}px;bottom:${ins[3]}px;overflow:visible;justify-content:${{top:"flex-start",middle:"center",bottom:"flex-end"}[o.valign||"top"]}`;
     const fx=document.createElement("div");fx.className="fx nofit";fx.innerHTML=freeParasHtml(o.paras||[]);
     if(edit&&o.k==="text"&&!(o.paras||[]).some(p=>stripTags(p.html).trim())){fx.classList.add("blank");fx.firstElementChild?.setAttribute("data-ph",o.hint||"Click to add text")}
-    if(edit&&path){fx.contentEditable="true";fx.spellcheck=true;fx.dataset.path=JSON.stringify(path)}
+    if(edit&&path){fx.contentEditable="true";fx.spellcheck=true;fx.dataset.path=JSON.stringify(path)}if(o.wa)fx.style.cssText+=";"+waCss(o.wa);
     tb.append(fx);d.append(tb);
   }else if(o.k==="line"){const x1=o.flipH?o.w:0,y1=o.flipV?o.h:0,x2=o.flipH?0:o.w,y2=o.flipV?0:o.h,lw=o.lw||2,mid=uid(),c=o.line||"000000";
     d.insertAdjacentHTML("beforeend",`<svg style="position:absolute;left:0;top:0;overflow:visible;${sh}" width="${Math.max(1,o.w)}" height="${Math.max(1,o.h)}"><defs>${arrowDef("s"+mid,c,o.head,true)}${arrowDef("e"+mid,c,o.tail)}</defs><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="transparent" stroke-width="16" style="pointer-events:stroke"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#${c}" stroke-width="${lw}" ${dashAttr(o.dash,lw)} stroke-linecap="round"${o.head&&o.head!=="none"?` marker-start="url(#s${mid})"`:""}${o.tail&&o.tail!=="none"?` marker-end="url(#e${mid})"`:""}/></svg>`);
@@ -2173,6 +2191,7 @@ function objNode(o,t,mode,path,ox=0,oy=0){
   else if(o.k==="icon"){d.innerHTML=iconSvg(o.icon||"spark","#"+(o.color||t.accent),o.sw||1.6);d.firstElementChild.style.cssText="width:100%;height:100%;display:block"}
   else if(o.k==="ink"){d.innerHTML=`<svg style="position:absolute;left:0;top:0;overflow:visible" width="${Math.max(1,o.w)}" height="${Math.max(1,o.h)}"><path d="${inkD(o.pts,o.w,o.h)}" fill="none" stroke="#${o.line||"000000"}" stroke-width="${o.lw||4}" stroke-linecap="round" stroke-linejoin="round"${o.alpha!=null&&o.alpha<1?` stroke-opacity="${o.alpha}"`:""}/></svg>`}
   else if(o.k==="video"||o.k==="audio")mediaNode(o,d,mode);
+  else if(o.k==="eq")eqNode(o,d);
   else if(o.k==="group")(o.kids||[]).forEach((k,j)=>{const n=objNode(k,t,mode,path?[...path,"kids",j]:null,o.x,o.y);n.dataset.kid=j;d.append(n)});
   return d}
 function mediaNode(o,d,mode){
@@ -2185,8 +2204,8 @@ function objTable(o,t,d,path){const rows=o.rows||[[""]],nc=Math.max(1,...rows.ma
   const cw=o.cw&&o.cw.length===nc?o.cw:Array(nc).fill(1/nc);const bd=mix(acc,t.bg,.55),bandC=mix(acc,t.bg,.86);
   const tb=document.createElement("table");tb.className="otbl";tb.style.cssText=`font-size:${fs}px;line-height:1.25;color:#${t.fg};font-family:${fontCss(o.font||t.bf)};width:100%;table-layout:fixed;border-collapse:collapse`;
   tb.innerHTML=`<colgroup>${cw.map(f=>`<col style="width:${(f*100).toFixed(3)}%">`).join("")}</colgroup>`;
-  rows.forEach((r,ri)=>{const tr=document.createElement("tr");const head=hd&&ri===0;
-    for(let ci=0;ci<nc;ci++){const td=document.createElement("td");const cf=o.cf?.[ri+","+ci];const bg=cf||(head?acc:band&&(ri%2===(hd?0:1))?bandC:null);
+  const cov=coveredOf(o.merge);rows.forEach((r,ri)=>{const tr=document.createElement("tr");const head=hd&&ri===0;
+    for(let ci=0;ci<nc;ci++){if(cov.has(ri+","+ci))continue;const td=document.createElement("td");const mg=o.merge?.[ri+","+ci];if(mg){td.colSpan=mg.cs;td.rowSpan=mg.rs}const cf=o.cf?.[ri+","+ci];const bg=cf||(head?acc:band&&(ri%2===(hd?0:1))?bandC:null);
       td.style.cssText=`background:${bg?"#"+bg:"transparent"};color:#${bg?(head&&!cf?onColor(acc):onColor(bg)===onColor(t.bg)?t.fg:onColor(bg)):t.fg};font-weight:${head?700:400};padding:.35em .6em;border:1px solid #${bd};vertical-align:middle;overflow-wrap:break-word`;
       td.innerHTML=r[ci]||"";if(path){td.contentEditable="true";td.dataset.path=JSON.stringify([...path,"rows",ri,ci])}tr.append(td)}
     tb.append(tr)});d.append(tb)}
@@ -2199,6 +2218,7 @@ function hfDate(hf){return hf.dateText||new Date().toLocaleDateString()}
 function syncObjHeights(root,s){if(!s?.objs)return;let ch=false;
   for(const n of root.querySelectorAll(":scope > .ob")){const o=n._o;if(!o)continue;
     if(o.k==="text"&&!o.fixH){const fx=n.querySelector(".fx");const ins=o.ins||[9.6,4.8,9.6,4.8];const need=Math.ceil(fx.offsetHeight+ins[1]+ins[3]);if(need>4&&Math.abs(need-o.h)>1){o.h=need;n.style.height=need+"px";ch=true}}
+    if(o.k==="eq"){const w=n.querySelector(".eqw");if(w&&w.offsetWidth){const nw=Math.ceil(w.offsetWidth)+6,nh=Math.ceil(w.offsetHeight)+6;if(Math.abs(nw-o.w)>1||Math.abs(nh-o.h)>1){o.w=nw;o.h=nh;n.style.width=nw+"px";n.style.height=nh+"px";ch=true}}}
     if(o.k==="table"){const tb=n.querySelector("table");const need=Math.ceil(tb.offsetHeight);if(need>4&&Math.abs(need-o.h)>1){o.h=need;n.style.height=need+"px";ch=true}}}
   return ch}
 
@@ -2231,6 +2251,7 @@ function toggleSel(k){setSel(SEL.includes(k)?SEL.filter(x=>x!==k):[...SEL,k])}
 function snapGeom(it){return {box:{...it.box},o:it.o?clone(it.o):null,els:it.els?it.els.map(e=>({x:e.x,y:e.y,w:e.w,h:e.h})):null,unit:it.sid?{...curS().free.units?.[it.sid]?.px}:null}}
 function applyGeom(it,g0,b1){const s=curS();
   if(it.o){const o=it.o,b0=g0.box;
+    if(o.k==="eq"&&b0.h&&g0.o)o.size=g0.o.size*b1.h/b0.h;
     if(o.k==="group"){o.kids=clone(g0.o.kids);const same=Math.abs(b1.w-b0.w)<.01&&Math.abs(b1.h-b0.h)<.01;if(same)o.kids.forEach(k=>moveObj(k,b1.x-b0.x,b1.y-b0.y));else{const walk=k=>{scaleObj(k,b0,b1);(k.kids||[]).forEach(walk)};o.kids.forEach(walk)}}
     o.x=b1.x;o.y=b1.y;o.w=b1.w;o.h=b1.h}
   else{const b0=g0.box,sx=b0.w?b1.w/b0.w:1,sy=b0.h?b1.h/b0.h:1;it.els.forEach((e,i)=>{const e0=g0.els[i];e.x=b1.x+(e0.x-b0.x)*sx;e.y=b1.y+(e0.y-b0.y)*sy;e.w=e0.w*sx;e.h=e0.h*sy});const u=s.free.units?.[it.sid];if(u)u.px={...b1}}
@@ -2255,7 +2276,8 @@ function drawSel(){const L=$("selLayer");if(!L)return;L.replaceChildren();if(vie
       if(cropMode&&o?.k==="pic"){const c=o.crop||{l:0,t:0,r:0,b:0},fw=b.w/(1-c.l-c.r),fh=b.h/(1-c.t-c.b);const g=document.createElement("img");g.src=o.src;g.className="cropghost";g.style.cssText=`left:${-c.l*fw*k}px;top:${-c.t*fh*k}px;width:${fw*k}px;height:${fh*k}px`;f.prepend(g)}}
     L.append(f)}
   if(items.length>1){const u=unionBox(items.map(i=>i.o?rotBounds(i.o):i.box));const f=document.createElement("div");f.className="sfr multi";f.style.cssText=`left:${u.x*k}px;top:${u.y*k}px;width:${u.w*k}px;height:${u.h*k}px`;L.append(f)}
-  if(!$("side").hidden&&sideTab==="anim")drawAnimBadges(L);
+  if(!$("side").hidden&&sideTab==="anim"){drawAnimBadges(L);drawPathOverlays(L)}
+  drawRulers();
 }
 function showGuides(lines){const L=$("guideLayer");if(!L)return;L.replaceChildren();const k=slideScale;for(const g of lines){const d=document.createElement("div");d.className="guide";if(g.v!=null)d.style.cssText=`left:${g.v*k}px;top:${g.a*k}px;width:0;height:${(g.b-g.a)*k}px`;else d.style.cssText=`top:${g.h*k}px;left:${g.a*k}px;height:0;width:${(g.b-g.a)*k}px`;L.append(d)}}
 function snapTargets(exclude){const xs=[[0,0,H],[W/2,0,H],[W,0,H]],ys=[[0,0,W],[H/2,0,W],[H,0,W]];
@@ -2292,7 +2314,7 @@ function startHandle(ev,h,p0){const it=selItems()[0];if(!it)return;const g0=snap
       const a=h==="p1"?np:fixed,b=h==="p1"?fixed:np;o.x=Math.min(a[0],b[0]);o.y=Math.min(a[1],b[1]);o.w=Math.abs(b[0]-a[0]);o.h=Math.abs(b[1]-a[1]);o.flipH=b[0]<a[0];o.flipV=b[1]<a[1];it.box=objBox(o);domUpdate(it);drawSel();return}
     const dX=q.x-p0.x,dY=q.y-p0.y,lx=dX*Math.cos(-rot)-dY*Math.sin(-rot),ly=dX*Math.sin(-rot)+dY*Math.cos(-rot);
     let w=b0.w,hh=b0.h,l=0,t=0;if(h.includes("e"))w=b0.w+lx;if(h.includes("w")){w=b0.w-lx;l=lx}if(h.includes("s"))hh=b0.h+ly;if(h.includes("n")){hh=b0.h-ly;t=ly}
-    const corner=h.length===2,keep=o&&["pic","icon","video","chart","group"].includes(o.k)||!o;
+    const corner=h.length===2,keep=o&&["pic","icon","video","chart","group","eq"].includes(o.k)||!o;
     if(corner&&!cropMode&&(keep!==e.shiftKey)){const k=Math.max(w/b0.w,hh/b0.h);w=b0.w*k;hh=b0.h*k;if(h.includes("w"))l=b0.w-w;if(h.includes("n"))t=b0.h-hh}
     if(!rot&&!cropMode){const nb={x:b0.x+l,y:b0.y+t,w,h:hh};const ex=h.includes("w")?[nb.x]:h.includes("e")?[nb.x+nb.w]:[],ey=h.includes("n")?[nb.y]:h.includes("s")?[nb.y+nb.h]:[];const sn=snapBox(nb,e.altKey,{x:ex,y:ey});
       if(!(corner&&keep!==e.shiftKey)){if(h.includes("w")){l+=sn.dx;w-=sn.dx}else if(h.includes("e"))w+=sn.dx;if(h.includes("n")){t+=sn.dy;hh-=sn.dy}else if(h.includes("s"))hh+=sn.dy;showGuides(sn.lines)}}
@@ -2312,13 +2334,15 @@ function startMarquee(ev,p0){const L=$("selLayer");const r=document.createElemen
 function enterEdit(node,ev){const s=curS();let target=null;
   if(ev&&document.elementFromPoint){const el=document.elementFromPoint(ev.clientX,ev.clientY);target=el?.closest?.("td[contenteditable],.fx[contenteditable]");if(target&&!node.contains(target))target=null}
   if(!target)target=node.querySelector(".fx[contenteditable],td[contenteditable]");
-  if(!target){const o=node._o;if(o?.k==="chart"){openObjData(o);return}if(o?.k==="pic"){toggleCrop();return}return}
+  if(!target){const o=node._o;if(o?.k==="eq"){eqEditor(o);return}if(o?.k==="chart"){openObjData(o);return}if(o?.k==="pic"){toggleCrop();return}return}
   target.focus();const sl=getSelection();let r=ev&&document.caretRangeFromPoint?document.caretRangeFromPoint(ev.clientX,ev.clientY):null;
   if(!r||!target.contains(r.startContainer)){r=document.createRange();r.selectNodeContents(target);r.collapse(false)}sl.removeAllRanges();sl.addRange(r);drawSel()}
 function textTarget(){const it=selItems()[0];if(!it||SEL.length!==1)return null;return $("slideBox").querySelector(`[data-sel="${it.k}"] .fx[contenteditable]`)}
 /* drawing new objects */
 function setDrawMode(m){drawMode=m;$("slideWrap").classList.toggle("drawing",!!m);$("slideWrap").classList.toggle("inking",m?.kind==="ink");if(m)setSel([]);renderObar();if(m&&m.kind!=="ink")toast(m.kind==="text"?"Click or drag on the slide to place the text box.":"Drag on the slide to draw. Shift keeps proportions. Esc cancels.",null,null,3000)}
 function startDraw(ev,p0){const m=drawMode;const L=$("selLayer");const k=slideScale;
+  if(m.kind==="motion"){const pts=[[p0.x,p0.y]];const sv=document.createElementNS("http://www.w3.org/2000/svg","svg");sv.setAttribute("class","inkprev");sv.setAttribute("width",W*k);sv.setAttribute("height",H*k);const pa=document.createElementNS("http://www.w3.org/2000/svg","path");pa.setAttribute("fill","none");pa.setAttribute("stroke","#2f9e44");pa.setAttribute("stroke-width","2");pa.setAttribute("stroke-dasharray","6 4");sv.append(pa);L.append(sv);
+    const mv=e=>{const q=slidePt(e);pts.push([q.x,q.y]);pa.setAttribute("d","M"+pts.map(p=>p[0]*k+","+p[1]*k).join("L"))};const up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up);sv.remove();finishPathDraw(pts)};addEventListener("pointermove",mv);addEventListener("pointerup",up);return}
   if(m.kind==="ink"){const pts=[[p0.x,p0.y]];const sv=document.createElementNS("http://www.w3.org/2000/svg","svg");sv.setAttribute("class","inkprev");sv.setAttribute("width",W*k);sv.setAttribute("height",H*k);const pa=document.createElementNS("http://www.w3.org/2000/svg","path");pa.setAttribute("fill","none");pa.setAttribute("stroke","#"+m.color);pa.setAttribute("stroke-width",m.lw*k);pa.setAttribute("stroke-linecap","round");pa.setAttribute("stroke-linejoin","round");if(m.alpha<1)pa.setAttribute("stroke-opacity",m.alpha);sv.append(pa);L.append(sv);
     const mv=e=>{const q=slidePt(e);const l=pts[pts.length-1];if(Math.hypot(q.x-l[0],q.y-l[1])<1.5)return;pts.push([q.x,q.y]);pa.setAttribute("d","M"+pts.map(p=>p[0]*k+","+p[1]*k).join("L"))};
     const up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up);sv.remove();if(pts.length<2)return;const sm=simplify(pts,.8);const b=unionBox(sm.map(p=>({x:p[0],y:p[1],w:0,h:0})));const w=Math.max(1,b.w),h=Math.max(1,b.h);
@@ -2399,6 +2423,7 @@ function wireStage(){
   wrap.addEventListener("mousedown",e=>{if(suppressMouse){e.preventDefault();suppressMouse=false}},true);
   wrap.addEventListener("dblclick",e=>{const hit=e.target.closest("#slideBox .sl > [data-sel]");if(!hit)return;const ae=document.activeElement;if(ae&&ae.isContentEditable&&hit.contains(ae))return;setSel([hit.dataset.sel]);enterEdit(hit,e)});
   wrap.addEventListener("contextmenu",e=>{const hit=e.target.closest("#slideBox .sl > [data-sel]");if(!hit)return;if(document.activeElement?.isContentEditable&&hit.contains(document.activeElement))return;e.preventDefault();if(!SEL.includes(hit.dataset.sel))setSel([hit.dataset.sel]);objMenu(hit)});
+  $("slideBox").addEventListener("mousedown",e=>{const td=e.target.closest(".otbl td");if(!td)return;const a=document.activeElement;if(e.shiftKey&&a?.tagName==="TD"&&a!==td&&a.closest(".otbl")===td.closest(".otbl")){e.preventDefault();setCellRange(a,td)}else if(cellRange){cellRange=null;paintRange()}},true);
   $("slideBox").addEventListener("focusin",()=>requestAnimationFrame(drawSel));$("slideBox").addEventListener("focusout",()=>requestAnimationFrame(drawSel));
 }
 function objMenu(anchor){const items=selItems();const objs=items.filter(i=>i.o);openPop(anchor,p=>{
@@ -2437,13 +2462,13 @@ function renderObar(){const bar=$("obar");if(!bar)return;bar.replaceChildren();
     B("Shape",b=>shapePicker(b),{svg:'<rect x="3.5" y="9" width="10" height="10" rx="1"/><circle cx="16" cy="8" r="5"/>'});
     B("Picture",()=>{insertPicMode=true;picTarget=null;pickImage()},{svg:SV.img});
     B("Table",b=>tablePicker(b),{svg:'<rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15M15 4.5v15"/>'});
-    B("Chart",b=>chartPicker(b),{svg:ICONS.chart});B("Diagram",b=>diagramPicker(b),{svg:ICONS.layers,title:"SmartArt-style diagram"});B("Icon",b=>iconInsertPicker(b),{svg:ICONS.star});
+    B("Chart",b=>chartPicker(b),{svg:ICONS.chart});B("Diagram",b=>diagramPicker(b),{svg:ICONS.layers,title:"SmartArt-style diagram"});B("Icon",b=>iconInsertPicker(b),{svg:ICONS.star});B("Equation",()=>eqEditor(null),{svg:'<path d="M5 6h8l-5 6 5 6H5"/><path d="M15 12h5M17.5 9.5v5"/>',title:"Insert an editable equation"});
     B("Video",()=>pickMedia("video"),{svg:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/>'});B("Audio",()=>pickMedia("audio"),{svg:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>'});
     B("Draw",()=>setDrawMode({kind:"ink",color:"E5484D",lw:4,alpha:1}),{svg:'<path d="M4 20l4-1L19 8l-3-3L5 16z"/>',title:"Draw with a pen"});
     if(!masterMode){sep();B("Background",b=>bgMenu(b),{svg:'<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 15l5-5 4 4 3-3 5 5"/>',title:"Format background"});B("Transition",b=>transMenu(b),{svg:'<rect x="2.5" y="6" width="9" height="12" rx="1.5"/><path d="M14 9l4 3-4 3M18 12h-4"/>',title:"Slide transition"})}
     return}
   const objs=items.filter(i=>i.o).map(i=>i.o),flat=flatObjs(objs),o=items.length===1&&objs.length===1?objs[0]:null;
-  const kinds=new Set(flat.map(x=>x.k));const name=items.length>1?`${items.length} objects`:o?({shape:"Shape",text:"Text box",line:"Line",pic:"Picture",table:"Table",chart:"Chart",icon:"Icon",ink:"Drawing",video:"Video",audio:"Audio",group:"Group"}[o.k]||"Object"):({pic:"Picture",ftext:"Text",shape:"Shape",table:"Table",chart:"Chart"}[items[0].els[0].k]||"Object")+" (from file)";
+  const kinds=new Set(flat.map(x=>x.k));const name=items.length>1?`${items.length} objects`:o?({eq:"Equation",shape:"Shape",text:"Text box",line:"Line",pic:"Picture",table:"Table",chart:"Chart",icon:"Icon",ink:"Drawing",video:"Video",audio:"Audio",group:"Group"}[o.k]||"Object"):({pic:"Picture",ftext:"Text",shape:"Shape",table:"Table",chart:"Chart"}[items[0].els[0].k]||"Object")+" (from file)";
   bar.insertAdjacentHTML("beforeend",`<span class="olab">${esc(name)}</span>`);
   if(kinds.has("shape")||kinds.has("text")){const f0=flat.find(x=>x.k==="shape"||x.k==="text");
     B("Fill",b=>colorPop(b,"Fill",f0.fill,c=>objEdit(()=>flat.forEach(x=>{if(x.k==="shape"||x.k==="text")x.fill=c})),{none:"No fill",stay:true,extra:p=>{msep(p);rangeRow(p,"Transparency",Math.round((1-(f0.fillA??1))*100),0,100,v=>objEdit(()=>flat.forEach(x=>{x.fillA=1-v/100})));checkRow(p,"Shadow",!!f0.shadow,v=>objEdit(()=>flat.forEach(x=>x.shadow=v)))}}),{pre:swatchSvg(f0.fill),title:"Fill color"});
@@ -2453,6 +2478,7 @@ function renderObar(){const bar=$("obar");if(!bar)return;bar.replaceChildren();
   if(o?.k==="pic"){B("Crop",toggleCrop,{on:cropMode,svg:'<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>',title:"Crop (drag the handles)"});B("Picture",b=>picPop(b,o),{svg:SV.img,title:"Shape, transparency, brightness, alt text"})}
   if(o?.k==="table")B("Table",b=>tablePop(b,o),{svg:'<rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15M15 4.5v15"/>'});
   if(o?.k==="chart")B("Edit data",()=>openObjData(o),{svg:'<path d="M4 4v16h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/>'});
+  if(o?.k==="eq"){B("Edit equation",()=>eqEditor(o),{svg:'<path d="M5 6h8l-5 6 5 6H5"/>'});B("Color",b=>colorPop(b,"Equation color",o.color,c=>objEdit(()=>o.color=c||th().fg)),{pre:swatchSvg(o.color||th().fg)});B("Size",b=>openPop(b,p=>{selRow(p,"Size",PT.map(v=>[v,v+" pt"]),Math.round((o.size||40)*.75),v=>objEdit(()=>o.size=+(v/.75).toFixed(2)))},{force:true}))}
   if(o?.k==="icon"){B("Color",b=>colorPop(b,"Icon color",o.color,c=>objEdit(()=>o.color=c||th().accent)),{pre:swatchSvg(o.color||th().accent)});B("Change icon",b=>iconInsertPicker(b,o))}
   if(o?.k==="video"||o?.k==="audio"){B("Playback",b=>openPop(b,p=>{mlab(p,"In Present");checkRow(p,"Start automatically",!!o.auto,v=>objEdit(()=>o.auto=v));checkRow(p,"Loop until stopped",!!o.loop,v=>objEdit(()=>o.loop=v));const d=document.createElement("div");d.className="hint";d.style.padding="6px 10px";d.textContent="The file is embedded in the PowerPoint file when you export.";p.append(d)},{force:true}),{svg:SV.play})}
   if(items.length===1&&!o&&items[0].els.some(e=>e.k==="pic")){const e=items[0].els.find(e=>e.k==="pic");B("Alt text",b=>altPop(b,e))}
@@ -2478,6 +2504,7 @@ function textPop(anchor,list){openPop(anchor,p=>{const p0=list[0].paras[0]||para
   lb("• Bullets",p0.bullet&&!p0.num,()=>{const v=!(p0.bullet&&!p0.num);all(q=>{q.bullet=v;q.num=false})});lb("1. Numbering",!!p0.num,()=>{const v=!p0.num;all(q=>{q.num=v;q.bullet=v})});
   lb("Indent →",false,()=>all(q=>q.lvl=Math.min(8,(q.lvl||0)+1)));lb("← Outdent",false,()=>all(q=>q.lvl=Math.max(0,(q.lvl||0)-1)));p.append(lr);
   selRow(p,"Line spacing",[[1,"1.0"],[1.15,"1.15"],[1.5,"1.5"],[2,"2.0"],[2.5,"2.5"],[3,"3.0"]],p0.ls||1,v=>all(q=>q.ls=+v));
+  msep(p);mi(p,"Text effects (WordArt)…",()=>waPop(anchor,list.filter(x=>x.k==="text"||x.k==="shape")),{icon:"wand",stay:true});
   const tb=list.find(x=>x.k==="text");if(tb)checkRow(p,"Grow box to fit text",!tb.fixH,v=>objEdit(()=>list.forEach(x=>{if(x.k==="text")x.fixH=!v})));
 },{force:true})}
 function picPop(anchor,o){openPop(anchor,p=>{mlab(p,"Crop to shape");const g=document.createElement("div");g.className="shgrid";
@@ -2492,9 +2519,11 @@ let lastCell=null;
 function tablePop(anchor,o){const rc=lastCell&&lastCell.id===o.id?lastCell:{r:o.rows.length-1,c:o.rows[0].length-1};openPop(anchor,p=>{const nc=o.rows[0].length;
   mlab(p,`Row ${rc.r+1}, column ${rc.c+1}`);
   const act=(l,fn)=>mi(p,l,()=>objEdit(fn));
-  act("Insert row above",()=>o.rows.splice(rc.r,0,Array(nc).fill("")));act("Insert row below",()=>o.rows.splice(rc.r+1,0,Array(nc).fill("")));
-  act("Insert column left",()=>{o.rows.forEach(r=>r.splice(rc.c,0,""));delete o.cw});act("Insert column right",()=>{o.rows.forEach(r=>r.splice(rc.c+1,0,""));delete o.cw});
-  if(o.rows.length>1)act("Delete row",()=>{o.rows.splice(rc.r,1);lastCell=null});if(nc>1)act("Delete column",()=>{o.rows.forEach(r=>r.splice(rc.c,1));delete o.cw;lastCell=null});
+  act("Insert row above",()=>{o.rows.splice(rc.r,0,Array(nc).fill(""));mergeShift(o,"r",rc.r,1)});act("Insert row below",()=>{o.rows.splice(rc.r+1,0,Array(nc).fill(""));mergeShift(o,"r",rc.r+1,1)});
+  act("Insert column left",()=>{o.rows.forEach(r=>r.splice(rc.c,0,""));mergeShift(o,"c",rc.c,1);delete o.cw});act("Insert column right",()=>{o.rows.forEach(r=>r.splice(rc.c+1,0,""));mergeShift(o,"c",rc.c+1,1);delete o.cw});
+  if(o.rows.length>1)act("Delete row",()=>{o.rows.splice(rc.r,1);mergeShift(o,"r",rc.r,-1);lastCell=null});if(nc>1)act("Delete column",()=>{o.rows.forEach(r=>r.splice(rc.c,1));mergeShift(o,"c",rc.c,-1);delete o.cw;lastCell=null});
+  msep(p);const rng=cellRange&&cellRange.id===o.id&&(cellRange.r0!==cellRange.r1||cellRange.c0!==cellRange.c1);mi(p,rng?`Merge cells (${cellRange.r1-cellRange.r0+1} × ${cellRange.c1-cellRange.c0+1})`:"Merge cells… (Shift-click a second cell first)",()=>mergeCells(o));
+  if(Object.keys(o.merge||{}).length)mi(p,"Split merged cell",()=>splitCell(o,rc));
   msep(p);checkRow(p,"Header row",o.ts?.head!==false,v=>objEdit(()=>{o.ts={...(o.ts||{}),head:v}}));checkRow(p,"Banded rows",o.ts?.band!==false,v=>objEdit(()=>{o.ts={...(o.ts||{}),band:v}}));
   mi(p,"Table color…",()=>colorPop(anchor,"Table color",o.ts?.color||th().accent,c=>objEdit(()=>{o.ts={...(o.ts||{}),color:c||undefined}})),{stay:true});
   mi(p,"Cell shading…",()=>colorPop(anchor,"Cell shading",o.cf?.[rc.r+","+rc.c],c=>objEdit(()=>{o.cf=o.cf||{};if(c)o.cf[rc.r+","+rc.c]=c;else delete o.cf[rc.r+","+rc.c]}),{none:"No shading"}),{stay:true});
@@ -2522,6 +2551,7 @@ function insertMenu(anchor){openPop(anchor,p=>{mlab(p,"Insert");
   mi(p,"Chart…",()=>chartPicker(anchor),{icon:"chart",stay:true});
   mi(p,"Diagram (SmartArt)…",()=>diagramPicker(anchor),{icon:"layers",stay:true});
   mi(p,"Icon…",()=>iconInsertPicker(anchor),{icon:"spark",stay:true});
+  mi(p,"Equation…",()=>eqEditor(null),{icon:"code"});
   mi(p,"Video from file…",()=>pickMedia("video"),{icon:"play"});mi(p,"Audio from file…",()=>pickMedia("audio"),{icon:"play"});
   mi(p,"Draw with pen",()=>setDrawMode({kind:"ink",color:"E5484D",lw:4,alpha:1}),{icon:"wand"});
   msep(p);mi(p,"Comment",()=>{openSide("cm");setTimeout(()=>$("cmNew")?.focus(),40)},{icon:"tone"});mi(p,"Header & footer…",hfEditor,{icon:"notes"});mi(p,"Section",()=>addSection(cur),{icon:"flag"});
@@ -2573,9 +2603,9 @@ function openObjData(o){dataObj=o;$("dataPanel").hidden=false;renderData()}
 const FX={entr:[["appear","Appear"],["fade","Fade"],["fly","Fly In"],["float","Float In"],["wipe","Wipe"],["zoom","Zoom"],["wheel","Wheel"]],emph:[["pulse","Pulse"],["spin","Spin"],["grow","Grow/Shrink"],["transp","Transparency"]],exit:[["appear","Disappear"],["fade","Fade"],["fly","Fly Out"],["wipe","Wipe"],["zoom","Zoom"]]};
 const FX_DUR={appear:0,fade:.5,fly:.5,float:1,wipe:.5,zoom:.5,wheel:2,pulse:.5,spin:2,grow:2,transp:.5,other:.5};
 const DIRS=[["b","From bottom"],["l","From left"],["r","From right"],["t","From top"]];
-const CLS_NAME={entr:"Entrance",emph:"Emphasis",exit:"Exit"};
-function fxName(a){if(a.fx==="other")return a.name||"Effect from PowerPoint";return (FX[a.cls]||[]).find(f=>f[0]===a.fx)?.[1]||a.fx}
-function targetLabel(s,key){if(key.startsWith("obj:")){const o=(s.objs||[]).find(o=>o.id===key.slice(4));if(!o)return "(deleted)";const txt=o.paras?stripTags(o.paras.map(p=>p.html).join(" ")).trim():"";return ({shape:"Shape",text:"Text box",line:"Line",pic:"Picture",table:"Table",chart:"Chart",icon:"Icon",ink:"Drawing",video:"Video",audio:"Audio",group:"Group"}[o.k]||"Object")+(txt?": "+txt.slice(0,28):"")}
+const CLS_NAME={entr:"Entrance",emph:"Emphasis",exit:"Exit",path:"Motion path"};
+function fxName(a){if(a.fx==="other")return a.name||"Effect from PowerPoint";if(a.cls==="path")return (PATHS.find(q=>q[0]===a.fx)?.[1]||"Custom path");return (FX[a.cls]||[]).find(f=>f[0]===a.fx)?.[1]||a.fx}
+function targetLabel(s,key){if(key.startsWith("obj:")){const o=(s.objs||[]).find(o=>o.id===key.slice(4));if(!o)return "(deleted)";const txt=o.paras?stripTags(o.paras.map(p=>p.html).join(" ")).trim():"";return ({eq:"Equation",shape:"Shape",text:"Text box",line:"Line",pic:"Picture",table:"Table",chart:"Chart",icon:"Icon",ink:"Drawing",video:"Video",audio:"Audio",group:"Group"}[o.k]||"Object")+(txt?": "+txt.slice(0,28):"")}
   if(key.startsWith("el:")){const p=key.slice(3);const nm={title:"Title",subtitle:"Subtitle",bullets:"Bullets",quote:"Quote",by:"Quote author",stat:"Big number",statLabel:"Number label",image:"Picture",chart:"Chart",table:"Table"}[p];if(nm)return nm;const m=p.match(/^(cols|items)\.(\d+)\.(\w+)/);if(m)return `${m[1]==="cols"?"Column":"Item"} ${+m[2]+1} ${m[3]}`;return p}
   if(key.startsWith("o:")&&s.free){const els=s.free.els.filter(e=>e.sid===key.slice(2));const tx=els.find(e=>e.k==="ftext");if(tx)return "Text: "+stripTags(tx.paras.map(p=>p.html).join(" ")).trim().slice(0,30);return ({pic:"Picture",shape:"Shape",table:"Table",chart:"Chart"}[els[0]?.k]||"Object")}
   return key}
@@ -2583,8 +2613,9 @@ function paraCount(s,key){if(key.startsWith("obj:")){const o=(s.objs||[]).find(o
   if(key.startsWith("el:")){const v=getPath(s,key.slice(3).split(".").map(x=>/^\d+$/.test(x)?+x:x));return Array.isArray(v)?v.length:0}
   if(key.startsWith("o:")&&s.free){const e=s.free.els.find(e=>e.sid===key.slice(2)&&e.k==="ftext");return e?e.paras.length:0}return 0}
 /* expand "by paragraph" and work out start times: [{auto, fx:[{a,pi,start,end}]}] */
-function animSteps(s){const out=[];let st=null,prevStart=0,grpEnd=0;
-  const list=[];for(const a of s.anims||[]){const n=a.byPara?paraCount(s,a.t):0;if(n>1){for(let i=0;i<n;i++)list.push({a,pi:i,trig:i===0?a.trig:a.trig==="click"?"click":"after"})}else list.push({a,pi:null,trig:a.trig})}
+function trigLists(s){const m={};for(const a of s.anims||[])if(a.on)(m[a.on]=m[a.on]||[]).push(a);return m}
+function animSteps(s,src){const out=[];let st=null,prevStart=0,grpEnd=0;
+  const list=[];for(const a of src||(s.anims||[]).filter(a=>!a.on)){const n=a.byPara?paraCount(s,a.t):0;if(n>1){for(let i=0;i<n;i++)list.push({a,pi:i,trig:i===0?a.trig:a.trig==="click"?"click":"after"})}else list.push({a,pi:null,trig:a.trig})}
   for(const it of list){const a=it.a,dur=Math.max(0,a.dur??FX_DUR[a.fx]??.5)*1000,del=Math.max(0,a.delay||0)*1000;
     if(it.trig==="click"||!st){st={auto:it.trig!=="click",fx:[]};out.push(st);prevStart=0;grpEnd=0}
     const base=it.trig==="after"?grpEnd:it.trig==="with"?prevStart:0;const start=base+del;st.fx.push({a,pi:it.pi,start,end:start+dur,base,del,trig:it.trig});prevStart=base;grpEnd=Math.max(grpEnd,start+dur)}
@@ -2602,11 +2633,12 @@ function playFx(root,f,t0=0,instant){const a=f.a;const ns=animNodes(root,a.t,f.p
   for(const n of ns){const base=n.style.transform||"";
     if(a.cls==="entr"){n.style.visibility="visible";if(instant)continue;anims.push(n.animate(fxFrames(a,n),{duration:a.fx==="appear"?1:dur,delay,fill:"backwards",easing:"cubic-bezier(.2,.7,.25,1)"}))}
     else if(a.cls==="exit"){if(instant){n.style.visibility="hidden";continue}const an=n.animate(fxFrames(a,n,true),{duration:a.fx==="appear"?1:dur,delay,fill:"forwards",easing:"ease-in"});an.onfinish=()=>{n.style.visibility="hidden";an.cancel()};anims.push(an)}
+    else if(a.cls==="path"){const kf=pathPts(a.path).map(q=>({transform:`translate(${(q[0]*W).toFixed(1)}px,${(q[1]*H).toFixed(1)}px) ${base}`}));if(instant){n.style.transform=kf.at(-1).transform;continue}anims.push(n.animate(kf,{duration:dur,delay,fill:"forwards",easing:"ease-in-out"}))}
     else if(!instant){let kf;if(a.fx==="pulse")kf=[{transform:base||"none"},{transform:`${base} scale(1.1)`},{transform:base||"none"}];else if(a.fx==="spin")kf=[{transform:`${base} rotate(0deg)`},{transform:`${base} rotate(360deg)`}];else if(a.fx==="grow")kf=[{transform:base||"none"},{transform:`${base} scale(1.5)`}];else kf=[{opacity:1},{opacity:.5}];
       anims.push(n.animate(kf,{duration:dur,delay,fill:a.fx==="grow"||a.fx==="transp"?"forwards":"none",easing:"ease-in-out"}))}}
   return anims}
 /* hide everything whose first effect is an entrance */
-function animInit(root,s){const seen=new Set();for(const st of animSteps(s))for(const f of st.fx){const k=f.a.t+"|"+(f.pi??"");if(seen.has(k))continue;seen.add(k);if(f.a.cls==="entr")for(const n of animNodes(root,f.a.t,f.pi))n.style.visibility="hidden"}}
+function animInit(root,s){const seen=new Set();for(const a of s.anims||[]){if(seen.has(a.t))continue;seen.add(a.t);if(a.cls!=="entr")continue;const n=a.byPara?paraCount(s,a.t):0;if(n>1){for(let i=0;i<n;i++)animNodes(root,a.t,i).forEach(x=>x.style.visibility="hidden")}else animNodes(root,a.t,null).forEach(x=>x.style.visibility="hidden")}}
 function runStep(root,st,instant){let all=[];for(const f of st.fx)all=all.concat(playFx(root,f,0,instant));return all}
 function stepsDuration(st){return Math.max(0,...st.fx.map(f=>f.end))}
 /* ---------- side panel: animations / comments ---------- */
@@ -2630,6 +2662,7 @@ function renderSide(){const box=$("sideBody");if(!box||$("side").hidden||!deck)r
      ${a.fx==="fly"||a.fx==="wipe"?`<select class="s" data-k="dir">${DIRS.map(([k,l])=>`<option value="${k}">${l}</option>`).join("")}</select>`:""}
      <label>Duration <input class="s" type="number" min="0" max="60" step="0.25" data-k="dur" value="${a.dur??FX_DUR[a.fx]}"></label><label>Delay <input class="s" type="number" min="0" max="60" step="0.25" data-k="delay" value="${a.delay||0}"></label>
      ${paraCount(s,a.t)>1?`<label><input type="checkbox" data-k="byPara" ${a.byPara?"checked":""}> By paragraph</label>`:""}
+     <label>Start <select class="s" data-k="on"><option value="">In sequence</option>${[...new Set([...$("slideBox").querySelectorAll(".sl [data-t]")].map(n=>n.dataset.t))].filter(k=>k!==a.t).map(k=>`<option value="${esc(k)}" ${a.on===k?"selected":""}>On click of ${esc(targetLabel(s,k))}</option>`).join("")}</select></label>
      <span style="flex:1"></span><button class="ib" data-a="up" title="Move earlier" ${i?"":"disabled"}><svg viewBox="0 0 24 24">${SV.up}</svg></button><button class="ib" data-a="dn" title="Move later" ${i<list.length-1?"":"disabled"}><svg viewBox="0 0 24 24">${SV.down}</svg></button><button class="ib" data-a="rm" title="Remove"><svg viewBox="0 0 24 24">${SV.trash}</svg></button></div>`;
     r.querySelector('[data-k="trig"]').value=a.trig;const ds=r.querySelector('[data-k="dir"]');if(ds)ds.value=a.dir||"b";
     r.querySelector(".anh").onclick=()=>{if(a.t.startsWith("obj:")||a.t.startsWith("o:"))setSel([a.t]);flashTarget(a.t)};
@@ -2640,10 +2673,11 @@ function renderSide(){const box=$("sideBody");if(!box||$("side").hidden||!deck)r
 }
 function animEdit(fn){checkpoint();const s=deck.slides[cur];s.anims=s.anims||[];fn();changed();refreshThumbSoon();renderSide();drawSel()}
 function addAnimPop(anchor){const tg=animTargets();if(!tg.length){toast("Select an object or click into a text first.");return}openPop(anchor,p=>{
-  for(const cls of["entr","emph","exit"]){mlab(p,CLS_NAME[cls]);const g=document.createElement("div");g.className="fxgrid";for(const [k,l] of FX[cls]){const b=document.createElement("button");b.className="fxb "+cls;b.textContent=l;b.onclick=()=>{closePop();animEdit(()=>{const s=deck.slides[cur];for(const t of tg)s.anims.push({id:uid(),t,cls,fx:k,dir:"b",trig:"click",dur:FX_DUR[k],delay:0,byPara:false})});setTimeout(()=>previewAnims(true),50)};g.append(b)}p.append(g)}},{force:true})}
+  for(const cls of["entr","emph","exit","path"]){mlab(p,CLS_NAME[cls]);if(cls==="path"){const g=document.createElement("div");g.className="fxgrid";for(const [k,l,pth] of PATHS){const b=document.createElement("button");b.className="fxb path";b.textContent=l;b.onclick=()=>{closePop();animEdit(()=>{const s=deck.slides[cur];for(const t of tg)s.anims.push({id:uid(),t,cls:"path",fx:k,path:pth||circlePath(),trig:"click",dur:2,delay:0,byPara:false})});setTimeout(()=>previewAnims(true),50)};g.append(b)}
+      const b=document.createElement("button");b.className="fxb path";b.textContent="Draw custom path";b.onclick=()=>{closePop();startPathDraw(tg[0])};g.append(b);p.append(g);continue}const g=document.createElement("div");g.className="fxgrid";for(const [k,l] of FX[cls]){const b=document.createElement("button");b.className="fxb "+cls;b.textContent=l;b.onclick=()=>{closePop();animEdit(()=>{const s=deck.slides[cur];for(const t of tg)s.anims.push({id:uid(),t,cls,fx:k,dir:"b",trig:"click",dur:FX_DUR[k],delay:0,byPara:false})});setTimeout(()=>previewAnims(true),50)};g.append(b)}p.append(g)}},{force:true})}
 function flashTarget(key){for(const n of $("slideBox").querySelectorAll(`[data-t="${CSS.escape(key)}"]`))n.animate([{outline:"3px solid rgba(108,104,240,.9)",outlineOffset:"4px"},{outline:"3px solid rgba(108,104,240,0)",outlineOffset:"4px"}],{duration:900})}
 function drawAnimBadges(L){const s=deck.slides[cur];if(!s?.anims?.length||masterMode)return;const box=$("slideBox").getBoundingClientRect();let step=0;const seen={};
-  s.anims.forEach((a,i)=>{if(a.trig==="click")step++;const lab=a.trig==="click"?step:(step||"▸");const n=$("slideBox").querySelector(`[data-t="${CSS.escape(a.t)}"]`);if(!n)return;const r=n.getBoundingClientRect();const k=a.t;seen[k]=(seen[k]||0)+1;
+  s.anims.forEach((a,i)=>{if(a.trig==="click")step++;const lab=a.on?"⚡":a.trig==="click"?step:(step||"▸");const n=$("slideBox").querySelector(`[data-t="${CSS.escape(a.t)}"]`);if(!n)return;const r=n.getBoundingClientRect();const k=a.t;seen[k]=(seen[k]||0)+1;
     const d=document.createElement("div");d.className="anbadge "+a.cls;d.textContent=lab;d.style.left=(r.left-box.left-22+seen[k]*0)+(seen[k]-1)*20+"px";d.style.top=(r.top-box.top)+"px";L.append(d)})}
 let previewing=null;
 async function previewAnims(lastOnly){const s=deck.slides[cur];const root=$("slideBox").querySelector(".sl");if(!root||!s.anims?.length)return;if(previewing){previewing.stop=true}const me={stop:false};previewing=me;
@@ -2653,19 +2687,22 @@ async function previewAnims(lastOnly){const s=deck.slides[cur];const root=$("sli
   await sleep(300);if(previewing===me){previewing=null;renderStage()}}
 /* ---------- importing animations from PowerPoint ---------- */
 const PRESET_IN={1:"appear",10:"fade",2:"fly",42:"float",22:"wipe",53:"zoom",23:"zoom",21:"wheel"},PRESET_EM={6:"grow",8:"spin",9:"transp",26:"pulse"};
-function readTiming(doc,spidToKey){const tm=byTag(doc,"timing")[0];if(!tm)return null;const seq=byTag(tm,"cTn").find(c=>c.getAttribute("nodeType")==="mainSeq");if(!seq)return [];
-  const out=[];for(const c of byTag(seq,"cTn")){const nt=c.getAttribute("nodeType");if(!/^(click|with|after)Effect$/.test(nt||""))continue;
-    const cls=c.getAttribute("presetClass");if(!["entr","emph","exit"].includes(cls))continue;const id=+c.getAttribute("presetID");const sub=+c.getAttribute("presetSubtype")||0;
+function readTiming(doc,spidToKey){const tm=byTag(doc,"timing")[0];if(!tm)return null;const out=[];
+  for(const c of byTag(tm,"cTn")){const nt=c.getAttribute("nodeType");if(!/^(click|with|after)Effect$/.test(nt||""))continue;
+    let seq=null;for(let q=c.parentNode;q&&q!==tm;q=q.parentNode)if(q.localName==="cTn"&&/^(mainSeq|interactiveSeq)$/.test(q.getAttribute("nodeType")||"")){seq=q;break}if(!seq)continue;
+    let on;if(seq.getAttribute("nodeType")==="interactiveSeq"){const st=kid(seq,"stCondLst");const tg0=st&&byTag(st,"spTgt")[0];on=tg0&&spidToKey[tg0.getAttribute("spid")];if(!on)continue}
+    const cls=c.getAttribute("presetClass");if(!["entr","emph","exit","path"].includes(cls))continue;const id=+c.getAttribute("presetID");const sub=+c.getAttribute("presetSubtype")||0;
     const tg=byTag(c,"spTgt")[0];if(!tg)continue;const key=spidToKey[tg.getAttribute("spid")];if(!key)continue;const pr=byTag(tg,"pRg")[0];
-    let fx=(cls==="emph"?PRESET_EM:PRESET_IN)[id]||"other";const durs=byTag(c,"cTn").map(x=>x.getAttribute("dur")).filter(d=>d&&/^\d+$/.test(d)).map(Number);
+    let fx=cls==="path"?"custom":(cls==="emph"?PRESET_EM:PRESET_IN)[id]||"other";const durs=byTag(c,"cTn").map(x=>x.getAttribute("dur")).filter(d=>d&&/^\d+$/.test(d)).map(Number);
     const dur=fx==="appear"?0:durs.length?Math.max(...durs)/1000:.5;const delay=+(byTag(c,"cond")[0]?.getAttribute("delay")||0)/1000||0;
-    const dir={4:"b",8:"l",2:"r",1:"t"}[sub]||"b";const a={id:uid(),t:key,cls,fx,dir,trig:nt.replace("Effect",""),dur:+dur.toFixed(2),delay:+delay.toFixed(2),byPara:false};
+    const dir={4:"b",8:"l",2:"r",1:"t"}[sub]||"b";const a={id:uid(),t:key,cls,fx,dir,trig:nt.replace("Effect",""),dur:+dur.toFixed(2),delay:+delay.toFixed(2),byPara:false};if(on)a.on=on;
+    if(cls==="path"){const mo=byTag(c,"animMotion")[0];if(!mo)continue;a.path=mo.getAttribute("path")||"M 0 0 E"}
     if(fx==="other")a.name=`${CLS_NAME[cls]} effect ${id} (from PowerPoint)`;
     if(pr){const prev=out[out.length-1];if(prev&&prev.t===key&&prev.byPara)continue;a.byPara=true}
     out.push(a)}
   return out}
 /* ---------- exporting animations as PowerPoint timing XML ---------- */
-function timingXml(s,idOf){const steps=animSteps(s);if(!steps.length)return "";let n=2;const id=()=>++n;const bld=new Map();
+function timingXml(s,idOf){const steps=animSteps(s);const trl=trigLists(s);if(!steps.length&&!Object.keys(trl).length)return "";let n=2;const id=()=>++n;const bld=new Map();
   const fxXml=(f,nodeType,tg)=>{const a=f.a,D=Math.max(1,Math.round(f.end-f.start)),spid=tg.spid,pi=f.pi;
     const T=`<p:tgtEl><p:spTgt spid="${spid}">${pi!=null?`<p:txEl><p:pRg st="${pi}" end="${pi}"/></p:txEl>`:""}</p:spTgt></p:tgtEl>`;
     const set=(vis,delay=0)=>`<p:set><p:cBhvr><p:cTn id="${id()}" dur="1" fill="hold"><p:stCondLst><p:cond delay="${delay}"/></p:stCondLst></p:cTn>${T}<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="${vis}"/></p:to></p:set>`;
@@ -2682,23 +2719,27 @@ function timingXml(s,idOf){const steps=animSteps(s);if(!steps.length)return "";l
     else if(a.cls==="exit"){switch(a.fx){case "appear":pid=1;body=set("hidden");break;case "fly":pid=2;ps=sub;body=anim("ppt_x","#ppt_x",flyX)+anim("ppt_y","#ppt_y",flyY)+set("hidden",D-1);break;
       case "wipe":pid=22;ps=sub;body=eff("out",wf)+set("hidden",D-1);break;case "zoom":pid=53;ps=32;body=anim("ppt_w","#ppt_w",0)+anim("ppt_h","#ppt_h",0)+eff("out","fade")+set("hidden",D-1);break;
       default:pid=10;body=eff("out","fade")+set("hidden",D-1)}}
+    else if(a.cls==="path"){pid=0;body=`<p:animMotion origin="layout" path="${esc(a.path||"M 0 0 E")}" pathEditMode="relative"><p:cBhvr><p:cTn id="${id()}" dur="${D}" fill="hold"/>${T}<p:attrNameLst><p:attrName>ppt_x</p:attrName><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr></p:animMotion>`}
     else{switch(a.fx){case "spin":pid=8;body=`<p:animRot by="21600000"><p:cBhvr><p:cTn id="${id()}" dur="${D}" fill="hold"/>${T}<p:attrNameLst><p:attrName>r</p:attrName></p:attrNameLst></p:cBhvr></p:animRot>`;break;
       case "grow":pid=6;body=`<p:animScale><p:cBhvr><p:cTn id="${id()}" dur="${D}" fill="hold"/>${T}</p:cBhvr><p:by x="150000" y="150000"/></p:animScale>`;break;
       case "transp":pid=9;body=`<p:set><p:cBhvr><p:cTn id="${id()}" dur="indefinite"/>${T}<p:attrNameLst><p:attrName>style.opacity</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="0.5"/></p:to></p:set><p:animEffect filter="image" prLst="opacity: 0.5"><p:cBhvr rctx="IE"><p:cTn id="${id()}" dur="indefinite"/>${T}</p:cBhvr></p:animEffect>`;break;
       default:pid=6;body=`<p:animScale><p:cBhvr><p:cTn id="${id()}" dur="${Math.max(1,Math.round(D/2))}" autoRev="1" fill="hold"/>${T}</p:cBhvr><p:by x="110000" y="110000"/></p:animScale>`}}
     const gk=spid+"|"+(pi!=null?"p":"s");if(!bld.has(gk))bld.set(gk,{spid,kind:tg.kind,para:pi!=null,grp:bld.size});const grp=bld.get(gk).grp;
     return `<p:par><p:cTn id="${cTnId}" presetID="${pid}" presetClass="${a.cls}" presetSubtype="${ps}" fill="hold" grpId="${grp}" nodeType="${nodeType}"><p:stCondLst><p:cond delay="${Math.round(f.del||0)}"/></p:stCondLst><p:childTnLst>${body}</p:childTnLst></p:cTn></p:par>`};
-  let main="";
+  const groups=(steps,inter)=>{let main="";
   steps.forEach((st,si)=>{const cId=id();let inner="";const subs=[];
     for(const f of st.fx){const tgs=idOf(f.a.t);if(!tgs.length)continue;const key=f.base;let sub=subs.find(x=>x.start===key);if(!sub){sub={start:key,items:[]};subs.push(sub)}tgs.forEach((tg,j)=>sub.items.push({f,tg,first:j===0}))}
     subs.sort((a,b)=>a.start-b.start);
     subs.forEach((sub,k)=>{const sId=id();const fx=sub.items.map((it,j)=>{const tr=it.first?it.f.trig:"with";const nt=k===0&&j===0&&!st.auto?"clickEffect":tr==="after"?"afterEffect":"withEffect";return fxXml(it.f,nt,it.tg)}).join("");
       inner+=`<p:par><p:cTn id="${sId}" fill="hold"><p:stCondLst><p:cond delay="${Math.round(sub.start)}"/></p:stCondLst><p:childTnLst>${fx}</p:childTnLst></p:cTn></p:par>`});
-    if(!inner)return;const cond=st.auto&&si===0?`<p:cond delay="indefinite"/><p:cond evt="onBegin" delay="0"><p:tn val="2"/></p:cond>`:`<p:cond delay="indefinite"/>`;
-    main+=`<p:par><p:cTn id="${cId}" fill="hold"><p:stCondLst>${cond}</p:stCondLst><p:childTnLst>${inner}</p:childTnLst></p:cTn></p:par>`});
-  if(!main)return "";
+    if(!inner)return;const cond=inter?(si===0?`<p:cond delay="0"/>`:`<p:cond delay="indefinite"/>`):st.auto&&si===0?`<p:cond delay="indefinite"/><p:cond evt="onBegin" delay="0"><p:tn val="2"/></p:cond>`:`<p:cond delay="indefinite"/>`;
+    main+=`<p:par><p:cTn id="${cId}" fill="hold"><p:stCondLst>${cond}</p:stCondLst><p:childTnLst>${inner}</p:childTnLst></p:cTn></p:par>`});return main};
+  const main=groups(steps,false);let inter="";
+  for(const [key,list] of Object.entries(trl)){const tg=idOf(key)[0];if(!tg)continue;const sid=id();const body=groups(animSteps(s,list),true);if(!body)continue;const C=`<p:cond evt="onClick" delay="0"><p:tgtEl><p:spTgt spid="${tg.spid}"/></p:tgtEl></p:cond>`;
+    inter+=`<p:seq concurrent="1" nextAc="seek"><p:cTn id="${sid}" restart="whenNotActive" fill="hold" evtFilter="cancelBubble" nodeType="interactiveSeq"><p:stCondLst>${C}</p:stCondLst><p:endSync evt="end" delay="0"><p:rtn val="all"/></p:endSync><p:childTnLst>${body}</p:childTnLst></p:cTn><p:nextCondLst>${C}</p:nextCondLst></p:seq>`}
+  if(!main&&!inter)return "";
   const bl=[...bld.values()].map(b=>b.kind==="sp"?`<p:bldP spid="${b.spid}" grpId="${b.grp}"${b.para?' build="p"':' animBg="1"'}/>`:b.kind==="gf"?`<p:bldGraphic spid="${b.spid}" grpId="${b.grp}"><p:bldAsOne/></p:bldGraphic>`:"").join("");
-  return `<p:timing xmlns:p="${NS_P}"><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek"><p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>${main}</p:childTnLst></p:cTn><p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst><p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst></p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>${bl?`<p:bldLst>${bl}</p:bldLst>`:""}</p:timing>`}
+  return `<p:timing xmlns:p="${NS_P}"><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst>${main?`<p:seq concurrent="1" nextAc="seek"><p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>${main}</p:childTnLst></p:cTn><p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst><p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst></p:seq>`:""}${inter}</p:childTnLst></p:cTn></p:par></p:tnLst>${bl?`<p:bldLst>${bl}</p:bldLst>`:""}</p:timing>`}
 function setTimingDoc(doc,txml){const root=doc.documentElement;for(const c of [...root.children])if(c.localName==="timing")c.remove();if(!txml)return;const frag=xml(txml).documentElement;const node=doc.importNode(frag,true);const ext=kid(root,"extLst");root.insertBefore(node,ext||null)}
 function nodeKind(n){return n.localName==="sp"?"sp":n.localName==="graphicFrame"?"gf":"other"}
 function cNvPrOf(n){return byTag(n,"cNvPr")[0]}
@@ -2739,7 +2780,7 @@ function slideFields(s){const F=[];const add=(get,set,label)=>F.push({get,set,la
   s.cols?.forEach(c=>{html(c,"heading","heading");c.bullets.forEach((b,i)=>add(()=>c.bullets[i],v=>c.bullets[i]=v,"bullet"))});
   s.items?.forEach(it=>{html(it,"title","item");html(it,"text","item")});
   s.table?.forEach(r=>r.forEach((c,i)=>add(()=>r[i],v=>r[i]=v,"table")))}
-  if(s.layout==="free"){s.free?.els.forEach(e=>{if(e.k==="ftext"&&!e.del&&!e.deco)e.paras.forEach(p=>html(p,"html","text"))});if(s.free?.els.some(e=>e.k==="table"&&!e.del))s.table?.forEach(r=>r.forEach((c,i)=>add(()=>r[i],v=>r[i]=v,"table")))}
+  if(s.layout==="free"){s.free?.els.forEach(e=>{if(e.k==="ftext"&&!e.del&&!e.deco)e.paras.forEach(p=>html(p,"html","text"))});for(const e of s.free?.els||[])if(e.k==="table"&&!e.del)(e.rows||s.table)?.forEach(r=>r.forEach((c,i)=>add(()=>r[i],v=>r[i]=v,"table")))}
   const ob=o=>{o.paras?.forEach(p=>html(p,"html","text"));o.rows?.forEach(r=>r.forEach((c,i)=>add(()=>r[i],v=>r[i]=v,"table")));o.kids?.forEach(ob)};(s.objs||[]).forEach(ob);
   F.push({get:()=>esc(s.notes||""),set:v=>s.notes=stripTags(v),label:"notes",notes:true});return F}
 function findRe(q,o){const e=q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");return new RegExp(o.word?`(?<![\\p{L}\\p{N}_])${e}(?![\\p{L}\\p{N}_])`:e,"gu"+(o.case?"":"i"))}
@@ -2769,9 +2810,9 @@ async function versionsModal(){await saveNow();const box=document.createElement(
   modal("Version history",box,[["Save current version…",()=>{openPop($("mFoot").firstChild,p=>{mlab(p,"Name this version");const w=document.createElement("div");w.className="pin";w.innerHTML='<input placeholder="e.g. Sent to client">';const i=w.querySelector("input");i.onkeydown=async e=>{if(e.key==="Enter"){closePop();await snapVersion(i.value.trim()||"Saved version",true);versionsModal()}};p.append(w)},{force:true})}],["Close",()=>$("modal").hidden=true,true]]);
   const list=await verAll(deck.id);const L=$("verList");L.replaceChildren();if(!list.length){L.innerHTML='<div class="empty">No versions yet. Keep editing, or save one now.</div>';return}
   for(const v of list){const r=document.createElement("div");r.className="verrow";let d=null;try{d=JSON.parse(v.json)}catch{continue}
-    const tw=document.createElement("div");tw.className="tw";if(d.slides?.[0])tw.append(thumb(d.slides[0],deckTheme(d),112));r.append(tw);
+    const tw=document.createElement("div");tw.className="tw";setDeckSize(d);tw.style.aspectRatio=`${W}/${H}`;if(d.slides?.[0])tw.append(thumb(d.slides[0],deckTheme(d),112));setDeckSize(deck);r.append(tw);
     r.insertAdjacentHTML("beforeend",`<div style="flex:1;min-width:0"><b>${esc(v.label||(v.auto?"Autosaved":"Version"))}</b><div class="hint">${new Date(v.t).toLocaleString()} · ${v.n} slides</div></div>`);
-    const a=document.createElement("button");a.className="btn sm";a.textContent="Restore";a.onclick=()=>{checkpoint();const keep=deck.id;deck={...d,id:keep,updated:Date.now()};cur=0;$("modal").hidden=true;$("deckTitle").value=deck.title;changed(true);toast("Restored that version. Undo brings back what you had.","Undo",undo,8000)};
+    const a=document.createElement("button");a.className="btn sm";a.textContent="Restore";a.onclick=()=>{checkpoint();const keep=deck.id;deck={...d,id:keep,updated:Date.now()};setDeckSize(deck);cur=0;$("modal").hidden=true;$("deckTitle").value=deck.title;changed(true);toast("Restored that version. Undo brings back what you had.","Undo",undo,8000)};
     const c=document.createElement("button");c.className="btn sm";c.textContent="Open copy";c.onclick=async()=>{const x={...d,id:uid(),title:(d.title||"Untitled")+" (version "+new Date(v.t).toLocaleDateString()+")",updated:Date.now()};await DB.put(x);$("modal").hidden=true;openDeck(x.id)};
     r.append(a,c);L.append(r)}
   settle(L)}
@@ -2845,11 +2886,13 @@ function wireSorter(){const g=$("sortGrid");
 /* ======================= view menu, zoom, grid ======================= */
 function setZoom(z){zoomK=Math.abs(z-1)<.01?1:z;layoutStage();drawSel()}
 function viewMenu(anchor){openPop(anchor,p=>{mlab(p,"View");
-  mi(p,"Slide sorter",openSorter,{icon:"layout"});mi(p,masterMode?"Close slide master":"Edit slide master",()=>masterMode?exitMaster():enterMaster(),{icon:"layers"});
+  mi(p,"Slide sorter",openSorter,{icon:"layout"});mi(p,`Slide size (${+(W*PXI).toFixed(2)} × ${+(H*PXI).toFixed(2)} in)…`,slideSizeModal,{icon:"screen"});
+  if(deck.src?.theme)mi(p,"Theme colors & fonts of this file…",themeColorsModal,{icon:"wand"});mi(p,masterMode?"Close slide master":"Edit slide master",()=>masterMode?exitMaster():enterMaster(),{icon:"layers"});
   msep(p);mi(p,(VIEW.guides?"✓ ":"   ")+"Smart guides",()=>{VIEW.guides=!VIEW.guides;store.set("guides",VIEW.guides)});mi(p,(VIEW.grid?"✓ ":"   ")+"Gridlines",()=>{VIEW.grid=!VIEW.grid;store.set("grid",VIEW.grid);layoutStage()});mi(p,(VIEW.snapGrid?"✓ ":"   ")+"Snap to grid",()=>{VIEW.snapGrid=!VIEW.snapGrid;store.set("snapGrid",VIEW.snapGrid)});
+  mi(p,(VIEW.rulers?"✓ ":"   ")+"Rulers",()=>{VIEW.rulers=!VIEW.rulers;store.set("rulers",VIEW.rulers);layoutStage();drawSel()});if(VIEW.rulers)mi(p,`   Ruler units: ${VIEW.rulerUnit==="cm"?"centimeters":"inches"}`,()=>{VIEW.rulerUnit=VIEW.rulerUnit==="cm"?"in":"cm";store.set("rulerUnit",VIEW.rulerUnit);drawRulers()});
   msep(p);mi(p,"Animations",()=>openSide("anim"),{icon:"play"});mi(p,"Comments",()=>openSide("cm"),{icon:"tone"});
   msep(p);mi(p,"Find and replace…",findReplace,{icon:"search",k:"⌘F"});mi(p,"Version history…",versionsModal,{icon:"clock"});mi(p,"Accessibility check…",a11yCheck,{icon:"check"})},{force:true})}
-SV.search=ICONS.search;SV.clock=ICONS.clock;
+SV.search=ICONS.search;SV.code=ICONS.code;SV.clock=ICONS.clock;
 
 /* ======================= PDF: notes pages and handouts ======================= */
 function wrapLines(ctx,text,maxW){const out=[];for(const para of String(text||"").split(/\n/)){const toks=para.match(/[　-鿿가-힯＀-￯]|[^\s　-鿿가-힯＀-￯]+|\s+/g)||[""];let line="";
@@ -2859,11 +2902,11 @@ async function exportPDFKind(kind){if(!canSave())return;
     const doc=new jp({orientation:"portrait",unit:"pt",format:"letter",compress:true});const per=kind==="h6"?6:kind==="h3"?3:1;const pages=Math.ceil(list.length/per);
     for(let pg=0;pg<pages;pg++){aiBar(`Rendering page ${pg+1} of ${pages}…`);const c=document.createElement("canvas");c.width=PW;c.height=PH;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,PW,PH);x.fillStyle="#333";
       const font=`-apple-system,"Segoe UI","PingFang SC","Hiragino Sans","Noto Sans",Arial,sans-serif`;
-      if(kind==="notes"){const s=list[pg];const r=await rasterSlide(s,t,1);const sw=PW-240,sh=sw*9/16;x.drawImage(r,120,110,sw,sh);x.strokeStyle="#ccc";x.strokeRect(120,110,sw,sh);
+      if(kind==="notes"){const s=list[pg];const r=await rasterSlide(s,t,1);const sh0=(PW-240)*H/W,sh=Math.min(sh0,700),sw=sh*W/H;x.drawImage(r,120,110,sw,sh);x.strokeStyle="#ccc";x.strokeRect(120,110,sw,sh);
         x.font=`28px ${font}`;x.fillStyle="#222";let y=110+sh+80;for(const l of wrapLines(x,s.notes||"",PW-240)){if(y>PH-100)break;x.fillText(l,120,y);y+=40}}
       else{const items=list.slice(pg*per,pg*per+per);for(let k=0;k<items.length;k++){const s=items[k];const r=await rasterSlide(s,t,1);
-        if(per===3){const sw=560,sh=315,y=110+k*490;x.drawImage(r,100,y,sw,sh);x.strokeStyle="#bbb";x.strokeRect(100,y,sw,sh);x.strokeStyle="#ddd";for(let j=0;j<7;j++){x.beginPath();x.moveTo(720,y+20+j*44);x.lineTo(PW-100,y+20+j*44);x.stroke()}}
-        else{const sw=500,sh=281,col=k%2,row=Math.floor(k/2),xx=110+col*(sw+55),y=120+row*(sh+170);x.drawImage(r,xx,y,sw,sh);x.strokeStyle="#bbb";x.strokeRect(xx,y,sw,sh)}}}
+        if(per===3){const sh=Math.min(400,560*H/W),sw=sh*W/H,y=110+k*490;x.drawImage(r,100,y,sw,sh);x.strokeStyle="#bbb";x.strokeRect(100,y,sw,sh);x.strokeStyle="#ddd";for(let j=0;j<7;j++){x.beginPath();x.moveTo(720,y+20+j*44);x.lineTo(PW-100,y+20+j*44);x.stroke()}}
+        else{const sh=Math.min(281,500*H/W),sw=sh*W/H,col=k%2,row=Math.floor(k/2),xx=110+col*(sw+55),y=120+row*(sh+170);x.drawImage(r,xx,y,sw,sh);x.strokeStyle="#bbb";x.strokeRect(xx,y,sw,sh)}}}
       x.font=`22px ${font}`;x.fillStyle="#888";x.fillText(stripTags(deck.title).slice(0,80),100,60);const pn=String(pg+1);x.fillText(pn,PW-100-x.measureText(pn).width,PH-50);
       if(pg)doc.addPage("letter","portrait");doc.addImage(c.toDataURL("image/jpeg",.9),"JPEG",0,0,612,792,undefined,"FAST")}
     measureHost().replaceChildren();doc.setProperties({title:stripTags(deck.title)});const buf=doc.output("arraybuffer");aiDone();await saveFile(fileBase()+(kind==="notes"?" (notes)":" (handouts)")+".pdf",buf)}
@@ -2881,7 +2924,7 @@ function wirePen(){const c=$("penCv"),dot=$("laserDot");const fit=()=>{c.width=i
 
 function renderSlide(s,th,mode){
   const root=document.createElement("div");root.className="sl";
-  root.style.cssText=`background:#${th.bg};color:#${th.fg};--ac:#${th.accent};font-family:${fontCss(th.bf)}`;
+  root.style.cssText=`width:${W}px;height:${H}px;background:#${th.bg};color:#${th.fg};--ac:#${th.accent};font-family:${fontCss(th.bf)}`;
   if(s.layout==="free"&&s.free){root.style.background=s.free.bgGrad?gradCss(s.free.bgGrad):`#${s.free.bg||"FFFFFF"}`;if(s.free.bgImage){root.style.backgroundImage=`url("${s.free.bgImage}")`;root.style.backgroundSize="cover";root.style.backgroundPosition="center"}}
   else if(s.bgo){if(s.bgo.grad)root.style.background=gradCss(s.bgo.grad);else if(s.bgo.color)root.style.background="#"+s.bgo.color;if(s.bgo.image){root.style.backgroundImage=`url("${s.bgo.image}")`;root.style.backgroundSize="cover";root.style.backgroundPosition="center"}}
   const edit=mode==="edit";
@@ -2915,7 +2958,7 @@ function renderSlide(s,th,mode){
     }else if(e.k==="ftext"){
       d.classList.add("tb");d.style.justifyContent={top:"flex-start",middle:"center",bottom:"flex-end"}[e.valign||"top"];
       const t=document.createElement("div");t.className="fx";
-      t.innerHTML=freeParasHtml(e.paras);if(edit&&e.hint&&!e.paras.some(p=>stripTags(p.html).trim())){t.classList.add("blank");t.firstElementChild?.setAttribute("data-ph",e.hint)}
+      t.innerHTML=freeParasHtml(e.paras);if(e.wa)t.style.cssText+=";"+waCss(e.wa);if(edit&&e.hint&&!e.paras.some(p=>stripTags(p.html).trim())){t.classList.add("blank");t.firstElementChild?.setAttribute("data-ph",e.hint)}
       if(edit){t.contentEditable="true";t.spellcheck=true;t.dataset.path=JSON.stringify(e.path)}
       d.append(t);
     }else if(e.k==="logo"){
@@ -2930,12 +2973,12 @@ function renderSlide(s,th,mode){
     }else if(e.k==="chart"){
       d.innerHTML=chartSvg(s.chart||{},e.w,e.h,th);if(edit&&!e.sid){d.classList.add("chartel");d.dataset.chart="1"}
     }else if(e.k==="table"){
-      d.classList.add("tbl");d.style.overflow="hidden";const rows=s.table||[];const nc=Math.max(1,...rows.map(r=>r.length));
+      d.classList.add("tbl");d.style.overflow="hidden";const own=e.rows?getPath(s,e.path):null;const rows=own?.rows||s.table||[];const tmg=own?own.tmerge:s.tmerge;const nc=Math.max(1,...rows.map(r=>r.length));
       const fs=clamp(Math.round(30-rows.length*1.4-nc*.9),13,26);
       const tb=document.createElement("table");tb.style.cssText=`font-size:${fs}px;line-height:1.3;color:#${th.fg};font-family:${fontCss(th.bf)}`;tb.dataset.fs=fs;
       rows.forEach((r,ri)=>{const tr=document.createElement("tr");
         if(ri===0)tr.style.cssText=`background:#${th.accent};color:#${onColor(th.accent)};font-weight:700`;else tr.style.cssText=`background:${ri%2===0?"#"+th.card:"transparent"};border-bottom:1px solid #${th.accent2}`;
-        for(let ci=0;ci<nc;ci++){const td=document.createElement("td");td.innerHTML=r[ci]||"";if(edit){td.contentEditable="true";td.dataset.path=JSON.stringify(["table",ri,ci])}tr.append(td)}
+        for(let ci=0;ci<nc;ci++){if(tmg&&coveredOf(tmg).has(ri+","+ci))continue;const td=document.createElement("td");const mg=tmg?.[ri+","+ci];if(mg){td.colSpan=mg.cs;td.rowSpan=mg.rs}td.innerHTML=r[ci]||"";if(edit){td.contentEditable="true";td.dataset.path=JSON.stringify(own?[...e.path,"rows",ri,ci]:["table",ri,ci])}tr.append(td)}
         tb.append(tr)});
       d.append(tb);
     }
@@ -2946,17 +2989,17 @@ function renderSlide(s,th,mode){
   return root;
 }
 /* fingerprint of what a slide shows; tf = ignore the words inside original text boxes and edits that can be patched in place */
-function sigOf(s,tf){const o={layout:s.layout,table:s.table||null,chart:s.chart||null,image:s.image?hashStr(s.image):null};
-  if(s.layout==="free"&&s.free){o.free={bg:s.free.bg,bgImage:s.free.bgImage?hashStr(s.free.bgImage):null,bgGrad:s.free.bgGrad||null,els:s.free.els.map(e=>{const r={...e};if(e.k==="ftext"){if(tf)delete r.paras}else if(e.k==="pic")r.src=hashStr(e.src||"");if(tf&&e.sid){for(const k of["x","y","w","h","del","crop","alt"])delete r[k]}return r})};
+function sigOf(s,tf,legacy){const o={layout:s.layout,table:s.table||null,chart:s.chart||null,image:s.image?hashStr(s.image):null};
+  if(s.layout==="free"&&s.free){o.free={bg:s.free.bg,bgImage:s.free.bgImage?hashStr(s.free.bgImage):null,bgGrad:s.free.bgGrad||null,els:s.free.els.map(e=>{const r={...e};if(e.k==="ftext"){if(tf)delete r.paras}else if(e.k==="pic")r.src=hashStr(e.src||"");if(tf&&e.sid){for(const k of["x","y","w","h","del","crop","alt"])delete r[k]}else if(tf&&e.deco&&!legacy){for(const k of["x","y","w","h"])delete r[k]}return r})};
     if(!tf&&s.free.units)o.units=Object.keys(s.free.units).sort().map(k=>s.free.units[k].px)}
   else for(const k of["title","subtitle","bullets","cols","items","quote","by","stat","statLabel","icon"])o[k]=s[k];
   if(!tf){if(s.objs?.length)o.objs=hashStr(JSON.stringify(s.objs));if(s.anims?.length)o.anims=s.anims;if(s.hideMaster)o.hm=1}
-  if(s.bgo)o.bgo=hashStr(JSON.stringify(s.bgo));
+  if(s.bgo)o.bgo=hashStr(JSON.stringify(s.bgo));if(s.tmerge)o.tmerge=s.tmerge;
   return hashStr(JSON.stringify(o))}
 
 /* ---------- PowerPoint export ---------- */
-const inch=v=>+(v/96).toFixed(4);
-const E9=v=>Math.round(v*EMU);
+const inch=v=>+(v*PXI).toFixed(4);
+const E9=v=>Math.round(v*PXI*914400);
 function parasRuns(ps,k=1){const runs=[];ps.forEach((p,pi)=>{const pt=+(p.size*k*.75).toFixed(1);let rs=runsOf(p.html);if(!rs.length)rs=[{text:" "}];
   rs.forEach((r,ri)=>{const o={fontFace:p.font||"Arial",fontSize:pt,color:p.color,...runOpts(r,pt),bold:!!(p.b||r.b),italic:!!(p.i||r.i),align:p.align||"left"};
     if(p.u&&!o.underline)o.underline={style:"sng"};if(p.s&&!o.strike)o.strike="sngStrike";
@@ -2982,7 +3025,7 @@ async function pgObj(pptx,sl,o,t,M,name,node){const base={x:inch(o.x),y:inch(o.y
     if(o.fill)opt.fill={color:o.fill,transparency:Math.round((1-(o.fillA??1))*100)};else M.nofill.push(name);
     if(shp==="roundRect")opt.rectRadius=inch(Math.min(o.w,o.h)*.1667);
     const ins=o.ins||[9.6,4.8,9.6,4.8];opt.margin=[ins[0]*.75,ins[2]*.75,ins[3]*.75,ins[1]*.75];opt.valign=o.valign||"top";if(o.k==="text"&&!o.fixH)opt.fit="resize";
-    sl.addText(has?parasRuns(o.paras):[{text:"",options:{fontFace:t.bf,fontSize:18,color:t.fg}}],opt);return}
+    sl.addText(has?parasRuns(o.paras):[{text:"",options:{fontFace:t.bf,fontSize:18,color:t.fg}}],opt);if(o.wa&&has)M.wa.push({name,wa:o.wa});return}
   if(o.k==="line"){const am={triangle:"triangle",stealth:"stealth",arrow:"arrow",oval:"oval",diamond:"diamond"};const ln={color:o.line||"000000",width:+((o.lw||2)*.75).toFixed(2),dashType:dashT[o.dash||"solid"]};if(am[o.head])ln.beginArrowType=am[o.head];if(am[o.tail])ln.endArrowType=am[o.tail];
     const opt={...base,line:ln};if(shadow)opt.shadow=shadow;sl.addShape("line",opt);return}
   if(o.k==="pic"){sl.addImage({data:o.src,...base,altText:o.alt||""});if(o.crop||o.mask||(o.alpha!=null&&o.alpha<1)||o.bright||o.contrast||o.line||o.shadow)M.pics.push({name,crop:o.crop,mask:o.mask,alpha:o.alpha,bright:o.bright,contrast:o.contrast,line:o.line,lw:o.lw,dash:o.dash,shadow:o.shadow});return}
@@ -2992,19 +3035,23 @@ async function pgObj(pptx,sl,o,t,M,name,node){const base={x:inch(o.x),y:inch(o.y
   if(o.k==="chart"){chartAdd(pptx,sl,o.chart,{x:base.x,y:base.y,w:base.w,h:base.h},t,name);return}
   if(o.k==="table"){const rows=o.rows||[];if(!rows.length)return;const nc=Math.max(...rows.map(r=>r.length));const st=o.ts||{},hd=st.head!==false,band=st.band!==false,acc=st.color||t.accent,fs=+((o.fs||20)*.75).toFixed(1);const bd=mix(acc,t.bg,.55),bandC=mix(acc,t.bg,.86);
     const trs=node?[...node.querySelectorAll("tr")]:[];const rowH=trs.length===rows.length?trs.map(r=>inch(r.offsetHeight)):undefined;
-    const data=rows.map((r,ri)=>Array.from({length:nc},(_,ci)=>{const c=r[ci]||"";const head=hd&&ri===0;const cf=o.cf?.[ri+","+ci];const bg=cf||(head?acc:band&&(ri%2===(hd?0:1))?bandC:null);
+    let data=rows.map((r,ri)=>Array.from({length:nc},(_,ci)=>{const c=r[ci]||"";const head=hd&&ri===0;const cf=o.cf?.[ri+","+ci];const bg=cf||(head?acc:band&&(ri%2===(hd?0:1))?bandC:null);
       const col=bg?(head&&!cf?onColor(acc):onColor(bg)===onColor(t.bg)?t.fg:onColor(bg)):t.fg;const rs=runsOf(c);
       const opts={fontFace:o.font||t.bf,fontSize:fs,color:col,bold:head,valign:"middle",margin:[fs*.35,fs*.6,fs*.35,fs*.6].map(v=>+v.toFixed(1)),border:[0,1,2,3].map(()=>({type:"solid",pt:.75,color:bd}))};if(bg)opts.fill={color:bg};
       return {text:rs.length?rs.map(x=>({text:x.text,options:{...runOpts(x,fs),bold:x.b||head,italic:x.i}})):"",options:opts}}));
+    if(o.merge&&Object.keys(o.merge).length){const cov=coveredOf(o.merge);data=data.map((r,ri)=>r.map((c,ci)=>{const mg=o.merge[ri+","+ci];if(mg){c.options.colspan=mg.cs;c.options.rowspan=mg.rs}return cov.has(ri+","+ci)?null:c}).filter(Boolean))}
     const cw=o.cw&&o.cw.length===nc?o.cw:Array(nc).fill(1/nc);sl.addTable(data,{x:base.x,y:base.y,w:base.w,colW:cw.map(f=>+(f*base.w).toFixed(3)),rowH,autoPage:false,objectName:name});return}
+  if(o.k==="eq"){const sz=Math.round((o.size||40)*.75*100);let png=null;try{png=await eqPng(o)}catch{}
+    if(png)sl.addImage({data:png,...base,altText:"Equation: "+o.tex});else sl.addText(o.tex||" ",{...base,fontFace:"Cambria Math",fontSize:sz/100,color:o.color||"000000",margin:0,valign:"middle"});
+    try{M.eqs.push({name,omml:ommlOf(o),sz})}catch(e){console.warn("equation",e)}return}
   if(o.k==="video"||o.k==="audio"){const f=await DB.getFile(o.mediaId);if(!f){M.missing++;return}const data=await blobDataUrl(f instanceof Blob?f:new Blob([f]));const mo={type:o.k,data,extn:o.ext||(o.k==="video"?"mp4":"mp3"),...base};if(o.k==="video"&&o.poster)mo.cover=o.poster;sl.addMedia(mo);return}}
 async function buildPptx(opts={}){const meta=[];
   const PG=await waitFor(()=>window.PptxGenJS,"PowerPoint library");
-  const pptx=new PG();pptx.layout="LAYOUT_WIDE";const t=th();
+  const pptx=new PG();pptx.defineLayout({name:"SM",width:+(W*PXI).toFixed(4),height:+(H*PXI).toFixed(4)});pptx.layout="SM";const t=th();
   pptx.title=stripTags(deck.title);pptx.subject="Made with AI Slide Maker";pptx.author="";pptx.company="";
   pptx.theme={headFontFace:t.hf,bodyFontFace:t.bf};
   const masterObjs=deck.master?.objs||[];
-  for(let si=0;si<deck.slides.length;si++){const s=deck.slides[si];const M={grads:[],bgGrad:null,pics:[],groups:[],inks:[],nofill:[],missing:0};meta.push(M);const skipDeco=opts.skipDeco?.(s,si);
+  for(let si=0;si<deck.slides.length;si++){const s=deck.slides[si];const M={grads:[],bgGrad:null,pics:[],groups:[],inks:[],nofill:[],eqs:[],wa:[],missing:0};meta.push(M);const skipDeco=opts.skipDeco?.(s,si);
     const sl=pptx.addSlide();sl.background={color:t.bg};if(s.hidden)sl.hidden=true;
     if(s.layout==="free"&&s.free){sl.background=s.free.bgImage?{data:s.free.bgImage}:{color:s.free.bg||"FFFFFF"};if(s.free.bgGrad&&!s.free.bgImage)M.bgGrad=s.free.bgGrad}
     else if(s.bgo){sl.background=s.bgo.image?{data:s.bgo.image}:{color:s.bgo.color||t.bg};if(s.bgo.grad&&!s.bgo.image)M.bgGrad=s.bgo.grad}
@@ -3035,7 +3082,7 @@ async function buildPptx(opts={}){const meta=[];
         sl.addText(runs,{...pos,objectName:nm,align:e.align||"left",valign:e.valign||"top",margin:0,lineSpacing:+(pt*e.lh).toFixed(1),fit:"shrink",fontFace:e.font,fontSize:pt,color:e.color});
       }else if(e.k==="ftext"){
         const tx=d.querySelector(".fx");const k=+(tx?.dataset.cur||1);if(!e.paras.some(p=>stripTags(p.html).trim()))continue;
-        const runs=parasRuns(e.paras,k);if(runs.length)sl.addText(runs,{...pos,objectName:nm,valign:e.valign||"top",margin:0,fit:"shrink"});
+        const runs=parasRuns(e.paras,k);if(runs.length)sl.addText(runs,{...pos,objectName:nm,valign:e.valign||"top",margin:0,fit:"shrink"});if(e.wa&&nm)M.wa.push({name:nm,wa:e.wa});
       }else if(e.k==="pic"){
         sl.addImage({data:e.src,...pos,objectName:nm,altText:e.alt||""});if(e.crop&&nm)M.pics.push({name:nm,crop:e.crop});
       }else if(e.k==="logo"){
@@ -3048,13 +3095,14 @@ async function buildPptx(opts={}){const meta=[];
       }else if(e.k==="chart"){
         chartAdd(pptx,sl,s.chart,pos,t,nm);
       }else if(e.k==="table"){
-        const tb=d.querySelector("table");const fs=+(+tb.dataset.cur*.75).toFixed(1);const rows=s.table||[];if(!rows.length)continue;const nc=rows[0].length;
+        const tb=d.querySelector("table");const fs=+(+tb.dataset.cur*.75).toFixed(1);const own=e.rows?getPath(s,e.path):null;const rows=own?.rows||s.table||[];const tmg=own?own.tmerge:s.tmerge;if(!rows.length)continue;const nc=rows[0].length;
         const trs=[...tb.rows];const rowH=trs.map(r=>px2in(r.offsetHeight));
-        const data=rows.map((r,ri)=>r.map(c=>{const rs=runsOf(c);const txt=rs.length?rs.map(x=>({text:x.text,options:{...runOpts(x,fs),bold:x.b||ri===0,italic:x.i}})):"";
+        let data=rows.map((r,ri)=>r.map(c=>{const rs=runsOf(c);const txt=rs.length?rs.map(x=>({text:x.text,options:{...runOpts(x,fs),bold:x.b||ri===0,italic:x.i}})):"";
           const o={fontFace:t.bf,fontSize:fs,color:ri===0?onColor(t.accent):t.fg,bold:ri===0,valign:"middle",margin:[fs*.5,fs*.75,fs*.5,fs*.75].map(v=>+(v).toFixed(1))};
           if(ri===0)o.fill={color:t.accent};else if(ri%2===0)o.fill={color:t.card};
           o.border=[{type:"none"},{type:"none"},ri===0?{type:"none"}:{type:"solid",pt:.75,color:t.accent2},{type:"none"}];
           return {text:txt,options:o}}));
+        if(tmg){const cov=coveredOf(tmg);data=data.map((r,ri)=>r.map((c,ci)=>{const mg=tmg[ri+","+ci];if(mg){c.options.colspan=mg.cs;c.options.rowspan=mg.rs}return cov.has(ri+","+ci)?null:c}).filter(Boolean))}
         sl.addTable(data,{x:pos.x,y:pos.y,w:pos.w,colW:Array(nc).fill(+(pos.w/nc).toFixed(3)),rowH,autoPage:false,objectName:nm});
       }
     }
@@ -3067,9 +3115,10 @@ async function buildPptx(opts={}){const meta=[];
   measureHost().replaceChildren();
   return {pptx,meta};
 }
-function shapeByName(doc,name){const c=byTag(doc,"cNvPr").find(c=>c.getAttribute("name")===name);return c?.parentNode?.parentNode||null}
+function inFallback(n){for(let p=n.parentNode;p;p=p.parentNode)if(p.localName==="Fallback")return true;return false}
+function shapeByName(doc,name){const c=byTag(doc,"cNvPr").find(c=>c.getAttribute("name")===name&&!inFallback(c));return c?.parentNode?.parentNode||null}
 function idsByName(doc,key){const nm=key.startsWith("obj:")?"smobj:"+key.slice(4):key.startsWith("el:")?"smel:"+key.slice(3):key.startsWith("o:")?"smo:"+key.slice(2):null;if(!nm)return [];
-  return byTag(doc,"cNvPr").filter(c=>c.getAttribute("name")===nm).map(c=>{const n=c.parentNode.parentNode;return {spid:c.getAttribute("id"),kind:nodeKind(n)}}).filter(x=>x.spid)}
+  return byTag(doc,"cNvPr").filter(c=>c.getAttribute("name")===nm&&!inFallback(c)).map(c=>{const n=c.parentNode.parentNode;return {spid:c.getAttribute("id"),kind:nodeKind(n)}}).filter(x=>x.spid)}
 function maxCId(doc){return Math.max(1,...byTag(doc,"cNvPr").map(c=>+c.getAttribute("id")||0))}
 function wrapGroups(doc,groups){let id=maxCId(doc);for(const g of groups){const nodes=g.names.map(n=>shapeByName(doc,n)).filter(Boolean);if(!nodes.length)continue;const b=g.box;
   const off=`<a:off x="${E9(b.x)}" y="${E9(b.y)}"/><a:ext cx="${E9(b.w)}" cy="${E9(b.h)}"/>`;
@@ -3090,7 +3139,7 @@ const MEDIA_CT={mp4:"video/mp4",m4v:"video/mp4",mov:"video/quicktime",webm:"vide
 async function moveToMaster(zip){const sp="ppt/slides/slide1.xml",mp="ppt/slideMasters/slideMaster1.xml";const sf=zip.file(sp),mf=zip.file(mp);if(!sf||!mf)return;
   const sdoc=xml(await sf.async("string")),mdoc=xml(await mf.async("string"));const nodes=[...byTag(sdoc,"spTree")[0].children].filter(n=>(cNvPrOf(n)?.getAttribute("name")||"").startsWith("smmas:"));if(!nodes.length)return;
   const P={zip};const srd=await relsDoc(P,sp),mrd=await relsDoc(P,mp);const srels=relsMap(srd);const tree=byTag(mdoc,"spTree")[0];let id=maxCId(mdoc);
-  for(const n of nodes){const c=mdoc.importNode(n,true);for(const cp of [c,...c.getElementsByTagName("*")].filter(e=>e.localName==="cNvPr"))cp.setAttribute("id",String(++id));
+  for(const n of nodes){const c=mdoc.importNode(n,true);{const idm={};for(const cp of [c,...c.getElementsByTagName("*")].filter(e=>e.localName==="cNvPr")){const o0=cp.getAttribute("id");cp.setAttribute("id",idm[o0]??=String(++id))}}
     for(const el of [c,...c.getElementsByTagName("*")])for(const at of [...el.attributes])if(at.namespaceURI===NS_R){const r=srels[at.value];if(!r)continue;at.value=r.mode==="External"?addRel(mrd,r.type,r.target,true):addRel(mrd,r.type,relTarget(mp,resolvePath(sp,r.target)))}
     const ph=[...tree.children].find(x=>byTag(x,"ph").length);tree.insertBefore(c,ph||null);n.remove()}
   zip.file(sp,ser(sdoc));zip.file(mp,ser(mdoc));zip.file(relsPathOf(mp),ser(mrd))}
@@ -3104,9 +3153,10 @@ async function fixPptx(buf,meta){
     if(M?.bgGrad)x=x.replace(/<p:bgPr>\s*<a:solidFill>[\s\S]*?<\/a:solidFill>/,"<p:bgPr>"+gradXml(M.bgGrad));
     const doc=xml(x);
     {const seen=new Set();let mx=maxCId(doc);for(const c of byTag(doc,"cNvPr")){const id=c.getAttribute("id");if(seen.has(id))c.setAttribute("id",String(++mx));else seen.add(id)}}
-    if(M){noFillFix(doc,M.nofill);wrapGroups(doc,M.groups);picTweaks(doc,M.pics);inkRound(doc,M.inks)}
+    if(M){noFillFix(doc,M.nofill);wrapGroups(doc,M.groups);picTweaks(doc,M.pics);inkRound(doc,M.inks);for(const w of M.wa){const sp=shapeByName(doc,w.name);if(sp)waApply(doc,sp,w.wa)}}
     if(s.hideMaster)doc.documentElement.setAttribute("showMasterSp","0");
     if(s.anims?.length)setTimingDoc(doc,timingXml(s,k=>idsByName(doc,k)));
+    if(M?.eqs.length)wrapEquations(doc,M.eqs);
     x=ser(doc);
     if(s.transition&&s.transition.type!=="none")x=setTransitionXml(x,s.transition);
     zip.file(name,x)}
@@ -3144,7 +3194,7 @@ async function patchTextDoc(P,path,doc,s,sps){let rd=null;
   }
   if(linksChanged)P.zip.file(relsPathOf(path),ser(rd));
 }
-function setXfrm(doc,n,u){const pr=n.localName==="graphicFrame"?n:kid(n,"spPr")||kid(n,"grpSpPr");if(!pr)return;let x=kid(pr,"xfrm");
+function setXfrm(doc,n,u){if(n.localName==="AlternateContent"){for(const c of n.children)if(c.firstElementChild)setXfrm(doc,c.firstElementChild,u);return}const pr=n.localName==="graphicFrame"?n:kid(n,"spPr")||kid(n,"grpSpPr");if(!pr)return;let x=kid(pr,"xfrm");
   if(!x){x=n.localName==="graphicFrame"?doc.createElementNS(NS_P,"p:xfrm"):A_(doc,"xfrm");pr.insertBefore(x,n.localName==="graphicFrame"?kid(n,"graphic"):pr.firstChild)}
   let off=kid(x,"off"),ext=kid(x,"ext");if(!off){off=A_(doc,"off");x.prepend(off)}if(!ext){ext=A_(doc,"ext");off.after(ext)}
   const p=u.px,p0=u.px0,e=u.emu,[kx,ky]=u.k;off.setAttribute("x",String(Math.round(e.x+(p.x-p0.x)/kx)));off.setAttribute("y",String(Math.round(e.y+(p.y-p0.y)/ky)));
@@ -3152,13 +3202,13 @@ function setXfrm(doc,n,u){const pr=n.localName==="graphicFrame"?n:kid(n,"spPr")|
 async function graftObjs(src,srcPath,dst,dstPath,doc,ctx,prefix,under){const sf=src.zip.file(srcPath);if(!sf)return 0;const sdoc=xml(await sf.async("string"));const srels=relsMap(await relsDoc(src,srcPath));
   const rd=await relsDoc(dst,dstPath);const tree=byTag(doc,"spTree")[0];let id=maxCId(doc);const gp=kid(tree,"grpSpPr");const firstRef=gp?gp.nextSibling:tree.firstChild;let n0=0;
   for(const n of [...byTag(sdoc,"spTree")[0].children]){const nm=cNvPrOf(n)?.getAttribute("name")||"";if(!nm.startsWith(prefix))continue;const c=doc.importNode(n,true);
-    for(const cp of [c,...c.getElementsByTagName("*")].filter(e=>e.localName==="cNvPr"))cp.setAttribute("id",String(++id));
+    {const idm={};for(const cp of [c,...c.getElementsByTagName("*")].filter(e=>e.localName==="cNvPr")){const o0=cp.getAttribute("id");cp.setAttribute("id",idm[o0]??=String(++id))}}
     for(const el of [c,...c.getElementsByTagName("*")])for(const at of [...el.attributes])if(at.namespaceURI===NS_R){const r=srels[at.value];if(!r)continue;let nid;
       if(r.mode==="External")nid=addRel(rd,r.type,r.target,true);else{const abs=resolvePath(srcPath,r.target);const to=src===dst?abs:await copyPart(src,dst,abs,ctx);nid=addRel(rd,r.type,relTarget(dstPath,to))}at.value=nid}
     if(under?.has(nm))tree.insertBefore(c,firstRef);else{const ext=kid(tree,"extLst");tree.insertBefore(c,ext||null)}n0++}
   dst.zip.file(relsPathOf(dstPath),ser(rd));return n0}
 async function patchSlide(out,path,x,s,gen,i,ctx){const doc=xml(x);
-  const pools={sp:byTag(doc,"sp"),pic:byTag(doc,"pic"),gf:byTag(doc,"graphicFrame"),cx:byTag(doc,"cxnSp"),grp:byTag(doc,"grpSp")};const nodeOf=sid=>{const [k,n]=String(sid).split(":");return pools[k]?.[+n]||null};
+  const pools={sp:byTag(doc,"sp"),pic:byTag(doc,"pic"),gf:byTag(doc,"graphicFrame"),cx:byTag(doc,"cxnSp"),grp:byTag(doc,"grpSp"),ac:byTag(doc,"AlternateContent")};const nodeOf=sid=>{const [k,n]=String(sid).split(":");return pools[k]?.[+n]||null};
   await patchTextDoc(out,path,doc,s,pools.sp);let removed=false;
   const bySid={};for(const e of s.free.els)if(e.sid&&!e.deco)(bySid[e.sid]=bySid[e.sid]||[]).push(e);
   for(const [sid,els] of Object.entries(bySid)){const n=nodeOf(sid);if(!n)continue;
@@ -3166,6 +3216,7 @@ async function patchSlide(out,path,x,s,gen,i,ctx){const doc=xml(x);
     const u=s.free.units?.[sid];if(u&&u.emu&&["x","y","w","h"].some(k=>Math.abs(u.px[k]-u.px0[k])>.05))setXfrm(doc,n,u);
     const pe=els.find(e=>e.k==="pic");if(pe&&JSON.stringify(pe.crop||null)!==JSON.stringify(pe.crop0||null))setSrcRect(doc,n,pe.crop);
     if(pe&&(pe.alt||"")!==(pe.alt0||""))cNvPrOf(n)?.setAttribute("descr",pe.alt||"")}
+  if(ctx.T)fitDoc(doc,ctx.T);
   if(s.objs?.length)await graftObjs(gen,`ppt/slides/slide${i+1}.xml`,out,path,doc,ctx,"smobj:",new Set(s.objs.filter(o=>o.under).map(o=>"smobj:"+o.id)));
   const root=doc.documentElement;if(!!s.hideMaster!==(root.getAttribute("showMasterSp")==="0")){if(s.hideMaster)root.setAttribute("showMasterSp","0");else root.removeAttribute("showMasterSp")}
   if(JSON.stringify(s.anims||[])!==(s.orig.anims||"[]")||removed&&byTag(doc,"timing").length){
@@ -3183,12 +3234,14 @@ async function mergeWithOriginal(origBuf,genBuf,plan){
   st.redirectNotes=(type,abs)=>{if(/\/notesMaster$/.test(type)){if(st.notesMaster)return st.notesMaster;return undefined}return undefined};
   const genNM=Object.keys(gen.zip.files).find(n=>/^ppt\/notesMasters\/notesMaster\d+\.xml$/.test(n));
   const entries=[],used=new Set();const gctx={map:{}};
+  {const z=byTag(pres,"sldSz")[0];const T=z&&fitTransform(+z.getAttribute("cx"),+z.getAttribute("cy"));if(T){gctx.T=T;z.setAttribute("cx",String(T.cx));z.setAttribute("cy",String(T.cy));z.removeAttribute("type");
+    for(const lp of Object.keys(out.zip.files).filter(n=>/^ppt\/(slideLayouts\/slideLayout|slideMasters\/slideMaster)\d+\.xml$/.test(n))){const d=xml(await out.zip.file(lp).async("string"));fitDoc(d,T);out.zip.file(lp,ser(d))}}}
   for(let i=0;i<deck.slides.length;i++){const s=deck.slides[i],pl=plan[i];let path;
     if(pl!=="gen"){
       if(!used.has(s.orig.path)&&out.zip.file(s.orig.path)){path=s.orig.path;used.add(path)}
       else path=await copyPart(pristine,out,s.orig.path,{map:{},redirect:(type,abs)=>/(slideLayout|image|notesMaster|video|audio|media|hyperlink|oleObject|tags)$/.test(type)?abs:undefined});
       let x=await out.zip.file(path).async("string");
-      if(pl==="patch")x=await patchSlide(out,path,x,s,gen,i,gctx);
+      if(pl==="patch")x=await patchSlide(out,path,x,s,gen,i,gctx);else if(gctx.T){const d=xml(x);fitDoc(d,gctx.T);x=ser(d)}
       if(!!s.hidden!==xmlHidden(x))x=setHiddenXml(x,!!s.hidden);
       if(JSON.stringify(s.transition||null)!==s.orig.trans)x=setTransitionXml(x,s.transition);
       out.zip.file(path,x);
@@ -3211,6 +3264,7 @@ async function mergeWithOriginal(origBuf,genBuf,plan){
   if(st.newNotesMaster){const rid=addRel(prd,RT("notesMaster"),relTarget(presPath,st.newNotesMaster));let nl=byTag(pres,"notesMasterIdLst")[0];if(!nl){nl=pres.createElementNS(NS_P,"p:notesMasterIdLst");byTag(pres,"sldMasterIdLst")[0].after(nl)}const e=pres.createElementNS(NS_P,"p:notesMasterId");e.setAttributeNS(NS_R,"r:id",rid);nl.append(e)}
   // master objects go into every slide master of the original file
   if(deck.master?.objs?.length){const gm="ppt/slideMasters/slideMaster1.xml";for(const mp of Object.keys(out.zip.files).filter(n=>/^ppt\/slideMasters\/slideMaster\d+\.xml$/.test(n))){const md=xml(await out.zip.file(mp).async("string"));for(const n of [...byTag(md,"spTree")[0].children])if((cNvPrOf(n)?.getAttribute("name")||"").startsWith("smmas:"))n.remove();if(await graftObjs(gen,gm,out,mp,md,gctx,"smmas:"))out.zip.file(mp,ser(md))}}
+  await writeThemeEdit(out);
   out.zip.file(presPath,ser(pres));out.zip.file(presRels,ser(prd));out.zip.file("[Content_Types].xml",ser(out.ct));
   for(const n of Object.keys(out.zip.files))if(out.zip.files[n].dir)delete out.zip.files[n];
   return await out.zip.generateAsync({type:"arraybuffer",compression:"DEFLATE",mimeType:"application/vnd.openxmlformats-officedocument.presentationml.presentation"});
@@ -3244,6 +3298,7 @@ async function finalizePkg(buf,plan){const P=await openPkg(buf);const presPath="
   for(const n of Object.keys(P.zip.files))if(P.zip.files[n].dir)delete P.zip.files[n];
   return await P.zip.generateAsync({type:"arraybuffer",compression:"DEFLATE",mimeType:"application/vnd.openxmlformats-officedocument.presentationml.presentation"})}
 async function pptxBytes(){
+  const hasEq=[...deck.slides.flatMap(s=>s.objs||[]),...(deck.master?.objs||[])].some(function f(o){return o.k==="eq"||(o.kids||[]).some(f)});if(hasEq)await loadKatex();
   const plan=exportPlan();const {pptx,meta}=await buildPptx({skipDeco:(s,i)=>plan[i]==="gen"&&!!linkedLayout(s)});
   let buf=await fixPptx(await pptx.write({outputType:"arraybuffer"}),meta);let fp=deck.slides.map(()=>"gen");
   if(deck.src?.fileId){const orig=await DB.getFile(deck.src.fileId);if(orig){buf=await mergeWithOriginal(orig,buf,plan);fp=plan}else toast("The original PowerPoint file is no longer stored on this computer, so every slide was rebuilt.")}
@@ -3309,9 +3364,9 @@ function renderPres(){
   if(!P.pv){const box=$("pbox");const prev=P.anim?box.querySelector(":scope > .sc"):null;if(prev)prev.remove();root=fitBox(box,innerWidth,innerHeight,s,"present");
     if(P.anim&&s.transition&&s.transition.type!=="none")tdur=runTransition(box,prev,s.transition)||0}
   else{const curEl=$("pv").querySelector(".cur");root=fitBox($("pvCur"),curEl.clientWidth||innerWidth*.6,curEl.clientHeight||innerHeight*.7,s,"present");
-    const nx=deck.slides[P.list[P.pos+1]];const nw=Math.max(160,($("pv").clientWidth||innerWidth)*.36);fitBox($("pvNext"),nw,nw*9/16,nx);$("pvNextLab").textContent=nx?"Next":"End of show";
+    const nx=deck.slides[P.list[P.pos+1]];const nw=Math.max(160,($("pv").clientWidth||innerWidth)*.36);fitBox($("pvNext"),nw,nw*H/W,nx);$("pvNextLab").textContent=nx?"Next":"End of show";
     $("pvNotes").textContent=s.notes||"No speaker notes for this slide.";$("pvNotes").style.setProperty("--nfs",P.nfs+"px");$("pv").style.setProperty("--nfs",P.nfs+"px");tickPV()}
-  P.root=root;
+  P.root=root;P.trig=Object.fromEntries(Object.entries(trigLists(s)).map(([k,l])=>[k,{steps:animSteps(s,l),i:0}]));for(const k of Object.keys(P.trig))root?.querySelectorAll(`[data-t="${CSS.escape(k)}"]`).forEach(n=>n.style.cursor="pointer");
   if(P.full){P.steps.forEach(st=>runStep(root,st,true));P.step=P.steps.length}
   else if(P.at!=null){animInit(root,s);for(let i=0;i<P.at;i++)runStep(root,P.steps[i],true);P.step=P.at}
   else{animInit(root,s);P.step=0;if(P.steps[0]?.auto){const st=P.steps[0];P.step=1;setTimeout(()=>{if(P.root===root)runStep(root,st)},tdur+(P.anim?60:0))}}
@@ -3324,6 +3379,177 @@ function pgo(d){const s=deck.slides[P.list[P.pos]];
   const n=clamp(P.pos+d,0,P.list.length-1);if(d>0&&P.pos===P.list.length-1){endPresent();return}
   if(n!==P.pos){P.anim=d>0;P.full=d<0;P.pos=n;P.black=false;$("pblank").hidden=true;renderPres()}}
 function renderPresAt(k){P.anim=false;P.full=false;P.at=k;renderPres()}
+
+/* ======================= slide size ======================= */
+const SIZES=[["wide","Widescreen 16:9",13.333,7.5],["std","Standard 4:3",10,7.5],["w1610","16:10",12,7.5],["a4","A4 paper",10.83,7.5],["b5","B5 paper",7.88,5.94],["35mm","35 mm slides",11.25,7.5],["square","Square",7.5,7.5],["portrait","Portrait 3:4",7.5,10]];
+function setDeckSize(d){const z=d?.size;W=z?.w||1280;H=z?.h||720;PXI=z?.pxi||1/96;document.documentElement.style.setProperty("--ar",`${W}/${H}`)}
+function slideSizeModal(){const win=+(W*PXI).toFixed(3),hin=+(H*PXI).toFixed(3);const box=document.createElement("div");box.style.whiteSpace="normal";
+  box.innerHTML=`<div class="hint" style="margin-bottom:8px">Now ${+win.toFixed(2)} × ${+hin.toFixed(2)} in. Theme layouts re-flow to the new shape; your own objects are scaled and centered.</div>
+   <div id="szList" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
+   <div class="frg" style="margin-top:12px"><label>Width</label><span><input class="s" id="szW" type="number" step="0.01" min="1" max="56" style="width:90px"> <select class="s" id="szU"><option value="in">inches</option><option value="cm">cm</option></select></span><label>Height</label><span><input class="s" id="szH" type="number" step="0.01" min="1" max="56" style="width:90px"></span>
+   <label>Content</label><select class="s" id="szM"><option value="fit">Ensure fit (shrink to fit)</option><option value="max">Maximize (fill, may crop)</option></select></div>`;
+  modal("Slide size",box,[["Cancel",()=>$("modal").hidden=true],["Apply",()=>{const u=$("szU").value==="cm"?1/2.54:1;const w=+$("szW").value*u,h=+$("szH").value*u;if(!(w>0&&h>0)){toast("Enter a width and height.");return}$("modal").hidden=true;applySlideSize(w,h,$("szM").value)},true]]);
+  const setV=(w,h)=>{const u=$("szU").value==="cm"?2.54:1;$("szW").value=+(w*u).toFixed(2);$("szH").value=+(h*u).toFixed(2)};
+  for(const [k,l,w,h] of SIZES){const b=document.createElement("button");b.className="btn sm";b.style.justifyContent="space-between";b.innerHTML=`<span>${esc(l)}</span><span class="hint">${w}×${h} in</span>`;b.onclick=()=>setV(w,h);$("szList").append(b)}
+  setV(win,hin);$("szU").onchange=()=>{const w=+$("szW").value,h=+$("szH").value,toCm=$("szU").value==="cm";const k=toCm?2.54:1/2.54;$("szW").value=+(w*k).toFixed(2);$("szH").value=+(h*k).toFixed(2)}}
+function applySlideSize(win,hin,mode){if(!deck)return;win=clamp(win,1,56);hin=clamp(hin,1,56);const W0=W,H0=H,nw=Math.round(720*win/hin),nh=720;
+  if(Math.abs(nw-W0)<1&&Math.abs(hin-H*PXI)<1e-3)return;checkpoint();
+  const f=mode==="max"?Math.max(nw/W0,nh/H0):Math.min(nw/W0,nh/H0),ox=(nw-W0*f)/2,oy=(nh-H0*f)/2;
+  const tp=b=>{b.x=b.x*f+ox;b.y=b.y*f+oy;b.w*=f;b.h*=f};const sObj=o=>{tp(o);if(o.k==="eq")o.size*=f;(o.kids||[]).forEach(sObj)};
+  for(const s of deck.slides){(s.objs||[]).forEach(sObj);(s.anims||[]).forEach(a=>{});if(s.free){for(const e of s.free.els)tp(e);for(const u of Object.values(s.free.units||{})){tp(u.px);tp(u.px0);u.k=[u.k[0]*f,u.k[1]*f]}}}
+  (deck.master?.objs||[]).forEach(sObj);
+  deck.size={w:nw,h:nh,pxi:hin/720,win,hin};
+  if(deck.src){const fp=deck.fitPx||{F:1,ox:0,oy:0};deck.fitPx={F:fp.F*f,ox:fp.ox*f+ox,oy:fp.oy*f+oy}}
+  setDeckSize(deck);setSel([]);changed(true);toast(`Slide size is now ${+win.toFixed(2)} × ${+hin.toFixed(2)} in.`,"Undo",undo,7000)}
+/* old-file EMU -> new-file EMU after a size change of an imported deck */
+function fitTransform(cx0,cy0){const fp=deck.fitPx;if(!fp)return null;const m=deck.src.map||(()=>{const S=Math.min(1280/cx0,720/cy0);return {S,ox:(1280-cx0*S)/2,oy:(720-cy0*S)/2}})();const e=PXI*914400;
+  return {f:m.S*fp.F*e,dx:(m.ox*fp.F+fp.ox)*e,dy:(m.oy*fp.F+fp.oy)*e,cx:Math.round(W*e),cy:Math.round(H*e)}}
+function fitDoc(doc,T){const tree=byTag(doc,"spTree")[0];if(!tree||!T)return;const tx=n=>{if(n.localName==="AlternateContent"){for(const c of n.children)for(const k of c.children)tx(k);return}
+    const pr=n.localName==="graphicFrame"?n:kid(n,"spPr")||kid(n,"grpSpPr");const x=pr&&kid(pr,"xfrm");if(!x)return;const off=kid(x,"off"),ext=kid(x,"ext");
+    if(off){off.setAttribute("x",String(Math.round(+off.getAttribute("x")*T.f+T.dx)));off.setAttribute("y",String(Math.round(+off.getAttribute("y")*T.f+T.dy)))}
+    if(ext){ext.setAttribute("cx",String(Math.round(+ext.getAttribute("cx")*T.f)));ext.setAttribute("cy",String(Math.round(+ext.getAttribute("cy")*T.f)))}};
+  for(const n of [...tree.children])tx(n)}
+/* ======================= rulers ======================= */
+function drawRulers(){const h=$("rulerH"),v=$("rulerV");if(!h)return;const on=!!VIEW.rulers&&view==="editor";h.hidden=v.hidden=!on;$("stage").classList.toggle("rulers",on);if(!on)return;
+  const cs=getComputedStyle(document.documentElement),bg=cs.getPropertyValue("--panel").trim()||"#fff",fg=cs.getPropertyValue("--muted").trim()||"#888",ac=cs.getPropertyValue("--accent-soft").trim()||"#ddf",dpr=devicePixelRatio||1;
+  const cm=VIEW.rulerUnit==="cm",unitPx=(cm?1/2.54:1)/PXI*slideScale,sub=cm?10:8,items=selItems();const sel=items.length?unionBox(items.map(i=>i.o?rotBounds(i.o):i.box)):null;
+  const paint=(c,len,horiz)=>{const L=len*slideScale;c.width=Math.round((horiz?L:16)*dpr);c.height=Math.round((horiz?16:L)*dpr);c.style.width=(horiz?L:16)+"px";c.style.height=(horiz?16:L)+"px";const x=c.getContext("2d");x.scale(dpr,dpr);x.fillStyle=bg;x.fillRect(0,0,horiz?L:16,horiz?16:L);
+    if(sel){x.fillStyle=ac;const a=(horiz?sel.x:sel.y)*slideScale,b=(horiz?sel.w:sel.h)*slideScale;horiz?x.fillRect(a,0,b,16):x.fillRect(0,a,16,b)}
+    x.strokeStyle=fg;x.fillStyle=fg;x.lineWidth=1;x.font="9px -apple-system,system-ui,sans-serif";const step=unitPx/sub;const n=Math.ceil(L/step);
+    for(let i=0;i<=n;i++){const p=Math.round(i*step)+.5;const major=i%sub===0,half=i%(sub/2)===0;const t=major?9:half?6:3;x.beginPath();if(horiz){x.moveTo(p,16);x.lineTo(p,16-t)}else{x.moveTo(16,p);x.lineTo(16-t,p)}if(step>2.5||major||half)x.stroke();
+      if(major&&i){const lab=String(i/sub);if(horiz)x.fillText(lab,p+2,8);else{x.save();x.translate(7,p+2);x.rotate(Math.PI/2);x.fillText(lab,0,0);x.restore()}}}};
+  paint(h,W,true);paint(v,H,false)}
+/* ======================= merged table cells ======================= */
+function coveredOf(merge){const cov=new Set();for(const [k,m] of Object.entries(merge||{})){const [r,c]=k.split(",").map(Number);for(let i=0;i<m.rs;i++)for(let j=0;j<m.cs;j++)if(i||j)cov.add((r+i)+","+(c+j))}return cov}
+let cellRange=null;
+function setCellRange(a,b){const pa=JSON.parse(a.dataset.path),pb=JSON.parse(b.dataset.path);const o=getPath(curS(),pa.slice(0,pa.length-3));if(!o)return;
+  let r0=Math.min(pa.at(-2),pb.at(-2)),r1=Math.max(pa.at(-2),pb.at(-2)),c0=Math.min(pa.at(-1),pb.at(-1)),c1=Math.max(pa.at(-1),pb.at(-1));
+  for(let g=0;g<10;g++){let ch=false;for(const [k,m] of Object.entries(o.merge||{})){const [r,c]=k.split(",").map(Number);const ir=r<=r1&&r+m.rs-1>=r0&&c<=c1&&c+m.cs-1>=c0;if(ir){if(r<r0){r0=r;ch=true}if(c<c0){c0=c;ch=true}if(r+m.rs-1>r1){r1=r+m.rs-1;ch=true}if(c+m.cs-1>c1){c1=c+m.cs-1;ch=true}}}if(!ch)break}
+  cellRange={id:o.id,r0,r1,c0,c1};paintRange()}
+function paintRange(){for(const td of $("slideBox").querySelectorAll("td.rsel"))td.classList.remove("rsel");if(!cellRange)return;
+  for(const td of $("slideBox").querySelectorAll(`[data-sel="obj:${cellRange.id}"] td`)){const p=JSON.parse(td.dataset.path||"[]");const r=p.at(-2),c=p.at(-1);if(r>=cellRange.r0&&r<=cellRange.r1&&c>=cellRange.c0&&c<=cellRange.c1)td.classList.add("rsel")}}
+function mergeCells(o){const R=cellRange&&cellRange.id===o.id?cellRange:null;if(!R||R.r0===R.r1&&R.c0===R.c1){toast("Shift-click a second cell to select a range of cells, then choose Merge cells.");return}
+  objEdit(()=>{o.merge=o.merge||{};const parts=[];for(let r=R.r0;r<=R.r1;r++)for(let c=R.c0;c<=R.c1;c++){const k=r+","+c;delete o.merge[k];const h=o.rows[r][c];if(stripTags(h).trim())parts.push(h);if(r!==R.r0||c!==R.c0)o.rows[r][c]=""}
+    o.rows[R.r0][R.c0]=parts.join(" ");o.merge[R.r0+","+R.c0]={cs:R.c1-R.c0+1,rs:R.r1-R.r0+1};cellRange=null})}
+function splitCell(o,rc){const k=rc.r+","+rc.c;const owner=Object.entries(o.merge||{}).find(([kk,m])=>{const [r,c]=kk.split(",").map(Number);return rc.r>=r&&rc.r<r+m.rs&&rc.c>=c&&rc.c<c+m.cs});if(!owner){toast("That cell isn't merged.");return}objEdit(()=>{delete o.merge[owner[0]]})}
+function mergeShift(o,axis,at,d){if(!o.merge)return;const out={};for(const [k,m] of Object.entries(o.merge)){let [r,c]=k.split(",").map(Number);const mm={...m};const p=axis==="r"?r:c,span=axis==="r"?m.rs:m.cs;
+    if(d<0){if(at>=p&&at<p+span){if(span-1<=1&&(axis==="r"?m.cs:m.rs)<=1)continue;if(axis==="r")mm.rs--;else mm.cs--}else if(at<p){if(axis==="r")r--;else c--}}
+    else{if(at<=p){if(axis==="r")r++;else c++}else if(at<p+span){if(axis==="r")mm.rs++;else mm.cs++}}
+    if(mm.rs>1||mm.cs>1)out[r+","+c]=mm}o.merge=out}
+function readTableMerges(tbl){const tm={};byTag(tbl,"tr").forEach((tr,r)=>byTag(tr,"tc").forEach((tc,c)=>{const cs=+(tc.getAttribute("gridSpan")||1),rs=+(tc.getAttribute("rowSpan")||1);if(cs>1||rs>1)tm[r+","+c]={cs,rs}}));return tm}
+/* ======================= equations ======================= */
+let katexP=null;
+function loadKatex(){if(window.katex)return Promise.resolve(window.katex);return katexP??=new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js";s.onload=()=>res(window.katex);s.onerror=()=>{katexP=null;rej(new Error("Equation engine didn't load"))};document.head.append(s)})}
+function texMathML(tex){return window.katex.renderToString(tex||"",{output:"mathml",displayMode:true,throwOnError:false})}
+function eqNode(o,d){const w=document.createElement("div");w.className="eqw";w.style.cssText=`position:absolute;left:0;top:0;white-space:nowrap;font-size:${o.size||40}px;color:#${o.color||"000000"};line-height:1.1`;
+  if(window.katex){w.innerHTML=texMathML(o.tex);const m=w.querySelector("math");if(m){m.setAttribute("display","inline");m.style.cssText="font-family:'Cambria Math','STIX Two Math','Latin Modern Math',math,serif"}}
+  else{w.textContent=o.tex;loadKatex().then(()=>{if(view==="editor"){renderStage();renderRail()}}).catch(()=>{})}
+  d.append(w)}
+const NARY="∑∏∐∫∬∭∮⋃⋂⋁⋀";
+function mathToOmml(node,sz,color){const R=(t,up)=>`<m:r>${up?'<m:rPr><m:sty m:val="p"/></m:rPr>':""}<a:rPr lang="en-US" sz="${sz}" i="${up?0:1}"><a:solidFill><a:srgbClr val="${color}"/></a:solidFill><a:latin typeface="Cambria Math" panose="02040503050406030204" pitchFamily="18" charset="0"/></a:rPr><m:t>${esc(t)}</m:t></m:r>`;
+  const K=n=>[...n.children].filter(c=>c.localName!=="annotation"&&c.localName!=="annotation-xml");
+  const all=n=>K(n).map(go).join("");const e=n=>`<m:e>${n?go(n):""}</m:e>`;
+  function go(n){const ln=n.localName,txt=()=>n.textContent;
+    switch(ln){case "mi":{const t=txt();return R(t,t.length>1||n.getAttribute("mathvariant")==="normal")}
+      case "mn":case "mtext":case "ms":return R(txt(),true);case "mo":return R(txt(),true);case "mspace":return "";
+      case "mfrac":{const [a,b]=K(n);return `<m:f>${n.getAttribute("linethickness")==="0px"||n.getAttribute("linethickness")==="0"?'<m:fPr><m:type m:val="noBar"/></m:fPr>':""}<m:num>${a?go(a):""}</m:num><m:den>${b?go(b):""}</m:den></m:f>`}
+      case "msup":{const [a,b]=K(n);return `<m:sSup>${e(a)}<m:sup>${b?go(b):""}</m:sup></m:sSup>`}
+      case "msub":{const [a,b]=K(n);return `<m:sSub>${e(a)}<m:sub>${b?go(b):""}</m:sub></m:sSub>`}
+      case "msubsup":{const [a,b,c]=K(n);if(a&&a.localName==="mo"&&NARY.includes(a.textContent.trim()))return `<m:nary><m:naryPr><m:chr m:val="${esc(a.textContent.trim())}"/></m:naryPr><m:sub>${b?go(b):""}</m:sub><m:sup>${c?go(c):""}</m:sup><m:e></m:e></m:nary>`;return `<m:sSubSup>${e(a)}<m:sub>${b?go(b):""}</m:sub><m:sup>${c?go(c):""}</m:sup></m:sSubSup>`}
+      case "msqrt":return `<m:rad><m:radPr><m:degHide m:val="1"/></m:radPr><m:deg/><m:e>${all(n)}</m:e></m:rad>`;
+      case "mroot":{const [a,b]=K(n);return `<m:rad><m:deg>${b?go(b):""}</m:deg>${e(a)}</m:rad>`}
+      case "munderover":case "munder":case "mover":{const [a,b,c]=K(n);const ch=a&&a.localName==="mo"?a.textContent.trim():"";
+        if(NARY.includes(ch)&&ch){const lo=ln==="mover"?null:b,hi=ln==="munderover"?c:ln==="mover"?b:null;return `<m:nary><m:naryPr><m:chr m:val="${esc(ch)}"/><m:limLoc m:val="undOvr"/>${lo?"":'<m:subHide m:val="1"/>'}${hi?"":'<m:supHide m:val="1"/>'}</m:naryPr><m:sub>${lo?go(lo):""}</m:sub><m:sup>${hi?go(hi):""}</m:sup><m:e></m:e></m:nary>`}
+        if(ln==="mover"&&b&&b.localName==="mo"&&(n.getAttribute("accent")==="true"||b.getAttribute("accent")==="true"))return `<m:acc><m:accPr><m:chr m:val="${esc(b.textContent.trim())}"/></m:accPr>${e(a)}</m:acc>`;
+        if(ln==="munder")return `<m:limLow>${e(a)}<m:lim>${b?go(b):""}</m:lim></m:limLow>`;if(ln==="mover")return `<m:limUpp>${e(a)}<m:lim>${b?go(b):""}</m:lim></m:limUpp>`;
+        return `<m:limUpp><m:e><m:limLow>${e(a)}<m:lim>${b?go(b):""}</m:lim></m:limLow></m:e><m:lim>${c?go(c):""}</m:lim></m:limUpp>`}
+      case "mtable":return `<m:m>${K(n).map(tr=>`<m:mr>${K(tr).map(td=>`<m:e>${all(td)}</m:e>`).join("")}</m:mr>`).join("")}</m:m>`;
+      default:return all(n)}}
+  return go(node)}
+/* the exact XML of an editable PowerPoint equation */
+function ommlOf(o){const sz=Math.round((o.size||40)*.75*100);const d=xml(texMathML(o.tex));const m=byTag(d,"math")[0];return m?mathToOmml(m,sz,o.color||"000000"):""}
+const NS_MC="http://schemas.openxmlformats.org/markup-compatibility/2006",NS_A14="http://schemas.microsoft.com/office/drawing/2010/main",NS_M="http://schemas.openxmlformats.org/officeDocument/2006/math";
+async function eqPng(o){await loadKatex();const host=measureHost();const d=document.createElement("div");d.style.cssText=`position:relative;width:${o.w}px;height:${o.h}px`;eqNode(o,d);host.replaceChildren(d);const w=d.querySelector(".eqw");w.style.left="3px";w.style.top="3px";
+  const html=new XMLSerializer().serializeToString(d);const k=3;const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${o.w*k}" height="${o.h*k}" viewBox="0 0 ${o.w} ${o.h}"><foreignObject x="0" y="0" width="${o.w}" height="${o.h}">${html.replace("<div ",'<div xmlns="http://www.w3.org/1999/xhtml" ')}</foreignObject></svg>`;
+  const im=new Image();im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);await im.decode();const c=document.createElement("canvas");c.width=Math.ceil(o.w*k);c.height=Math.ceil(o.h*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);host.replaceChildren();return c.toDataURL("image/png")}
+function wrapEquations(doc,list){for(const q of list){let sp=shapeByName(doc,q.name);if(!sp||sp.parentNode?.localName==="Fallback")continue;
+  if(sp.localName==="pic"){const cp=cNvPrOf(sp);const xf=byTag(sp,"xfrm")[0];const t=xml(`<p:sp xmlns:p="${NS_P}" xmlns:a="${NS_A}"><p:nvSpPr><p:cNvPr id="${cp.getAttribute("id")}" name="${esc(q.name)}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr>${xf?new XMLSerializer().serializeToString(xf):""}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr><p:txBody><a:bodyPr wrap="none" lIns="0" tIns="0" rIns="0" bIns="0" anchor="ctr"><a:noAutofit/></a:bodyPr><a:lstStyle/><a:p><a:endParaRPr lang="en-US"/></a:p></p:txBody></p:sp>`).documentElement;
+    const ch=doc.importNode(t,true);const ctb=kid(ch,"txBody");for(const p of kids(ctb,"p"))p.remove();finishEq(doc,sp,ch,ctb,q);continue}
+  const tb=kid(sp,"txBody");if(!tb)continue;
+  const ch=sp.cloneNode(true);const ctb=kid(ch,"txBody");for(const p of kids(ctb,"p"))p.remove();finishEq(doc,sp,ch,ctb,q)}}
+function finishEq(doc,sp,ch,ctb,q){
+  const p=xml(`<a:p xmlns:a="${NS_A}" xmlns:a14="${NS_A14}" xmlns:m="${NS_M}"><a14:m><m:oMathPara><m:oMathParaPr><m:jc m:val="left"/></m:oMathParaPr><m:oMath>${q.omml}</m:oMath></m:oMathPara></a14:m><a:endParaRPr lang="en-US" sz="${q.sz}"/></a:p>`).documentElement;ctb.append(doc.importNode(p,true));
+  const ac=doc.importNode(xml(`<mc:AlternateContent xmlns:mc="${NS_MC}"><mc:Choice xmlns:a14="${NS_A14}" Requires="a14"/><mc:Fallback/></mc:AlternateContent>`).documentElement,true);
+  sp.parentNode.insertBefore(ac,sp);kid(ac,"Choice").append(ch);kid(ac,"Fallback").append(sp)}
+const EQ_TPL=[["Fraction","\\frac{a}{b}"],["Square root","\\sqrt{x}"],["Power","x^{2}"],["Subscript","x_{i}"],["Sum","\\sum_{i=1}^{n} i"],["Integral","\\int_{a}^{b} f(x)\\,dx"],["Limit","\\lim_{x\\to\\infty} f(x)"],["Matrix","\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}"],["Quadratic","x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}"],["Greek","\\alpha\\ \\beta\\ \\gamma\\ \\pi\\ \\theta\\ \\Sigma"],["Relations","\\le\\ \\ge\\ \\ne\\ \\approx\\ \\to\\ \\infty"]];
+function eqEditor(o){const box=document.createElement("div");box.style.whiteSpace="normal";
+  box.innerHTML=`<div class="hint" style="margin-bottom:6px">Type LaTeX. It becomes a real, editable PowerPoint equation when you export.</div><textarea id="eqT" class="s" rows="3" style="width:100%;font:13px ui-monospace,Menlo,monospace" spellcheck="false"></textarea>
+    <div id="eqTpl" style="display:flex;flex-wrap:wrap;gap:4px;margin:8px 0"></div><div id="eqP" style="min-height:70px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:30px;background:#fff;color:#000;padding:10px;overflow:auto"></div>`;
+  modal(o?"Edit equation":"Insert equation",box,[["Cancel",()=>$("modal").hidden=true],[o?"Update":"Insert",()=>{const t=$("eqT").value.trim();if(!t)return;$("modal").hidden=true;
+    if(o){objEdit(()=>{o.tex=t;o.w=0})}else{const q={id:uid(),k:"eq",tex:t,size:40,color:th().fg,x:0,y:0,w:300,h:80,rot:0};insertCentered(q)}},true]]);
+  const ta=$("eqT");ta.value=o?.tex||"";const prev=()=>{if(!window.katex){$("eqP").textContent="Loading the equation engine…";return}$("eqP").innerHTML=texMathML(ta.value)};
+  for(const [l,t] of EQ_TPL){const b=document.createElement("button");b.className="btn sm";b.textContent=l;b.onclick=()=>{const s=ta.selectionStart,e2=ta.selectionEnd;ta.value=ta.value.slice(0,s)+t+ta.value.slice(e2);ta.focus();prev()};$("eqTpl").append(b)}
+  ta.oninput=prev;loadKatex().then(prev).catch(()=>{$("eqP").textContent="The equation engine couldn't load. Check the connection, then try again."});setTimeout(()=>ta.focus(),30)}
+/* ======================= WordArt-style text effects ======================= */
+const WA_PRESETS=[["None",null],["Gradient",{grad:["2F5BEA","C026D3"]}],["Outline",{outline:{c:"1D1D1F",w:2},fillNone:true}],["Shadow",{shadow:true}],["Glow",{glow:{c:"FFD43B",r:10}}],["Bold outline + shadow",{outline:{c:"1D1D1F",w:3},shadow:true}],["Gold",{grad:["F6D365","B8860B"],shadow:true}],["Neon",{glow:{c:"39FF14",r:14},outline:{c:"0B3D0B",w:1}}]];
+function waCss(wa){if(!wa)return "";let s="";const sh=[];if(wa.shadow)sh.push("3px 3px 4px rgba(0,0,0,.45)");if(wa.glow)sh.push(`0 0 ${wa.glow.r}px #${wa.glow.c}`,`0 0 ${wa.glow.r/2}px #${wa.glow.c}`);
+  if(wa.grad)s+=`background:linear-gradient(90deg,#${wa.grad[0]},#${wa.grad[1]});-webkit-background-clip:text;background-clip:text;`;
+  if(wa.grad||wa.fillNone)s+="-webkit-text-fill-color:transparent;";if(wa.outline)s+=`-webkit-text-stroke:${wa.outline.w}px #${wa.outline.c};paint-order:stroke fill;`;if(sh.length&&!wa.grad)s+=`text-shadow:${sh.join(",")};`;else if(sh.length)s+=`filter:drop-shadow(${wa.shadow?"3px 3px 3px rgba(0,0,0,.45)":`0 0 ${wa.glow.r/2}px #${wa.glow.c}`});`;return s}
+function waApply(doc,sp,wa){for(const rPr of [...byTag(sp,"rPr"),...byTag(sp,"endParaRPr")]){if(rPr.namespaceURI!==NS_A)continue;
+  if(wa.outline){const l=xml(`<a:ln xmlns:a="${NS_A}" w="${E9(wa.outline.w)}"><a:solidFill><a:srgbClr val="${wa.outline.c}"/></a:solidFill></a:ln>`).documentElement;putChild(rPr,doc.importNode(l,true),["ln"])}
+  if(wa.grad){const g=xml(`<a:gradFill xmlns:a="${NS_A}"><a:gsLst><a:gs pos="0"><a:srgbClr val="${wa.grad[0]}"/></a:gs><a:gs pos="100000"><a:srgbClr val="${wa.grad[1]}"/></a:gs></a:gsLst><a:lin ang="0" scaled="0"/></a:gradFill>`).documentElement;putChild(rPr,doc.importNode(g,true),["noFill","solidFill","gradFill","blipFill","pattFill","grpFill"])}
+  else if(wa.fillNone)putChild(rPr,A_(doc,"noFill"),["noFill","solidFill","gradFill","blipFill","pattFill","grpFill"]);
+  if(wa.glow||wa.shadow){const ef=xml(`<a:effectLst xmlns:a="${NS_A}">${wa.glow?`<a:glow rad="${E9(wa.glow.r)}"><a:srgbClr val="${wa.glow.c}"><a:alpha val="60000"/></a:srgbClr></a:glow>`:""}${wa.shadow?`<a:outerShdw blurRad="38100" dist="38100" dir="2700000" algn="tl" rotWithShape="0"><a:srgbClr val="000000"><a:alpha val="45000"/></a:srgbClr></a:outerShdw>`:""}</a:effectLst>`).documentElement;putChild(rPr,doc.importNode(ef,true),["effectLst","effectDag"])}}}
+function waPop(anchor,list){const o0=list[0];openPop(anchor,p=>{mlab(p,"Text effects (WordArt)");const g=document.createElement("div");g.className="fxgrid";
+  for(const [l,wa] of WA_PRESETS){const b=document.createElement("button");b.className="fxb";b.innerHTML=`<span style="font:800 15px Arial;${waCss(wa)}${wa?"":""}">${esc(l)}</span>`;b.onclick=()=>objEdit(()=>list.forEach(o=>{if(wa)o.wa=clone(wa);else delete o.wa}));g.append(b)}p.append(g);
+  msep(p);const wa=o0.wa||{};const set=fn=>objEdit(()=>list.forEach(o=>{o.wa=o.wa||{};fn(o.wa)}));
+  mi(p,`Outline${wa.outline?" ✓":""}…`,()=>colorPop(anchor,"Text outline",wa.outline?.c,c=>set(w=>{if(c)w.outline={c,w:w.outline?.w||2};else delete w.outline}),{none:"No outline",stay:true,extra:q=>rangeRow(q,"Width",wa.outline?.w||2,1,8,v=>set(w=>{w.outline={c:w.outline?.c||"000000",w:v}}),v=>v+" px")}),{stay:true});
+  mi(p,`Glow${wa.glow?" ✓":""}…`,()=>colorPop(anchor,"Glow",wa.glow?.c,c=>set(w=>{if(c)w.glow={c,r:w.glow?.r||10};else delete w.glow}),{none:"No glow",stay:true,extra:q=>rangeRow(q,"Size",wa.glow?.r||10,2,30,v=>set(w=>{w.glow={c:w.glow?.c||"FFD43B",r:v}}),v=>v+" px")}),{stay:true});
+  mi(p,`Gradient fill${wa.grad?" ✓":""}…`,()=>colorPop(anchor,"Gradient start",wa.grad?.[0],c=>set(w=>{if(c)w.grad=[c,w.grad?.[1]||"C026D3"];else delete w.grad}),{none:"No gradient",stay:true,extra:q=>{msep(q);mi(q,"Gradient end color…",()=>colorPop(anchor,"Gradient end",wa.grad?.[1],c=>set(w=>{w.grad=[w.grad?.[0]||"2F5BEA",c||"C026D3"]}),{stay:true}),{stay:true})}}),{stay:true});
+  checkRow(p,"Shadow",!!wa.shadow,v=>set(w=>{if(v)w.shadow=true;else delete w.shadow}))},{force:true})}
+/* ======================= motion paths ======================= */
+const PATHS=[["down","Lines: down","M 0 0 L 0 0.25 E"],["up","Lines: up","M 0 0 L 0 -0.25 E"],["right","Lines: right","M 0 0 L 0.25 0 E"],["left","Lines: left","M 0 0 L -0.25 0 E"],["arc","Arc","M 0 0 C 0.0833 0.15 0.1667 0.15 0.25 0 E"],["turn","Turn","M 0 0 C 0.125 0 0.25 0 0.25 0.15 L 0.25 0.3 E"],["circle","Circle",null],["zigzag","Zigzag","M 0 0 L 0.05 0.06 L 0.1 0 L 0.15 0.06 L 0.2 0 L 0.25 0.06 E"]];
+function circlePath(){const rx=.08,ry=rx*W/H,k=.5523;return `M 0 0 C ${rx*k} 0 ${rx} ${ry*(1-k)} ${rx} ${ry} C ${rx} ${ry*(1+k)} ${rx*k} ${2*ry} 0 ${2*ry} C ${-rx*k} ${2*ry} ${-rx} ${ry*(1+k)} ${-rx} ${ry} C ${-rx} ${ry*(1-k)} ${-rx*k} 0 0 0 E`}
+function pathPts(path,n=48){const t=String(path||"").match(/[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?|[MLCZEmlcze]/g)||[];const segs=[];let i=0,cur=[0,0],st=[0,0];
+  while(i<t.length){const c=t[i++];if(c==="M"){cur=[+t[i++],+t[i++]];st=cur}else if(c==="L"){const p=[+t[i++],+t[i++]];segs.push(["L",cur,p]);cur=p}else if(c==="C"){const a=[+t[i++],+t[i++]],b=[+t[i++],+t[i++]],p=[+t[i++],+t[i++]];segs.push(["C",cur,a,b,p]);cur=p}else if(c==="Z"||c==="z"){segs.push(["L",cur,st]);cur=st}else if(c==="E")break;else if(!isNaN(+c)){/* implicit */}}
+  const pts=[[0,0]];for(const s of segs){const m=s[0]==="L"?4:Math.max(4,Math.round(n/segs.length));for(let k=1;k<=m;k++){const u=k/m;if(s[0]==="L")pts.push([s[1][0]+(s[2][0]-s[1][0])*u,s[1][1]+(s[2][1]-s[1][1])*u]);else{const [_,p0,p1,p2,p3]=s,v=1-u;pts.push([0,1].map(j=>v*v*v*p0[j]+3*v*v*u*p1[j]+3*v*u*u*p2[j]+u*u*u*p3[j]))}}}
+  return pts}
+function startPathDraw(target){drawMode={kind:"motion",target};$("slideWrap").classList.add("drawing");toast("Drag from the object along the route it should take. Esc cancels.",null,null,3500)}
+function finishPathDraw(pts){const m=drawMode;setDrawMode(null);if(!m||pts.length<2)return;const n=$("slideBox").querySelector(`[data-t="${CSS.escape(m.target)}"]`);let c=pts[0];if(n){const r=n.getBoundingClientRect(),b=$("slideBox").getBoundingClientRect();c=[(r.left+r.width/2-b.left)/slideScale,(r.top+r.height/2-b.top)/slideScale]}
+  const sm=simplify(pts,1.5),d0=[sm[0][0]-c[0],sm[0][1]-c[1]];const path="M 0 0 "+sm.slice(1).map(p=>`L ${((p[0]-sm[0][0])/W).toFixed(4)} ${((p[1]-sm[0][1])/H).toFixed(4)}`).join(" ")+" E";
+  animEdit(()=>deck.slides[cur].anims.push({id:uid(),t:m.target,cls:"path",fx:"custom",path,trig:"click",dur:2,delay:0,byPara:false}));setTimeout(()=>previewAnims(true),50)}
+function drawPathOverlays(L){const s=deck.slides[cur];if(!s?.anims?.length)return;const box=$("slideBox").getBoundingClientRect();
+  for(const a of s.anims){if(a.cls!=="path")continue;const n=$("slideBox").querySelector(`[data-t="${CSS.escape(a.t)}"]`);if(!n)continue;const r=n.getBoundingClientRect();const cx=r.left+r.width/2-box.left,cy=r.top+r.height/2-box.top;
+    const pts=pathPts(a.path).map(p=>[cx+p[0]*W*slideScale,cy+p[1]*H*slideScale]);const sv=document.createElementNS("http://www.w3.org/2000/svg","svg");sv.setAttribute("class","inkprev");sv.setAttribute("width","1");sv.setAttribute("height","1");sv.style.overflow="visible";
+    sv.innerHTML=`<polyline points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#2f9e44" stroke-width="2" stroke-dasharray="6 4"/><circle cx="${pts[0][0]}" cy="${pts[0][1]}" r="4" fill="#2f9e44"/><circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="4" fill="#d93025"/>`;L.append(sv)}}
+/* ======================= theme colors and fonts of an imported file ======================= */
+const CLR_KEYS=[["dk1","Text / background dark 1"],["lt1","Text / background light 1"],["dk2","Dark 2"],["lt2","Light 2"],["accent1","Accent 1"],["accent2","Accent 2"],["accent3","Accent 3"],["accent4","Accent 4"],["accent5","Accent 5"],["accent6","Accent 6"],["hlink","Hyperlink"],["folHlink","Followed hyperlink"]];
+async function readThemeInfo(zip){const mp=Object.keys(zip.files).find(n=>/^ppt\/slideMasters\/slideMaster\d+\.xml$/.test(n));if(!mp)return null;const rels=relsMap(xml(await zip.file(relsPathOf(mp))?.async("string")||"<x/>"));const tr=Object.values(rels).find(r=>/theme$/.test(r.type));if(!tr)return null;
+  const td=xml(await zip.file(resolvePath(mp,tr.target))?.async("string")||"<x/>");const cs=byTag(td,"clrScheme")[0];if(!cs)return null;const colors={};for(const c of cs.children){const v=c.children[0];colors[c.localName]=((v?.localName==="srgbClr"?v.getAttribute("val"):v?.getAttribute("lastClr"))||"000000").toUpperCase()}
+  const lat=n=>n&&kid(n,"latin")?.getAttribute("typeface");return {colors,fonts:{major:lat(byTag(td,"majorFont")[0])||"Calibri Light",minor:lat(byTag(td,"minorFont")[0])||"Calibri"}}}
+function lumVar(hex,lm,lo){const [h,s,l]=hexToHsl(hex);return hslToHex(h,s,clamp(l*lm+lo,0,1))}
+const LUM_VARS=[[1,0],[.75,0],[.5,0],[.25,0],[.2,.8],[.4,.6],[.6,.4],[.9,0],[.95,0],[.85,0]];
+function themeColorsModal(){const t0=deck.src?.theme;if(!t0){toast("This presentation has no PowerPoint theme to edit. Use Theme › Customize colors instead.");return}const curT=clone(deck.themeCur||t0);
+  const box=document.createElement("div");box.style.whiteSpace="normal";box.innerHTML=`<div class="hint" style="margin-bottom:10px">These are the theme colors and fonts of the PowerPoint file. Shapes and text that use them change everywhere, in this app and in the saved file.</div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 16px" id="tcG"></div><div class="frg" style="margin-top:12px"><label>Heading font</label><select class="s" id="tcMj"></select><label>Body font</label><select class="s" id="tcMn"></select></div>`;
+  modal("Theme colors & fonts",box,[["Reset to file",()=>{$("modal").hidden=true;applyThemeEdit(clone(t0))}],["Cancel",()=>$("modal").hidden=true],["Apply",()=>{$("modal").hidden=true;applyThemeEdit(curT)},true]]);
+  for(const [k,l] of CLR_KEYS){if(!curT.colors[k])continue;const r=document.createElement("label");r.className="rrow";r.style.padding="2px 0";r.innerHTML=`<span>${l}</span><input type="color" value="#${curT.colors[k]}">`;r.querySelector("input").oninput=e=>curT.colors[k]=e.target.value.slice(1).toUpperCase();$("tcG").append(r)}
+  const opts=v=>[...new Set([v,...FONTS])].map(f=>`<option ${f===v?"selected":""}>${esc(f)}</option>`).join("");$("tcMj").innerHTML=opts(curT.fonts.major);$("tcMn").innerHTML=opts(curT.fonts.minor);$("tcMj").onchange=e=>curT.fonts.major=e.target.value;$("tcMn").onchange=e=>curT.fonts.minor=e.target.value}
+function applyThemeEdit(next){const prev=deck.themeCur||deck.src.theme;const cmap=new Map(),fmap=new Map();
+  for(const [k] of CLR_KEYS){const a=prev.colors[k],b=next.colors[k];if(!a||!b||a===b)continue;for(const [lm,lo] of LUM_VARS){const x=lm===1&&lo===0?a:lumVar(a,lm,lo),y=lm===1&&lo===0?b:lumVar(b,lm,lo);if(!cmap.has(x))cmap.set(x,y)}}
+  if(prev.fonts.major!==next.fonts.major)fmap.set(prev.fonts.major,next.fonts.major);if(prev.fonts.minor!==next.fonts.minor)fmap.set(prev.fonts.minor,next.fonts.minor);
+  if(!cmap.size&&!fmap.size){deck.themeCur=next;changed();return}checkpoint();
+  const rs=str=>{if(typeof str!=="string"||str.startsWith("data:"))return str;if(fmap.has(str))return fmap.get(str);let r=str.replace(/(^|[^0-9A-Za-z])([0-9A-F]{6})(?![0-9A-Za-z])/g,(m,p,h)=>cmap.has(h)?p+cmap.get(h):m);for(const [a,b] of fmap)r=r.split(`font-family:${a}`).join(`font-family:${b}`).split(`"font":"${a}"`).join(`"font":"${b}"`);return r};
+  const walk=v=>Array.isArray(v)?v.map(walk):v&&typeof v==="object"?Object.fromEntries(Object.entries(v).map(([k,x])=>[k,k==="h0"?x:walk(x)])):rs(v);
+  for(const s of deck.slides){if(!s.free)continue;const keep=s.orig&&sigOf(s)===s.orig.sig,tk=s.orig&&sigOf(s,true)===s.orig.tsig;const same=new Set(s.free.els.filter(e=>e.k==="ftext"&&hashStr(JSON.stringify(e.paras))===e.h0));
+    const idx=[...same].map(e=>s.free.els.indexOf(e));s.free=walk(s.free);for(const i of idx){const e=s.free.els[i];e.h0=hashStr(JSON.stringify(e.paras))}
+    if(keep)s.orig.sig=sigOf(s);if(tk)s.orig.tsig=sigOf(s,true)}
+  deck.themeCur=next;changed(true);toast("Theme colors and fonts updated.","Undo",undo,7000)}
+async function writeThemeEdit(out){const t=deck.themeCur,t0=deck.src?.theme;if(!t||!t0||JSON.stringify(t)===JSON.stringify(t0))return;const done=new Set();
+  for(const mp of Object.keys(out.zip.files).filter(n=>/^ppt\/slideMasters\/slideMaster\d+\.xml$/.test(n))){const rd=await relsDoc(out,mp);const tr=byTag(rd,"Relationship").find(r=>/theme$/.test(r.getAttribute("Type")));if(!tr)continue;const tp=resolvePath(mp,tr.getAttribute("Target"));if(done.has(tp)||!out.zip.file(tp))continue;done.add(tp);
+    const td=xml(await out.zip.file(tp).async("string"));const cs=byTag(td,"clrScheme")[0];if(cs)for(const c of [...cs.children]){const v=t.colors[c.localName];if(!v||v===t0.colors[c.localName])continue;while(c.firstChild)c.firstChild.remove();const e=td.createElementNS(NS_A,"a:srgbClr");e.setAttribute("val",v);c.append(e)}
+    for(const [tag,k] of [["majorFont","major"],["minorFont","minor"]]){const n=byTag(td,tag)[0],l=n&&kid(n,"latin");if(l&&t.fonts[k]!==t0.fonts[k])l.setAttribute("typeface",t.fonts[k])}
+    out.zip.file(tp,ser(td))}}
 
 /* ---------- wiring for the editing tools ---------- */
 $("insertBtn").onclick=()=>insertMenu($("insertBtn"));

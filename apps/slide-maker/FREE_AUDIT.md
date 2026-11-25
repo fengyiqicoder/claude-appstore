@@ -27,7 +27,7 @@ Status: **have** = already in the app before this round · **added** = built thi
 | Layouts | all | have |
 | Format background (color, gradient, picture; apply to all) | PPT web, Slides | added |
 | Header & footer: slide numbers, date, footer text | PPT web, Slides | added (theme-styled slides; imported slides keep their own placeholders) |
-| Slide size 16:9 / 4:3 | PPT web, Slides | not added (theme layouts are drawn for 16:9; imported 4:3 decks still save as 4:3 untouched) |
+| Slide size: 16:9, 4:3, 16:10, A4, B5, 35 mm, square, portrait, custom (in or cm); ensure fit / maximize | PPT web, Slides | added (theme layouts re-flow; imported files open at their own size; changing an imported file's size rescales its masters, layouts and slides like PowerPoint's Ensure Fit, without changing font sizes) |
 | Speaker notes | all | have |
 | Find & replace (match case, whole words, notes included) | all | added |
 | Spell check | all | have (system spell checker in every text box) |
@@ -42,7 +42,7 @@ Status: **have** = already in the app before this round · **added** = built thi
 | Fill color, transparency, outline color/weight/dash, arrow heads, shadow | all | added |
 | SmartArt-style diagrams (process, chevrons, cycle, hierarchy, pyramid, Venn, matrix, list, timeline) | PPT web (limited), Slides "Diagram" | added (saved as grouped, editable shapes) |
 | Tables (insert any size, edit cells, add/remove rows and columns, header row, banded rows, cell shading, Tab adds a row) | all | added (table layout existed; free tables added) |
-| Merge table cells | PPT web, Slides | not added (cell editing model is a plain grid) |
+| Merge / split table cells | PPT web, Slides | added (Shift-click a range, Merge cells; saved as gridSpan/rowSpan/hMerge/vMerge; merged cells in .pptx files are read too) |
 | Charts (column, bar, line, pie, doughnut) anywhere on a slide, edit data, paste from Excel | Slides, PPT desktop | added (chart layout existed) |
 | Pictures: insert from file, paste, drag in, replace | all | have / added as free objects |
 | Picture resize (aspect locked), crop (drag crop handles), crop to shape, transparency, brightness, contrast, alt text | all | added |
@@ -51,8 +51,8 @@ Status: **have** = already in the app before this round · **added** = built thi
 | Online video (YouTube), stock images, online pictures | all | impossible (no network or iframes) |
 | Draw / ink with pen and highlighter | PPT web Draw tab, Slides scribble | added (saved as editable freeform shapes) |
 | Hyperlinks | all | have |
-| Equations | PPT web, Slides | not added (no way to save an editable PowerPoint equation without a math engine) |
-| WordArt | PPT web, Slides | not added |
+| Equations | PPT web, Slides | added (LaTeX editor with templates, KaTeX loaded on first use; saved as native editable PowerPoint equations (OMML) with a picture fallback, like PowerPoint) |
+| WordArt-style text effects: outline, shadow, glow, gradient fill, presets | PPT web, Slides | added (saved as real text effects; shown for imported text too) |
 | Symbols / emoji | all | have (system character viewer) |
 
 ## Arrange and format
@@ -71,9 +71,10 @@ Status: **have** = already in the app before this round · **added** = built thi
 | Paragraph: align, vertical align, bullets, numbering, line spacing, indent (Tab) | all | added |
 | Themes, theme colors and fonts, logo | all | have |
 | Edit slide master | Slides (Edit theme); not in PPT web | added (master objects shown on every slide, saved into the PowerPoint slide master; "Hide background graphics" per slide) |
-| Edit master/theme of an imported .pptx | PPT desktop | not added (imported slides keep their own master; restyle with a theme instead) |
+| Edit theme colors and fonts of an imported .pptx | PPT desktop | added (View › Theme colors & fonts; the file's theme is rewritten so PowerPoint recolors everything; the app recolors shapes using those colors and their standard tints) |
+| Add objects to an imported .pptx's slide master | PPT desktop | added (View › Edit slide master) |
 | Zoom the editing canvas | all | added |
-| Rulers | all | not added |
+| Rulers (inches or cm, selection shown on the ruler) | all | added |
 | Accessibility checker, alt text | PPT web | added |
 
 ## Animations and transitions
@@ -84,7 +85,8 @@ Status: **have** = already in the app before this round · **added** = built thi
 | Entrance: Appear, Fade, Fly In, Float In, Wipe, Zoom, Wheel; Emphasis: Pulse, Spin, Grow/Shrink, Transparency; Exit: Disappear, Fade, Fly Out, Wipe, Zoom | PPT web (37), Slides | added (saved as native PowerPoint timing XML) |
 | Order, On click / With previous / After previous, duration, delay, by paragraph, preview | all | added |
 | Animations from imported .pptx play in Present | all | added (common effects; other effects play as a fade and stay untouched in the file unless you edit that slide's list) |
-| Motion paths, triggers | PPT desktop | not added |
+| Motion paths (lines, arc, turn, circle, zigzag, draw your own) | PPT desktop, Slides | added (saved as PowerPoint motion paths, read back and played) |
+| Animation triggers (start on click of a shape) | PPT desktop | added (saved as PowerPoint interactive sequences; read back and played in Present) |
 
 ## Present
 | Feature | Where | Status |
@@ -99,6 +101,7 @@ Status: **have** = already in the app before this round · **added** = built thi
 - PowerPoint preset shapes (stars, arrows, chevrons, hearts…), freeform shapes and diagonal connector lines with arrow heads now draw correctly instead of as rectangles / not at all.
 - Picture crops from PowerPoint (`srcRect`) are shown and kept; alt text is read and kept.
 - Moving, resizing, cropping or deleting an object of an imported slide patches only that object's XML; the rest of the slide stays byte-identical. Grouped shapes move as one group.
+- Every table on an imported slide is kept and editable (before, only the first was read). Equations made in PowerPoint show their picture fallback.
 - PptxGenJS gave tables the same shape id as another shape and left content-type entries for masters that don't exist; both are cleaned up on save.
 
 ## AI (already beyond the free tiers)
