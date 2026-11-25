@@ -2,7 +2,7 @@
 """Build Claude AppStore from data/apps.json.
 
 Outputs:
-  docs/index.html      the website (GitHub Pages, appstore.000ooo.ooo)
+  docs/index.html      the website (GitHub Pages, claudeappstore.000ooo.ooo)
   artifact/store.html  the same page without a document skeleton, published as a Claude artifact
   README.md            the list on GitHub
 """
@@ -23,7 +23,7 @@ page = page.replace("/*STORE_ARTIFACT*/", art_url)
 (ROOT / "artifact/store.html").write_text(page)
 site_page = page.replace("const SITE = /*SITE*/false;", "const SITE = true;")
 
-STORE = "https://appstore.000ooo.ooo"
+STORE = "https://claudeappstore.000ooo.ooo"
 head = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -36,7 +36,7 @@ head = f"""<!doctype html>
 """
 (ROOT / "docs").mkdir(exist_ok=True)
 (ROOT / "docs/index.html").write_text(head + site_page + "\n</body></html>\n")
-(ROOT / "docs/CNAME").write_text("appstore.000ooo.ooo\n")
+(ROOT / "docs/CNAME").write_text("claudeappstore.000ooo.ooo\n")
 
 # README
 CATS = [("play", "Play"), ("learn", "Learn"), ("work", "Work"), ("life", "Life")]
@@ -53,7 +53,7 @@ parts = [f"""# Claude AppStore [![Awesome](https://awesome.re/badge.svg)](https:
 
 > **Stop paying for apps.** Free AI apps that run on the Claude plan you already have and install on your Mac or PC: our own Claude-powered tools, plus the best artifacts the community has shared.
 
-**Browse the store: [appstore.000ooo.ooo]({STORE})**, or install the store itself as an app: [open it in Claude](ARTIFACT_URL) and choose *Install as app*.
+**Browse the store: [claudeappstore.000ooo.ooo]({STORE})**, or install the store itself as an app: [open it in Claude](ARTIFACT_URL) and choose *Install as app*.
 
 On November 24, 2026, Anthropic shipped **Install as app** (beta) in Claude for Mac and Windows: ask Claude to build an artifact, pick *Install as app*, and it gets its own icon and window. Installed apps can use Claude and your connectors, and, if you allow it, send notifications, add a menu bar item, or read files. ([announcement](https://x.com/ClaudeDevs/status/2125315491522650299))
 

@@ -2,7 +2,7 @@
 
 > **Stop paying for apps.** Free AI apps that run on the Claude plan you already have and install on your Mac or PC: our own Claude-powered tools, plus the best artifacts the community has shared.
 
-**Browse the store: [appstore.000ooo.ooo](https://appstore.000ooo.ooo)**, or install the store itself as an app: [open it in Claude](https://claude.ai/artifact/TZvveBZQg4mRBxvKWmwg4x) and choose *Install as app*.
+**Browse the store: [claudeappstore.000ooo.ooo](https://claudeappstore.000ooo.ooo)**, or install the store itself as an app: [open it in Claude](https://claude.ai/artifact/TZvveBZQg4mRBxvKWmwg4x) and choose *Install as app*.
 
 On November 24, 2026, Anthropic shipped **Install as app** (beta) in Claude for Mac and Windows: ask Claude to build an artifact, pick *Install as app*, and it gets its own icon and window. Installed apps can use Claude and your connectors, and, if you allow it, send notifications, add a menu bar item, or read files. ([announcement](https://x.com/ClaudeDevs/status/2125315491522650299))
 
