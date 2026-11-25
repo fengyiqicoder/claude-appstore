@@ -26,6 +26,7 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - [Turn artifacts into Mac and Windows apps](https://claude.com/resources/articles/install-as-app) - Launch article: what installed apps can do and how permissions work.
 - [Install an artifact as an app](https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app) - Help center guide: install, open, uninstall, permission list, limitations.
 - [Artifacts admin guide for Team and Enterprise](https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans) - Where admins turn the feature and full computer access on or off.
+- [Demo apps from Felix Rieseberg](https://x.com/felixrieseberg/status/2125310111149416682) - Launch post from the Claude Desktop team with a page of demo apps that use OS APIs, connectors and Claude.
 
 ## Play
 
@@ -33,17 +34,18 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **Titan Colony** - A planet you can install: people land on Titan and build a colony over 60 years, drawn in one shader with no libraries. ([post](https://x.com/maximbilan/status/2125504700518928832) by [@maximbilan](https://x.com/maximbilan))
 - **[Isekai Reincarnation Quiz](https://claude.ai/artifact/4x32h1UqVfe6tP54Qrm6fC)** - 30 pixel-art RPG scenes decide which of 16 fantasy lives you are reborn into. Japanese. ([post](https://x.com/suke_aicopy/status/2125443342297387077) by [@suke_aicopy](https://x.com/suke_aicopy))
 - **[Tarot Love Type](https://claude.ai/artifact/2PdqPFbQ8aWwPMDPQAdWcG)** - 30 questions and 320+ results drawn as a tarot card, with attachment style and a compatibility check. Japanese. ([post](https://x.com/suke_aicopy/status/2125454175257686350) by [@suke_aicopy](https://x.com/suke_aicopy))
-- **[pop'n Difficulty Table](https://claude.ai/artifact/U5qnbDYQrnXGAPVNiPMvpA)** - A level 29–50 difficulty tracker for pop'n music, from a player of 24 years. Japanese. ([post](https://x.com/kuzetaku/status/2125419678290100395) by [@kuzetaku](https://x.com/kuzetaku))
 - **[Party Game](https://claude.ai/artifact/3VqFRic6tuyhhd8mNCTwru)** - A pass-and-play party game for 3 to 8 friends on one screen. Claude writes the prompts, everyone answers in secret and votes for the funniest, then Claude teases every answer and picks its own favorite for bonus points. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/party-game), made by this repo)
+- **[Signal Operator](https://claude.ai/artifact/3tLMQDE56DHFmahcMwZ1Au)** - You switch every light at one intersection by hand. Change too early and cars crash, too late and they back up; by evening there are right-turning cars, buses and ambulances. The game ends when any direction has 8 cars waiting. Japanese. ([post](https://x.com/fighthub_jp/status/2125545039849824687) by [@fighthub_jp](https://x.com/fighthub_jp))
+- **[Watch Out! Walking While Texting](https://claude.ai/artifact/V5TFihpFWc5HLBU1vCkFnC)** - A short simulation about the danger of walking while looking at your phone. Free, no sign-up, works on phone or PC; the same post links a companion game, Walk Beside Me, and the author also has Japanese versions of both. ([post](https://x.com/s_young_sb29/status/2125609332205289478) by [@s_young_sb29](https://x.com/s_young_sb29))
 
 ## Learn
 
 - **Geography Trainer** - An artifact Claude made for learning geography, installed as a desktop app. ([post](https://x.com/cjav_dev/status/2125317458038768101) by [@cjav_dev](https://x.com/cjav_dev))
 - **[AI Architecture Survival Lab](https://claude.ai/artifact/N78JPA38614byXSEqA3Zei)** - Design an AI system, then survive budget cuts, provider outages and security reviews across 9 missions and 12 failure modes. ([post](https://x.com/PeakGrizzly/status/2125432809330524466) by [@PeakGrizzly](https://x.com/PeakGrizzly))
 - **[Podcast Lessons](https://claude.ai/artifact/N8p7odNH5Y8zYuNBLrfE7X)** - Highlights from Acquired, Invest Like the Best, Farnam Street and 50 other shows, turned into an interactive page with flashcards. ([post](https://x.com/SamSirapat/status/2125467516122386560) by [@SamSirapat](https://x.com/SamSirapat))
-- **[Zone of Protection](https://claude.ai/artifact/C5Yo7CEy9QJYw1yWN4L38U)** - A 60-second hand-hygiene challenge scored like an antibiotic sensitivity plate: S, I or R. ([post](https://x.com/drasumant/status/2125506140066955686) by [@drasumant](https://x.com/drasumant))
 - **[500 Years of Science](https://claude.ai/artifact/JzUr9QdXgYXKpyXfXnVfvf)** - A ranked list of key scientific achievements of the last five centuries, up to the day before it was made. Hebrew. ([post](https://x.com/tamritzblog/status/2125198164118413378) by [@tamritzblog](https://x.com/tamritzblog))
 - **[Speaking Coach](https://claude.ai/artifact/UuqPyQ25QRBtGaT7E9h3ZD)** - Claude writes a short spoken passage at your level in one of 9 languages and reads it to you. Repeat it or answer its question out loud, and Claude scores what you said, corrects it and reads back a more natural version. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/speaking-coach), made by this repo)
+- **[Exact Birthday Calculator](https://claude.ai/artifact/FzmS8QF45CN7JmLFmeghku)** - Works out the exact moment of your birthday as a whole number of trips around the sun, not a calendar date. Made by an MIT professor for people who live in a different time zone from where they were born, or were born on February 29. ([post](https://x.com/fredodurand/status/2125610055982866917) by [@fredodurand](https://x.com/fredodurand))
 
 ## Work
 
@@ -63,6 +65,7 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - [Official example prompts](https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app) - "Make a Pomodoro timer that lives in my menu bar", "remind me to stretch every hour", "rename the photos in a folder by date".
 - [10 apps you can build this weekend](https://x.com/pundiranusha/status/2125510269267014054) - Menu bar pomodoro, PR review checklist, invoice maker, habit tracker with notifications, meeting cost calculator and more.
 - [Add an export button first](https://x.com/YH31377807/status/2125380955255026128) - Ask Claude for an "export to JSON" button before installing, so your data isn't stuck inside an app tied to your account.
+- [Personal app builder prompt](https://x.com/minchoi/status/2125564860255658247) - Four phases: interview you about a weekly annoyance, pick and spec one app, build it as a self-contained artifact, then test it and list every permission it will ask for.
 
 ## How it works
 

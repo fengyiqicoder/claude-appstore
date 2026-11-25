@@ -109,30 +109,6 @@
    "added": "2026-11-25"
   },
   {
-   "id": "hand-hygiene",
-   "name": "Zone of Protection",
-   "subtitle": "A 60-second hand-hygiene test",
-   "category": "learn",
-   "desc": "A 60-second hand-hygiene challenge scored like an antibiotic sensitivity plate: S, I or R.",
-   "author": "drasumant",
-   "post": "https://x.com/drasumant/status/2125506140066955686",
-   "artifact": "https://claude.ai/artifact/C5Yo7CEy9QJYw1yWN4L38U",
-   "lang": "",
-   "added": "2026-11-25"
-  },
-  {
-   "id": "popn-table",
-   "name": "pop'n Difficulty Table",
-   "subtitle": "Track levels 29 to 50",
-   "category": "play",
-   "desc": "A level 29–50 difficulty tracker for pop'n music, from a player of 24 years.",
-   "author": "kuzetaku",
-   "post": "https://x.com/kuzetaku/status/2125419678290100395",
-   "artifact": "https://claude.ai/artifact/U5qnbDYQrnXGAPVNiPMvpA",
-   "lang": "Japanese",
-   "added": "2026-11-25"
-  },
-  {
    "id": "science-500",
    "name": "500 Years of Science",
    "subtitle": "Ranked scientific achievements",
@@ -268,6 +244,42 @@
     "Shortcut"
    ],
    "ai": true
+  },
+  {
+   "id": "signal-operator",
+   "name": "Signal Operator",
+   "subtitle": "Run every traffic light by hand",
+   "category": "play",
+   "desc": "You switch every light at one intersection by hand. Change too early and cars crash, too late and they back up; by evening there are right-turning cars, buses and ambulances. The game ends when any direction has 8 cars waiting.",
+   "author": "fighthub_jp",
+   "post": "https://x.com/fighthub_jp/status/2125545039849824687",
+   "artifact": "https://claude.ai/artifact/3tLMQDE56DHFmahcMwZ1Au",
+   "lang": "Japanese",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "exact-birthday",
+   "name": "Exact Birthday Calculator",
+   "subtitle": "Your birthday, to the orbit",
+   "category": "learn",
+   "desc": "Works out the exact moment of your birthday as a whole number of trips around the sun, not a calendar date. Made by an MIT professor for people who live in a different time zone from where they were born, or were born on February 29.",
+   "author": "fredodurand",
+   "post": "https://x.com/fredodurand/status/2125610055982866917",
+   "artifact": "https://claude.ai/artifact/FzmS8QF45CN7JmLFmeghku",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "walking-while-texting",
+   "name": "Watch Out! Walking While Texting",
+   "subtitle": "A walk with your phone out",
+   "category": "play",
+   "desc": "A short simulation about the danger of walking while looking at your phone. Free, no sign-up, works on phone or PC; the same post links a companion game, Walk Beside Me, and the author also has Japanese versions of both.",
+   "author": "s_young_sb29",
+   "post": "https://x.com/s_young_sb29/status/2125609332205289478",
+   "artifact": "https://claude.ai/artifact/V5TFihpFWc5HLBU1vCkFnC",
+   "lang": "",
+   "added": "2026-11-26"
   }
  ],
  "official": [
@@ -290,6 +302,11 @@
    "title": "Artifacts admin guide for Team and Enterprise",
    "url": "https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans",
    "note": "Where admins turn the feature and full computer access on or off."
+  },
+  {
+   "title": "Demo apps from Felix Rieseberg",
+   "url": "https://x.com/felixrieseberg/status/2125310111149416682",
+   "note": "Launch post from the Claude Desktop team with a page of demo apps that use OS APIs, connectors and Claude."
   }
  ],
  "prompts": [
@@ -307,6 +324,11 @@
    "title": "Add an export button first",
    "url": "https://x.com/YH31377807/status/2125380955255026128",
    "note": "Ask Claude for an \"export to JSON\" button before installing, so your data isn't stuck inside an app tied to your account."
+  },
+  {
+   "title": "Personal app builder prompt",
+   "url": "https://x.com/minchoi/status/2125564860255658247",
+   "note": "Four phases: interview you about a weekly annoyance, pick and spec one app, build it as a self-contained artifact, then test it and list every permission it will ask for."
   }
  ],
  "guides": [
