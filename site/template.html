@@ -107,8 +107,8 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
     <label class="search"><svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="q" type="search" placeholder="Search" aria-label="Search apps"></label>
     <nav id="nav"></nav>
     <div class="foot">
-      <a href="https://github.com/fengyiqicoder/awesome-claude-artifact-apps/issues/new" target="_blank" rel="noopener">Submit your app</a>
-      <a href="https://github.com/fengyiqicoder/awesome-claude-artifact-apps" target="_blank" rel="noopener">Source on GitHub</a>
+      <a href="https://github.com/fengyiqicoder/claude-appstore/issues/new" target="_blank" rel="noopener">Submit your app</a>
+      <a href="https://github.com/fengyiqicoder/claude-appstore" target="_blank" rel="noopener">Source on GitHub</a>
       <span>Community catalog, not affiliated with Anthropic or Apple. Apps belong to their creators.</span>
       <span id="upd"></span>
     </div>
@@ -162,7 +162,7 @@ function getBtn(a,cls=""){
 function row(a){
   return `<div class="item">${iconHTML(a,52)}<div class="meta" data-open="${a.id}" role="link" tabindex="0"><b>${esc(a.name)}</b><span>${esc(a.subtitle)}</span></div>${getBtn(a)}</div>`;
 }
-function grid(list){return list.length?`<div class="grid">${list.map(row).join("")}</div>`:`<p class="empty">Nothing here yet. <a href="https://github.com/fengyiqicoder/awesome-claude-artifact-apps/issues/new" target="_blank" rel="noopener">Submit an app</a>.</p>`}
+function grid(list){return list.length?`<div class="grid">${list.map(row).join("")}</div>`:`<p class="empty">Nothing here yet. <a href="https://github.com/fengyiqicoder/claude-appstore/issues/new" target="_blank" rel="noopener">Submit an app</a>.</p>`}
 function fcard(a,eyebrow,blurb){
   const [g1,g2]=grad(a);
   return `<div class="fcard" data-open="${a.id}" role="link" tabindex="0" style="background:linear-gradient(145deg,${g1},${g2})">
