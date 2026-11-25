@@ -1,4 +1,4 @@
-<title>Talkback</title>
+<title>Speaking Coach</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* Layout: one lesson card at a time. Settings row on top, the passage with listen controls, then a speaking panel where Claude checks what you said. */
@@ -52,7 +52,7 @@ textarea{font:16px/1.5 var(--read);width:100%;min-height:70px;resize:vertical;bo
 
 <div class="drag"></div>
 <div class="wrap">
-  <header><h1>Talkback</h1><span class="streak" id="streak"></span></header>
+  <header><h1>Speaking Coach</h1><span class="streak" id="streak"></span></header>
   <div class="opts">
     <select id="lang" aria-label="Language to practice"></select>
     <select id="level" aria-label="Level"><option value="A2">Beginner (A2)</option><option value="B1">Intermediate (B1)</option><option value="B2">Upper intermediate (B2)</option><option value="C1">Advanced (C1)</option></select>
@@ -87,7 +87,7 @@ function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 
 function render(){
   if(!L){
-    $("lesson").innerHTML=`<div class="card empty"><b style="color:var(--fg);font-size:16px">A short lesson, read aloud, then your turn to speak.</b><span>Claude writes a passage at your level, reads it to you, and checks how you repeat it or answer its question.</span>${sample?"":`<span>Open Talkback in the Claude app to start.</span>`}</div>`;
+    $("lesson").innerHTML=`<div class="card empty"><b style="color:var(--fg);font-size:16px">A short lesson, read aloud, then your turn to speak.</b><span>Claude writes a passage at your level, reads it to you, and checks how you repeat it or answer its question.</span>${sample?"":`<span>Open Speaking Coach in the Claude app to start.</span>`}</div>`;
     return;
   }
   $("lesson").innerHTML=`<div class="card">
@@ -179,7 +179,7 @@ streak();render();
   let desktop;
   [sample,tts,dict,desktop]=await Promise.all([use("sample"),use("tts"),use("dictation"),use("desktop")]);
   $("new").disabled=!sample;onDict();render();
-  if(!sample) $("st").textContent="Open Talkback in the Claude app to practice with Claude.";
+  if(!sample) $("st").textContent="Open Speaking Coach in the Claude app to practice with Claude.";
   if(desktop?.tray){desktop.app.dock.setIcon(dockIcon()).catch(()=>{});desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:32,width:620,height:760,minWidth:380,minHeight:520}).catch(()=>{});}
   else if(desktop&&await desktop.install.state().catch(()=>"")==="available"){const b=document.createElement("button");b.className="btn";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});document.querySelector("header").append(b);}
 })();

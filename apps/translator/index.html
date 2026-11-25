@@ -1,4 +1,4 @@
-<title>Lingo</title>
+<title>AI Translator</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script type="application/json" id="claude-artifacts-manifest">{"permissions":["overlay","shortcuts"]}</script>
 <style>
@@ -136,18 +136,18 @@ function setup(){
   if(!float){b.textContent="Float on top";b.onclick=async()=>{try{perms=await desktop.permissions.request(["overlay","shortcuts"]);}catch{}if(perms.overlay==="granted"){store.set("float",true);applyWindow();}setup();};}
   else{b.textContent="Normal window";b.onclick=()=>{store.set("float",false);applyWindow();setup();};}
   act.append(b);
-  $("hint").textContent=sc?"Option+Shift+T brings Lingo up anywhere.":"Float it on top to get the Option+Shift+T shortcut.";
+  $("hint").textContent=sc?"Option+Shift+T brings AI Translator up anywhere.":"Float it on top to get the Option+Shift+T shortcut.";
 }
 (async()=>{
   const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
   [sample,tts,desktop]=await Promise.all([use("sample"),use("tts"),use("desktop")]);
   $("go").disabled=!sample; $("speak").hidden=!tts;
-  if(!sample){$("hint").textContent="Open Lingo in the Claude app to translate with Claude.";}
+  if(!sample){$("hint").textContent="Open AI Translator in the Claude app to translate with Claude.";}
   if(!desktop) {if(sample)$("hint").textContent="Install from the Claude desktop app to float it with a shortcut.";return;}
   if(!desktop.tray){
     const st=await desktop.install.state().catch(()=>"unavailable");
     if(st==="available"){const b=document.createElement("button");b.className="btn pri";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("act").replaceChildren(b);$("hint").textContent="Install it to float on top with a shortcut.";}
-    else if(sample) $("hint").textContent=st==="installed"?"Installed. Open Lingo from Applications or Start.":"Install from the Claude desktop app to float it with a shortcut.";
+    else if(sample) $("hint").textContent=st==="installed"?"Installed. Open AI Translator from Applications or Start.":"Install from the Claude desktop app to float it with a shortcut.";
     return;
   }
   document.body.classList.add("app");

@@ -1,4 +1,4 @@
-<title>Punchline</title>
+<title>Party Game</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* Layout: a game-show stage on one screen. A big prompt card in the middle, players along the bottom, one action at a time. Single dark look: it's a party on a shared screen. */
@@ -54,7 +54,7 @@ textarea{min-height:90px;resize:vertical;font-size:17px}
 
 <div class="drag"></div>
 <div class="wrap">
-  <h1 class="logo">PUNCHLINE</h1>
+  <h1 class="logo">PARTY GAME</h1>
   <p class="sub">A party game on one screen. Claude writes the prompts and judges the jokes.</p>
   <div id="stage"></div>
   <p class="st" id="st"></p>
@@ -82,7 +82,7 @@ function view(){
       <div class="chips">${THEMES.map(t=>`<button class="chip ${t===G.theme?"on":""}" data-theme="${esc(t)}" style="cursor:pointer;padding:6px 12px">${esc(t)}</button>`).join("")}</div>
       <label class="f" for="lg">Language</label>
       <select id="lg" style="font:inherit;padding:8px;border-radius:10px;background:#120d24;color:var(--fg);border:1px solid var(--line);max-width:220px">${["English","Chinese","Japanese","Korean","Spanish","French","German","Portuguese"].map(l=>`<option ${l===G.lang?"selected":""}>${l}</option>`).join("")}</select>
-      <div class="row"><button class="btn go" id="start" ${G.players.length<3||!sample?"disabled":""}>Start · ${G.rounds} rounds</button><span class="st" style="text-align:left">${sample?"Pass the computer around. Everyone answers in secret, then everyone votes.":"Open Punchline in the Claude app to play."}</span></div>
+      <div class="row"><button class="btn go" id="start" ${G.players.length<3||!sample?"disabled":""}>Start · ${G.rounds} rounds</button><span class="st" style="text-align:left">${sample?"Pass the computer around. Everyone answers in secret, then everyone votes.":"Open Party Game in the Claude app to play."}</span></div>
     </div>`;
     const add=()=>{const v=$("pn").value.trim();if(v&&G.players.length<8&&!G.players.includes(v)){G.players.push(v);store.set("players",G.players);}view();$("pn").focus();};
     $("add").onclick=add;$("pn").onkeydown=e=>{if(e.key==="Enter")add();};

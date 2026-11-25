@@ -17,22 +17,25 @@ start, end = tpl.index("/*APPS_DATA*/"), tpl.index("/*END*/") + len("/*END*/")
 page = tpl[:start] + json.dumps(data, ensure_ascii=False) + tpl[end:]
 page = page.replace("/*UPDATED*/", today)
 
+art_url = (ROOT / "data/artifact_url.txt").read_text().strip() if (ROOT / "data/artifact_url.txt").exists() else ""
+page = page.replace("/*STORE_ARTIFACT*/", art_url)
 (ROOT / "artifact").mkdir(exist_ok=True)
 (ROOT / "artifact/store.html").write_text(page)
+site_page = page.replace("const SITE = /*SITE*/false;", "const SITE = true;")
 
 STORE = "https://appstore.000ooo.ooo"
 head = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="canonical" href="{STORE}/">
-<meta property="og:title" content="Claude AppStore">
-<meta property="og:description" content="A community catalog of Claude artifacts you can install as Mac and Windows apps.">
+<title>Claude AppStore: Stop paying for apps</title>\n<meta property="og:title" content="Claude AppStore: Stop paying for apps">
+<meta property="og:description" content="Free AI apps that run on the Claude plan you already have. Install them on your Mac or PC.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='5.5' fill='%230a6cdf'/%3E%3Cpath d='M7 7h4v4H7zM13 7h4v4h-4zM7 13h4v4H7z' fill='%23fff'/%3E%3Ccircle cx='15' cy='15' r='2.3' fill='%23fff'/%3E%3C/svg%3E">
 <style>:root{{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);height:100%}}[hidden]{{display:none!important}}</style>
 </head><body>
 """
 (ROOT / "docs").mkdir(exist_ok=True)
-(ROOT / "docs/index.html").write_text(head + page + "\n</body></html>\n")
+(ROOT / "docs/index.html").write_text(head + site_page + "\n</body></html>\n")
 (ROOT / "docs/CNAME").write_text("appstore.000ooo.ooo\n")
 
 # README
@@ -48,7 +51,7 @@ def links(items):
 
 parts = [f"""# Claude AppStore [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 
-> AI apps that run on Claude and install on your Mac or PC: our own Claude-powered tools, plus the best artifacts the community has shared.
+> **Stop paying for apps.** Free AI apps that run on the Claude plan you already have and install on your Mac or PC: our own Claude-powered tools, plus the best artifacts the community has shared.
 
 **Browse the store: [appstore.000ooo.ooo]({STORE})**, or install the store itself as an app: [open it in Claude](ARTIFACT_URL) and choose *Install as app*.
 

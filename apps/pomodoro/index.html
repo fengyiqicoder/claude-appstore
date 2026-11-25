@@ -1,4 +1,4 @@
-<title>Focus</title>
+<title>Pomodoro Timer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script type="application/json" id="claude-artifacts-manifest">{"permissions":["menu-bar","notifications","shortcuts"]}</script>
 <style>
@@ -120,7 +120,7 @@ function paint(){
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.mode===S.mode));
   const n=Math.max(4,S.done);
   $("dots").innerHTML=Array.from({length:Math.min(n,12)},(_,i)=>`<i class="${i<S.done?"on":""}"></i>`).join("")+`<span>${S.done} today</span>`;
-  document.title=S.running?`${fmt(r)} · Focus`:"Focus";
+  document.title=S.running?`${fmt(r)} · Pomodoro Timer`:"Pomodoro Timer";
   syncDesktop(r);
 }
 function syncDesktop(r){
@@ -142,7 +142,7 @@ function setTray(){
       {label:"Reset",click:reset,enabled:r<total},
       {label:"Skip to next",click:skip},
       {type:"separator"},
-      {label:"Show Focus",click:()=>desktop.window.show().catch(()=>{})}
+      {label:"Show Pomodoro Timer",click:()=>desktop.window.show().catch(()=>{})}
     ]
   }).catch(()=>{});
 }
@@ -168,7 +168,7 @@ function finish(){
 }
 function notify(body){
   if(desktop?.notification&&perms.notifications==="granted") desktop.notification.show({body}).catch(()=>{});
-  else if("Notification" in window&&Notification.permission==="granted"){try{new Notification("Focus",{body})}catch{}}
+  else if("Notification" in window&&Notification.permission==="granted"){try{new Notification("Pomodoro Timer",{body})}catch{}}
 }
 let ac=null;
 function chime(){
@@ -258,7 +258,7 @@ paint();
   if(!desktop.tray){
     const st=await desktop.install.state().catch(()=>"unavailable");
     if(st==="available"){const b=document.createElement("button");b.className="install";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("hint").replaceChildren(b);}
-    else $("hint").textContent=st==="installed"?"Installed. Open Focus from your Applications or Start menu.":"Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.";
+    else $("hint").textContent=st==="installed"?"Installed. Open Pomodoro Timer from your Applications or Start menu.":"Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.";
     return;
   }
   desktop.app.dock.setIcon(dockIcon()).catch(()=>{});

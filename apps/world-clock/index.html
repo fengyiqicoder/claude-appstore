@@ -1,4 +1,4 @@
-<title>Zones</title>
+<title>World Clock</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <script type="application/json" id="claude-artifacts-manifest">{"permissions":["menu-bar"]}</script>
 <style>
@@ -58,7 +58,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 <div class="drag"></div>
 <div class="wrap">
-  <header><h1>Zones</h1>
+  <header><h1>World Clock</h1>
     <div class="add"><input id="q" type="search" placeholder="Add a city" autocomplete="off" aria-label="Add a city"><div class="sugg" id="sugg" hidden></div></div>
   </header>
   <div class="list" id="list"></div>
@@ -119,7 +119,7 @@ function setTray(){
   const abbr=p.name==="Here"?"":p.name.replace(/[^A-Za-zÀ-ÿ ]/g,"").split(" ").map(w=>w[0]).join("").slice(0,3).toUpperCase()||p.name.slice(0,3).toUpperCase();
   const short=p.name.length<=6?p.name:abbr;
   desktop.tray.set({title:`${short} ${parts(p.tz,d).label}`.trim(),toolTip:list.map(c=>`${c.name} ${parts(c.tz,d).label}`).join(" · ").slice(0,100),
-    menu:[...list.map(c=>({label:`${c.name}   ${parts(c.tz,d).label}  ${parts(c.tz,d).wd}`,type:"checkbox",checked:c.name===p.name,click:()=>{pinned=c.name;save();render();}})),{type:"separator"},{label:"Open Zones",click:()=>desktop.window.show().catch(()=>{})}]}).catch(()=>{});
+    menu:[...list.map(c=>({label:`${c.name}   ${parts(c.tz,d).label}  ${parts(c.tz,d).wd}`,type:"checkbox",checked:c.name===p.name,click:()=>{pinned=c.name;save();render();}})),{type:"separator"},{label:"Open World Clock",click:()=>desktop.window.show().catch(()=>{})}]}).catch(()=>{});
 }
 // add city
 const allTz=(Intl.supportedValuesOf?Intl.supportedValuesOf("timeZone"):[]);
@@ -195,7 +195,7 @@ function foot(){
   if(!desktop.tray){
     const st=await desktop.install.state().catch(()=>"unavailable");
     if(st==="available"){const b=document.createElement("button");b.className="install";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("foot").replaceChildren(b);}
-    else $("foot").textContent=st==="installed"?"Installed. Open Zones from your Applications or Start menu.":"Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.";
+    else $("foot").textContent=st==="installed"?"Installed. Open World Clock from your Applications or Start menu.":"Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.";
     return;
   }
   desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
