@@ -47,6 +47,9 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 
 - **[To-do List](https://claude.ai/artifact/XVDvZnh6uE689MTBPf9MYo)** - A to-do app built in under two hours and shared with @ClaudeDevs. ([post](https://x.com/DavidCismas/status/2125415718673879062) by [@DavidCismas](https://x.com/DavidCismas))
 - **[School Achievements](https://claude.ai/artifact/7xLbZEbjZvrYJK6QaHJKT4)** - A full school profile site with activities, photos, vision and staff, made from a single prompt. Arabic. ([post](https://x.com/Atallah147/status/2125494606561489142) by [@Atallah147](https://x.com/Atallah147))
+- **[Focus](https://claude.ai/artifact/34QrCwomkxG1UuEA1C8hFh)** - A pomodoro timer with focus, short and long breaks. Installed, it counts down in your menu bar and Dock, sends a notification when a session ends, and starts or pauses from anywhere with Option+Shift+P. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/focus), made by this repo)
+- **[Zones](https://claude.ai/artifact/3aHTJUDXhT7WrZMSKtcSry)** - Keep the cities you work with side by side, each with a day and night band. Drag one slider to see what time a meeting lands everywhere. Installed, the city you pick stays in your menu bar. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/zones), made by this repo)
+- **[Jot](https://claude.ai/artifact/XB1iwfcvpd3y43i14i6TMa)** - Four colored sticky notes in one small window. Installed, it can float above every other window, and Option+Shift+J hides it or brings it back. Notes stay on your computer. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/jot), made by this repo)
 
 ## Life
 

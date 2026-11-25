@@ -1,0 +1,172 @@
+<title>Zones</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script type="application/json" id="claude-artifacts-manifest">{"permissions":["menu-bar"]}</script>
+<style>
+/* Layout: a stacked list of city rows, each with a 24-hour day/night band; one shared time slider at the bottom shifts every row to plan a meeting. */
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --fg:#14181f; --muted:#6b7380; --line:#e2e5ea;
+  --day:#ffd88a; --dusk:#f4a77a; --night:#2b3550; --now:#0f6fff; --accent:#0f6fff;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+  --num:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--panel:#1b1e24;--fg:#eef1f5;--muted:#8d95a1;--line:#2b3038;--day:#d9a94a;--dusk:#b9714a;--night:#0b1020;--now:#5b9dff;--accent:#5b9dff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121418;--panel:#1b1e24;--fg:#eef1f5;--muted:#8d95a1;--line:#2b3038;--day:#d9a94a;--dusk:#b9714a;--night:#0b1020;--now:#5b9dff;--accent:#5b9dff;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 var(--font)}
+.drag{height:30px;app-region:drag;-webkit-app-region:drag}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:14px;padding-block:4px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font:700 22px/1 var(--num);margin:0}
+.add{position:relative}
+.add input{font:inherit;width:200px;max-width:52vw;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
+.sugg{position:absolute;right:0;top:calc(100% + 4px);width:260px;max-width:80vw;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.14);overflow:hidden;z-index:5}
+.sugg button{display:flex;justify-content:space-between;gap:8px;width:100%;border:0;background:transparent;color:var(--fg);font:inherit;text-align:left;padding:8px 12px;cursor:pointer}
+.sugg button:hover,.sugg button:focus{background:var(--bg)}
+.sugg small{color:var(--muted)}
+.list{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:12px 14px;border-top:1px solid var(--line);align-items:center}
+.row:first-child{border-top:0}
+.city{min-width:0}
+.city b{display:flex;align-items:center;gap:6px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.city span{color:var(--muted);font-size:12px}
+.pin{border:0;background:none;color:var(--muted);cursor:pointer;padding:0 2px;font-size:12px;line-height:1}
+.pin.on{color:var(--accent)}
+.clock{text-align:right}
+.clock b{font:600 26px/1 var(--num);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.clock span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.band{grid-column:1/-1;position:relative;height:10px;border-radius:5px;overflow:hidden}
+.band i{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--now);border-radius:1px}
+.del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0}
+.del:hover{color:#d33}
+.plan{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.plan .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.plan b{font-weight:600}
+.plan button{font:600 12px/1 var(--font);border:0;background:var(--bg);color:var(--fg);border-radius:999px;padding:6px 10px;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.foot{font-size:12px;color:var(--muted);text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.install{font:600 12.5px/1 var(--font);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:8px 14px;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="drag"></div>
+<div class="wrap">
+  <header><h1>Zones</h1>
+    <div class="add"><input id="q" type="search" placeholder="Add a city" autocomplete="off" aria-label="Add a city"><div class="sugg" id="sugg" hidden></div></div>
+  </header>
+  <div class="list" id="list"></div>
+  <div class="plan">
+    <div class="top"><b id="planlbl">Now</b><button id="now" hidden>Back to now</button></div>
+    <input id="shift" type="range" min="-720" max="720" step="15" value="0" aria-label="Shift time to plan a meeting">
+    <span style="color:var(--muted);font-size:12px">Drag to see what time it will be everywhere. Good for picking a meeting slot.</span>
+  </div>
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const CITIES=[["Honolulu","Pacific/Honolulu"],["Anchorage","America/Anchorage"],["San Francisco","America/Los_Angeles"],["Los Angeles","America/Los_Angeles"],["Seattle","America/Los_Angeles"],["Vancouver","America/Vancouver"],["Denver","America/Denver"],["Phoenix","America/Phoenix"],["Chicago","America/Chicago"],["Austin","America/Chicago"],["Mexico City","America/Mexico_City"],["New York","America/New_York"],["Toronto","America/Toronto"],["Miami","America/New_York"],["Bogotá","America/Bogota"],["Lima","America/Lima"],["Santiago","America/Santiago"],["Buenos Aires","America/Argentina/Buenos_Aires"],["São Paulo","America/Sao_Paulo"],["Reykjavík","Atlantic/Reykjavik"],["Lisbon","Europe/Lisbon"],["London","Europe/London"],["Dublin","Europe/Dublin"],["Paris","Europe/Paris"],["Amsterdam","Europe/Amsterdam"],["Berlin","Europe/Berlin"],["Madrid","Europe/Madrid"],["Rome","Europe/Rome"],["Zurich","Europe/Zurich"],["Stockholm","Europe/Stockholm"],["Warsaw","Europe/Warsaw"],["Athens","Europe/Athens"],["Istanbul","Europe/Istanbul"],["Kyiv","Europe/Kyiv"],["Moscow","Europe/Moscow"],["Cairo","Africa/Cairo"],["Lagos","Africa/Lagos"],["Nairobi","Africa/Nairobi"],["Johannesburg","Africa/Johannesburg"],["Tel Aviv","Asia/Jerusalem"],["Dubai","Asia/Dubai"],["Riyadh","Asia/Riyadh"],["Tehran","Asia/Tehran"],["Karachi","Asia/Karachi"],["Mumbai","Asia/Kolkata"],["Bangalore","Asia/Kolkata"],["Kathmandu","Asia/Kathmandu"],["Dhaka","Asia/Dhaka"],["Bangkok","Asia/Bangkok"],["Jakarta","Asia/Jakarta"],["Ho Chi Minh City","Asia/Ho_Chi_Minh"],["Singapore","Asia/Singapore"],["Kuala Lumpur","Asia/Kuala_Lumpur"],["Manila","Asia/Manila"],["Hong Kong","Asia/Hong_Kong"],["Taipei","Asia/Taipei"],["Shanghai","Asia/Shanghai"],["Beijing","Asia/Shanghai"],["Shenzhen","Asia/Shanghai"],["Seoul","Asia/Seoul"],["Tokyo","Asia/Tokyo"],["Perth","Australia/Perth"],["Adelaide","Australia/Adelaide"],["Brisbane","Australia/Brisbane"],["Sydney","Australia/Sydney"],["Melbourne","Australia/Melbourne"],["Auckland","Pacific/Auckland"]];
+const localTz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+const store={get(k,d){try{const v=localStorage.getItem("zones."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("zones."+k,JSON.stringify(v))}catch{}}};
+let list=store.get("list",null)||[{name:"Here",tz:localTz},["New York","America/New_York"],["London","Europe/London"],["Tokyo","Asia/Tokyo"]].map(x=>Array.isArray(x)?{name:x[0],tz:x[1]}:x).filter((c,i,a)=>i===0||c.tz!==localTz);
+let pinned=store.get("pin",list[1]?.tz?list[1].name:list[0].name);
+let shift=0, desktop=null, perms={};
+const save=()=>{store.set("list",list);store.set("pin",pinned)};
+function parts(tz,d){
+  const f=new Intl.DateTimeFormat("en-US",{timeZone:tz,hour:"numeric",minute:"2-digit",hour12:false,weekday:"short",month:"short",day:"numeric",year:"numeric"});
+  const o={};for(const p of f.formatToParts(d))o[p.type]=p.value;
+  const h=+o.hour%24,m=+o.minute;
+  return {h,m,label:`${String(h).padStart(2,"0")}:${o.minute}`,wd:o.weekday,md:`${o.month} ${o.day}`,ymd:`${o.year}-${o.month}-${o.day}`};
+}
+function tzOff(tz,d){const f=new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});const o={};for(const p of f.formatToParts(d))o[p.type]=+p.value;return (Date.UTC(o.year,o.month-1,o.day,o.hour,o.minute)-Math.floor(d/6e4)*6e4)/6e4}
+function offsetMin(tz,d){return tzOff(tz,d)-tzOff(localTz,d)}
+function rel(tz,d){
+  const off=offsetMin(tz,d);if(tz===localTz) return "Local time";if(off===0) return "Same time as you";
+  const h=off/60, s=(h>0?"+":h<0?"−":"")+(Math.abs(h)%1?Math.abs(h).toFixed(1):Math.abs(h))+"h";
+  const p=parts(tz,d),l=parts(localTz,d);
+  const day=p.md===l.md?"Today":(offsetMin(tz,d)>0?"Tomorrow":"Yesterday");
+  return `${day}, ${s}`;
+}
+function band(){
+  // 24h strip: night, dawn, day, dusk, night (fixed hours, good enough for planning)
+  return "linear-gradient(90deg,var(--night) 0%,var(--night) 25%,var(--dusk) 29%,var(--day) 33%,var(--day) 75%,var(--dusk) 79%,var(--night) 83%,var(--night) 100%)";
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(){
+  const d=new Date(Date.now()+shift*6e4);
+  $("list").innerHTML=list.map((c,i)=>{const p=parts(c.tz,d);return `<div class="row">
+    <div class="city"><b><button class="pin ${c.name===pinned?"on":""}" data-pin="${i}" title="Show in menu bar" aria-label="Show ${esc(c.name)} in menu bar">${c.name===pinned?"●":"○"}</button>${esc(c.name)}</b><span>${esc(rel(c.tz,d))} · ${esc(p.wd)} ${esc(p.md)}${i?` · <button class="del" data-del="${i}">Remove</button>`:""}</span></div>
+    <div class="clock"><b>${p.label}</b></div>
+    <div class="band" style="background:${band()}"><i style="left:calc(${((p.h*60+p.m)/1440*100).toFixed(2)}% - 1px)"></i></div></div>`}).join("");
+  const off=shift;$("planlbl").textContent=off===0?"Now":`${off>0?"In":""} ${Math.floor(Math.abs(off)/60)}h ${Math.abs(off)%60?Math.abs(off)%60+"m":""}${off<0?" ago":""}`.trim();
+  $("now").hidden=off===0;
+  setTray();
+}
+function setTray(){
+  if(!desktop?.tray||perms["menu-bar"]!=="granted") return;
+  const d=new Date(), p=list.find(c=>c.name===pinned)||list[0];
+  const abbr=p.name==="Here"?"":p.name.replace(/[^A-Za-zÀ-ÿ ]/g,"").split(" ").map(w=>w[0]).join("").slice(0,3).toUpperCase()||p.name.slice(0,3).toUpperCase();
+  const short=p.name.length<=6?p.name:abbr;
+  desktop.tray.set({title:`${short} ${parts(p.tz,d).label}`.trim(),toolTip:list.map(c=>`${c.name} ${parts(c.tz,d).label}`).join(" · ").slice(0,100),
+    menu:[...list.map(c=>({label:`${c.name}   ${parts(c.tz,d).label}  ${parts(c.tz,d).wd}`,type:"checkbox",checked:c.name===p.name,click:()=>{pinned=c.name;save();render();}})),{type:"separator"},{label:"Open Zones",click:()=>desktop.window.show().catch(()=>{})}]}).catch(()=>{});
+}
+// add city
+const allTz=(Intl.supportedValuesOf?Intl.supportedValuesOf("timeZone"):[]);
+function suggestions(q){
+  q=q.trim().toLowerCase();if(!q) return [];
+  const a=CITIES.filter(([n])=>n.toLowerCase().includes(q)).map(([n,tz])=>({name:n,tz}));
+  const b=allTz.filter(tz=>tz.toLowerCase().replace(/_/g," ").includes(q)&&!a.some(x=>x.tz===tz)).map(tz=>({name:tz.split("/").pop().replace(/_/g," "),tz}));
+  return [...a,...b].slice(0,7);
+}
+$("q").addEventListener("input",()=>{const s=suggestions($("q").value);$("sugg").hidden=!s.length;$("sugg").innerHTML=s.map((x,i)=>`<button data-add="${i}"><span>${esc(x.name)}</span><small>${esc(parts(x.tz,new Date()).label)}</small></button>`).join("");$("sugg")._s=s;});
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter"){const s=$("sugg")._s;if(s?.length)addCity(s[0]);}if(e.key==="Escape"){$("sugg").hidden=true;}});
+function addCity(c){if(!list.some(x=>x.name===c.name&&x.tz===c.tz)){list.push(c);save();}$("q").value="";$("sugg").hidden=true;render();}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-add]");if(a){addCity($("sugg")._s[+a.dataset.add]);return;}
+  const d=e.target.closest("[data-del]");if(d){const c=list.splice(+d.dataset.del,1)[0];if(c.name===pinned)pinned=list[0].name;save();render();return;}
+  const p=e.target.closest("[data-pin]");if(p){pinned=list[+p.dataset.pin].name;save();render();ensurePerms();return;}
+  if(!e.target.closest(".add"))$("sugg").hidden=true;
+});
+$("shift").addEventListener("input",e=>{shift=+e.target.value;render();});
+$("now").onclick=()=>{shift=0;$("shift").value=0;render();};
+render();
+setInterval(render,15000);
+
+function dockIcon(){
+  const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#2b3a6b");g.addColorStop(1,"#0f1a33");
+  x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
+  x.save();x.beginPath();x.arc(128,128,82,0,Math.PI*2);x.clip();
+  const s=x.createLinearGradient(46,0,210,0);s.addColorStop(0,"#ffd88a");s.addColorStop(.5,"#f4a77a");s.addColorStop(.5,"#3d4f86");s.addColorStop(1,"#3d4f86");
+  x.fillStyle=s;x.fillRect(40,40,176,176);x.restore();
+  x.strokeStyle="#fff";x.lineWidth=10;x.beginPath();x.arc(128,128,82,0,Math.PI*2);x.stroke();
+  x.lineCap="round";x.lineWidth=12;x.beginPath();x.moveTo(128,128);x.lineTo(128,74);x.moveTo(128,128);x.lineTo(166,146);x.stroke();
+  x.fillStyle="#fff";x.beginPath();x.arc(128,128,9,0,Math.PI*2);x.fill();
+  return c.toDataURL("image/png");
+}
+async function ensurePerms(){
+  if(!desktop?.tray||perms["menu-bar"]==="granted") return;
+  try{perms=await desktop.permissions.request(["menu-bar"]);}catch{}
+  render();foot();
+}
+function foot(){
+  if(!desktop?.tray) return;
+  $("foot").replaceChildren();
+  if(perms["menu-bar"]==="granted"){$("foot").textContent="The dot picks the city shown in your menu bar.";}
+  else{const b=document.createElement("button");b.className="install";b.textContent="Show time in menu bar";b.onclick=ensurePerms;$("foot").replaceChildren(b);}
+}
+(async()=>{
+  desktop=window.claude?.use?await window.claude.use("desktop").catch(()=>null):null;
+  if(!desktop){$("foot").textContent="Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.";return;}
+  if(!desktop.tray){
+    const st=await desktop.install.state().catch(()=>"unavailable");
+    if(st==="available"){const b=document.createElement("button");b.className="install";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("foot").replaceChildren(b);}
+    else $("foot").textContent=st==="installed"?"Installed. Open Zones from your Applications or Start menu.":"Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.";
+    return;
+  }
+  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:30,width:460,height:620,minWidth:340,minHeight:420}).catch(()=>{});
+  try{perms=await desktop.permissions.state();}catch{}
+  render();foot();
+})();
+</script>

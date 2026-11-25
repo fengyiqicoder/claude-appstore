@@ -1,0 +1,216 @@
+<title>Focus</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script type="application/json" id="claude-artifacts-manifest">{"permissions":["menu-bar","notifications","shortcuts"]}</script>
+<style>
+/* Layout: one compact window. Mode tabs on top, a big countdown ring in the middle, controls below. */
+:root{
+  --bg:#fbf7f4; --fg:#2a1f1a; --muted:#8a7a72; --line:#ecdfd7; --chip:#f2e7e0;
+  --focus:#e2513a; --short:#2f9e74; --long:#3b6fd4; --accent:var(--focus);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+  --num:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","SF Pro Display","Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1817;--fg:#f6ece6;--muted:#a3938b;--line:#382e2a;--chip:#2b2321;--focus:#ff6a52;--short:#46c393;--long:#6d97ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d1817;--fg:#f6ece6;--muted:#a3938b;--line:#382e2a;--chip:#2b2321;--focus:#ff6a52;--short:#46c393;--long:#6d97ff;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 var(--font);-webkit-user-select:none;user-select:none}
+.drag{height:30px;app-region:drag;-webkit-app-region:drag}
+.wrap{min-height:calc(100% - 30px);display:flex;flex-direction:column;align-items:center;gap:22px;padding-block:4px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.tabs{display:flex;gap:4px;background:var(--chip);padding:3px;border-radius:9px}
+.tabs button{font:600 12.5px/1 var(--font);border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:7px;cursor:pointer}
+.tabs button.on{background:var(--bg);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.ring{position:relative;width:min(260px,72vw);aspect-ratio:1;max-width:100%}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9}
+.ring .track{stroke:var(--line)}
+.ring .bar{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .3s linear,stroke .3s}
+.time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.time b{font:600 clamp(44px,15vw,64px)/1 var(--num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.time span{color:var(--muted);font-size:13px}
+.ctrl{display:flex;gap:10px;align-items:center}
+.btn{font:600 14px/1 var(--font);border:0;border-radius:999px;padding:12px 26px;cursor:pointer;background:var(--accent);color:#fff;min-width:120px}
+.btn.ghost{background:var(--chip);color:var(--fg);min-width:0;padding:12px 16px}
+.dots{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:12px}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--focus)}
+details{width:100%;max-width:300px;color:var(--muted);font-size:12.5px}
+summary{cursor:pointer;text-align:center;list-style:none}
+summary::-webkit-details-marker{display:none}
+.set{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;margin-top:12px}
+.set input[type=number]{width:64px;font:inherit;padding:4px 6px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--fg);text-align:right}
+.set label{color:var(--fg)}
+.hint{font-size:12px;color:var(--muted);text-align:center;max-width:300px}
+.install{font:600 12.5px/1 var(--font);border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:999px;padding:8px 14px;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.ring .bar{transition:none}}
+</style>
+
+<div class="drag"></div>
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button id="m-focus" data-mode="focus" class="on">Focus</button>
+    <button id="m-short" data-mode="short">Short break</button>
+    <button id="m-long" data-mode="long">Long break</button>
+  </div>
+  <div class="ring">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="44"/><circle class="bar" id="bar" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg>
+    <div class="time"><b id="t">25:00</b><span id="lbl">Ready to focus</span></div>
+  </div>
+  <div class="ctrl">
+    <button class="btn ghost" id="reset" title="Reset">Reset</button>
+    <button class="btn" id="go">Start</button>
+    <button class="btn ghost" id="skip" title="Skip to next">Skip</button>
+  </div>
+  <div class="dots" id="dots" aria-label="Sessions today"></div>
+  <details>
+    <summary>Settings</summary>
+    <div class="set">
+      <label for="d-focus">Focus (minutes)</label><input id="d-focus" type="number" min="1" max="120">
+      <label for="d-short">Short break</label><input id="d-short" type="number" min="1" max="60">
+      <label for="d-long">Long break</label><input id="d-long" type="number" min="1" max="60">
+      <label for="auto">Start next session automatically</label><input id="auto" type="checkbox">
+    </div>
+  </details>
+  <p class="hint" id="hint"></p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const NAMES={focus:"Focus",short:"Short break",long:"Long break"};
+const store={get(k,d){try{const v=localStorage.getItem("focus."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("focus."+k,JSON.stringify(v))}catch{}}};
+const today=()=>new Date().toISOString().slice(0,10);
+let S={
+  dur:store.get("dur",{focus:25,short:5,long:15}),
+  auto:store.get("auto",false),
+  mode:"focus", running:false, endAt:0, left:0,
+  done:(store.get("day","")===today())?store.get("done",0):0
+};
+S.left=S.dur[S.mode]*60;
+let desktop=null, perms={}, lastTitle="";
+
+function fmt(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function remaining(){return S.running?(S.endAt-Date.now())/1000:S.left}
+function paint(){
+  const r=remaining(), total=S.dur[S.mode]*60;
+  document.documentElement.style.setProperty("--accent",`var(--${S.mode})`);
+  $("t").textContent=fmt(r);
+  $("bar").style.strokeDashoffset=(276.46*(1-Math.max(0,r)/total)).toFixed(2);
+  $("lbl").textContent=S.running?(S.mode==="focus"?"Focusing":"On a break"):(r<total?"Paused":S.mode==="focus"?"Ready to focus":"Time for a break");
+  $("go").textContent=S.running?"Pause":(r<total?"Resume":"Start");
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.mode===S.mode));
+  const n=Math.max(4,S.done);
+  $("dots").innerHTML=Array.from({length:Math.min(n,12)},(_,i)=>`<i class="${i<S.done?"on":""}"></i>`).join("")+`<span>${S.done} today</span>`;
+  document.title=S.running?`${fmt(r)} · Focus`:"Focus";
+  syncDesktop(r);
+}
+function syncDesktop(r){
+  if(!desktop?.tray) return;
+  const title=S.running?fmt(r):"";
+  if(title===lastTitle) return;
+  lastTitle=title;
+  desktop.app.dock.setBadge(title).catch(()=>{});
+  setTray();
+}
+function setTray(){
+  if(!desktop?.tray||perms["menu-bar"]!=="granted") return;
+  const r=remaining(), total=S.dur[S.mode]*60;
+  desktop.tray.set({
+    icon:trayIcon(), title:S.running?fmt(r):"",
+    toolTip:S.running?`${NAMES[S.mode]}: ${fmt(r)} left`:`${S.done} sessions today`,
+    menu:[
+      {label:S.running?"Pause":(r<total?"Resume":"Start "+NAMES[S.mode]),click:toggle},
+      {label:"Reset",click:reset,enabled:r<total},
+      {label:"Skip to next",click:skip},
+      {type:"separator"},
+      {label:"Show Focus",click:()=>desktop.window.show().catch(()=>{})}
+    ]
+  }).catch(()=>{});
+}
+function save(){store.set("dur",S.dur);store.set("auto",S.auto);store.set("done",S.done);store.set("day",today())}
+async function toggle(){
+  if(S.running){S.left=remaining();S.running=false;}
+  else{await ensurePerms();S.endAt=Date.now()+S.left*1000;S.running=true;}
+  paint();
+}
+function reset(){S.running=false;S.left=S.dur[S.mode]*60;paint();}
+function setMode(m,start=false){S.mode=m;S.running=false;S.left=S.dur[m]*60;if(start){S.endAt=Date.now()+S.left*1000;S.running=true;}paint();}
+function nextMode(){return S.mode!=="focus"?"focus":(S.done%4===0?"long":"short")}
+function skip(){setMode(nextMode(),false)}
+function finish(){
+  const was=S.mode;
+  if(was==="focus"){S.done++;save();}
+  chime();
+  const next=nextMode();
+  const msg=was==="focus"?`Focus session done. ${S.done} today. Time for a ${next==="long"?"long":"short"} break.`:"Break's over. Ready for the next focus session?";
+  notify(msg);
+  setMode(next,S.auto);
+}
+function notify(body){
+  if(desktop?.notification&&perms.notifications==="granted") desktop.notification.show({body}).catch(()=>{});
+  else if("Notification" in window&&Notification.permission==="granted"){try{new Notification("Focus",{body})}catch{}}
+}
+let ac=null;
+function chime(){
+  try{ac=ac||new AudioContext();const t=ac.currentTime;[0,0.18,0.36].forEach((d,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=[784,988,1175][i];g.gain.setValueAtTime(0.0001,t+d);g.gain.exponentialRampToValueAtTime(0.18,t+d+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+d+0.5);o.connect(g).connect(ac.destination);o.start(t+d);o.stop(t+d+0.55);});}catch{}
+}
+setInterval(()=>{if(S.running&&remaining()<=0){finish();}else if(S.running)paint();},250);
+
+// icons
+function dockIcon(){
+  const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,0,256);g.addColorStop(0,"#ff7a5c");g.addColorStop(1,"#d63a2a");
+  x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
+  x.strokeStyle="rgba(255,255,255,.35)";x.lineWidth=18;x.beginPath();x.arc(128,136,72,0,Math.PI*2);x.stroke();
+  x.strokeStyle="#fff";x.lineCap="round";x.beginPath();x.arc(128,136,72,-Math.PI/2,Math.PI*0.9);x.stroke();
+  x.fillStyle="#fff";x.beginPath();x.roundRect(110,40,36,22,8);x.fill();
+  x.lineWidth=12;x.beginPath();x.moveTo(128,136);x.lineTo(128,92);x.stroke();
+  return c.toDataURL("image/png");
+}
+let trayCache=null;
+function trayIcon(){
+  if(trayCache) return trayCache;
+  const c=document.createElement("canvas");c.width=c.height=36;const x=c.getContext("2d");
+  x.strokeStyle="#000";x.lineWidth=3.4;x.beginPath();x.arc(18,20,12,0,Math.PI*2);x.stroke();
+  x.fillStyle="#000";x.fillRect(14,3,8,4);x.lineCap="round";x.beginPath();x.moveTo(18,20);x.lineTo(18,13);x.stroke();
+  return trayCache=c.toDataURL("image/png");
+}
+async function ensurePerms(){
+  if(desktop?.permissions&&desktop.tray){
+    try{perms=await desktop.permissions.request(["menu-bar","notifications","shortcuts"]);}catch{}
+    setupDesktopFeatures();
+  }else if("Notification" in window&&Notification.permission==="default"){try{await Notification.requestPermission()}catch{}}
+}
+let shortcutSet=false;
+function setupDesktopFeatures(){
+  lastTitle=null;setTray();
+  if(!shortcutSet&&perms.shortcuts==="granted"){shortcutSet=true;desktop.globalShortcut.register("Alt+Shift+P",toggle).catch(()=>{shortcutSet=false});}
+  hint();
+}
+function hint(){
+  const h=$("hint");
+  if(desktop?.tray) h.textContent=perms.shortcuts==="granted"?"Press Option+Shift+P anywhere to start or pause. The countdown shows in your menu bar.":"Start a session to turn on the menu bar timer and notifications.";
+}
+
+// wire up
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+$("go").onclick=toggle;$("reset").onclick=reset;$("skip").onclick=skip;
+["focus","short","long"].forEach(k=>{const i=$("d-"+k);i.value=S.dur[k];i.onchange=()=>{const v=Math.min(+i.max,Math.max(1,Math.round(+i.value||S.dur[k])));i.value=v;S.dur[k]=v;save();if(!S.running&&S.mode===k){S.left=v*60;}paint();};});
+$("auto").checked=S.auto;$("auto").onchange=e=>{S.auto=e.target.checked;save();};
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="INPUT"&&e.target.tagName!=="BUTTON"){e.preventDefault();toggle();}});
+paint();
+
+(async()=>{
+  desktop=window.claude?.use?await window.claude.use("desktop").catch(()=>null):null;
+  if(!desktop) {$("hint").textContent="Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.";return;}
+  if(!desktop.tray){
+    const st=await desktop.install.state().catch(()=>"unavailable");
+    if(st==="available"){const b=document.createElement("button");b.className="install";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("hint").replaceChildren(b);}
+    else $("hint").textContent=st==="installed"?"Installed. Open Focus from your Applications or Start menu.":"Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.";
+    return;
+  }
+  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:30,width:380,height:560,minWidth:320,minHeight:500}).catch(()=>{});
+  try{perms=await desktop.permissions.state();}catch{}
+  setupDesktopFeatures();paint();
+})();
+</script>

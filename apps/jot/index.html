@@ -1,0 +1,115 @@
+<title>Jot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script type="application/json" id="claude-artifacts-manifest">{"permissions":["overlay","shortcuts"]}</script>
+<style>
+/* Layout: a sticky note. A thin grab strip with four colored page dots on top, the writing area fills the rest. */
+:root{
+  --y:#fff4b8; --p:#ffd9e1; --g:#d8f5d0; --b:#d6e8ff;
+  --yi:#e8c93a; --pi:#ef7f98; --gi:#5fbf55; --bi:#5b95e8;
+  --paper:var(--y); --ink:#2b2615; --muted:rgba(43,38,21,.55); --strip:rgba(0,0,0,.05);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+  --hand:"Patrick Hand","Marker Felt","Segoe Print","Bradley Hand",cursive;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--y:#3d3820;--p:#43282f;--g:#243a25;--b:#1f2f45;--ink:#f3eedb;--muted:rgba(243,238,219,.55);--strip:rgba(255,255,255,.06);color-scheme:dark}}
+:root[data-theme="dark"]{--y:#3d3820;--p:#43282f;--g:#243a25;--b:#1f2f45;--ink:#f3eedb;--muted:rgba(243,238,219,.55);--strip:rgba(255,255,255,.06);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 var(--font);display:flex;flex-direction:column;transition:background .2s}
+.strip{display:flex;align-items:center;gap:8px;padding-block:8px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));background:var(--strip)}
+body.app .strip{app-region:drag;-webkit-app-region:drag}
+body.inset .strip{padding-left:max(78px,env(safe-area-inset-left,0px))}
+.dots{display:flex;gap:6px;app-region:no-drag;-webkit-app-region:no-drag}
+.dots button{width:14px;height:14px;border-radius:50%;border:0;padding:0;cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.12)}
+.dots button.on{box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.12),0 0 0 2px var(--paper),0 0 0 3.5px var(--ink)}
+.sp{flex:1}
+.tool{app-region:no-drag;-webkit-app-region:no-drag;border:0;background:transparent;color:var(--muted);font:600 12px/1 var(--font);padding:4px 6px;border-radius:6px;cursor:pointer}
+.tool:hover{color:var(--ink);background:var(--strip)}
+textarea{flex:1;width:100%;border:0;resize:none;background:transparent;color:var(--ink);font:20px/1.45 var(--hand);padding-block:10px 6px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));outline:none}
+textarea::placeholder{color:var(--muted)}
+.foot{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:11.5px;color:var(--muted);padding-block:4px 8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.foot button{border:0;background:var(--strip);color:var(--ink);font:600 11.5px/1 var(--font);padding:6px 10px;border-radius:999px;cursor:pointer}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap">
+
+<div class="strip">
+  <div class="dots" id="dots"></div>
+  <span class="sp"></span>
+  <button class="tool" id="copy" title="Copy this note">Copy</button>
+  <button class="tool" id="hide" title="Hide (Option+Shift+J brings it back)" hidden>Hide</button>
+</div>
+<textarea id="t" spellcheck="false" placeholder="Jot something down…" aria-label="Note"></textarea>
+<div class="foot"><span id="info"></span><span id="act"></span></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const COLORS=["y","p","g","b"];
+const store={get(k,d){try{const v=localStorage.getItem("jot."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("jot."+k,JSON.stringify(v))}catch{}}};
+let notes=store.get("notes",["","","",""]), cur=store.get("cur",0), desktop=null, perms={};
+function paint(){
+  document.documentElement.style.setProperty("--paper",`var(--${COLORS[cur]})`);
+  $("dots").innerHTML=COLORS.map((c,i)=>`<button style="background:var(--${c}i)" class="${i===cur?"on":""}" data-i="${i}" aria-label="Note ${i+1}"></button>`).join("");
+  if($("t").value!==notes[cur]) $("t").value=notes[cur];
+  info();
+}
+function info(){const w=(notes[cur].trim().match(/\S+/g)||[]).length;$("info").textContent=w?`${w} word${w===1?"":"s"}`:"Saved on this computer";}
+let tm=0;
+$("t").addEventListener("input",e=>{notes[cur]=e.target.value;info();clearTimeout(tm);tm=setTimeout(()=>store.set("notes",notes),250);});
+$("dots").addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;store.set("notes",notes);cur=+b.dataset.i;store.set("cur",cur);paint();$("t").focus();});
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(notes[cur]);$("copy").textContent="Copied";}catch{$("t").select();$("copy").textContent="Selected";}setTimeout(()=>$("copy").textContent="Copy",1200);};
+window.addEventListener("beforeunload",()=>store.set("notes",notes));
+paint();
+
+function dockIcon(){
+  const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  x.fillStyle="#ffe46b";x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
+  x.fillStyle="#f2cf3a";x.beginPath();x.moveTo(248,170);x.lineTo(248,194);x.quadraticCurveTo(248,248,194,248);x.lineTo(170,248);x.closePath();x.fill();
+  x.strokeStyle="#5b4a12";x.lineCap="round";x.lineWidth=13;
+  [[62,90,190],[62,130,176],[62,170,140]].forEach(([a,y,b])=>{x.beginPath();x.moveTo(a,y);x.lineTo(b,y);x.stroke();});
+  return c.toDataURL("image/png");
+}
+async function toggleVisible(){
+  if(document.visibilityState==="visible"&&document.hasFocus()) desktop.window.hide().catch(()=>{});
+  else {await desktop.window.show().catch(()=>{});$("t").focus();}
+}
+async function makeFloating(){
+  try{perms=await desktop.permissions.request(["overlay","shortcuts"]);}catch{}
+  if(perms.overlay==="granted"){store.set("float",true);store.set("notes",notes);applyWindow();}
+  setup();
+}
+function applyWindow(){
+  const float=store.get("float",false)&&perms.overlay==="granted";
+  document.body.classList.toggle("inset",!float);
+  const opts=float
+    ?{frame:false,alwaysOnTop:true,dragHeight:0,width:300,height:340,minWidth:220,minHeight:200,roundedCorners:true,hasShadow:true}
+    :{titleBarStyle:"hiddenInset",dragHeight:34,width:320,height:380,minWidth:240,minHeight:220};
+  desktop.window.setOptions(opts).catch(()=>{});
+  $("hide").hidden=!float;
+}
+let sc=false;
+function setup(){
+  const act=$("act");act.replaceChildren();
+  if(perms.shortcuts==="granted"&&!sc){sc=true;desktop.globalShortcut.register("Alt+Shift+J",toggleVisible).catch(()=>{sc=false});}
+  if(!(store.get("float",false)&&perms.overlay==="granted")){
+    const b=document.createElement("button");b.textContent="Float on top";b.title="Keep the note above other windows and summon it with Option+Shift+J";b.onclick=makeFloating;act.append(b);
+  }else{
+    const b=document.createElement("button");b.textContent="Normal window";b.onclick=()=>{store.set("float",false);store.set("notes",notes);applyWindow();setup();};act.append(b);
+  }
+}
+$("hide").onclick=()=>desktop?.window.hide().catch(()=>{});
+(async()=>{
+  desktop=window.claude?.use?await window.claude.use("desktop").catch(()=>null):null;
+  const act=$("act");
+  if(!desktop){act.textContent="Install from Claude Desktop to float it";return;}
+  if(!desktop.tray){
+    const st=await desktop.install.state().catch(()=>"unavailable");
+    if(st==="available"){const b=document.createElement("button");b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});act.replaceChildren(b);}
+    else act.textContent=st==="installed"?"Installed":"Install from Claude Desktop to float it";
+    return;
+  }
+  document.body.classList.add("app");
+  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  try{perms=await desktop.permissions.state();}catch{}
+  applyWindow();setup();
+})();
+</script>

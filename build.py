@@ -40,6 +40,8 @@ CATS = [("play", "Play"), ("learn", "Learn"), ("work", "Work"), ("life", "Life")
 def entry(a):
     name = f"[{a['name']}]({a['artifact']})" if a["artifact"] else a["name"]
     lang = f" {a['lang']}." if a["lang"] else ""
+    if a.get("maker"):
+        return f"- **{name}** - {a['desc']} ([source]({a['post']}), made by this repo)"
     return f"- **{name}** - {a['desc']}{lang} ([post]({a['post']}) by [@{a['author']}](https://x.com/{a['author']}))"
 def links(items):
     return "\n".join(f"- [{x['title']}]({x['url']}) - {x['note']}" for x in items)
