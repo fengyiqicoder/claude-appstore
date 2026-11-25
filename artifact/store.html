@@ -1,0 +1,231 @@
+<title>Claude AppStore</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="A community catalog of Claude artifacts you can install as Mac and Windows apps.">
+<style>
+/* Layout: Mac store window. Fixed sidebar (nav + search) on the left, scrolling content on the right; on phones the sidebar becomes a top tab strip. */
+:root{
+  --bg:#ffffff; --side:#f3f3f6; --fg:#1d1d1f; --muted:#6e6e73; --line:#e3e3e8;
+  --accent:#0a6cdf; --pill:#ececf1; --hover:#e6e6ec; --card:#f7f7fa;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1e1e20; --side:#262629; --fg:#f5f5f7; --muted:#9a9aa1; --line:#36363b;
+  --accent:#3d8bff; --pill:#36363c; --hover:#323237; --card:#28282c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1e1e20; --side:#262629; --fg:#f5f5f7; --muted:#9a9aa1; --line:#36363b;
+  --accent:#3d8bff; --pill:#36363c; --hover:#323237; --card:#28282c; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 var(--font);margin:0}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
+.side{background:var(--side);border-right:1px solid var(--line);padding-block:18px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:14px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:9px;font:600 15px/1 var(--display);padding:0 6px}
+.brand svg{flex:none}
+.search{position:relative}
+.search input{width:100%;font:inherit;padding:6px 10px 6px 28px;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+.search svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--muted)}
+nav{display:flex;flex-direction:column;gap:2px}
+nav a{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:7px;color:var(--fg);font-size:14px}
+nav a:hover{background:var(--hover);text-decoration:none}
+nav a.on{background:var(--hover);font-weight:600}
+nav a svg{color:var(--accent);flex:none}
+.side .foot{margin-top:auto;font-size:12px;color:var(--muted);padding:0 6px;display:flex;flex-direction:column;gap:6px}
+main{overflow-y:auto;padding-block:28px 48px;padding-left:max(16px,4vw);padding-right:max(16px,env(safe-area-inset-right,0px),4vw)}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:34px}
+h1{font:700 30px/1.1 var(--display);margin:0;letter-spacing:-.01em}
+h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
+.sec{display:flex;flex-direction:column;gap:14px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:16px}
+.sec-head a{font-size:13px}
+.lede{color:var(--muted);margin:6px 0 0;max-width:62ch}
+/* featured */
+.feat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.fcard{border-radius:14px;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:space-between;min-height:250px;padding:20px;position:relative;cursor:pointer;text-decoration:none!important}
+.fcard .eyebrow{font:700 11px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.fcard h3{font:700 26px/1.1 var(--display);margin:8px 0 0;text-wrap:balance;max-width:16ch}
+.fcard p{margin:6px 0 0;opacity:.9;max-width:40ch}
+.fcard .row{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.22);backdrop-filter:blur(8px);border-radius:12px;padding:10px 12px}
+.fcard .row .meta{flex:1;min-width:0}
+.fcard .row b{display:block;font-size:14px}
+.fcard .row span{font-size:12px;opacity:.85}
+.fcard .get{background:rgba(255,255,255,.25);color:#fff}
+.fcard canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.fcard > *:not(canvas){position:relative;z-index:1}
+/* app rows */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 26px}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);min-width:0}
+.item .meta{flex:1;min-width:0;cursor:pointer}
+.item .meta b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .meta span{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon{flex:none;border-radius:22.5%;display:grid;place-items:center;color:#fff;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.12)}
+.icon svg{width:56%;height:56%}
+.get{flex:none;font:700 13px/1 var(--font);letter-spacing:.02em;text-transform:uppercase;background:var(--pill);color:var(--accent);border-radius:999px;padding:7px 16px;border:0;cursor:pointer;text-decoration:none!important;display:inline-block}
+.get:hover{filter:brightness(.96)}
+.get.view{text-transform:none;font-weight:600}
+.empty{color:var(--muted);padding:20px 0}
+/* detail */
+.back{font-size:13px;display:inline-flex;gap:4px;align-items:center}
+.dhead{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.dhead .meta{flex:1;min-width:220px}
+.dhead h1{font-size:28px}
+.dhead p{margin:4px 0 12px;color:var(--muted);font-size:16px}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-block:1px solid var(--line);padding-block:12px}
+.facts div{padding:0 14px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:3px;align-items:center;text-align:center;min-width:0}
+.facts div:first-child{border-left:0}
+.facts small{font:600 10.5px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.facts b{font:600 15px/1.2 var(--display);overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+.prose{max-width:66ch;font-size:15px;line-height:1.55;margin:0}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:66ch}
+.note{background:var(--card);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--muted);max-width:66ch}
+/* reading list */
+.list{display:flex;flex-direction:column}
+.list a.li{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-bottom:1px solid var(--line);color:var(--fg);text-decoration:none}
+.list a.li b{color:var(--accent);font-weight:600}
+.list a.li span{color:var(--muted);font-size:13px}
+@media (max-width:1180px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:720px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .side{border-right:0;border-bottom:1px solid var(--line);padding-block:12px;padding-right:max(16px,env(safe-area-inset-right,0px));padding-left:max(16px,env(safe-area-inset-left,0px));gap:10px;overflow:visible}
+  nav{flex-direction:row;overflow-x:auto;gap:4px}
+  nav a{white-space:nowrap}
+  .side .foot{display:none}
+  .feat,.grid{grid-template-columns:1fr}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:12px}
+  .facts div:nth-child(3){border-left:0}
+  h1{font-size:26px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5.5" fill="var(--accent)"/><path d="M7 7h4v4H7zM13 7h4v4h-4zM7 13h4v4H7z" fill="#fff"/><circle cx="15" cy="15" r="2.3" fill="#fff"/></svg>Claude AppStore</div>
+    <label class="search"><svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="q" type="search" placeholder="Search" aria-label="Search apps"></label>
+    <nav id="nav"></nav>
+    <div class="foot">
+      <a href="https://github.com/fengyiqicoder/awesome-claude-artifact-apps/issues/new" target="_blank" rel="noopener">Submit your app</a>
+      <a href="https://github.com/fengyiqicoder/awesome-claude-artifact-apps" target="_blank" rel="noopener">Source on GitHub</a>
+      <span>Community catalog, not affiliated with Anthropic or Apple. Apps belong to their creators.</span>
+      <span id="upd"></span>
+    </div>
+  </aside>
+  <main id="main"><div class="wrap" id="view"></div></main>
+</div>
+
+<script>
+const DATA = {"apps": [{"id": "gridbloom", "name": "Gridbloom", "subtitle": "Arena shooter in its own window", "category": "play", "desc": "A small arena shooter rebuilt as an artifact and installed with its own Dock icon. The post also explains what's inside the installed app.", "author": "de1mat", "post": "https://x.com/de1mat/status/2125334953479315834", "artifact": "", "lang": "", "added": "2026-11-25"}, {"id": "geography-trainer", "name": "Geography Trainer", "subtitle": "Learn countries and capitals", "category": "learn", "desc": "An artifact Claude made for learning geography, installed as a desktop app.", "author": "cjav_dev", "post": "https://x.com/cjav_dev/status/2125317458038768101", "artifact": "", "lang": "", "added": "2026-11-25"}, {"id": "titan-colony", "name": "Titan Colony", "subtitle": "Build a colony over 60 years", "category": "play", "desc": "A planet you can install: people land on Titan and build a colony over 60 years, drawn in one shader with no libraries.", "author": "maximbilan", "post": "https://x.com/maximbilan/status/2125504700518928832", "artifact": "", "lang": "", "added": "2026-11-25"}, {"id": "todo-list", "name": "To-do List", "subtitle": "A simple task list", "category": "work", "desc": "A to-do app built in under two hours and shared with @ClaudeDevs.", "author": "DavidCismas", "post": "https://x.com/DavidCismas/status/2125415718673879062", "artifact": "https://claude.ai/artifact/XVDvZnh6uE689MTBPf9MYo", "lang": "", "added": "2026-11-25"}, {"id": "ai-architecture-lab", "name": "AI Architecture Survival Lab", "subtitle": "9 missions, 12 ways to break it", "category": "learn", "desc": "Design an AI system, then survive budget cuts, provider outages and security reviews across 9 missions and 12 failure modes.", "author": "PeakGrizzly", "post": "https://x.com/PeakGrizzly/status/2125432809330524466", "artifact": "https://claude.ai/artifact/N78JPA38614byXSEqA3Zei", "lang": "", "added": "2026-11-25"}, {"id": "podcast-flashcards", "name": "Podcast Lessons", "subtitle": "Flashcards from 50+ shows", "category": "learn", "desc": "Highlights from Acquired, Invest Like the Best, Farnam Street and 50 other shows, turned into an interactive page with flashcards.", "author": "SamSirapat", "post": "https://x.com/SamSirapat/status/2125467516122386560", "artifact": "https://claude.ai/artifact/N8p7odNH5Y8zYuNBLrfE7X", "lang": "", "added": "2026-11-25"}, {"id": "grow-one-thing", "name": "Grow One Thing", "subtitle": "Raise a bonsai, a chrysalis, more", "category": "life", "desc": "Pick one of six living things, from a chrysalis (3 days) to a bonsai (60 days), and raise it through five stages into your collection.", "author": "fighthub_jp", "post": "https://x.com/fighthub_jp/status/2125477701020774880", "artifact": "https://claude.ai/artifact/3tMn8Y3f1hcNjEVUTwMzsX", "lang": "Japanese", "added": "2026-11-25"}, {"id": "isekai-quiz", "name": "Isekai Reincarnation Quiz", "subtitle": "Which fantasy life awaits you", "category": "play", "desc": "30 pixel-art RPG scenes decide which of 16 fantasy lives you are reborn into.", "author": "suke_aicopy", "post": "https://x.com/suke_aicopy/status/2125443342297387077", "artifact": "https://claude.ai/artifact/4x32h1UqVfe6tP54Qrm6fC", "lang": "Japanese", "added": "2026-11-25"}, {"id": "tarot-love-quiz", "name": "Tarot Love Type", "subtitle": "320+ results, drawn as a card", "category": "play", "desc": "30 questions and 320+ results drawn as a tarot card, with attachment style and a compatibility check.", "author": "suke_aicopy", "post": "https://x.com/suke_aicopy/status/2125454175257686350", "artifact": "https://claude.ai/artifact/2PdqPFbQ8aWwPMDPQAdWcG", "lang": "Japanese", "added": "2026-11-25"}, {"id": "hand-hygiene", "name": "Zone of Protection", "subtitle": "A 60-second hand-hygiene test", "category": "learn", "desc": "A 60-second hand-hygiene challenge scored like an antibiotic sensitivity plate: S, I or R.", "author": "drasumant", "post": "https://x.com/drasumant/status/2125506140066955686", "artifact": "https://claude.ai/artifact/C5Yo7CEy9QJYw1yWN4L38U", "lang": "", "added": "2026-11-25"}, {"id": "popn-table", "name": "pop'n Difficulty Table", "subtitle": "Track levels 29 to 50", "category": "play", "desc": "A level 29–50 difficulty tracker for pop'n music, from a player of 24 years.", "author": "kuzetaku", "post": "https://x.com/kuzetaku/status/2125419678290100395", "artifact": "https://claude.ai/artifact/U5qnbDYQrnXGAPVNiPMvpA", "lang": "Japanese", "added": "2026-11-25"}, {"id": "science-500", "name": "500 Years of Science", "subtitle": "Ranked scientific achievements", "category": "learn", "desc": "A ranked list of key scientific achievements of the last five centuries, up to the day before it was made.", "author": "tamritzblog", "post": "https://x.com/tamritzblog/status/2125198164118413378", "artifact": "https://claude.ai/artifact/JzUr9QdXgYXKpyXfXnVfvf", "lang": "Hebrew", "added": "2026-11-25"}, {"id": "school-site", "name": "School Achievements", "subtitle": "A school profile from one prompt", "category": "work", "desc": "A full school profile site with activities, photos, vision and staff, made from a single prompt.", "author": "Atallah147", "post": "https://x.com/Atallah147/status/2125494606561489142", "artifact": "https://claude.ai/artifact/7xLbZEbjZvrYJK6QaHJKT4", "lang": "Arabic", "added": "2026-11-25"}], "official": [{"title": "Announcement on X", "url": "https://x.com/ClaudeDevs/status/2125315491522650299", "note": "@ClaudeDevs, with a demo that turns one prompt into an installed space-junk tracker."}, {"title": "Turn artifacts into Mac and Windows apps", "url": "https://claude.com/resources/articles/install-as-app", "note": "Launch article: what installed apps can do and how permissions work."}, {"title": "Install an artifact as an app", "url": "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app", "note": "Help center guide: install, open, uninstall, permission list, limitations."}, {"title": "Artifacts admin guide for Team and Enterprise", "url": "https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans", "note": "Where admins turn the feature and full computer access on or off."}], "prompts": [{"title": "Official example prompts", "url": "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app", "note": "\"Make a Pomodoro timer that lives in my menu bar\", \"remind me to stretch every hour\", \"rename the photos in a folder by date\"."}, {"title": "10 apps you can build this weekend", "url": "https://x.com/pundiranusha/status/2125510269267014054", "note": "Menu bar pomodoro, PR review checklist, invoice maker, habit tracker with notifications, meeting cost calculator and more."}, {"title": "Add an export button first", "url": "https://x.com/YH31377807/status/2125380955255026128", "note": "Ask Claude for an \"export to JSON\" button before installing, so your data isn't stuck inside an app tied to your account."}], "guides": [{"title": "I took apart an installed app: 404 KB", "url": "https://x.com/realamlug/status/2125493255173288159", "note": "Two tiny native binaries and an icon; the page renders inside Claude's own Electron process."}, {"title": "Gridbloom teardown", "url": "https://x.com/de1mat/status/2125334953479315834", "note": "The installed app is a launcher with none of the code inside; it opens Claude Desktop, which shows the artifact in its own window under your login."}, {"title": "How it compares with a web app shell (Chinese)", "url": "https://x.com/dotey/status/2125368995746308453", "note": "@dotey on why it feels like a Chrome web app and why it still needs to be online."}]};
+const UPDATED = "2026-11-25";
+const CATS = {
+  play:{name:"Play", blurb:"Games, quizzes and toys people built with Claude.", icon:'<path d="M6 9h12a4 4 0 0 1 4 4v1a3 3 0 0 1-5.4 1.8L15 14H9l-1.6 1.8A3 3 0 0 1 2 14v-1a4 4 0 0 1 4-4z" fill="currentColor"/>'},
+  learn:{name:"Learn", blurb:"Flashcards, trainers and labs that teach one thing well.", icon:'<path d="M12 4 1 9l11 5 9-4.1V16h2V9z" fill="currentColor"/><path d="M5 12.5V16c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2z" fill="currentColor"/>'},
+  work:{name:"Work", blurb:"Lists, trackers and sites for getting things done.", icon:'<rect x="3" y="7" width="18" height="13" rx="2.5" fill="currentColor"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  life:{name:"Life", blurb:"Small companions for every day.", icon:'<path d="M12 21C6 16 3 12.5 3 9a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1c0 3.5-3 7-9 12z" fill="currentColor"/>'}
+};
+const NAV = [
+  ["discover","Discover",'<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm3.5 6.5-2 5-5 2 2-5z" fill="currentColor"/>'],
+  ...Object.entries(CATS).map(([k,c])=>[k,c.name,c.icon]),
+  ["guides","Guides",'<path d="M5 3h10l4 4v14H5z" fill="currentColor"/><path d="M8 11h8M8 15h8" stroke="var(--side)" stroke-width="1.6"/>']
+];
+// Icon art: each app gets a glyph and a two-stop gradient. Unknown ids fall back to a monogram.
+const GLYPH = {
+  "gridbloom":'<path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3z" fill="#fff" opacity=".95"/><circle cx="17" cy="17" r="4" fill="#fff"/>',
+  "geography-trainer":'<circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="2"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="#fff" stroke-width="1.6"/>',
+  "titan-colony":'<circle cx="12" cy="12" r="6" fill="#fff"/><ellipse cx="12" cy="12" rx="11" ry="3.6" fill="none" stroke="#fff" stroke-width="1.6" transform="rotate(-18 12 12)"/>',
+  "todo-list":'<rect x="3" y="4" width="5" height="5" rx="1.2" fill="#fff"/><path d="M11 6.5h10M11 12.5h10M11 18.5h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="3.8" y="10.8" width="3.4" height="3.4" rx=".8" fill="none" stroke="#fff" stroke-width="1.6"/><rect x="3.8" y="16.8" width="3.4" height="3.4" rx=".8" fill="none" stroke="#fff" stroke-width="1.6"/>',
+  "ai-architecture-lab":'<rect x="9" y="2.5" width="6" height="5" rx="1" fill="#fff"/><rect x="2.5" y="16.5" width="6" height="5" rx="1" fill="#fff"/><rect x="15.5" y="16.5" width="6" height="5" rx="1" fill="#fff"/><path d="M12 7.5v4.5M5.5 16.5V12h13v4.5" fill="none" stroke="#fff" stroke-width="1.8"/>',
+  "podcast-flashcards":'<rect x="6" y="3" width="14" height="10" rx="2" fill="#fff" opacity=".55"/><rect x="3" y="7" width="14" height="10" rx="2" fill="#fff"/><path d="M10 19.5v1.5M7 21h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>',
+  "grow-one-thing":'<path d="M12 21v-8" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M12 13C12 8 8 5 3.5 5 3.5 10 7 13 12 13zM12 11c0-4 3-6.5 8.5-6.5 0 4.5-3 7.5-8.5 7.5z" fill="#fff"/>',
+  "isekai-quiz":'<path d="M12 2l2.6 6.2L21 9l-5 4.3L17.5 20 12 16.6 6.5 20 8 13.3 3 9l6.4-.8z" fill="#fff"/>',
+  "tarot-love-quiz":'<rect x="5.5" y="2.5" width="13" height="19" rx="2" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M12 17c-3-2.3-4.5-4-4.5-5.8a2.2 2.2 0 0 1 4.5-.5 2.2 2.2 0 0 1 4.5.5C16.5 13 15 14.7 12 17z" fill="#fff"/>',
+  "hand-hygiene":'<circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="5" fill="none" stroke="#fff" stroke-width="1.8" stroke-dasharray="2 2"/><circle cx="12" cy="12" r="1.8" fill="#fff"/>',
+  "popn-table":'<circle cx="6" cy="8" r="2.6" fill="#fff"/><circle cx="12" cy="8" r="2.6" fill="#fff" opacity=".7"/><circle cx="18" cy="8" r="2.6" fill="#fff"/><circle cx="9" cy="15" r="2.6" fill="#fff" opacity=".7"/><circle cx="15" cy="15" r="2.6" fill="#fff"/>',
+  "science-500":'<path d="M9 3h6M10 3v6L4.5 19A1.5 1.5 0 0 0 5.8 21h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 15h10l2 4.5H5z" fill="#fff"/>',
+  "school-site":'<path d="M12 3 2 8h20zM4 10h16v9H4z" fill="#fff"/><path d="M8 12v5M12 12v5M16 12v5" stroke="var(--g2)" stroke-width="1.6"/>'
+};
+function hue(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h}
+function grad(a){const h=a.hue??hue(a.id);return [`hsl(${h} 78% 58%)`,`hsl(${(h+38)%360} 72% 42%)`]}
+function iconHTML(a,size){
+  const [g1,g2]=grad(a);
+  const inner = GLYPH[a.id] || `<text x="12" y="16.5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="var(--display)">${esc(a.name.split(/\s+/).map(w=>w[0]).join('').slice(0,2))}</text>`;
+  return `<div class="icon" style="width:${size}px;height:${size}px;background:linear-gradient(160deg,${g1},${g2});--g2:${g2}" aria-hidden="true"><svg viewBox="0 0 24 24">${inner}</svg></div>`;
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function getBtn(a,cls=""){
+  return a.artifact
+    ? `<a class="get ${cls}" href="${esc(a.artifact)}" target="_blank" rel="noopener" aria-label="Get ${esc(a.name)}">Get</a>`
+    : `<a class="get view ${cls}" href="${esc(a.post)}" target="_blank" rel="noopener" aria-label="View ${esc(a.name)} on X">View</a>`;
+}
+function row(a){
+  return `<div class="item">${iconHTML(a,52)}<div class="meta" data-open="${a.id}" role="link" tabindex="0"><b>${esc(a.name)}</b><span>${esc(a.subtitle)}</span></div>${getBtn(a)}</div>`;
+}
+function grid(list){return list.length?`<div class="grid">${list.map(row).join("")}</div>`:`<p class="empty">Nothing here yet. <a href="https://github.com/fengyiqicoder/awesome-claude-artifact-apps/issues/new" target="_blank" rel="noopener">Submit an app</a>.</p>`}
+function fcard(a,eyebrow,blurb){
+  const [g1,g2]=grad(a);
+  return `<div class="fcard" data-open="${a.id}" role="link" tabindex="0" style="background:linear-gradient(145deg,${g1},${g2})">
+    <div><div class="eyebrow">${esc(eyebrow)}</div><h3>${esc(a.name)}</h3><p>${esc(blurb||a.desc)}</p></div>
+    <div class="row">${iconHTML(a,40)}<div class="meta"><b>${esc(a.name)}</b><span>${esc(a.subtitle)}</span></div>${getBtn(a)}</div></div>`;
+}
+const installable = ()=>DATA.apps.filter(a=>a.artifact);
+function discover(){
+  const apps=DATA.apps.slice().reverse();
+  const inst=installable();
+  const f1=inst.find(a=>a.id==="ai-architecture-lab")||inst[0], f2=DATA.apps.find(a=>a.id==="titan-colony")||apps[1];
+  return `<div><h1>Discover</h1><p class="lede">Artifacts people built with Claude and installed as Mac and Windows apps. Open one in Claude Desktop, then choose <b>Install as app</b>.</p></div>
+  <div class="feat">${f1?fcard(f1,"Editors' pick","Design an AI system, then keep it alive through outages, budget cuts and security reviews."):""}${f2?fcard(f2,"Made in one shader",""):""}</div>
+  <section class="sec"><div class="sec-head"><h2>Ready to install</h2><span class="lede" style="margin:0">${inst.length} public artifacts</span></div>${grid(inst)}</section>
+  ${Object.entries(CATS).map(([k,c])=>{const l=DATA.apps.filter(a=>a.category===k);return l.length?`<section class="sec"><div class="sec-head"><h2>${c.name}</h2><a href="#${k}">See all</a></div>${grid(l.slice(0,6))}</section>`:""}).join("")}
+  <section class="sec"><div class="sec-head"><h2>Build your own</h2><a href="#guides">See all</a></div><div class="list">${DATA.prompts.map(li).join("")}</div></section>`;
+}
+function li(x){return `<a class="li" href="${esc(x.url)}" target="_blank" rel="noopener"><b>${esc(x.title)}</b><span>${esc(x.note)}</span></a>`}
+function catView(k){const c=CATS[k];return `<div><h1>${c.name}</h1><p class="lede">${c.blurb}</p></div>${grid(DATA.apps.filter(a=>a.category===k))}`}
+function guides(){
+  return `<div><h1>Guides</h1><p class="lede">How Install as app works, what it can touch, and prompts to start from.</p></div>
+  <section class="sec"><div class="sec-head"><h2>Official</h2></div><div class="list">${DATA.official.map(li).join("")}</div></section>
+  <section class="sec"><div class="sec-head"><h2>Prompts and ideas</h2></div><div class="list">${DATA.prompts.map(li).join("")}</div></section>
+  <section class="sec"><div class="sec-head"><h2>How it works</h2></div><div class="list">${DATA.guides.map(li).join("")}</div></section>
+  <section class="sec"><div class="sec-head"><h2>Good to know</h2></div><ul class="steps">
+    <li>Needs Claude for Mac or Windows 6.28899.0 or later. Beta on Free, Pro, Max, Ultra, Team and Enterprise; Enterprise owners must turn it on.</li>
+    <li>You must be online and signed in to Claude Desktop to open an installed app, and its requests to Claude count toward your plan's usage limits.</li>
+    <li>Editing the artifact updates the installed app. Apps ask before using notifications, keyboard shortcuts, floating windows, files or full computer access.</li>
+    <li>Docs, Slides and Sheets artifacts can't be installed.</li></ul></section>`;
+}
+function detail(id){
+  const a=DATA.apps.find(x=>x.id===id); if(!a) return discover();
+  const c=CATS[a.category]||{name:"Apps"};
+  return `<a class="back" href="#${a.category}">‹ ${c.name}</a>
+  <div class="dhead">${iconHTML(a,128)}<div class="meta"><h1>${esc(a.name)}</h1><p>${esc(a.subtitle)}</p>${getBtn(a)}</div></div>
+  <div class="facts"><div><small>Category</small><b>${c.name}</b></div><div><small>Language</small><b>${esc(a.lang||"English")}</b></div><div><small>Developer</small><b><a href="https://x.com/${esc(a.author)}" target="_blank" rel="noopener">@${esc(a.author)}</a></b></div><div><small>Added</small><b>${esc(a.added.slice(5).replace("-","/"))}</b></div></div>
+  <section class="sec"><h2>About</h2><p class="prose">${esc(a.desc)}</p><p class="prose"><a href="${esc(a.post)}" target="_blank" rel="noopener">See the creator's post on X ›</a></p></section>
+  <section class="sec"><h2>${a.artifact?"How to install":"Getting it"}</h2>${a.artifact
+    ?`<ol class="steps"><li>Click <b>Get</b>. The artifact opens on claude.ai.</li><li>Open it in Claude for Mac or Windows, sign in if asked.</li><li>Choose <b>Install as app</b> from the artifact's title menu or <b>Share</b>. It gets its own icon and window.</li></ol>`
+    :`<p class="note">The creator hasn't shared a public link yet. The post shows the app; ask them for the artifact, or ask Claude to build something like it.</p>`}</section>`;
+}
+function search(q){
+  q=q.toLowerCase();
+  const l=DATA.apps.filter(a=>[a.name,a.subtitle,a.desc,a.author,a.lang].join(" ").toLowerCase().includes(q));
+  return `<div><h1>Results for “${esc(q)}”</h1><p class="lede">${l.length} app${l.length===1?"":"s"}</p></div>${grid(l)}`;
+}
+const view=document.getElementById("view"), main=document.getElementById("main"), qi=document.getElementById("q");
+function render(){
+  const h=(location.hash||"#discover").slice(1);
+  const q=qi.value.trim();
+  let html, active=h;
+  if(q){html=search(q);active="";}
+  else if(h.startsWith("app-")){html=detail(h.slice(4));active=(DATA.apps.find(a=>a.id===h.slice(4))||{}).category;}
+  else if(CATS[h]) html=catView(h);
+  else if(h==="guides") html=guides();
+  else {html=discover();active="discover";}
+  view.innerHTML=html;
+  document.getElementById("nav").innerHTML=NAV.map(([k,n,ic])=>`<a href="#${k}" class="${k===active?"on":""}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">${ic}</svg>${n}</a>`).join("");
+}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-open]");if(t&&!e.target.closest("a")){qi.value="";location.hash="app-"+t.dataset.open;}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"){const t=e.target.closest("[data-open]");if(t){qi.value="";location.hash="app-"+t.dataset.open;}}});
+window.addEventListener("hashchange",()=>{qi.value="";render();main.scrollTop=0;});
+qi.addEventListener("input",render);
+document.getElementById("upd").textContent=UPDATED&&!UPDATED.startsWith("/*")?`${DATA.apps.length} apps · updated ${UPDATED}`:"";
+render();
+</script>
