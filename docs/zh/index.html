@@ -250,7 +250,8 @@ function discover(){
   const apps=DATA.apps.slice().reverse();
   const inst=installable();
   const f1=DATA.apps.find(a=>a.id==="document-editor")||inst[0], f2=DATA.apps.find(a=>a.id==="slide-maker")||apps[1];
-  const hero=SITE?(ZH?`<section class="hero"><h1>别再为<br><em>App 付费了。</em></h1>
+  const HERO=false; // 2026-11-26: no hero, the site opens straight on Discover like the Mac App Store
+  const hero=HERO&&SITE?(ZH?`<section class="hero"><h1>别再为<br><em>App 付费了。</em></h1>
     <p>能打开你 Office 文件的 AI 文档、表格和幻灯片，加上 PDF 对话、语法检查、思维导图和图片转文字。它们跑在你已有的 Claude 套餐上，可以装到 Mac 或 PC，不用再额外订阅任何东西。</p>
     <div class="ctas"><a class="cta pri" href="#cancel" data-jump="cancel">看看能退订哪些</a><a class="cta sec" href="${esc(STORE_ARTIFACT)}" target="_blank" rel="noopener">在 Claude 里安装商店</a></div>
     <div class="instead"><span>不再需要：</span><s>Word、Excel、PowerPoint 里的 Copilot</s><s>Gamma</s><s>Acrobat AI 助手</s><s>Grammarly Premium</s><s>Xmind Pro</s><s>TextSniper</s></div></section>`:`<section class="hero"><h1>Stop paying<br>for <em>apps.</em></h1>
