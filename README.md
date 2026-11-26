@@ -46,6 +46,8 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **[500 Years of Science](https://claude.ai/artifact/JzUr9QdXgYXKpyXfXnVfvf)** - A ranked list of key scientific achievements of the last five centuries, up to the day before it was made. Hebrew. ([post](https://x.com/tamritzblog/status/2125198164118413378) by [@tamritzblog](https://x.com/tamritzblog))
 - **[Exact Birthday Calculator](https://claude.ai/artifact/FzmS8QF45CN7JmLFmeghku)** - Works out the exact moment of your birthday as a whole number of trips around the sun, not a calendar date. Made by an MIT professor for people who live in a different time zone from where they were born, or were born on February 29. ([post](https://x.com/fredodurand/status/2125610055982866917) by [@fredodurand](https://x.com/fredodurand))
 - **[Speaking Coach](https://claude.ai/artifact/UuqPyQ25QRBtGaT7E9h3ZD)** - Claude writes a short spoken passage at your level in one of 9 languages and reads it to you. Repeat it or answer its question out loud, and Claude scores what you said, corrects it and reads back a more natural version. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/speaking-coach), made by this repo)
+- **[The Future of AI](https://claude.ai/artifact/Cy2d8Vn63CnzCtonA1LSah)** - A presentation on the future of AI and the intelligence explosion where every slide is a full 3D scene, joined by camera moves and sound. Takes about eight minutes to watch; the author says an early Opus 5.6 built it. ([post](https://x.com/fluxxrider/status/2125622238481371372) by [@fluxxrider](https://x.com/fluxxrider))
+- **[Zone of Protection](https://claude.ai/artifact/C5Yo7CEy9QJYw1yWN4L38U)** - A 60-second hand-hygiene challenge scored like an antibiotic sensitivity plate: S, I or R. ([post](https://x.com/drasumant/status/2125575149852525054) by [@drasumant](https://x.com/drasumant))
 
 ## Work
 
@@ -62,6 +64,7 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **[Pomodoro Timer](https://claude.ai/artifact/34QrCwomkxG1UuEA1C8hFh)** - Dump everything you need to do and Claude turns it into ordered tasks with the number of focus sessions each needs. The timer works through them, counts down in your menu bar and Dock, notifies you when a session ends, and starts or pauses from anywhere with Option+Shift+P. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/pomodoro), made by this repo)
 - **[World Clock](https://claude.ai/artifact/3aHTJUDXhT7WrZMSKtcSry)** - Keep the cities you work with side by side, each with a day and night band. Ask in plain words, like "best time for a call with London and Tokyo", and Claude answers and moves the time slider there. Installed, the city you pick stays in your menu bar. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/world-clock), made by this repo)
 - **[Sticky Notes](https://claude.ai/artifact/XB1iwfcvpd3y43i14i6TMa)** - Four colored sticky notes in one small window. Claude can turn a messy note into a checklist, clean up the writing, summarize it, suggest next steps or translate it, with one-click undo. Installed, it floats above every window and Option+Shift+J hides it or brings it back. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/sticky-notes), made by this repo)
+- **Mac Cleaner** - A Mac cleaning app the author always wanted, built in Claude and installed as a desktop app; the post shows it running. ([post](https://x.com/joseamijares/status/2125372164954030086) by [@joseamijares](https://x.com/joseamijares))
 
 ## Life
 
@@ -79,6 +82,7 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - [I took apart an installed app: 404 KB](https://x.com/realamlug/status/2125493255173288159) - Two tiny native binaries and an icon; the page renders inside Claude's own Electron process.
 - [Gridbloom teardown](https://x.com/de1mat/status/2125334953479315834) - The installed app is a launcher with none of the code inside; it opens Claude Desktop, which shows the artifact in its own window under your login.
 - [How it compares with a web app shell (Chinese)](https://x.com/dotey/status/2125368995746308453) - @dotey on why it feels like a Chrome web app and why it still needs to be online.
+- [Same prompt, two results: Swift app vs installed artifact](https://x.com/lvntblsn/status/2125736966624776242) - A menu bar Pomodoro asked for twice: the Code tab produced an 832 KB Swift app that runs without Claude but never changes; the artifact updates whenever it is edited, and the install option had not reached the account yet.
 
 ## Good to know
 

@@ -419,6 +419,42 @@
     "Shortcut"
    ],
    "ai": true
+  },
+  {
+   "id": "future-of-ai-deck",
+   "name": "The Future of AI",
+   "subtitle": "A 3D deck you fly through",
+   "category": "learn",
+   "desc": "A presentation on the future of AI and the intelligence explosion where every slide is a full 3D scene, joined by camera moves and sound. Takes about eight minutes to watch; the author says an early Opus 5.6 built it.",
+   "author": "fluxxrider",
+   "post": "https://x.com/fluxxrider/status/2125622238481371372",
+   "artifact": "https://claude.ai/artifact/Cy2d8Vn63CnzCtonA1LSah",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "zone-of-protection",
+   "name": "Zone of Protection",
+   "subtitle": "A 60-second hand-hygiene test",
+   "category": "learn",
+   "desc": "A 60-second hand-hygiene challenge scored like an antibiotic sensitivity plate: S, I or R.",
+   "author": "drasumant",
+   "post": "https://x.com/drasumant/status/2125575149852525054",
+   "artifact": "https://claude.ai/artifact/C5Yo7CEy9QJYw1yWN4L38U",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "mac-cleaner",
+   "name": "Mac Cleaner",
+   "subtitle": "A disk cleaner built in a chat",
+   "category": "work",
+   "desc": "A Mac cleaning app the author always wanted, built in Claude and installed as a desktop app; the post shows it running.",
+   "author": "joseamijares",
+   "post": "https://x.com/joseamijares/status/2125372164954030086",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-26"
   }
  ],
  "official": [
@@ -485,6 +521,11 @@
    "title": "How it compares with a web app shell (Chinese)",
    "url": "https://x.com/dotey/status/2125368995746308453",
    "note": "@dotey on why it feels like a Chrome web app and why it still needs to be online."
+  },
+  {
+   "title": "Same prompt, two results: Swift app vs installed artifact",
+   "url": "https://x.com/lvntblsn/status/2125736966624776242",
+   "note": "A menu bar Pomodoro asked for twice: the Code tab produced an 832 KB Swift app that runs without Claude but never changes; the artifact updates whenever it is edited, and the install option had not reached the account yet."
   }
  ]
 }
