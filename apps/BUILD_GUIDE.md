@@ -48,7 +48,19 @@ The page is published as a Claude artifact and installed as a desktop app. Read 
 - English UI copy, plain and specific. Label buttons by what they do. Errors say what happened and what to do.
 - Every AI action that changes the person's content needs Undo, or must show the change for review (accept/reject) first.
 
+**Installed-window rules (learned the hard way)**
+- `desktop.window.setOptions({titleBarStyle:"hiddenInset", dragHeight: 8, ...})`. `dragHeight` is a strip the host lays over the top of the page; anything under it can't be clicked, and CSS `no-drag` does not rescue it. Keep it at 8 when the top bar has controls, and make the empty parts of the top bar draggable with CSS `app-region:drag` (and `app-region:no-drag` on every control inside it). Leave ~80px on the left of the top bar for the traffic lights.
+- Selected-but-not-editing states (a selected topic, cell, shape, card) must keep focus on a real text input (a hidden/transparent textarea), so a Chinese IME composition lands in it. Focus on a non-editable element loses IME input.
+- Don't call `setPointerCapture` on a container if you rely on `click`/`dblclick` `e.target` later: after capture the target is the container. Resolve the real element with `document.elementFromPoint`.
+
+**Chinese UI and install prompt (shared, don't reinvent)**
+- Chinese UI: write `data/i18n/<id>.json` (`dict` of exact English UI strings → Chinese, `patterns` for strings with numbers, `skip` CSS selectors for anything showing user content) and run `python3 data/i18n/apply.py <id>`. Read `data/i18n/runtime.js` first. In app code use `window.__t(en, zh)` for strings not in the DOM (tray, notifications, defaults) and guard `window.__tr` (it only exists in Chinese mode). When `window.__ZH`, Claude's explanatory output should be Simplified Chinese; user content keeps its language.
+- The install-as-app prompt and the Dock icon are added by the store maintainer (`data/apply_install_prompt.py`, `data/icons/apply_dock_icons.py`); just keep a `function dockIcon(){...}` that returns a PNG data URL and call `desktop.app.dock.setIcon(dockIcon())`.
+
 ## 4. Test before you report
+
+- Real input, not JS state pokes: drive the page with Playwright (`playwright-core` in `/private/tmp/claude-501/-Users-fengyq-Desktop/530f795f-6ddd-440f-8936-3e641a0bf47f/scratchpad/pw`, `chromium.launch({channel:'chrome',headless:true})`) using `page.mouse`/`page.keyboard`, double-clicks and drags; type Chinese with a CDP session (`Input.imeSetComposition` then `Input.insertText`). Test as a new user (empty storage) and with `localStorage`/`indexedDB` throwing. Set the context `locale` explicitly (`en-US` and `zh-CN`): this Mac is Chinese, so the default locale is Chinese.
+- Simulate the installed window: stub `window.claude.use("desktop")` with `fs`/`tray`/`window.setOptions` present, read the options the page sets, and check that no visible control sits under the `dragHeight` strip or inside an `app-region:drag` area without `no-drag`.
 
 - `node -e` syntax check of every inline script.
 - Open the file in the Claude_Browser preview (`preview_start` with `url: file:///...`) and click through the non-AI paths with real files: create sample .docx/.xlsx/.pptx/.pdf/.xmind/.csv files yourself (python3 is available; check what libraries exist before relying on them, or generate the sample with the same JS library in the page).

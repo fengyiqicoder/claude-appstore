@@ -39,6 +39,8 @@ body.app.inset .top{padding-left:max(80px,env(safe-area-inset-left,0px))}
 .ib svg,.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 /* toolbar */
 .tools{display:flex;align-items:center;gap:2px;height:40px;flex:none;border-bottom:1px solid var(--line);background:var(--panel);overflow-x:auto;scrollbar-width:none}
+/* every toolbar button must be visible at the default window width: wrap to a second row instead of hiding buttons off-screen */
+@media (min-width:700px){.tools{flex-wrap:wrap;height:auto;min-height:40px;padding-top:4px;padding-bottom:4px;row-gap:2px;overflow-x:visible}}
 .tools::-webkit-scrollbar{display:none}
 .sep{width:1px;height:18px;background:var(--line2);margin:0 5px;flex:none}
 .tools select{border:1px solid var(--line2);background:var(--panel);border-radius:6px;height:28px;padding:0 6px;font-size:12.5px;flex:none}
@@ -3000,6 +3002,7 @@ async function runFill(preview){
   }catch(e){$("fillSt").textContent=e?.code==="cancelled"?`Stopped after ${done} rows.`:errText(e);aiGone(e)}
   finally{
     fillCtl=null;$("fillGo").textContent="Run on all rows";$("fillPrev").disabled=false;
+    if(!preview&&group&&!results.size&&U.stack[U.stack.length-1]===group){undo();group=null}
     if(preview){const tb=`<table class="mini"><tr><th>Row</th><th>${escHtml(names.join(" / "))}</th><th>${escHtml(outName)}</th></tr>`+rows.filter(r=>results.has(r)).map(r=>`<tr><td>${r+1}</td><td>${escHtml(cols.map(c=>fmtValue(getValue(si,r,c))).join(" / ").slice(0,140))}</td><td>${escHtml(String(results.get(r)))}</td></tr>`).join("")+"</table>";$("fillOutBox").innerHTML=results.size?tb:""}
     else if(group&&group.parts.length){const b=document.createElement("button");b.className="btn";b.textContent="Undo this run";b.onclick=()=>{if(U.stack[U.stack.length-1]===group){undo();b.disabled=true}else toast("Undo your later edits first.")};$("fillOutBox").replaceChildren(b);setSel(h,outC);scrollIntoView(h,outC)}
   }

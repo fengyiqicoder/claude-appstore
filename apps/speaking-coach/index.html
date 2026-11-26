@@ -127,8 +127,8 @@ const langName=()=>LANGS.find(l=>l[1]===$("lang").value)[0];
 let L=store.get("lesson",null), sample=null, tts=null, dict=null, said="", ctl=null;
 
 function streak(){
-  const s=store.get("streak",{n:0,last:""});const t=new Date().toISOString().slice(0,10);
-  const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  const s=store.get("streak",{n:0,last:""});const ld=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");const n0=new Date(),t=ld(n0);
+  const y=ld(new Date(n0.getFullYear(),n0.getMonth(),n0.getDate()-1));
   const n=(s.last===t||s.last===y)?s.n:0;
   $("streak").textContent=n?`${n}-day streak`:"";
   return {s,t,y};

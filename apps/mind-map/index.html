@@ -214,6 +214,7 @@ body.zen #side,body.zen #insp{display:none!important}
   .wide{display:none!important}
   #mtitle{max-width:140px}
 }
+@media (max-width:1000px){ #viewseg .wide{display:none!important} }
 @media (max-width:520px){ .wide2{display:none!important} #find input{width:110px} }
 </style>
 <div id="app">
@@ -829,9 +830,9 @@ function dropRelsFor(ids){M.rels=(M.rels||[]).filter(r=>!ids.has(r.from)&&!ids.h
 /* ---------- commands ---------- */
 function freezeSides(){const R=M.root,half=Math.ceil(R.children.length/2);R.children.forEach((k,i)=>{if(!k.side)k.side=i<half?"right":"left"})}
 function lighterSide(){let l=0,r=0;for(const k of M.root.children){const h=(G.get(k.id)?.sh||40)+18;if(k.side==="left")l+=h;else r+=h}return l<r?"left":"right"}
-function addChild(){if(!M)return;const p=primary()||(focusId&&BY.get(focusId))||M.root;const c=N("");commit(()=>{delete p.collapsed;if(p===M.root&&M.layout==="map"&&LROOT===M.root){freezeSides();c.side=lighterSide()}insertChild(p,c,p.children.length)});setSel(c.id);ensureVisible(c.id);startEdit(c.id,{isNew:true})}
+function addChild(){if(!M)return;const p=primary()||(focusId&&BY.get(focusId))||M.root;const c=N("");commit(()=>{delete p.collapsed;if(p===M.root&&M.layout==="map"&&LROOT===M.root){freezeSides();c.side=lighterSide()}insertChild(p,c,p.children.length)});setSel(c.id);ensureVisible(c.id);startEdit(c.id,{isNew:true,back:p.id})}
 function addFloat(x,y,text=""){const c=N(text);c.fx=x;c.fy=y;commit(()=>{(M.floats||(M.floats=[])).push(c)});setSel(c.id);ensureVisible(c.id);startEdit(c.id,{isNew:true});return c}
-function addSibling(before=false){const n=primary();if(!n)return addChild();if(isFloat(n)&&n.id!==focusId){const g=G.get(n.id);return addFloat(n.fx??g?.x??0,(n.fy??(g?g.y+g.h/2:0))+(before?-1:1)*((g?.sh||40)/2+50))}const p=P.get(n.id);if(!p||n.id===focusId)return addChild();const i=p.children.indexOf(n);const c=N("");if(n.side)c.side=n.side;commit(()=>insertChild(p,c,i+(before?0:1)));setSel(c.id);ensureVisible(c.id);startEdit(c.id,{isNew:true})}
+function addSibling(before=false){const n=primary();if(!n)return addChild();if(isFloat(n)&&n.id!==focusId){const g=G.get(n.id);return addFloat(n.fx??g?.x??0,(n.fy??(g?g.y+g.h/2:0))+(before?-1:1)*((g?.sh||40)/2+50))}const p=P.get(n.id);if(!p||n.id===focusId)return addChild();const i=p.children.indexOf(n);const c=N("");if(n.side)c.side=n.side;commit(()=>insertChild(p,c,i+(before?0:1)));setSel(c.id);ensureVisible(c.id);startEdit(c.id,{isNew:true,back:n.id})}
 function insertParent(){const n=primary();const p=n&&P.get(n.id);if(!p)return;const i=p.children.indexOf(n);const x=N("");if(n.side)x.side=n.side;commit(()=>{removeChild(p,i);x.children=[n];delete n.side;insertChild(p,x,i)});setSel(x.id);ensureVisible(x.id);startEdit(x.id,{isNew:true})}
 function deleteSel(){
   if(selObj?.t==="zone"){const id=selObj.id;commit(()=>{M.zones=(M.zones||[]).filter(z=>z.id!==id)});selObjSet(null);toast("Zone removed. Its topics stay.","Undo",undo);return}
@@ -889,12 +890,12 @@ function placeEditor(){const t=editTarget();if(!t){finishEdit();return}const k=V
   editor.style.font=`${t.italic?"italic ":""}${t.weight} ${fs}px ${FONT_STACK}`;
   mctx.font=editor.style.font;let w=0;for(const l of editor.value.split("\n"))w=Math.max(w,mctx.measureText(l).width);
   const W=Math.max(t.w*k,w+28,90);editor.style.width=W+"px";editor.style.left=(t.x*k+V.x+(t.w*k-W)/2*(editing.obj?1:0)-2)+"px";editor.style.top=(t.y*k+V.y-2)+"px";editor.style.height="auto";editor.style.height=Math.max(t.h*k+4,editor.scrollHeight+2)+"px"}
-function startEdit(id,opt={}){if(!M||!BY.get(id))return;if(view!=="map"){return}finishEdit();const n=BY.get(id);editing={id,isNew:!!opt.isNew,orig:n.text};editor.classList.remove("armed");editor.value=opt.text!=null?opt.text:n.text;editor.hidden=false;placeEditor();editor.focus();if(opt.text!=null){const L=editor.value.length;editor.setSelectionRange(L,L)}else editor.select()}
+function startEdit(id,opt={}){if(!M||!BY.get(id))return;if(view!=="map"){return}finishEdit();const n=BY.get(id);editing={id,isNew:!!opt.isNew,orig:n.text,back:opt.back};editor.classList.remove("armed");editor.value=opt.text!=null?opt.text:n.text;editor.hidden=false;placeEditor();editor.focus();if(opt.text!=null){const L=editor.value.length;editor.setSelectionRange(L,L)}else editor.select()}
 function startEditObj(o){finishEdit();editor.classList.remove("armed");let v="";if(o.t==="rel")v=M.rels.find(x=>x.id===o.id)?.label||"";else if(o.t==="sum")v=BY.get(o.pid)?.sums?.[o.i]?.text||"";else return;editing={obj:o,orig:v};editor.value=v;editor.hidden=false;placeEditor();editor.focus();editor.select()}
 function finishEdit(cancel=false){if(!editing)return;const e=editing;editing=null;editor.hidden=true;const v=cancel?e.orig:editor.value.replace(/\s+$/,"");
   if(e.obj){if(v===e.orig)return;commit(()=>{if(e.obj.t==="rel"){const r=M.rels.find(x=>x.id===e.obj.id);if(r)r.label=v}else{const s=BY.get(e.obj.pid)?.sums?.[e.obj.i];if(s)s.text=v||tz("Summary","概要")}});return}
   const n=BY.get(e.id);if(!n)return;
-  if(e.isNew&&!v.trim()){const U=undoOf();if(U.u.length){restore(U.u.pop());changed()}const p=P.get(e.id);setSel(selId&&BY.has(selId)?selId:(p?p.id:null));stage.focus();queueMicrotask(arm);return}
+  if(e.isNew&&!v.trim()){const U=undoOf();if(U.u.length){restore(U.u.pop());changed()}const p=P.get(e.id);setSel(selId&&BY.has(selId)?selId:(e.back&&BY.has(e.back)?e.back:(p?p.id:null)));stage.focus();queueMicrotask(arm);return}
   if(e.isNew){n.text=v;changed()}else if(v!==n.text){commit(()=>{n.text=v})}
   stage.focus({preventScroll:true});queueMicrotask(arm)}
 editor.addEventListener("input",()=>{if(editor.classList.contains("armed")){if(!beginFromArm())editor.value="";else placeEditor();return}placeEditor()});

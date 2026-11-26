@@ -199,6 +199,67 @@ I["speaking-coach"] = tile("sc", "#FF6BAA", "#C2185B", '''
  <rect x="400" y="770" width="224" height="40" rx="20" fill="#fff"/>
 </g>''', '<linearGradient id="mic" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E4E7EE"/></linearGradient>')
 
+# Video Studio: video frame with play button over a keyframed timeline
+I["video-studio"] = tile("vs", "#FF6B4A", "#C2185B", '''
+<g filter="url(#ds)" transform="rotate(-5 500 420)">
+ <rect x="190" y="210" width="620" height="400" rx="40" fill="#1B1530"/>
+ <rect x="222" y="242" width="556" height="336" rx="22" fill="url(#vsky)"/>
+ <path d="M222 520l150-120 110 90 90-70 206 150v8a22 22 0 0 1-22 22H244a22 22 0 0 1-22-22z" fill="#2B1F4F" opacity=".85"/>
+ <circle cx="500" cy="410" r="86" fill="#fff"/>
+ <path d="M472 362l82 48-82 48z" fill="#E0245E"/>
+</g>
+<g filter="url(#ds)">
+ <rect x="170" y="668" width="684" height="150" rx="36" fill="#fff"/>
+ <rect x="214" y="706" width="250" height="30" rx="10" fill="#FF8A65"/>
+ <rect x="478" y="706" width="170" height="30" rx="10" fill="#7C4DFF"/>
+ <rect x="662" y="706" width="150" height="30" rx="10" fill="#26C6DA"/>
+ <rect x="214" y="752" width="598" height="22" rx="8" fill="#ECE7F3"/>
+ <path d="M330 763l14-14 14 14-14 14zM560 763l14-14 14 14-14 14zM720 763l14-14 14 14-14 14z" fill="#1B1530"/>
+ <rect x="436" y="684" width="10" height="114" rx="5" fill="#E0245E"/>
+</g>''', '<linearGradient id="vsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB86B"/><stop offset="1" stop-color="#FF5E7E"/></linearGradient>')
+
+# Design Studio: phone screen with colorful blocks and a pen-tool bezier
+I["design-studio"] = tile("ds", "#FF5CC8", "#7B1FA2", '''
+<g filter="url(#ds)" transform="rotate(-8 430 500)">
+ <rect x="250" y="160" width="360" height="700" rx="64" fill="#15121F"/>
+ <rect x="272" y="182" width="316" height="656" rx="46" fill="#fff"/>
+ <rect x="404" y="200" width="52" height="14" rx="7" fill="#15121F"/>
+ <rect x="300" y="238" width="260" height="170" rx="26" fill="url(#dsg)"/>
+ <rect x="300" y="432" width="170" height="26" rx="13" fill="#2A2438"/>
+ <rect x="300" y="474" width="230" height="18" rx="9" fill="#D7D2E2"/>
+ <rect x="300" y="506" width="200" height="18" rx="9" fill="#D7D2E2"/>
+ <rect x="300" y="556" width="120" height="120" rx="24" fill="#FFD54F"/>
+ <rect x="440" y="556" width="120" height="120" rx="24" fill="#4DD0E1"/>
+ <rect x="300" y="700" width="260" height="60" rx="30" fill="#7C4DFF"/>
+</g>
+<g filter="url(#ds2)">
+ <path d="M560 790C620 600 760 640 820 470" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+ <path d="M560 790L650 700M820 470L760 560" stroke="#fff" stroke-width="6" stroke-dasharray="14 10" opacity=".85"/>
+ <rect x="538" y="768" width="44" height="44" rx="8" fill="#fff" stroke="#7B1FA2" stroke-width="8"/>
+ <rect x="798" y="448" width="44" height="44" rx="8" fill="#fff" stroke="#7B1FA2" stroke-width="8"/>
+ <circle cx="650" cy="700" r="16" fill="#fff"/><circle cx="760" cy="560" r="16" fill="#fff"/>
+</g>''', '<linearGradient id="dsg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A80"/><stop offset="1" stop-color="#7C4DFF"/></linearGradient>')
+
+# Thinking Partner: question bubble over a checked decision list
+I["thinking-partner"] = tile("tp", "#FFC94D", "#EF7A00", '''
+<g filter="url(#ds)" transform="rotate(4 560 640)">
+ <rect x="360" y="430" width="470" height="420" rx="44" fill="#fff"/>
+ <rect x="404" y="486" width="56" height="56" rx="16" fill="#2EB872"/>
+ <path d="M418 514l12 12 20-24" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+ <rect x="484" y="500" width="290" height="28" rx="14" fill="#3B2A12"/>
+ <rect x="404" y="584" width="56" height="56" rx="16" fill="#2EB872"/>
+ <path d="M418 612l12 12 20-24" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+ <rect x="484" y="598" width="240" height="28" rx="14" fill="#3B2A12"/>
+ <rect x="404" y="682" width="56" height="56" rx="16" fill="none" stroke="#E0C9A6" stroke-width="8"/>
+ <rect x="484" y="696" width="270" height="28" rx="14" fill="#E9DCC6"/>
+ <rect x="404" y="770" width="56" height="56" rx="16" fill="none" stroke="#E0C9A6" stroke-width="8"/>
+ <rect x="484" y="784" width="200" height="28" rx="14" fill="#E9DCC6"/>
+</g>
+<g filter="url(#ds)">
+ <path d="M200 170h330a80 80 0 0 1 80 80v170a80 80 0 0 1-80 80H330l-100 86v-86h-30a80 80 0 0 1-80-80V250a80 80 0 0 1 80-80z" fill="#2B1D0E"/>
+ <text x="365" y="440" text-anchor="middle" font-family="-apple-system,'SF Pro Rounded',Helvetica,Arial" font-weight="900" font-size="300" fill="#FFC94D">?</text>
+</g>''')
+
 # Store: an App Store-style "A" built from three rounded bars, in Claude's colors, with the Claude spark
 I["store"] = tile("store", "#E58B68", "#B9532F", '''
 <g filter="url(#ds)" stroke-linecap="round" fill="none">

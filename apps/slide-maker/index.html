@@ -3606,6 +3606,8 @@ async function writeThemeEdit(out){const t=deck.themeCur,t0=deck.src?.theme;if(!
 
 /* ---------- wiring for the editing tools ---------- */
 $("insertBtn").onclick=()=>insertMenu($("insertBtn"));
+$("undoBtn").onclick=()=>undo();
+$("redoBtn").onclick=()=>redo();
 $("viewBtn").onclick=()=>viewMenu($("viewBtn"));
 $("sideClose").onclick=closeSide;
 $("sideTabs").onclick=e=>{const b=e.target.closest("button");if(b){sideTab=b.dataset.t;renderSide();drawSel()}};

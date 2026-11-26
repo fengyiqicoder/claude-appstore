@@ -27,7 +27,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 var(--font);-we
 .ring .bar{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .3s linear,stroke .3s}
 .time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .time b{font:600 clamp(44px,15vw,64px)/1 var(--num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.time span{color:var(--muted);font-size:13px}
+.time span{color:var(--muted);font-size:13px;max-width:66%;text-align:center;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .ctrl{display:flex;gap:10px;align-items:center}
 .btn{font:600 14px/1 var(--font);border:0;border-radius:999px;padding:12px 26px;cursor:pointer;background:var(--accent);color:#fff;min-width:120px}
 .btn.ghost{background:var(--chip);color:var(--fg);min-width:0;padding:12px 16px}
@@ -149,7 +149,7 @@ const $=id=>document.getElementById(id);
 const T=window.__t;
 const NAMES={focus:T("Focus","专注"),short:T("Short break","短休息"),long:T("Long break","长休息")};
 const store={get(k,d){try{const v=localStorage.getItem("focus."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("focus."+k,JSON.stringify(v))}catch{}}};
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 let S={
   dur:store.get("dur",{focus:25,short:5,long:15}),
   auto:store.get("auto",false),
@@ -207,7 +207,7 @@ async function toggle(){
 }
 function reset(){S.running=false;S.left=S.dur[S.mode]*60;paint();}
 function setMode(m,start=false){S.mode=m;S.running=false;S.left=S.dur[m]*60;if(start){S.endAt=Date.now()+S.left*1000;S.running=true;}paint();}
-function nextMode(){return S.mode!=="focus"?"focus":(S.done%4===0?"long":"short")}
+function nextMode(){return S.mode!=="focus"?"focus":(S.done>0&&S.done%4===0?"long":"short")}
 function skip(){setMode(nextMode(),false)}
 function finish(){
   const was=S.mode;
@@ -306,7 +306,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dat
 $("go").onclick=toggle;$("reset").onclick=reset;$("skip").onclick=skip;
 ["focus","short","long"].forEach(k=>{const i=$("d-"+k);i.value=S.dur[k];i.onchange=()=>{const v=Math.min(+i.max,Math.max(1,Math.round(+i.value||S.dur[k])));i.value=v;S.dur[k]=v;save();if(!S.running&&S.mode===k){S.left=v*60;}paint();};});
 $("auto").checked=S.auto;$("auto").onchange=e=>{S.auto=e.target.checked;save();};
-document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="INPUT"&&e.target.tagName!=="BUTTON"){e.preventDefault();toggle();}});
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&!e.isComposing&&!/^(INPUT|TEXTAREA|SELECT|BUTTON|SUMMARY|A)$/.test(e.target.tagName)&&!e.target.isContentEditable){e.preventDefault();toggle();}});
 paint();
 
 (async()=>{

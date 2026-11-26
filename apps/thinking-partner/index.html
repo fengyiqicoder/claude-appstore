@@ -1,0 +1,1279 @@
+<title>AI Thinking Partner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: sessions sidebar on the left, the interview thread in the middle with a composer docked at the bottom,
+   and a live structure panel on the right (decision map, ideas, matrix, terms, decisions, risks). */
+:root{
+  --bg:#f3f4f6; --panel:#ffffff; --fg:#17191f; --muted:#6b7280; --line:#e3e5ea; --chip:#eef0f3; --hover:#f1f2f5;
+  --accent:#4f5bd5; --accent-fg:#ffffff; --accent-soft:rgba(79,91,213,.12);
+  --canvas:#fafafb; --danger:#d93f3f; --ok:#1f9d63; --ok-soft:rgba(31,157,99,.12); --warn:#c27c0e; --warn-soft:rgba(194,124,14,.13);
+  --shadow:0 6px 24px rgba(15,20,40,.10),0 1px 3px rgba(15,20,40,.08);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15171b;--panel:#1d2025;--fg:#eceef2;--muted:#9097a3;--line:#2d3138;--chip:#272b32;--hover:#262a31;--accent:#8b95ff;--accent-fg:#10132e;--accent-soft:rgba(139,149,255,.16);--canvas:#191b20;--danger:#ff6b6b;--ok:#4cc98f;--ok-soft:rgba(76,201,143,.15);--warn:#f0b04a;--warn-soft:rgba(240,176,74,.15);--shadow:0 8px 28px rgba(0,0,0,.45),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15171b;--panel:#1d2025;--fg:#eceef2;--muted:#9097a3;--line:#2d3138;--chip:#272b32;--hover:#262a31;--accent:#8b95ff;--accent-fg:#10132e;--accent-soft:rgba(139,149,255,.16);--canvas:#191b20;--danger:#ff6b6b;--ok:#4cc98f;--ok-soft:rgba(76,201,143,.15);--warn:#f0b04a;--warn-soft:rgba(240,176,74,.15);--shadow:0 8px 28px rgba(0,0,0,.45),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:13px/1.4 var(--font);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+input,textarea,select{font:inherit;color:var(--fg)}
+.ic{width:17px;height:17px;flex:none}
+#app{display:flex;height:100vh;height:100dvh;width:100vw;overflow:hidden}
+/* sidebar */
+#side{width:248px;flex:none;display:flex;flex-direction:column;background:var(--bg);border-right:1px solid var(--line);min-height:0}
+.sidehead{display:flex;align-items:center;gap:6px;padding:12px 10px 8px max(12px,env(safe-area-inset-left,0px))}
+body.app .sidehead{padding-left:80px;app-region:drag;-webkit-app-region:drag}
+body.app .sidehead>*{app-region:no-drag;-webkit-app-region:no-drag}
+.sidehead h1{font-size:13px;font-weight:650;margin:0;flex:1;letter-spacing:-.01em}
+.sidesearch{margin:0 10px 6px max(10px,env(safe-area-inset-left,0px));position:relative}
+.sidesearch input{width:100%;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 8px 6px 28px;outline:none}
+.sidesearch input:focus{border-color:var(--accent)}
+.sidesearch .ic{position:absolute;left:8px;top:7px;width:14px;height:14px;color:var(--muted)}
+#slist{flex:1;overflow:auto;padding:2px 6px 8px max(6px,env(safe-area-inset-left,0px))}
+.si{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:default;position:relative;width:100%;border:0;background:transparent;text-align:left}
+.si:hover{background:var(--hover)}
+.si.on{background:var(--accent-soft)}
+.si .sic{width:28px;height:28px;border-radius:7px;background:var(--chip);flex:none;display:grid;place-items:center;color:var(--muted)}
+.si .sic .ic{width:15px;height:15px}
+.si.on .sic{color:var(--accent)}
+.si .st{flex:1;min-width:0}
+.si .sn{display:block;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si .ss{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si .sx{opacity:0;border:0;background:transparent;border-radius:6px;padding:2px 4px;cursor:pointer;color:var(--muted);display:grid;place-items:center}
+.si .sx .ic{width:14px;height:14px}
+.si:hover .sx,.si.on .sx{opacity:1}
+.si .sx:hover{background:var(--chip)}
+.sidefoot{padding:8px 10px max(10px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.sidefoot .hint{font-size:11.5px;color:var(--muted)}
+.emptylist{color:var(--muted);padding:16px 10px;font-size:12.5px}
+/* buttons */
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:5px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-weight:520}
+.btn:hover{background:var(--hover)}
+.btn.pri{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.btn.pri:hover{filter:brightness(1.06)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.ghost:hover{background:var(--hover);color:var(--fg)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn .ic{width:15px;height:15px}
+.btn kbd{margin-left:2px;opacity:.75;background:transparent;border:0;padding:0;font-weight:500}
+.ib{border:0;background:transparent;border-radius:7px;width:30px;height:30px;display:inline-grid;place-items:center;cursor:pointer;color:var(--fg);flex:none;padding:0}
+.ib:hover{background:var(--hover)}
+.ib.on{background:var(--accent-soft);color:var(--accent)}
+.ib:disabled{opacity:.35;cursor:default}
+/* main */
+#main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative;background:var(--canvas)}
+#bar{display:flex;align-items:center;gap:4px;padding:8px max(10px,env(safe-area-inset-right,0px)) 8px max(10px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);background:var(--panel);min-height:46px}
+body.app #bar{app-region:drag;-webkit-app-region:drag}
+body.app #bar>*{app-region:no-drag;-webkit-app-region:no-drag}
+body.app.noside #bar{padding-left:80px}
+#bar .sp{flex:1;min-width:4px;app-region:drag;-webkit-app-region:drag}
+#stitle{border:1px solid transparent;background:transparent;font-weight:650;font-size:14px;padding:4px 6px;border-radius:6px;min-width:130px;width:260px;max-width:min(320px,34vw);outline:none;text-overflow:ellipsis;flex:0 1 260px}
+#stitle:hover{border-color:var(--line)}
+#stitle:focus{border-color:var(--accent);background:var(--panel)}
+#savest{font-size:11.5px;color:var(--muted);white-space:nowrap;padding:0 4px}
+.sep{width:1px;height:20px;background:var(--line);margin:0 4px;flex:none}
+.seg{display:flex;background:var(--chip);border-radius:8px;padding:2px;flex:none}
+.seg button{border:0;background:transparent;border-radius:6px;padding:4px 10px;cursor:pointer;font-weight:550;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.seg button.on{background:var(--panel);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg button .ic{width:15px;height:15px}
+/* thread */
+#thread{flex:1;overflow:auto;outline:none}
+#col{max-width:740px;margin:0 auto;padding:22px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+.who{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:650;color:var(--muted);margin-bottom:6px}
+.who .ic{width:14px;height:14px;color:var(--accent)}
+.blk{margin:0 0 18px}
+.pb{font-size:14px;line-height:1.55;white-space:pre-wrap}
+.seed{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.seed .sx{white-space:pre-wrap;font-size:13.5px;line-height:1.5;max-height:9.2em;overflow:hidden;position:relative}
+.seed.open .sx{max-height:none}
+.seed .files{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.fchip{display:inline-flex;align-items:center;gap:5px;background:var(--chip);border-radius:6px;padding:3px 8px;font-size:12px;color:var(--muted)}
+.fchip .ic{width:13px;height:13px}
+.note{display:flex;justify-content:flex-end}
+.note .bub{background:var(--chip);border-radius:14px;padding:8px 12px;max-width:85%;white-space:pre-wrap;font-size:13.5px;line-height:1.5}
+.sysl{font-size:12px;color:var(--muted);text-align:center;margin:0 0 16px}
+/* question cards */
+.qc{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin:0 0 10px;transition:box-shadow .15s,border-color .15s}
+.qc.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.qc.flash{animation:flash 1.2s}
+@keyframes flash{0%,40%{box-shadow:0 0 0 4px var(--accent-soft);border-color:var(--accent)}}
+.qh{display:flex;align-items:center;gap:6px;padding:10px 12px 0}
+.qn{font-weight:700;font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums}
+.qbr{font-size:11.5px;color:var(--muted);background:var(--chip);border-radius:5px;padding:1px 6px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qh .sp{flex:1}
+.qt{font-size:15px;font-weight:650;padding:6px 12px 0;line-height:1.35}
+.qbody{padding:6px 12px 0;font-size:13.5px;line-height:1.55;white-space:pre-wrap;color:var(--fg)}
+.rec{margin:10px 12px 0;border-radius:9px;background:var(--accent-soft);padding:8px 10px}
+.rec .rl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.rec .rt{font-size:13.5px;line-height:1.5;white-space:pre-wrap}
+.simpler{margin:10px 12px 0;border-left:3px solid var(--warn);padding:4px 10px;font-size:13.5px;line-height:1.55;white-space:pre-wrap}
+.simpler .rl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);margin-bottom:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 0}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 11px;cursor:pointer;font-size:12.5px;text-align:left;max-width:100%}
+.chip:hover{border-color:var(--accent);background:var(--accent-soft)}
+.chip kbd{margin-right:4px}
+.qa{display:flex;flex-wrap:wrap;gap:6px;padding:12px}
+.qc.done .qh{padding-bottom:0}
+.qc.done{cursor:default}
+.qc .ans{padding:4px 12px 10px 34px;font-size:13.5px;line-height:1.5;white-space:pre-wrap}
+.qc .ans .how{font-size:11.5px;color:var(--muted);margin-left:4px}
+.qc .sumr{padding:0 12px 10px 34px;font-size:12.5px;color:var(--muted);white-space:pre-wrap}
+.dot{width:16px;height:16px;border-radius:50%;flex:none;display:grid;place-items:center}
+.dot .ic{width:11px;height:11px;stroke-width:3}
+.dot.resolved{background:var(--ok);color:#fff}
+.dot.open{border:2px solid var(--accent)}
+.dot.parked{background:var(--warn);color:#fff}
+.dot.parked .ic{stroke-width:0;fill:currentColor}
+.qc.queued{display:flex;align-items:center;gap:8px;padding:9px 12px;width:100%;text-align:left;cursor:pointer;color:var(--muted)}
+.qc.queued:hover{border-color:var(--accent)}
+.qc.queued .qtt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--fg);font-weight:550}
+.qc.done .qtt{flex:1;min-width:0;font-weight:600;font-size:13.5px}
+.tag{font-size:11px;color:var(--muted);white-space:nowrap}
+/* ideas, directions, matrix in the thread */
+.ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.idea{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 10px;display:flex;gap:8px;align-items:flex-start}
+.idea .it{flex:1;font-size:13px;line-height:1.45}
+.idea .il{display:block;font-size:11px;color:var(--muted);margin-bottom:2px;font-weight:600}
+.idea.on{border-color:var(--warn);background:var(--warn-soft)}
+.starb{border:0;background:transparent;padding:2px;border-radius:6px;cursor:pointer;color:var(--muted);display:grid;place-items:center}
+.starb:hover{background:var(--hover)}
+.starb.on{color:var(--warn)}
+.starb.on .ic{fill:currentColor}
+.dirs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.dir{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px}
+.dir h4{margin:0 0 4px;font-size:13.5px}
+.dir p{margin:0 0 6px;font-size:12.5px;line-height:1.45}
+.dir dl{margin:0;font-size:12px;display:grid;grid-template-columns:auto 1fr;gap:3px 8px}
+.dir dt{color:var(--muted);font-weight:600}
+.dir dd{margin:0}
+.mxwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table.mx{border-collapse:collapse;width:100%;font-size:12.5px}
+.mx th,.mx td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:middle;white-space:nowrap}
+.mx th{font-size:11.5px;color:var(--muted);font-weight:650}
+.mx td.num,.mx th.num{text-align:center}
+.mx tr.best td{background:var(--ok-soft)}
+.mx tr:last-child td{border-bottom:0}
+.mx input,.mx select{border:1px solid transparent;background:transparent;border-radius:5px;padding:3px 4px;outline:none;max-width:140px}
+.mx input:focus,.mx select:focus,.mx input:hover,.mx select:hover{border-color:var(--line);background:var(--panel)}
+.mx .tot{font-weight:700;font-variant-numeric:tabular-nums}
+.done-card{border:1px solid var(--ok);background:var(--ok-soft);border-radius:12px;padding:12px 14px}
+.done-card h3{margin:0 0 4px;font-size:14px;display:flex;align-items:center;gap:6px}
+.done-card .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.think{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:0 0 18px}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.errc{border:1px solid var(--danger);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:center;margin:0 0 18px;font-size:13px}
+.errc span{flex:1}
+/* home */
+#home{max-width:680px;margin:0 auto;padding:9vh max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+#home h2{font-size:24px;font-weight:650;letter-spacing:-.02em;margin:0 0 6px;text-align:center}
+#home .lead{color:var(--muted);text-align:center;margin:0 0 20px;font-size:14px}
+.compose{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:10px 10px 8px}
+.compose:focus-within{border-color:var(--accent)}
+.compose textarea{width:100%;border:0;background:transparent;resize:none;outline:none;line-height:1.5;font-size:14px;padding:4px 4px;display:block}
+#seedta{min-height:96px;max-height:40vh}
+.crow{display:flex;align-items:center;gap:4px;margin-top:4px}
+.crow .sp{flex:1}
+.sendb{width:30px;height:30px;border-radius:8px;border:0;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;cursor:pointer;flex:none;padding:0}
+.sendb:disabled{opacity:.4;cursor:default}
+.sendb.stop{background:var(--fg);color:var(--bg)}
+.ib.rec{color:var(--danger);background:rgba(217,63,63,.12)}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 0}
+.mode{border:1px solid var(--line);background:var(--panel);border-radius:11px;padding:10px 12px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:3px}
+.mode:hover{background:var(--hover)}
+.mode.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.mode b{display:flex;align-items:center;gap:6px;font-size:13.5px}
+.mode b .ic{color:var(--accent)}
+.mode span{font-size:12px;color:var(--muted);line-height:1.35}
+.exh{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px;margin:24px 2px 8px}
+.examples{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ex{border:1px solid var(--line);background:var(--panel);border-radius:11px;padding:11px 12px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.ex:hover{background:var(--hover)}
+.ex b{font-size:13px}
+.ex span{font-size:12px;color:var(--muted);line-height:1.35}
+.homenote{color:var(--muted);font-size:12px;text-align:center;margin-top:18px}
+/* dock composer */
+#dock{padding:8px max(16px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:linear-gradient(to bottom,transparent,var(--canvas) 30%)}
+#dock .compose{max-width:740px;margin:0 auto}
+#dockta{min-height:24px;max-height:30vh}
+.ctx{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:0 4px 4px}
+.ctx b{color:var(--fg);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.ctx .ib{width:20px;height:20px}
+.ctx .ib .ic{width:12px;height:12px}
+#dictp{font-size:12px;color:var(--muted);padding:0 4px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* inspector panel */
+#insp{width:320px;flex:none;border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+.itabs{display:flex;gap:2px;padding:8px 8px;border-bottom:1px solid var(--line);align-items:center;overflow-x:auto;scrollbar-width:none}
+.itabs::-webkit-scrollbar{display:none}
+.itabs button{border:0;background:transparent;padding:5px 8px;border-radius:7px;cursor:pointer;color:var(--muted);font-weight:600;white-space:nowrap;flex:none}
+.itabs button.on{color:var(--fg);background:var(--chip)}
+.itabs button i{font-style:normal;font-weight:500;font-size:11px;margin-left:3px;opacity:.8}
+.itabs .sp{flex:1}
+.ibody{flex:1;overflow:auto;padding:12px 14px 24px}
+.sec{margin-bottom:18px}
+.sec h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px;font-weight:650;display:flex;align-items:center;gap:6px}
+.sec h3 .sp{flex:1}
+.ed{outline:none;border-radius:6px;padding:2px 4px;margin:-2px -4px;white-space:pre-wrap;word-break:break-word}
+.ed:hover{background:var(--hover)}
+.ed:focus{background:var(--panel);box-shadow:0 0 0 1px var(--accent)}
+.ed:empty::before{content:attr(data-ph);color:var(--muted)}
+.prog{height:6px;border-radius:3px;background:var(--chip);overflow:hidden;display:flex;margin:4px 0 6px}
+.prog i{display:block;height:100%}
+.prog .r{background:var(--ok)}.prog .p{background:var(--warn)}
+.stats{font-size:12px;color:var(--muted)}
+.node{display:flex;gap:8px;align-items:flex-start;width:100%;border:0;background:transparent;text-align:left;padding:6px 6px;border-radius:7px;cursor:pointer}
+.node:hover{background:var(--hover)}
+.node .dot{margin-top:1px}
+.node .nt{flex:1;min-width:0}
+.node .nt b{font-weight:600;font-size:12.5px;display:block}
+.node .nt span{font-size:12px;color:var(--muted);display:block;white-space:pre-wrap}
+.node .qn{font-size:11px}
+.branch{border-left:2px solid var(--line);margin-left:7px;padding-left:6px}
+.bname{font-size:12.5px;font-weight:650;margin:10px 0 4px;display:flex;align-items:center;gap:6px}
+.bname .ic{width:14px;height:14px;color:var(--muted)}
+.li{border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-bottom:6px;position:relative;font-size:12.5px;line-height:1.45}
+.li .lx{position:absolute;right:4px;top:4px;opacity:0}
+.li:hover .lx{opacity:1}
+.li .lx.ib{width:24px;height:24px}
+.li .lx .ic{width:13px;height:13px}
+.li .k{font-weight:650;font-size:13px;padding-right:22px}
+.li .m{color:var(--muted);font-size:11.5px}
+.li .lbl{font-size:11px;font-weight:650;color:var(--muted);margin-top:4px}
+.sev{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:4px;padding:1px 5px;margin-right:4px;cursor:pointer;border:0}
+.sev.high{background:rgba(217,63,63,.14);color:var(--danger)}
+.sev.medium{background:var(--warn-soft);color:var(--warn)}
+.sev.low{background:var(--chip);color:var(--muted)}
+.kind{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;cursor:pointer;border:0;background:transparent;padding:0}
+.addb{border:1px dashed var(--line);background:transparent;border-radius:8px;width:100%;padding:6px 8px;cursor:pointer;color:var(--muted);text-align:left;display:flex;align-items:center;gap:6px}
+.addb:hover{border-color:var(--accent);color:var(--fg)}
+.addb .ic{width:14px;height:14px}
+.pempty{color:var(--muted);font-size:12.5px;line-height:1.5;padding:4px 0 10px}
+.fl{margin:0;padding-left:16px;font-size:12.5px;line-height:1.5}
+.fl li{margin-bottom:3px}
+.small{font-size:11.5px}.muted{color:var(--muted)}
+/* menus, toasts, sheets */
+.pop{position:fixed;z-index:85;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:5px;min-width:220px;max-width:calc(100vw - 16px);max-height:80vh;overflow:auto}
+.pop button{display:flex;width:100%;align-items:center;gap:8px;border:0;background:transparent;padding:6px 10px;border-radius:6px;cursor:pointer;text-align:left;white-space:nowrap}
+.pop button:hover{background:var(--accent);color:var(--accent-fg)}
+.pop button .ic{width:15px;height:15px}
+.pop button kbd,.pop button .r{margin-left:auto;color:var(--muted);font:11.5px var(--font)}
+.pop button:hover kbd,.pop button:hover .r{color:inherit;opacity:.85}
+.pop button.danger{color:var(--danger)}
+.pop button.danger:hover{background:var(--danger);color:#fff}
+.pop hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+.pop .ph{font-size:11px;color:var(--muted);padding:4px 10px 2px;text-transform:uppercase;letter-spacing:.05em;font-weight:650}
+.pop .pd{display:block;font-size:11.5px;color:var(--muted);white-space:normal}
+.pop button:hover .pd{color:inherit;opacity:.85}
+.pop button .pt{display:flex;flex-direction:column;min-width:0}
+#toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:var(--fg);color:var(--bg);border-radius:10px;padding:8px 10px 8px 14px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);max-width:calc(100vw - 32px);font-weight:520}
+#toast button{border:0;background:rgba(127,127,127,.25);color:inherit;border-radius:6px;padding:3px 9px;cursor:pointer;font-weight:650}
+#sheet{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.32);display:grid;place-items:center;padding:16px}
+#sheet .in{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);max-width:640px;width:100%;max-height:88vh;overflow:auto;padding:18px 20px;display:flex;flex-direction:column}
+#sheet .in.wsheet{max-width:880px;height:88vh;padding:0;overflow:hidden}
+#sheet h2{margin:0 0 10px;font-size:16px}
+.dhead{display:flex;align-items:center;gap:6px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.dhead h2{margin:0!important;font-size:15px!important;flex:1;min-width:120px}
+.dbody{flex:1;overflow:auto;min-height:0}
+.dfoot{display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);flex-wrap:wrap}
+.dfoot .sp{flex:1}
+#mdta{width:100%;height:100%;border:0;outline:none;resize:none;padding:18px 22px;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel)}
+.md{padding:18px 26px 40px;font-size:14px;line-height:1.6;max-width:760px;margin:0 auto}
+.md h1{font-size:22px;margin:.2em 0 .5em;letter-spacing:-.01em}
+.md h2{font-size:17px;margin:1.3em 0 .4em}
+.md h3{font-size:14.5px;margin:1.1em 0 .3em}
+.md table{border-collapse:collapse;margin:8px 0;font-size:13px}
+.md th,.md td{border:1px solid var(--line);padding:5px 8px;text-align:left}
+.md code{background:var(--chip);border-radius:4px;padding:1px 4px;font-size:12.5px}
+.md pre{background:var(--chip);border-radius:8px;padding:10px;overflow:auto}
+.md blockquote{border-left:3px solid var(--line);margin:0;padding:0 12px;color:var(--muted)}
+.md hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.fld{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 9px;outline:none}
+.fld:focus{border-color:var(--accent);background:var(--panel)}
+textarea.fld{resize:vertical;min-height:80px;line-height:1.45}
+.flab{display:block;font-weight:600;margin:12px 0 4px}
+.fhint{color:var(--muted);font-size:12px;margin:0 0 6px}
+.rowe{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+table.tk{border-collapse:collapse;width:100%;font-size:12.5px}
+.tk th,.tk td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.tk th{font-size:11.5px;color:var(--muted);font-weight:650;position:sticky;top:0;background:var(--panel)}
+.tk input{width:100%;border:1px solid transparent;background:transparent;border-radius:5px;padding:3px 4px;outline:none;font-weight:600}
+.tk input:focus,.tk input:hover{border-color:var(--line)}
+.tk .ac{color:var(--muted);font-size:12px;margin:2px 0 0;padding-left:16px}
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:4px 20px}
+.keys div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+kbd{font:600 11px var(--font);background:var(--chip);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px;white-space:nowrap}
+.banner{background:var(--warn-soft);border-radius:10px;padding:9px 12px;font-size:12.5px;margin:0 0 16px;line-height:1.45}
+#drop{position:fixed;inset:10px;z-index:90;border:2px dashed var(--accent);border-radius:14px;background:var(--accent-soft);display:grid;place-items:center;font-weight:600;font-size:15px;color:var(--accent);pointer-events:none}
+/* responsive */
+#scrim{display:none}
+@media (max-width:1360px){.wl{display:none}}
+@media (max-width:900px){
+  #insp{position:fixed;right:0;top:0;bottom:0;z-index:30;width:min(340px,92vw);box-shadow:var(--shadow)}
+  #side{position:fixed;left:0;top:0;bottom:0;z-index:30;box-shadow:var(--shadow);background:var(--panel)}
+  #scrim{display:block;position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.25)}
+  .wide{display:none!important}
+  #stitle{width:150px;min-width:80px}
+}
+@media (max-width:560px){
+  .wide2{display:none!important}
+  .modes,.examples{grid-template-columns:1fr}
+  #stitle{width:110px;min-width:40px}
+  .seg button{padding:4px 7px}
+  #home{padding-top:5vh}
+}
+</style>
+<div id="app">
+  <aside id="side">
+    <div class="sidehead"><h1>Sessions</h1>
+      <button class="ib" id="bImport" title="Open a plan or document (.md, .txt, .docx) or a saved session (.json)" data-ic="attach"></button>
+      <button class="ib" id="bNew" title="New session (Cmd+N)" data-ic="plus"></button>
+    </div>
+    <div class="sidesearch"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="sq" placeholder="Search sessions" autocomplete="off"></div>
+    <div id="slist"></div>
+    <div class="sidefoot">
+      <div id="inst"></div>
+      <div class="hint">Saved on this computer. Drop a .md, .txt or .docx anywhere to think it through.</div>
+    </div>
+  </aside>
+  <div id="scrim" hidden></div>
+  <main id="main">
+    <div id="bar">
+      <button class="ib" id="bSide" title="Show or hide sessions (Cmd+\)" data-ic="side"></button>
+      <input id="stitle" spellcheck="false" aria-label="Session name" hidden>
+      <span id="savest" class="wide2"></span>
+      <div class="sp"></div>
+      <div class="seg" id="modeseg" hidden><button data-m="grill" title="Grill: one round of hard questions at a time"><span data-ic="grill"></span><span class="wide">Grill</span></button><button data-m="brainstorm" title="Brainstorm: open up, then narrow down"><span data-ic="bulb"></span><span class="wide">Brainstorm</span></button><button data-m="decide" title="Decide: options, criteria and trade-offs"><span data-ic="scale"></span><span class="wide">Decide</span></button></div>
+      <button class="btn ghost wide" id="bWait" title="Re-explain the current question more simply (Option+W)" hidden><span data-ic="help"></span><span class="wl">Wait, what?</span></button>
+      <button class="ib" id="bTts" title="Read questions aloud" data-ic="speaker" hidden></button>
+      <button class="ib" id="bExport" title="Export spec, PRD, tickets… (Cmd+E)" data-ic="export" hidden></button>
+      <button class="ib" id="bMore" title="More" data-ic="more" hidden></button>
+      <button class="ib" id="bInsp" title="Show or hide the map (Cmd+Option+I)" data-ic="panel"></button>
+    </div>
+    <div id="thread" tabindex="-1">
+      <div id="home" hidden>
+        <h2>What are you thinking through?</h2>
+        <p class="lead">Paste a plan, describe an idea, or name a decision. Claude asks the hard questions and builds the map as you answer.</p>
+        <div id="homebanner"></div>
+        <div class="compose" id="homecomp">
+          <textarea id="seedta" placeholder="Paste a plan, describe an idea, or name a decision you're stuck on…" spellcheck="true"></textarea>
+          <div id="seedfiles" class="crow" hidden></div>
+          <div class="crow"><button class="ib" id="hAttach" title="Add a .md, .txt or .docx file" data-ic="attach"></button><button class="ib" id="hMic" title="Dictate (Cmd+Shift+D)" data-ic="mic" hidden></button><span id="hdictp" class="small muted"></span><span class="sp"></span><span class="small muted wide2" id="hcount"></span><button class="btn pri" id="hStart" disabled>Start<kbd>⌘⏎</kbd></button></div>
+        </div>
+        <div class="modes" id="hmodes">
+          <button class="mode" data-m="grill"><b><span data-ic="grill"></span>Grill me</b><span>Relentless questions, one round at a time, each with a recommended answer.</span></button>
+          <button class="mode" data-m="brainstorm"><b><span data-ic="bulb"></span>Brainstorm</b><span>Open the idea up with fresh angles, then narrow to a direction.</span></button>
+          <button class="mode" data-m="decide"><b><span data-ic="scale"></span>Decide</b><span>Options, criteria and trade-offs, scored in a decision matrix.</span></button>
+        </div>
+        <div class="exh"><span>Or try an example</span></div>
+        <div class="examples" id="hex">
+          <button class="ex" data-ex="0"><b>Grill my launch plan</b><span>A paid newsletter for indie game developers, launching in six weeks.</span></button>
+          <button class="ex" data-ex="1"><b>Brainstorm a weekend project</b><span>Something useful for my running club that I can build in two days.</span></button>
+          <button class="ex" data-ex="2"><b>Decide between offers</b><span>Startup with equity, or a big company with a higher salary.</span></button>
+        </div>
+        <p class="homenote">Sessions stay on this computer. Export a spec, PRD, questionnaire, tickets (CSV for Linear and Jira) or a handoff brief at any point.</p>
+      </div>
+      <div id="col" hidden></div>
+    </div>
+    <div id="dock" hidden>
+      <div class="compose">
+        <div class="ctx" id="ctx" hidden></div>
+        <textarea id="dockta" rows="1" placeholder="Answer, or say anything…" spellcheck="true"></textarea>
+        <div id="dictp" hidden></div>
+        <div class="crow"><button class="ib" id="dAttach" title="Add a file to this session" data-ic="attach"></button><button class="ib" id="dMic" title="Dictate (Cmd+Shift+D)" data-ic="mic" hidden></button><span class="sp"></span><span class="small muted wide2" id="dhint"></span><button class="sendb" id="dSend" title="Send (Enter)" data-ic="send"></button></div>
+      </div>
+    </div>
+  </main>
+  <aside id="insp">
+    <div class="itabs" id="itabs"></div>
+    <div class="ibody" id="ibody"></div>
+  </aside>
+</div>
+<div id="toast" hidden><span id="toastt"></span><button id="toastb" hidden></button></div>
+<div id="menu" class="pop" hidden></div>
+<div id="sheet" hidden><div class="in" id="sheetin"></div></div>
+<div id="drop" hidden>Drop a .md, .txt or .docx to think it through</div>
+<input type="file" id="file" accept=".md,.markdown,.txt,.docx,.json,.html,.htm,text/plain,text/markdown" multiple hidden>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
+<script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"AI Thinking Partner": "AI 思考搭档", "Sessions": "会话", "Open a plan or document (.md, .txt, .docx) or a saved session (.json)": "打开计划或文档（.md、.txt、.docx）或保存的会话（.json）", "New session (Cmd+N)": "新建会话（Cmd+N）", "Search sessions": "搜索会话", "Saved on this computer. Drop a .md, .txt or .docx anywhere to think it through.": "保存在这台电脑上。把 .md、.txt 或 .docx 拖到任意位置，就能开始梳理。", "Show or hide sessions (Cmd+\\)": "显示或隐藏会话（Cmd+\\）", "Session name": "会话名称", "Grill: one round of hard questions at a time": "拷问：一轮一轮地追问关键问题", "Brainstorm: open up, then narrow down": "头脑风暴：先发散，再收敛", "Decide: options, criteria and trade-offs": "做决定：选项、标准和取舍", "Grill": "拷问", "Brainstorm": "头脑风暴", "Decide": "做决定", "Re-explain the current question more simply (Option+W)": "把当前问题解释得更简单些（Option+W）", "Wait, what?": "等等，什么意思？", "Read questions aloud": "朗读问题", "Export spec, PRD, tickets… (Cmd+E)": "导出规格说明、PRD、任务单…（Cmd+E）", "More": "更多", "Show or hide the map (Cmd+Option+I)": "显示或隐藏地图（Cmd+Option+I）", "What are you thinking through?": "你在想什么事？", "Paste a plan, describe an idea, or name a decision. Claude asks the hard questions and builds the map as you answer.": "粘贴一个计划、描述一个想法，或说出一个要做的决定。Claude 会提出关键问题，并在你回答时搭出整张地图。", "Paste a plan, describe an idea, or name a decision you're stuck on…": "粘贴一个计划、描述一个想法，或说出你卡住的决定…", "Add a .md, .txt or .docx file": "添加 .md、.txt 或 .docx 文件", "Dictate (Cmd+Shift+D)": "听写（Cmd+Shift+D）", "Start": "开始", "Grill me": "拷问我", "Relentless questions, one round at a time, each with a recommended answer.": "一轮一轮不停追问，每个问题都附上建议答案。", "Open the idea up with fresh angles, then narrow to a direction.": "从新角度把想法打开，再收敛到一个方向。", "Options, criteria and trade-offs, scored in a decision matrix.": "选项、标准和取舍，在决策矩阵里打分。", "Or try an example": "或者试一个例子", "Grill my launch plan": "拷问我的发布计划", "A paid newsletter for indie game developers, launching in six weeks.": "一份面向独立游戏开发者的付费周刊，六周后上线。", "Brainstorm a weekend project": "头脑风暴一个周末项目", "Something useful for my running club that I can build in two days.": "给我的跑团做点有用的东西，两天能做完。", "Decide between offers": "在两个 offer 之间做决定", "Startup with equity, or a big company with a higher salary.": "有期权的创业公司，还是薪水更高的大公司。", "Sessions stay on this computer. Export a spec, PRD, questionnaire, tickets (CSV for Linear and Jira) or a handoff brief at any point.": "会话只保存在这台电脑上。随时可以导出规格说明、PRD、问卷、任务单（Linear 和 Jira 的 CSV）或交接简报。", "Answer, or say anything…": "回答，或者说点什么…", "Add a file to this session": "给这个会话添加文件", "Send (Enter)": "发送（Enter）", "Drop a .md, .txt or .docx to think it through": "拖入 .md、.txt 或 .docx 开始梳理", "Linear (.csv)": "Linear（.csv）", "Jira (.csv)": "Jira（.csv）", "Trello (.csv)": "Trello（.csv）"};
+  const PATTERNS=([]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.uc, #mdv, #mdta, #stitle");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+"use strict";
+/* ---------- basics ---------- */
+const $=id=>document.getElementById(id);
+const T=(en,zh)=>window.__t?window.__t(en,zh):en;
+const ZH=()=>!!window.__ZH;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-3);
+const isMac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);
+const MOD=e=>isMac?e.metaKey:e.ctrlKey;
+const clip=(s,n)=>{s=String(s??"");return s.length>n?s.slice(0,n)+"…":s};
+const IC={
+ plus:'<path d="M12 5v14M5 12h14"/>',side:'<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16"/>',panel:'<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M15 4v16"/>',
+ export:'<path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/>',more:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',send:'<path d="M12 19V5M6 11l6-6 6 6"/>',stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+ speaker:'<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',x:'<path d="M6 6l12 12M18 6 6 18"/>',check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+ attach:'<path d="M20 11.5 12 19.5a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.7 17.2a1.7 1.7 0 0 1-2.4-2.4L15 7"/>',undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',
+ trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+ doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+ spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>',
+ help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01"/>',pause:'<rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/>',
+ tree:'<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8.5 6H12a3 3 0 0 1 3 3v.5M8.5 18H12a3 3 0 0 0 3-3v-.5"/>',
+ grill:'<path d="M8 10h.01M12 10h.01M16 10h.01"/><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.4A8 8 0 1 1 21 12z"/>',
+ bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z"/>',
+ scale:'<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/>',
+ copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',keyboard:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
+ table:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>'
+};
+const icon=(n,cls="")=>`<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]||""}</svg>`;
+function paintIcons(root=document){root.querySelectorAll("[data-ic]").forEach(el=>{if(el.dataset.icd===el.dataset.ic)return;el.querySelector(":scope>svg.ic")?.remove();el.dataset.icd=el.dataset.ic;el.insertAdjacentHTML("afterbegin",icon(el.dataset.ic))})}
+
+/* ---------- storage (localStorage, with an in-memory fallback when it throws) ---------- */
+const store={mem:{},warned:false,
+  get(k,d){try{const v=localStorage.getItem(k);if(v!=null)return JSON.parse(v)}catch{}return k in this.mem?this.mem[k]:d},
+  set(k,v){this.mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v));return true}catch{if(!this.warned){this.warned=true;toast(T("Couldn't save on this computer. Export your session to keep it.","无法保存到这台电脑。请导出会话来保留它。"))}return false}},
+  del(k){delete this.mem[k];try{localStorage.removeItem(k)}catch{}}};
+
+/* ---------- state ---------- */
+let sample=null,downloads=null,desktop=null,dictation=null,tts=null,aiOK=false;
+let index=store.get("tp.index",[]);if(!Array.isArray(index))index=[];
+let S=null;            // the open session
+let homeMode=store.get("tp.homeMode","grill");
+let homeFiles=[];      // [{name,text}]
+let busy=null;         // {kind,ctl}
+let lastErr=null;      // {msg,retry}
+let tab=store.get("tp.tab","map");
+let undoStack=[];      // snapshots before each Claude round (this session only)
+let ttsOn=store.get("tp.tts",false),ttsState="idle";
+let scrollTarget=null;
+const MODES={grill:{name:"Grill",zh:"拷问",ic:"grill"},brainstorm:{name:"Brainstorm",zh:"头脑风暴",ic:"bulb"},decide:{name:"Decide",zh:"做决定",ic:"scale"}};
+const modeName=m=>T(MODES[m]?.name||m,MODES[m]?.zh||m);
+
+/* ---------- toast / menu / sheet ---------- */
+let toastTimer=0;
+function toast(msg,btn,fn,ms=4200){const t=$("toast");$("toastt").textContent=msg;const b=$("toastb");if(btn){b.hidden=false;b.textContent=btn;b.onclick=()=>{t.hidden=true;fn()}}else b.hidden=true;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.hidden=true,btn?Math.max(ms,6500):ms)}
+function menu(anchor,items){const m=$("menu");m.innerHTML="";for(const it of items){if(it==="-"){m.appendChild(document.createElement("hr"));continue}if(it.head){const h=document.createElement("div");h.className="ph";h.textContent=it.head;m.appendChild(h);continue}
+  const b=document.createElement("button");if(it.danger)b.className="danger";b.innerHTML=(it.ic?icon(it.ic):"")+`<span class="pt"><span>${esc(it.label)}</span>${it.desc?`<span class="pd">${esc(it.desc)}</span>`:""}</span>`+(it.key?`<kbd>${esc(it.key)}</kbd>`:"");if(it.disabled){b.disabled=true;b.style.opacity=.45}
+  b.onclick=()=>{closeMenu();it.fn()};m.appendChild(b)}
+  m.hidden=false;const r=anchor.getBoundingClientRect();const w=m.offsetWidth,h=m.offsetHeight;let x=Math.min(r.right-w,innerWidth-w-8);x=Math.max(8,x);let y=r.bottom+4;if(y+h>innerHeight-8)y=Math.max(8,r.top-h-4);m.style.left=x+"px";m.style.top=y+"px";m.querySelector("button:not([disabled])")?.focus()}
+function closeMenu(){$("menu").hidden=true}
+document.addEventListener("mousedown",e=>{if(!$("menu").hidden&&!$("menu").contains(e.target))closeMenu()});
+$("menu").addEventListener("keydown",e=>{const bs=[...$("menu").querySelectorAll("button:not([disabled])")];const i=bs.indexOf(document.activeElement);if(e.key==="ArrowDown"){e.preventDefault();bs[(i+1)%bs.length]?.focus()}else if(e.key==="ArrowUp"){e.preventDefault();bs[(i-1+bs.length)%bs.length]?.focus()}else if(e.key==="Escape"){e.preventDefault();closeMenu()}});
+let sheetClose=null;
+function openSheet(html,{wide=false,onClose=null}={}){const s=$("sheetin");s.className="in"+(wide?" wsheet":"");s.innerHTML=html;paintIcons(s);$("sheet").hidden=false;sheetClose=onClose}
+function closeSheet(){if($("sheet").hidden)return;$("sheet").hidden=true;$("sheetin").innerHTML="";const f=sheetClose;sheetClose=null;f?.()}
+$("sheet").addEventListener("mousedown",e=>{if(e.target===$("sheet"))closeSheet()});
+
+/* ---------- sessions ---------- */
+function stats(s){let r=0,o=0,p=0;for(const q of Object.values(s.qs||{})){if(q.status==="resolved")r++;else if(q.status==="parked")p++;else o++}return{r,o,p}}
+function saveIndex(){store.set("tp.index",index)}
+let saveTimer=0;
+function save(now){if(!S)return;const s=S;s.updated=Date.now();if(pendingSave&&pendingSave.s!==s)flushSave();clearTimeout(saveTimer);const doit=()=>{const ok=store.set("tp.s."+s.id,s);const i=index.findIndex(x=>x.id===s.id);const st=stats(s);const e={id:s.id,title:s.title,mode:s.mode,updated:s.updated,st};if(i>=0)index[i]=e;else index.unshift(e);saveIndex();if(S===s)$("savest").textContent=ok?T("Saved","已保存"):"";renderSide()};doit.s=s;pendingSave=doit;if(now)flushSave();else{$("savest").textContent=T("Saving…","正在保存…");saveTimer=setTimeout(flushSave,350)}}
+let pendingSave=null;function flushSave(){clearTimeout(saveTimer);const f=pendingSave;pendingSave=null;f?.()}
+addEventListener("pagehide",flushSave);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flushSave()});
+function loadSession(id){const s=store.get("tp.s."+id,null);return s&&s.qs&&s.thread?s:null}
+function guessTitle(t){const line=String(t||"").split("\n").map(l=>l.replace(/^[#>\-*\s]+/,"").trim()).find(l=>l.length>1)||T("Untitled session","未命名会话");return clip(line.replace(/\s+/g," "),60)}
+function newSession(seed,mode,files){const now=Date.now();return{id:uid(),v:1,title:guessTitle(seed||(files[0]&&files[0].name)),mode,created:now,updated:now,seed:seed||"",files:(files||[]).map(f=>({name:f.name,words:wc(f.text)})),destination:"",thread:[{t:"seed",id:uid()}],qs:{},qn:0,glossary:[],decisions:[],risks:[],ideas:[],directions:[],matrix:null,notYet:[],outScope:[],outbox:[],done:false,docs:{},activeQid:null,adr:0}}
+const wc=t=>{t=String(t||"");const cjk=(t.match(/[㐀-鿿]/g)||[]).length;return cjk+(t.replace(/[㐀-鿿]/g," ").match(/\S+/g)||[]).length};
+function openSession(id){const s=loadSession(id);if(!s){index=index.filter(x=>x.id!==id);saveIndex();renderSide();toast(T("That session couldn't be opened.","无法打开这个会话。"));return}
+  stopTurn();S=s;undoStack=[];lastErr=null;store.set("tp.last",id);scrollTarget="active";if(narrow())toggleSide(false);renderAll()}
+function goHome(){stopTurn();S=null;lastErr=null;store.set("tp.last",null);if(narrow())toggleSide(false);renderAll();setTimeout(()=>$("seedta").focus(),0)}
+function deleteSession(id){flushSave();const e=index.find(x=>x.id===id);const data=store.get("tp.s."+id,null);index=index.filter(x=>x.id!==id);saveIndex();store.del("tp.s."+id);if(S&&S.id===id){S=null;renderAll()}else renderSide();
+  toast(T("Deleted “"+clip(e?.title||"",30)+"”","已删除“"+clip(e?.title||"",30)+"”"),T("Undo","撤销"),()=>{if(data){store.set("tp.s."+id,data);index.unshift(e);index.sort((a,b)=>b.updated-a.updated);saveIndex();openSession(id)}})}
+function duplicateSession(){if(!S)return;const c=JSON.parse(JSON.stringify(S));c.id=uid();c.title=clip(S.title,52)+" "+T("(copy)","（副本）");c.created=c.updated=Date.now();S=c;save(true);renderAll();toast(T("Duplicated. You're in the copy now.","已复制，现在打开的是副本。"))}
+
+/* ---------- rendering: sidebar ---------- */
+function rel(t){const d=(Date.now()-t)/1000;if(d<60)return T("just now","刚刚");if(d<3600)return T(Math.floor(d/60)+" min ago",Math.floor(d/60)+" 分钟前");if(d<86400)return T(Math.floor(d/3600)+" h ago",Math.floor(d/3600)+" 小时前");const dt=new Date(t);return dt.toLocaleDateString(ZH()?"zh-CN":undefined,{month:"short",day:"numeric"})}
+function renderSide(){const q=$("sq").value.trim().toLowerCase();const list=index.filter(e=>!q||(e.title||"").toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);const L=$("slist");
+  if(!list.length){L.innerHTML=`<div class="emptylist">${q?esc(T("No sessions match.","没有匹配的会话。")):esc(T("No sessions yet. Start one with a plan, an idea or a decision.","还没有会话。从一个计划、想法或决定开始吧。"))}</div>`;return}
+  L.innerHTML=list.map(e=>{const st=e.st||{r:0,o:0,p:0};const bits=[modeName(e.mode)];if(st.r)bits.push(T(st.r+" resolved",st.r+" 已解决"));if(st.o)bits.push(T(st.o+" open",st.o+" 待答"));bits.push(rel(e.updated));
+    return `<div class="si${S&&S.id===e.id?" on":""}" data-id="${esc(e.id)}" role="button" tabindex="0"><span class="sic">${icon(MODES[e.mode]?.ic||"grill")}</span><span class="st"><span class="sn uc">${esc(e.title)}</span><span class="ss">${esc(bits.join(" · "))}</span></span><button class="sx" data-del="${esc(e.id)}" title="${esc(T("Delete session","删除会话"))}">${icon("x")}</button></div>`}).join("")}
+$("slist").addEventListener("click",e=>{const d=e.target.closest("[data-del]");if(d){e.stopPropagation();deleteSession(d.dataset.del);return}const it=e.target.closest(".si");if(it)openSession(it.dataset.id)});
+$("slist").addEventListener("keydown",e=>{if(e.key==="Enter"){const it=e.target.closest(".si");if(it)openSession(it.dataset.id)}});
+$("sq").addEventListener("input",renderSide);
+
+/* ---------- rendering: bar ---------- */
+function renderBar(){const on=!!S;$("stitle").hidden=!on;$("modeseg").hidden=!on;$("bExport").hidden=!on;$("bMore").hidden=!on;$("bWait").hidden=!on||!aiOK;$("bTts").hidden=!on||!tts;
+  if(on){if(document.activeElement!==$("stitle"))$("stitle").value=S.title;$("modeseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.m===S.mode));$("bWait").disabled=!activeQ()}
+  $("bTts").classList.toggle("on",ttsOn);$("bTts").dataset.ic=ttsState!=="idle"?"stop":"speaker";$("bTts").title=ttsState!=="idle"?T("Stop reading","停止朗读"):ttsOn?T("Reading questions aloud is on","朗读问题：已开启"):T("Read questions aloud","朗读问题");paintIcons($("bar"))}
+$("stitle").addEventListener("input",()=>{if(!S)return;S.title=$("stitle").value.slice(0,120)||T("Untitled session","未命名会话");S.named=true;save()});
+$("stitle").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();$("dockta").focus()}});
+$("modeseg").addEventListener("click",e=>{const b=e.target.closest("button[data-m]");if(!b||!S||S.mode===b.dataset.m)return;setMode(b.dataset.m)});
+function setMode(m){S.mode=m;S.thread.push({t:"mode",mode:m,id:uid()});S.outbox.push({kind:"mode",text:m});S.done=false;if(m==="decide"&&tab==="map")tab="matrix";if(m==="brainstorm"&&tab==="map"&&S.ideas.length)tab="ideas";save();renderAll();
+  toast(T("Switched to "+modeName(m)+". Your next answer continues in this mode.","已切换到"+modeName(m)+"。下一次回答会按这个模式继续。"),aiOK?T("Ask now","现在提问"):null,()=>sendTurn())}
+
+/* ---------- active question ---------- */
+function lastRound(){if(!S)return null;for(let i=S.thread.length-1;i>=0;i--)if(S.thread[i].t==="round")return S.thread[i];return null}
+function activeQ(){if(!S)return null;const a=S.activeQid&&S.qs[S.activeQid];if(a&&a.status==="open")return a;const r=lastRound();if(r)for(const id of r.qids){const q=S.qs[id];if(q&&q.status==="open")return q}
+  const all=Object.values(S.qs).filter(q=>q.status==="open").sort((a,b)=>a.n-b.n);return all[0]||null}
+
+/* ---------- rendering: thread ---------- */
+function renderAll(){document.body.classList.toggle("insess",!!S);renderSide();renderBar();renderThread();renderPanel();renderDock()}
+function renderThread(){const home=!S;$("home").hidden=!home;$("col").hidden=home;$("dock").hidden=home;
+  if(home){renderHome();return}
+  const C=$("col");const act=activeQ();let h="";
+  if(aiOK===false)h+=`<div class="banner">${esc(T("Claude isn't available in this view, so it can't ask questions here. Open this app in the Claude desktop app or claude.ai. You can still add questions, terms, decisions and risks by hand in the map, and export your notes.","当前视图无法使用 Claude，所以不能在这里提问。请在 Claude 桌面应用或 claude.ai 中打开。你仍可以在右侧手动添加问题、术语、决定和风险，并导出笔记。"))}</div>`;
+  for(const it of S.thread){
+    if(it.t==="seed"){const txt=S.seed||"";h+=`<div class="blk"><div class="who">${icon("doc")}<span>${esc(T("Your starting point","你的起点"))}</span><span class="sp"></span></div><div class="seed${S.seedOpen?" open":""}">${txt?`<div class="sx uc">${esc(txt)}</div>`:""}${S.files?.length?`<div class="files">${S.files.map(f=>`<span class="fchip">${icon("doc")}<span class="uc">${esc(f.name)}</span></span>`).join("")}</div>`:""}${txt.split("\n").length>6||txt.length>520?`<button class="btn ghost" data-act="seed" style="margin-top:6px;padding:2px 6px">${esc(S.seedOpen?T("Show less","收起"):T("Show all","展开全部"))}</button>`:""}</div></div>`}
+    else if(it.t==="note")h+=`<div class="blk note"><div class="bub uc">${esc(it.text)}</div></div>`;
+    else if(it.t==="file")h+=`<div class="blk note"><div class="bub"><span class="fchip">${icon("doc")}<span class="uc">${esc(it.name)}</span></span></div></div>`;
+    else if(it.t==="mode")h+=`<div class="sysl">${esc(T("Switched to "+modeName(it.mode),"已切换到"+modeName(it.mode)))}</div>`;
+    else if(it.t==="round")h+=roundHTML(it,act);
+  }
+  if(busy&&busy.kind==="turn")h+=`<div class="think"><span class="spin"></span><span>${esc(busy.label||T("Claude is thinking…","Claude 正在思考…"))}</span><button class="btn" data-act="stop">${icon("stop")}${esc(T("Stop","停止"))}</button></div>`;
+  else if(lastErr)h+=`<div class="errc"><span>${esc(lastErr.msg)}</span>${lastErr.retry?`<button class="btn" data-act="retry">${icon("refresh")}${esc(T("Try again","重试"))}</button>`:""}</div>`;
+  else if(aiOK&&!act&&!busy&&pendingCount()>0)h+=`<div class="think"><span>${esc(T("Your answers haven't been sent yet.","你的回答还没有发送。"))}</span><button class="btn pri" data-act="send">${esc(T("Send to Claude","发送给 Claude"))}</button></div>`;
+  else if(aiOK&&!act&&!busy&&S.thread.some(t=>t.t==="round")&&!S.done)h+=`<div class="think"><span>${esc(T("No open questions right now.","目前没有待答的问题。"))}</span><button class="btn" data-act="more">${esc(T("Ask me more","继续提问"))}</button></div>`;
+  else if(aiOK&&!S.thread.some(t=>t.t==="round")&&!busy)h+=`<div class="think"><button class="btn pri" data-act="more">${icon("spark")}${esc(T("Start the interview","开始提问"))}</button></div>`;
+  C.innerHTML=h;
+  requestAnimationFrame(()=>{if(scrollTarget==="active"){const el=C.querySelector(".qc.active")||C.querySelector(".think,.errc,.done-card");if(el)el.scrollIntoView({block:"center"});else $("thread").scrollTop=1e9}else if(scrollTarget==="bottom")$("thread").scrollTop=1e9;else if(scrollTarget&&scrollTarget.startsWith("q:")){const el=$("q-"+scrollTarget.slice(2));if(el){el.scrollIntoView({block:"center",behavior:"smooth"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1300)}}scrollTarget=null});
+  renderBar();
+}
+function howLabel(q){return q.kind==="accepted"?T("accepted the recommendation","采纳了建议"):q.kind==="chip"?T("picked","选择"):q.kind==="park"?T("parked","暂缓"):q.kind==="manual"?T("noted","已记录"):T("answered","已回答")}
+function roundHTML(it,act){let h=`<div class="blk" data-round="${esc(it.id)}">`;
+  if(it.playback)h+=`<div class="who">${icon("spark")}<span>Claude</span></div><div class="pb uc" style="margin-bottom:12px">${esc(it.playback)}</div>`;
+  else h+=it.manual?`<div class="who">${icon("edit")}<span>${esc(T("You","你"))}</span></div>`:`<div class="who">${icon("spark")}<span>Claude</span></div>`;
+  if(it.ideas&&it.ideas.length){h+=`<div class="ideas" style="margin-bottom:12px">`+it.ideas.map(id=>S.ideas.find(x=>x.id===id)).filter(Boolean).map(ideaHTML).join("")+`</div>`}
+  if(it.dirs&&it.dirs.length)h+=`<div class="dirs" style="margin-bottom:12px">${it.dirs.map(dirHTML).join("")}</div>`;
+  if(it.mx&&S.matrix)h+=`<div style="margin-bottom:12px">${matrixHTML(false)}<div style="margin-top:6px"><button class="btn ghost" data-act="tab" data-tab="matrix">${icon("table")}${esc(T("Edit weights and scores","调整权重和分数"))}</button></div></div>`;
+  for(const id of it.qids){const q=S.qs[id];if(!q)continue;h+=qHTML(q,act)}
+  if(it.done&&S.done&&it===lastRound())h+=doneHTML(it);
+  return h+"</div>"}
+function ideaHTML(x){return `<div class="idea${x.star?" on":""}"><div class="it">${x.lens?`<span class="il uc">${esc(x.lens)}</span>`:""}<span class="uc">${esc(x.text)}</span></div><button class="starb${x.star?" on":""}" data-act="star" data-id="${esc(x.id)}" title="${esc(x.star?T("Unstar","取消标星"):T("Star: this one resonates","标星：这个有感觉"))}">${icon("star")}</button></div>`}
+function dirHTML(d){return `<div class="dir"><h4 class="uc">${esc(d.name)}</h4>${d.summary?`<p class="uc">${esc(d.summary)}</p>`:""}<dl>${d.value?`<dt>${esc(T("Value","价值"))}</dt><dd class="uc">${esc(d.value)}</dd>`:""}${d.feasibility?`<dt>${esc(T("Feasibility","可行性"))}</dt><dd class="uc">${esc(d.feasibility)}</dd>`:""}${d.differentiation?`<dt>${esc(T("Different","差异化"))}</dt><dd class="uc">${esc(d.differentiation)}</dd>`:""}${d.assumptions?`<dt>${esc(T("Betting on","押注"))}</dt><dd class="uc">${esc(d.assumptions)}</dd>`:""}</dl></div>`}
+function qHTML(q,act){const st=q.status;
+  if(st==="open"&&act&&act.id===q.id){const chips=(q.options||[]).slice(0,6);
+    return `<div class="qc active" id="q-${esc(q.id)}"><div class="qh"><span class="qn">${esc(q.id)}</span>${q.branch?`<span class="qbr uc">${esc(q.branch)}</span>`:""}<span class="sp"></span>${tts?`<button class="ib" data-act="say" data-id="${esc(q.id)}" title="${esc(T("Read this question aloud","朗读这个问题"))}">${icon("speaker")}</button>`:""}</div>
+      <div class="qt uc">${esc(q.title)}</div>${q.body?`<div class="qbody uc">${esc(q.body)}</div>`:""}
+      ${q.rec?`<div class="rec"><div class="rl">${esc(T("Recommended","建议"))}</div><div class="rt uc">${esc(q.rec)}</div></div>`:""}
+      ${q.simpler?`<div class="simpler"><div class="rl">${esc(T("Put more simply","说得更简单些"))}</div><div class="uc">${esc(q.simpler)}</div></div>`:""}
+      ${chips.length?`<div class="chips">${chips.map((c,i)=>`<button class="chip" data-act="chip" data-id="${esc(q.id)}" data-i="${i}" title="${esc(T("Answer with this (Option+"+(i+1)+")","用这个回答（Option+"+(i+1)+"）"))}"><span class="uc">${esc(c)}</span></button>`).join("")}</div>`:""}
+      <div class="qa">${q.rec?`<button class="btn pri" data-act="accept" data-id="${esc(q.id)}">${icon("check")}${esc(T("Yes, go with that","好，就这样"))}<kbd>${isMac?"⌘⏎":"Ctrl+⏎"}</kbd></button>`:""}<button class="btn" data-act="park" data-id="${esc(q.id)}" title="${esc(T("Leave it open for later; it goes into the questionnaire","先放着，之后放进问卷"))}">${icon("pause")}${esc(T("Park it","暂缓"))}</button>${aiOK?`<button class="btn ghost" data-act="wait" data-id="${esc(q.id)}">${icon("help")}${esc(T("Wait, what?","等等，什么意思？"))}</button>`:""}</div></div>`}
+  if(st==="open")return `<button class="qc queued" data-act="focus" data-id="${esc(q.id)}"><span class="dot open"></span><span class="qn">${esc(q.id)}</span><span class="qtt uc">${esc(q.title)}</span><span class="tag">${esc(T("Up next","下一个"))}</span></button>`;
+  return `<div class="qc done" id="q-${esc(q.id)}"><div class="qh" style="padding-bottom:4px"><span class="dot ${st}">${st==="parked"?icon("pause"):icon("check")}</span><span class="qn">${esc(q.id)}</span><span class="qtt uc">${esc(q.title)}</span><button class="btn ghost" data-act="reopen" data-id="${esc(q.id)}" style="padding:2px 6px">${esc(T("Change answer","修改回答"))}</button></div>
+    <div class="ans">${st==="parked"?`<span class="muted">${esc(T("Parked for later","暂缓，稍后再定"))}</span>`:`<span class="uc">${esc(q.answer)}</span>`}<span class="how">${q.kind==="park"?"":"· "+esc(howLabel(q))}${q.revised?" · "+esc(T("revised","已修改")):""}${q.sent===false?" · "+esc(T("not sent yet","尚未发送")):""}</span></div>${q.summary?`<div class="sumr uc">→ ${esc(q.summary)}</div>`:""}</div>`}
+function doneHTML(it){return `<div class="done-card"><h3>${icon("check")}${esc(T("Shared understanding reached","已经达成共识"))}</h3><div class="small">${esc(T("Every branch on the map is visited. Turn it into something you can hand over, or keep going.","地图上的每个分支都走过了。把它整理成可以交出去的文档，或者继续深挖。"))}</div>
+  <div class="row"><button class="btn pri" data-act="doc" data-doc="${S.mode==="brainstorm"?"onepager":S.mode==="decide"?"decision":"spec"}">${icon("doc")}${esc(S.mode==="brainstorm"?T("Write the one-pager","写一页纸"):S.mode==="decide"?T("Write the decision record","写决策记录"):T("Write the spec","写规格说明"))}</button><button class="btn" data-act="doc" data-doc="prd">${esc(T("PRD","PRD"))}</button><button class="btn" data-act="doc" data-doc="tickets">${esc(T("Tickets","任务单"))}</button><button class="btn" data-act="doc" data-doc="handoff">${esc(T("Handoff brief","交接简报"))}</button><button class="btn ghost" data-act="more">${esc(T("Keep going","继续深挖"))}</button></div></div>`}
+$("col").addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b||!S)return;const a=b.dataset.act,id=b.dataset.id,q=id&&S.qs[id];
+  if(a==="accept"&&q)answer(q.id,q.rec,"accepted");
+  else if(a==="chip"&&q)answer(q.id,q.options[+b.dataset.i],"chip");
+  else if(a==="park"&&q)answer(q.id,"","park");
+  else if(a==="wait"&&q)waitWhat(q);
+  else if(a==="say"&&q)sayQ(q,true);
+  else if(a==="focus"&&q){S.activeQid=q.id;scrollTarget="q:"+q.id;renderThread();renderDock();renderPanel();$("dockta").focus()}
+  else if(a==="reopen"&&q)reopen(q.id);
+  else if(a==="stop")stopTurn();
+  else if(a==="retry"){const f=lastErr?.retry;lastErr=null;f?.()}
+  else if(a==="send"||a==="more")sendTurn();
+  else if(a==="seed"){S.seedOpen=!S.seedOpen;renderThread()}
+  else if(a==="star")toggleStar(id);
+  else if(a==="tab")setTab(b.dataset.tab,true);
+  else if(a==="doc")openDoc(b.dataset.doc)});
+
+/* ---------- answering ---------- */
+function pendingCount(){if(!S)return 0;return Object.values(S.qs).filter(q=>q.status!=="open"&&q.sent===false).length+S.outbox.length}
+function answer(id,text,kind){const q=S.qs[id];if(!q)return;if(busy&&busy.kind==="turn"){toast(T("Claude is still writing. Stop it first, or wait a moment.","Claude 还在写，请先停止或稍等。"));return}
+  if(q.everAnswered)q.revised=true;q.everAnswered=true;q.status=kind==="park"?"parked":"resolved";q.answer=String(text||"").trim();q.kind=kind;q.sent=false;q.at=Date.now();if(S.activeQid===id)S.activeQid=null;if(q.revised)q.summary="";
+  if(ttsState!=="idle")tts?.stop?.().catch?.(()=>{});
+  save();const r=lastRound();const roundDone=r&&r.qids.every(x=>S.qs[x]?.status!=="open");
+  if(roundDone&&aiOK){sendTurn();return}
+  scrollTarget="active";renderAll();$("dockta").focus();if(ttsOn)sayQ(activeQ())}
+function reopen(id){const q=S.qs[id];if(!q)return;q.status="open";q.prevAnswer=q.answer;S.activeQid=id;S.done=false;save();scrollTarget="q:"+id;renderAll();const ta=$("dockta");ta.value=q.prevAnswer||"";autosize(ta);ta.focus();ta.select()}
+function toggleStar(id){const x=S.ideas.find(i=>i.id===id);if(!x)return;x.star=!x.star;save();renderThread();renderPanel()}
+
+/* ---------- dock composer ---------- */
+function renderDock(){if(!S)return;const q=activeQ();const c=$("ctx");
+  if(q){c.hidden=false;c.innerHTML=`<span>${esc(T("Answering","正在回答"))}</span><b class="uc">${esc(q.id)} · ${esc(q.title)}</b><button class="ib" id="ctxx" title="${esc(T("Say something else instead","改为说点别的"))}">${icon("x")}</button>`;$("ctxx").onclick=()=>{S.activeQid="__none";renderDock();$("dockta").focus()}}
+  else c.hidden=true;
+  if(S.activeQid==="__none"){c.hidden=false;c.innerHTML=`<span>${esc(T("Message to Claude, not an answer","发给 Claude 的消息，不是回答"))}</span><button class="ib" id="ctxx" title="${esc(T("Back to the question","回到问题"))}">${icon("x")}</button>`;$("ctxx").onclick=()=>{S.activeQid=null;renderDock();$("dockta").focus()}}
+  $("dockta").placeholder=q&&S.activeQid!=="__none"?(q.rec?T("Type your answer, or press ⌘⏎ to go with the recommendation","输入你的回答，或按 ⌘⏎ 采纳建议"):T("Type your answer…","输入你的回答…")):T("Say anything: a correction, new facts, a different direction…","说点什么：更正、新情况、换个方向…");
+  const sb=$("dSend");const running=busy&&busy.kind==="turn";sb.classList.toggle("stop",!!running);sb.dataset.ic=running?"stop":"send";sb.title=running?T("Stop (Cmd+.)","停止（Cmd+.）"):T("Send (Enter)","发送（Enter）");paintIcons(sb.parentElement);
+  $("dhint").textContent=pendingCount()&&!running?T(pendingCount()+" waiting to send",pendingCount()+" 条待发送"):""}
+function autosize(ta){ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,innerHeight*.3)+"px"}
+$("dockta").addEventListener("input",e=>autosize(e.target));
+$("dockta").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();if(MOD(e)&&!$("dockta").value.trim()){const q=activeQ();if(q&&q.rec&&S.activeQid!=="__none")answer(q.id,q.rec,"accepted");return}submitDock()}
+  else if(e.key==="Escape"&&busy){e.preventDefault();stopTurn()}});
+$("dSend").onclick=()=>{if(busy&&busy.kind==="turn")stopTurn();else submitDock()};
+function submitDock(){const ta=$("dockta");const text=ta.value.trim();if(!S)return;
+  if(!text){if(pendingCount()&&aiOK)sendTurn();return}
+  if(busy&&busy.kind==="turn"){toast(T("Claude is still writing. Stop it first, or wait a moment.","Claude 还在写，请先停止或稍等。"));return}
+  ta.value="";autosize(ta);const q=activeQ();
+  if(q&&S.activeQid!=="__none"){answer(q.id,text,"typed");return}
+  if(S.activeQid==="__none")S.activeQid=null;
+  S.thread.push({t:"note",text,id:uid()});S.outbox.push({kind:"note",text});save();scrollTarget="bottom";
+  if(aiOK)sendTurn();else renderAll()}
+
+/* ---------- Claude ---------- */
+const AIERR={rate_limited:"Claude is busy or you've hit your usage limit. Try again in a bit.",not_granted:"Claude isn't allowed for this app. You can allow it in the app's Permissions menu.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined this request. Try rewording your last answer.",session_expired:"Sign in to Claude again, then try again.",prompt_too_large:"This session is too long to send at once. Export it, then start a new session from the export.",invalid_json:"Claude's answer came back in the wrong shape. Try again.",cancelled:"Stopped."};
+const AIERRZH={rate_limited:"Claude 正忙，或者你的用量已到上限。稍后再试。",not_granted:"这个应用没有获准使用 Claude。可以在应用的“权限”菜单中允许。",sampling_disabled:"这个账号无法使用 Claude。",refused:"Claude 拒绝了这个请求。试着换个说法。",session_expired:"请重新登录 Claude 后再试。",prompt_too_large:"这个会话太长，无法一次发送。先导出，再用导出的内容开一个新会话。",invalid_json:"Claude 返回的格式不对，请重试。",cancelled:"已停止。"};
+const aiMsg=e=>{const c=e?.code;return ZH()?(AIERRZH[c]||"Claude 出错了，请重试。"):(AIERR[c]||"Something went wrong talking to Claude. Try again.")};
+function langRule(){return ZH()?"LANGUAGE: The person's interface is Chinese. Write every question, recommendation, quick reply, note and summary in Simplified Chinese, unless the person's own material and answers are clearly in another language; then use that language.":"LANGUAGE: Write in the language the person uses in their material and answers."}
+const RULES={
+grill:`You are a thinking partner grilling the person about their plan, relentlessly, until you both reach a shared understanding.
+Model it as a DESIGN TREE: every decision branches into the decisions that hang off it. Work in ROUNDS. The FRONTIER is every decision whose prerequisites are already settled: the questions you can ask now without guessing at answers you haven't heard. Ask the frontier in this round: 1 to 4 questions, most fundamental first. A question whose answer depends on another question still open belongs to a later round.
+Give every question your recommended answer, and word the question so that "yes" accepts your recommendation. Add 2-4 short alternative answers as quick replies when there are real choices.
+Finding facts is your job, never theirs: don't ask for anything you can reasonably infer; state it as an assumption in "risks" instead. The decisions are theirs.
+Push back when an answer is vague, contradicts an earlier answer or the glossary, or hides a risk. Stress-test with concrete edge-case scenarios. When they use a fuzzy or overloaded term, propose one precise canonical term and add it to the glossary with the words to avoid.
+Record a decision (ADR) only when all three hold: hard to reverse, surprising without context, the result of a real trade-off.
+Keep "notYetSpecified" as the fog of war: in-scope questions you can see coming but can't phrase sharply yet. "outOfScope": things ruled beyond the destination.
+The session is done when the frontier is empty: every branch visited, nothing silently assumed. Then set "done": true, ask no questions, and play back the shared understanding.`,
+brainstorm:`You are a brainstorming partner. Diverge, then converge. Be honest, not supportive: if an idea is weak, say so kindly.
+Phase 1, understand: restate the idea as a crisp "How might we…" in the playback. Ask 3-5 sharpening questions in the first round (who it is for, specifically; what success looks like; real constraints; what was tried before; why now). Anchor questions in concrete moments. Give each a recommended answer anyway.
+Phase 2, expand: once you know who it is for and what success looks like, generate 5-8 idea variations in "ideas", each with its lens (Inversion, Constraint removal, Audience shift, Combination, Simplification, 10x version, Expert lens). Push beyond the obvious. Then ask which ones resonate (the person can also star ideas).
+Phase 3, converge: cluster the resonating ideas into 2-3 meaningfully different "directions". Stress-test each on user value (painkiller or vitamin), feasibility (the hardest part), differentiation (would someone switch?). Name the hidden assumptions as risks/assumptions: what you're betting is true, what could kill it, what you're choosing to ignore.
+Phase 4, sharpen: ask them to choose a direction, then settle the simplest MVP scope and a Not Doing list (put those in outOfScope). Then set "done": true.
+Ask questions the same way throughout: a round of 1-4, each with a recommended answer and quick replies. Note fuzzy terms in the glossary.`,
+decide:`You are a decision coach. Help the person make one decision well.
+First name the decision precisely in "destination". Early rounds: what a good outcome looks like, the deadline, and whether it is a one-way door (hard to reverse) or a two-way door.
+Surface the options, including ones they haven't considered (doing nothing, waiting, a hybrid). Agree on 3-6 criteria with weights 1-5. Score every option 1-5 on every criterion and keep "matrix" as the full current version (the person may have edited weights and scores: respect their numbers unless an answer changes them).
+Name the trade-offs plainly. Run a pre-mortem: for the leading option, what would make this decision look wrong in a year? Put those in risks.
+Ask questions in rounds of 1-4, each with your recommended answer (worded so "yes" accepts it) and quick replies.
+When the choice is made, record it as a decision (ADR) with the alternatives considered, put your recommendation and confidence in matrix.recommendation, and set "done": true.`};
+const SHAPE=`Reply with only one JSON object and no other text, in this shape:
+{"playback":"1-3 sentences: what you now understand, what changed, what this round is about",
+"destination":"one line: what reaching the end looks like (set it in the first round; update only if it changes)",
+"questions":[{"title":"short question title","body":"the question itself, with any context or choices","recommended":"your recommended answer","options":["short alternative answer"],"branch":"short topic name this belongs to"}],
+"resolved":[{"q":"Q3","summary":"one-line gist of what was decided"}],
+"glossary":[{"term":"","definition":"one or two sentences: what it IS","avoid":["words not to use for it"]}],
+"decisions":[{"title":"","decision":"what was decided","why":"","alternatives":"what else was considered"}],
+"risks":[{"kind":"risk or assumption","text":"","severity":"high, medium or low","mitigation":""}],
+"notYetSpecified":[""],"outOfScope":[""],
+"ideas":[{"text":"","lens":""}],
+"directions":[{"name":"","summary":"","value":"","feasibility":"","differentiation":"","assumptions":""}],
+"matrix":{"options":["option name"],"criteria":[{"name":"","weight":3}],"scores":[[3,4]],"notes":"","recommendation":""},
+"done":false}
+"scores" has one row per option, one number 1-5 per criterion, in the same order.
+Leave out any field with nothing new. "questions", "glossary", "decisions", "risks" and "ideas" hold only NEW items. "resolved" summarises every question answered since your last turn. "notYetSpecified", "outOfScope", "directions" and "matrix", when present, are the full current version. Never repeat a question that is already resolved or parked unless an answer reopened it.`;
+function ctxText(maxSeed){const s=S;let o=`SESSION TITLE: ${s.title}\nMODE: ${modeName(s.mode)}\n`;
+  let seed=s.seed||"";if(seed.length>maxSeed)seed=seed.slice(0,maxSeed)+"\n…(material continues, cut for length)";
+  o+=`\nTHE PERSON'S STARTING MATERIAL:\n<<<\n${seed||"(none)"}\n>>>\n`;
+  if(s.destination)o+=`\nDESTINATION: ${s.destination}\n`;
+  const qs=Object.values(s.qs).sort((a,b)=>a.n-b.n);
+  if(qs.length){o+="\nQUESTIONS SO FAR:\n";for(const q of qs){o+=`${q.id} [${q.status}]${q.branch?" ("+q.branch+")":""} ${q.title}${q.body&&q.body!==q.title?" — "+clip(q.body,400):""}\n`;if(q.rec)o+=`   Recommended: ${clip(q.rec,300)}\n`;if(q.status==="resolved")o+=`   Answer (${q.kind==="accepted"?"accepted the recommendation":q.kind==="chip"?"picked a quick reply":"own words"}): ${clip(q.answer,1500)}\n`;if(q.summary)o+=`   Gist: ${q.summary}\n`}}
+  if(s.glossary.length)o+="\nGLOSSARY:\n"+s.glossary.map(g=>`- ${g.term}: ${g.def}${g.avoid?.length?" (avoid: "+g.avoid.join(", ")+")":""}`).join("\n")+"\n";
+  if(s.decisions.length)o+="\nDECISIONS:\n"+s.decisions.map(d=>`- ${d.no} ${d.title}: ${d.decision}${d.why?" Because: "+d.why:""}`).join("\n")+"\n";
+  if(s.risks.length)o+="\nRISKS AND ASSUMPTIONS:\n"+s.risks.map(r=>`- [${r.kind}${r.kind==="risk"?", "+r.sev:""}] ${r.text}${r.mit?" (mitigation: "+r.mit+")":""}`).join("\n")+"\n";
+  if(s.ideas.length)o+="\nIDEAS (★ = the person starred it):\n"+s.ideas.map(x=>`- ${x.star?"★ ":""}${x.text}${x.lens?" ["+x.lens+"]":""}`).join("\n")+"\n";
+  if(s.directions.length)o+="\nDIRECTIONS:\n"+s.directions.map(d=>`- ${d.name}: ${d.summary||""}`).join("\n")+"\n";
+  if(s.matrix&&s.matrix.options.length){const m=s.matrix;o+="\nDECISION MATRIX (weights and scores as the person sees them now):\nCriteria: "+m.criteria.map(c=>`${c.name} (weight ${c.weight})`).join(", ")+"\n"+m.options.map(op=>`- ${op.name}: `+m.criteria.map(c=>`${c.name} ${m.scores?.[op.id]?.[c.id]??"?"}`).join(", ")+` → ${mxTotal(op.id)}%`).join("\n")+"\n"}
+  if(s.notYet.length)o+="\nNOT YET SPECIFIED:\n"+s.notYet.map(x=>"- "+x).join("\n")+"\n";
+  if(s.outScope.length)o+="\nOUT OF SCOPE:\n"+s.outScope.map(x=>"- "+x).join("\n")+"\n";
+  return o}
+function newSinceText(){const s=S;const lines=[];for(const q of Object.values(s.qs).sort((a,b)=>a.n-b.n)){if(q.sent!==false||q.status==="open")continue;if(q.status==="parked")lines.push(`- ${q.id} was PARKED: leave it open for later; don't ask it again now.`);else lines.push(`- ${q.id} ${q.revised?"REVISED, new answer":"answered"}: "${clip(q.answer,1500)}"${q.kind==="accepted"?" (accepted your recommendation)":""}`)}
+  for(const m of s.outbox){if(m.kind==="note")lines.push(`- The person wrote: "${clip(m.text,3000)}"`);else if(m.kind==="file")lines.push(`- The person added a file "${m.name}":\n<<<\n${clip(m.text,40000)}\n>>>`);else if(m.kind==="mode")lines.push(`- The person switched the mode to ${MODES[m.text]?.name||m.text}. Continue from everything above in this mode.`);else if(m.kind==="more")lines.push("- The person asked you to keep going: look for branches not yet visited, edge cases, and anything silently assumed.")}
+  const st=Object.values(s.ideas).filter(x=>x.star&&!x.starSent);if(st.length)lines.push("- The person starred: "+st.map(x=>`"${x.text}"`).join("; "));
+  return lines}
+function buildPrompt(){const first=!S.thread.some(t=>t.t==="round");const news=newSinceText();
+  let task=first?"This is the first round. Restate what you understand in the playback, set the destination, and ask the first round of questions.":news.length?"NEW SINCE YOUR LAST TURN:\n"+news.join("\n")+"\n\nUpdate the map, then ask the next round (or finish if the frontier is empty).":"Continue: ask the next round of questions on the frontier, or finish if it is empty.";
+  for(const maxSeed of [60000,30000,12000,4000]){const p=`${RULES[S.mode]||RULES.grill}\n\n${langRule()}\n\n${SHAPE}\n\n=== CURRENT STATE ===\n${ctxText(maxSeed)}\n=== YOUR TURN ===\n${task}`;if(new TextEncoder().encode(p).length<240000)return p}
+  return null}
+async function sendTurn(){if(!S||!aiOK)return;if(busy){if(busy.kind==="turn")return;stopTurn()}
+  const sess=S;const prompt=buildPrompt();if(!prompt){lastErr={msg:aiMsg({code:"prompt_too_large"})};renderThread();return}
+  const ctl=new AbortController();busy={kind:"turn",ctl,label:T("Claude is thinking…","Claude 正在思考…")};lastErr=null;scrollTarget="bottom";renderThread();renderDock();
+  let first=true;
+  try{const res=await sample.json(prompt,{modelTier:"default",cache:false,signal:ctl.signal,onText:()=>{if(first&&busy&&busy.ctl===ctl){first=false;busy.label=T("Claude is writing the next round…","Claude 正在写下一轮…");if(S===sess)renderThread()}}});
+    if(busy?.ctl!==ctl)return;busy=null;if(S!==sess)return;
+    if(!res||typeof res!=="object"||Array.isArray(res))throw {code:"invalid_json"};
+    undoStack.push(JSON.stringify(S));if(undoStack.length>20)undoStack.shift();
+    merge(res);save(true);scrollTarget="active";renderAll();if(ttsOn)sayQ(activeQ());
+  }catch(e){if(busy?.ctl===ctl)busy=null;if(S!==sess)return;
+    if(e?.code==="cancelled"){lastErr={msg:T("Stopped. Your answers are kept.","已停止，你的回答都保留着。"),retry:()=>sendTurn()}}
+    else if(e?.code==="not_granted"){aiOK=false;lastErr={msg:aiMsg(e)}}
+    else lastErr={msg:aiMsg(e),retry:e?.code==="prompt_too_large"?null:()=>sendTurn()};
+    renderAll()}}
+function stopTurn(){if(busy){try{busy.ctl.abort()}catch{}busy=null}}
+const arr=x=>Array.isArray(x)?x:[];const str=x=>typeof x==="string"?x.trim():x==null?"":String(x).trim();
+function merge(r){const s=S;const round={t:"round",id:uid(),playback:str(r.playback),qids:[],ideas:[],dirs:null,mx:false,done:false};
+  // what was sent is now sent
+  for(const q of Object.values(s.qs))if(q.status!=="open")q.sent=true;s.outbox=[];for(const x of s.ideas)if(x.star)x.starSent=true;
+  if(str(r.destination))s.destination=str(r.destination);
+  for(const x of arr(r.resolved)){const id=str(x?.q).toUpperCase().replace(/\s/g,"");const q=s.qs[id];if(q&&str(x.summary))q.summary=str(x.summary)}
+  for(const g of arr(r.glossary)){const term=str(g?.term);if(!term)continue;const ex=s.glossary.find(x=>x.term.toLowerCase()===term.toLowerCase());const d={term,def:str(g.definition||g.def),avoid:arr(g.avoid).map(str).filter(Boolean)};if(ex)Object.assign(ex,d);else s.glossary.push({id:uid(),...d})}
+  for(const d of arr(r.decisions)){const title=str(d?.title);if(!title||s.decisions.some(x=>x.title.toLowerCase()===title.toLowerCase()))continue;s.adr=(s.adr||0)+1;s.decisions.push({id:uid(),no:String(s.adr).padStart(4,"0"),title,decision:str(d.decision),why:str(d.why),alt:str(d.alternatives),at:Date.now()})}
+  for(const k of arr(r.risks)){const text=str(k?.text);if(!text||s.risks.some(x=>x.text===text))continue;const kind=/assum/i.test(str(k.kind))?"assumption":"risk";const sev=/high/i.test(str(k.severity))?"high":/low/i.test(str(k.severity))?"low":"medium";s.risks.push({id:uid(),kind,text,sev,mit:str(k.mitigation)})}
+  if(Array.isArray(r.notYetSpecified))s.notYet=r.notYetSpecified.map(str).filter(Boolean);
+  if(Array.isArray(r.outOfScope))s.outScope=r.outOfScope.map(str).filter(Boolean);
+  for(const x of arr(r.ideas)){const text=str(x?.text||x);if(!text||s.ideas.some(i=>i.text===text))continue;const it={id:uid(),text,lens:str(x?.lens),star:false};s.ideas.push(it);round.ideas.push(it.id)}
+  if(Array.isArray(r.directions)&&r.directions.length){s.directions=r.directions.map(d=>({name:str(d?.name),summary:str(d?.summary),value:str(d?.value),feasibility:str(d?.feasibility),differentiation:str(d?.differentiation),assumptions:str(d?.assumptions)})).filter(d=>d.name);round.dirs=s.directions.map(d=>({...d}))}
+  if(r.matrix&&typeof r.matrix==="object"&&arr(r.matrix.options).length){mergeMatrix(r.matrix);round.mx=true}
+  for(const x of arr(r.questions)){const title=str(x?.title);const body=str(x?.body);if(!title&&!body)continue;s.qn=(s.qn||0)+1;const id="Q"+s.qn;s.qs[id]={id,n:s.qn,title:title||clip(body,80),body:body===title?"":body,rec:str(x.recommended||x.recommendation),options:arr(x.options).map(str).filter(Boolean).slice(0,6),branch:str(x.branch),status:"open",answer:"",round:round.id};round.qids.push(id)}
+  s.done=!!r.done&&!round.qids.length;round.done=s.done;
+  if(!s.named&&s.title&&s.destination&&s.thread.filter(t=>t.t==="round").length===0&&s.seed.length>200)s.title=clip(s.destination.replace(/[.。]$/,""),60);
+  s.activeQid=null;s.thread.push(round);
+  if(s.mode==="brainstorm"&&round.ideas.length&&tab==="map")tab="ideas";if(round.mx&&tab==="map")tab="matrix"}
+function mergeMatrix(m){const s=S;const old=s.matrix||{options:[],criteria:[],scores:{}};const opts=arr(m.options).map(o=>str(o?.name||o)).filter(Boolean);const crits=arr(m.criteria).map(c=>({name:str(c?.name||c),weight:clampN(c?.weight,3)})).filter(c=>c.name);
+  const nm={options:opts.map(n=>old.options.find(o=>o.name.toLowerCase()===n.toLowerCase())||{id:uid(),name:n}),criteria:crits.map(c=>{const ex=old.criteria.find(o=>o.name.toLowerCase()===c.name.toLowerCase());return ex?{...ex,weight:c.weight}:{id:uid(),...c}}),scores:{},notes:str(m.notes)||old.notes||"",recommendation:str(m.recommendation)||old.recommendation||""};
+  const sc=arr(m.scores);nm.options.forEach((o,i)=>{nm.scores[o.id]={};nm.criteria.forEach((c,j)=>{const v=sc[i]?.[j];nm.scores[o.id][c.id]=v!=null?clampN(v,3):(old.scores?.[o.id]?.[c.id]??3)})});s.matrix=nm}
+const clampN=(v,d)=>{v=Math.round(+v);return isFinite(v)?Math.min(5,Math.max(1,v)):d};
+function mxTotal(oid){const m=S.matrix;if(!m||!m.criteria.length)return 0;let a=0,b=0;for(const c of m.criteria){a+=c.weight*(m.scores?.[oid]?.[c.id]??0);b+=c.weight*5}return b?Math.round(a/b*100):0}
+function undoRound(){if(!S||!undoStack.length){toast(T("Nothing to undo.","没有可以撤销的。"));return}stopTurn();const prev=JSON.parse(undoStack.pop());if(prev.id!==S.id)return;
+  // keep the answers given since: they become unsent again
+  S=prev;save(true);scrollTarget="active";renderAll();toast(T("Undid Claude's last round. Your answers are back and unsent.","已撤销 Claude 的上一轮，你的回答已恢复为未发送。"))}
+
+/* ---------- Wait, what? ---------- */
+async function waitWhat(q){q=q||activeQ();if(!q||!aiOK)return;if(busy){toast(T("Claude is busy. Try again in a moment.","Claude 正忙，稍后再试。"));return}
+  const ctl=new AbortController();busy={kind:"wait",ctl};q.simpler=T("…","…");renderThread();
+  const g=S.glossary.map(x=>`- ${x.term}: ${x.def}`).join("\n");
+  const p=`The person did not understand this question. Re-pitch it. Give a little context first (what has been settled so far that this question builds on), then ask it again in Simplified Technical English (ASD-STE100 style: short sentences, common words, one idea per sentence, active voice). Use the glossary terms exactly as defined. End with the question and your recommended answer, each on one line. At most 120 words. Plain text, no Markdown.\n${langRule()}\n\nSETTLED SO FAR:\n${Object.values(S.qs).filter(x=>x.status==="resolved").slice(-8).map(x=>`- ${x.title}: ${clip(x.summary||x.answer,200)}`).join("\n")||"(nothing yet)"}\n\nGLOSSARY:\n${g||"(empty)"}\n\nTHE QUESTION (${q.id}): ${q.title}\n${q.body}\nRecommended: ${q.rec}`;
+  try{const {text}=await sample(p,{modelTier:"quick",cache:false,signal:ctl.signal,onText:({text})=>{q.simpler=text;const el=document.querySelector(`#q-${q.id} .simpler .uc`);if(el)el.textContent=text;else renderThread()}});q.simpler=text.trim();save();if(ttsOn)tts?.speak?.(clip(q.simpler,2000)).catch(()=>{})}
+  catch(e){q.simpler="";if(e?.code!=="cancelled")toast(aiMsg(e))}
+  finally{if(busy?.ctl===ctl)busy=null;renderThread()}}
+
+/* ---------- reading aloud ---------- */
+function sayQ(q,force){if(!tts||!q)return;if(!force&&!ttsOn)return;const text=clip(`${q.title}. ${q.body||""}${q.rec?" "+T("Recommended: ","建议：")+q.rec:""}`,1990);tts.speak(text).catch(e=>{if(e?.code==="not_granted"){tts=null;ttsOn=false;renderAll()}else if(e?.code==="busy")toast(T("Stop dictating to hear the question.","请先停止听写，再听问题。"))})}
+$("bTts").onclick=()=>{if(ttsState!=="idle"){tts?.stop?.();return}ttsOn=!ttsOn;store.set("tp.tts",ttsOn);renderBar();if(ttsOn){toast(T("Questions will be read aloud.","之后会朗读问题。"));sayQ(activeQ())}else toast(T("Reading aloud is off.","已关闭朗读。"))};
+
+/* ---------- dictation ---------- */
+const dict={on:false,target:null,base:"",partial:""};
+function initDictation(){if(!dictation)return;$("hMic").hidden=false;$("dMic").hidden=false;
+  dictation.onPartial(({text})=>{dict.partial=text;const p=dict.target==="seedta"?$("hdictp"):$("dictp");p.hidden=false;p.textContent=text?"“"+text+"”":T("Listening…","正在听…")});
+  dictation.onFinal(({text})=>{const ta=$(dict.target||"dockta");if(!ta||!text)return;const pp=dict.target==="seedta"?$("hdictp"):$("dictp");if(dict.on)pp.textContent=T("Listening…","正在听…");const v=ta.value;const pos=ta.selectionStart??v.length;const add=(v&&!/\s$/.test(v.slice(0,pos))&&!/^[　-鿿，。]/.test(text)?" ":"")+text.replace(/^\s+/,"");ta.value=v.slice(0,pos)+add+v.slice(pos);ta.selectionStart=ta.selectionEnd=pos+add.length;ta.dispatchEvent(new Event("input"))});
+  dictation.onState(({state,reason})=>{dict.on=state!=="idle";if(!dict.on){$("dictp").hidden=true;$("hdictp").textContent="";if(reason==="not_granted"){toast(T("Dictation is off for this app. Type instead, or allow it in the app's Permissions menu.","这个应用的听写已关闭。可以直接输入，或在应用的“权限”菜单中开启。"))}else if(reason==="unavailable"){toast(T("Dictation isn't available for your account or language here.","这里无法为你的账号或语言提供听写。"));$("hMic").hidden=$("dMic").hidden=true}else if(reason==="upstream_error"||reason==="rate_limited")toast(T("Dictation stopped. Try again in a moment.","听写已停止，稍后再试。"))}
+    for(const id of ["hMic","dMic"]){const b=$(id);b.classList.toggle("rec",dict.on&&dict.target===(id==="hMic"?"seedta":"dockta"));b.title=dict.on?T("Stop dictating","停止听写"):T("Dictate (Cmd+Shift+D)","听写（Cmd+Shift+D）")}})}
+function toggleDict(target){if(!dictation)return;if(dict.on){dictation.stop().catch(()=>{});return}dict.target=target;
+  if(ttsState!=="idle")tts?.stop?.();
+  dictation.start().catch(e=>{const c=e?.code;if(c==="not_granted")toast(T("Dictation was not allowed. You can still type.","没有允许听写，你仍然可以打字。"));else if(c==="unavailable")toast(T("Dictation isn't available here. Type instead.","这里无法听写，请直接输入。"));else if(c==="rate_limited")toast(T("Dictation is busy. Try again shortly.","听写正忙，请稍后再试。"));else if(c==="busy")toast(T("Claude is reading aloud. Stop it first.","Claude 正在朗读，请先停止。"));else if(c&&c!=="stopped"&&c!=="dismissed")toast(T("Dictation couldn't start. Try again.","听写无法开始，请重试。"))});
+  $(target).focus();const p=target==="seedta"?$("hdictp"):$("dictp");p.hidden=false;p.textContent=T("Listening…","正在听…")}
+$("hMic").onclick=()=>toggleDict("seedta");$("dMic").onclick=()=>toggleDict("dockta");
+
+/* ---------- home ---------- */
+const EXAMPLES=[
+ {mode:"grill",en:"I'm launching a paid newsletter for indie game developers in six weeks. Plan: weekly deep-dive on one shipped indie game's marketing (numbers, what worked, what didn't). $8/month or $80/year, first issue free. I'll grow it from my 4,000 followers on X and cross-posts on r/gamedev. Goal: 300 paying subscribers by month three so it covers my rent.",zh:"我准备在六周后推出一份面向独立游戏开发者的付费周刊。计划：每周深挖一款已上线独立游戏的营销（数据、有效的、无效的）。定价每月 8 美元或每年 80 美元，第一期免费。靠我在 X 上的 4000 个关注者和 r/gamedev 的转帖起量。目标：第三个月有 300 个付费订阅，够交房租。"},
+ {mode:"brainstorm",en:"I want to build something useful for my running club (about 60 members, three group runs a week) in one weekend. I can code a simple web app. Not sure what problem to solve.",zh:"我想用一个周末给我的跑团（大约 60 人，每周三次集体跑）做点有用的东西。我会写简单的网页应用，但还不确定要解决什么问题。"},
+ {mode:"decide",en:"Should I take the offer from a 12-person seed-stage startup (lower salary, 0.4% equity, product lead role) or from a large tech company (35% higher salary, senior PM, stable)? I have six months of savings and no kids. I need to answer both by Friday.",zh:"我该接受一家 12 人种子轮创业公司的 offer（薪水低一些，0.4% 期权，产品负责人），还是一家大科技公司的 offer（薪水高 35%，高级产品经理，稳定）？我有六个月的积蓄，没有孩子。周五前要给两边答复。"}];
+function renderHome(){$("hmodes").querySelectorAll(".mode").forEach(b=>b.classList.toggle("on",b.dataset.m===homeMode));updateStart();
+  $("homebanner").innerHTML=aiOK===false?`<div class="banner">${esc(T("Claude isn't available in this view. Open this app in the Claude desktop app or on claude.ai to be interviewed. You can still open your saved sessions and export them.","当前视图无法使用 Claude。请在 Claude 桌面应用或 claude.ai 中打开以开始提问。你仍可以打开和导出已保存的会话。"))}</div>`:"";
+  const sf=$("seedfiles");sf.hidden=!homeFiles.length;sf.innerHTML=homeFiles.map((f,i)=>`<span class="fchip">${icon("doc")}<span class="uc">${esc(f.name)}</span><button class="ib" data-rmf="${i}" style="width:18px;height:18px" title="${esc(T("Remove","移除"))}">${icon("x")}</button></span>`).join("")}
+function updateStart(){const has=$("seedta").value.trim()||homeFiles.length;$("hStart").disabled=!has;const n=wc($("seedta").value)+homeFiles.reduce((a,f)=>a+wc(f.text),0);$("hcount").textContent=n>30?T(n+" words",n+" 字"):""}
+$("seedfiles").addEventListener("click",e=>{const b=e.target.closest("[data-rmf]");if(b){homeFiles.splice(+b.dataset.rmf,1);renderHome()}});
+$("seedta").addEventListener("input",updateStart);
+$("seedta").addEventListener("keydown",e=>{if(e.key==="Enter"&&MOD(e)&&!e.isComposing){e.preventDefault();startFromHome()}});
+$("hmodes").addEventListener("click",e=>{const b=e.target.closest(".mode");if(!b)return;homeMode=b.dataset.m;store.set("tp.homeMode",homeMode);renderHome();$("seedta").focus()});
+$("hex").addEventListener("click",e=>{const b=e.target.closest(".ex");if(!b)return;const x=EXAMPLES[+b.dataset.ex];homeMode=x.mode;store.set("tp.homeMode",homeMode);$("seedta").value=ZH()?x.zh:x.en;autosizeSeed();renderHome();$("seedta").focus()});
+function autosizeSeed(){const ta=$("seedta");ta.style.height="auto";ta.style.height=Math.min(Math.max(96,ta.scrollHeight),innerHeight*.4)+"px"}
+$("seedta").addEventListener("input",autosizeSeed);
+$("hStart").onclick=startFromHome;
+function startFromHome(){let text=$("seedta").value.trim();if(!text&&!homeFiles.length)return;
+  if(homeFiles.length)text=(text?text+"\n\n":"")+homeFiles.map(f=>`--- ${f.name} ---\n${f.text}`).join("\n\n");
+  if(dict.on)dictation?.stop?.().catch(()=>{});
+  S=newSession(text,homeMode,homeFiles);if(homeFiles.length&&!$("seedta").value.trim())S.title=guessTitle(homeFiles[0].text)||homeFiles[0].name;
+  $("seedta").value="";homeFiles=[];undoStack=[];lastErr=null;save(true);store.set("tp.last",S.id);tab=homeMode==="decide"?"matrix":"map";if(aiOK===false&&!narrow())toggleInsp(true);renderAll();if(aiOK)sendTurn();else $("dockta").focus()}
+
+/* ---------- files ---------- */
+async function fileText(f){const ext=(f.name.split(".").pop()||"").toLowerCase();
+  if(ext==="docx"){if(!window.JSZip)throw new Error("zip");return docxToText(await f.arrayBuffer())}
+  const t=await f.text();if(ext==="html"||ext==="htm"){const d=new DOMParser().parseFromString(t,"text/html");return (d.body?.innerText||d.body?.textContent||"").trim()}
+  return t}
+async function docxToText(buf){const zip=await JSZip.loadAsync(buf);const f=zip.file("word/document.xml");if(!f)throw new Error("not a Word document");const W="http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+  const x=new DOMParser().parseFromString(await f.async("string"),"application/xml");const body=x.getElementsByTagNameNS(W,"body")[0];if(!body)return "";const out=[];
+  const pt=p=>{let s="";for(const n of p.getElementsByTagNameNS(W,"*")){if(n.localName==="t"&&n.parentNode?.localName!=="delText")s+=n.textContent;else if(n.localName==="tab")s+="\t";else if(n.localName==="br")s+="\n"}return s};
+  const para=p=>{const ps=p.getElementsByTagNameNS(W,"pStyle")[0];const st=ps?(ps.getAttributeNS(W,"val")||ps.getAttribute("w:val")||""):"";const t=pt(p);if(!t.trim())return "";const h=/^title$/i.test(st)?1:(+((st.match(/heading\s*(\d)/i)||st.match(/^(\d)$/)||[])[1])||0);if(h)return "#".repeat(Math.min(h,6))+" "+t;if(p.getElementsByTagNameNS(W,"numPr").length)return "- "+t;return t};
+  for(const el of body.children){if(el.localName==="p")out.push(para(el));else if(el.localName==="tbl"){for(const tr of el.getElementsByTagNameNS(W,"tr"))out.push("| "+[...tr.getElementsByTagNameNS(W,"tc")].map(tc=>[...tc.getElementsByTagNameNS(W,"p")].map(pt).join(" ").replace(/\|/g,"/")).join(" | ")+" |");out.push("")}else if(el.localName==="sdt"){for(const p of el.getElementsByTagNameNS(W,"p"))out.push(para(p))}}
+  return out.join("\n").replace(/\n{3,}/g,"\n\n").trim()}
+async function takeFiles(files){const list=[...files];if(!list.length)return;
+  for(const f of list){const ext=(f.name.split(".").pop()||"").toLowerCase();
+    if(ext==="json"){try{const d=JSON.parse(await f.text());if(d&&d.qs&&d.thread){d.id=uid();d.updated=Date.now();S=d;save(true);renderAll();toast(T("Opened the saved session.","已打开保存的会话。"));continue}}catch{}toast(T("That .json file isn't a saved session.","这个 .json 文件不是保存的会话。"));continue}
+    if(!["md","markdown","txt","docx","html","htm"].includes(ext)&&!f.type.startsWith("text/")){toast(T("Can't read "+f.name+". Use .md, .txt or .docx.","无法读取 "+f.name+"，请使用 .md、.txt 或 .docx。"));continue}
+    let text;try{text=(await fileText(f)).trim()}catch{toast(T("Couldn't read "+f.name+".","无法读取 "+f.name+"。"));continue}
+    if(!text){toast(T(f.name+" has no text in it.",f.name+" 里没有文字。"));continue}
+    text=text.slice(0,200000);
+    if(!S){homeFiles.push({name:f.name,text});renderHome();updateStart();$("seedta").focus()}
+    else{S.thread.push({t:"file",name:f.name,id:uid()});S.files=(S.files||[]).concat({name:f.name,words:wc(text)});S.outbox.push({kind:"file",name:f.name,text});save();scrollTarget="bottom";renderAll();if(aiOK&&!busy)sendTurn()}}}
+$("file").addEventListener("change",e=>{takeFiles(e.target.files);e.target.value=""});
+for(const id of ["bImport","hAttach","dAttach"])$(id).onclick=()=>$("file").click();
+let dragN=0;
+addEventListener("dragenter",e=>{if(![...(e.dataTransfer?.types||[])].includes("Files"))return;dragN++;$("drop").hidden=false});
+addEventListener("dragleave",()=>{dragN=Math.max(0,dragN-1);if(!dragN)$("drop").hidden=true});
+addEventListener("dragover",e=>{if([...(e.dataTransfer?.types||[])].includes("Files"))e.preventDefault()});
+addEventListener("drop",e=>{if(!e.dataTransfer?.files?.length)return;e.preventDefault();dragN=0;$("drop").hidden=true;takeFiles(e.dataTransfer.files)});
+
+/* ---------- panel ---------- */
+function tabsFor(){const t=[{k:"map",n:T("Map","地图"),c:S?Object.keys(S.qs).length:0}];if(S&&(S.mode==="brainstorm"||S.ideas.length||S.directions.length))t.push({k:"ideas",n:T("Ideas","想法"),c:S.ideas.length});if(S&&(S.mode==="decide"||S.matrix))t.push({k:"matrix",n:T("Matrix","矩阵"),c:S.matrix?.options.length||0});
+  t.push({k:"terms",n:T("Terms","术语"),c:S?.glossary.length||0},{k:"decisions",n:T("Decisions","决定"),c:S?.decisions.length||0},{k:"risks",n:T("Risks","风险"),c:S?.risks.length||0});return t}
+function setTab(k,show){tab=k;store.set("tp.tab",k);if(show)toggleInsp(true);renderPanel()}
+function renderPanel(){const tabs=tabsFor();if(!tabs.some(t=>t.k===tab))tab="map";
+  $("itabs").innerHTML=tabs.map(t=>`<button data-t="${t.k}" class="${t.k===tab?"on":""}">${esc(t.n)}${t.c?`<i>${t.c}</i>`:""}</button>`).join("")+`<span class="sp"></span><button class="ib" id="inspx" title="${esc(T("Close","关闭"))}">${icon("x")}</button>`;
+  $("inspx").onclick=()=>toggleInsp(false);
+  const B=$("ibody");if(!S){B.innerHTML=`<div class="pempty">${esc(T("As you answer, this panel builds the structure: a map of resolved, open and parked questions, the terms you agree on, the decisions you make, and the risks and assumptions underneath.","在你回答的过程中，这里会逐步搭出结构：已解决、待答和暂缓的问题地图，你们约定的术语，做出的决定，以及背后的风险与假设。"))}</div>`;return}
+  B.innerHTML=tab==="map"?mapTab():tab==="ideas"?ideasTab():tab==="matrix"?matrixTab():tab==="terms"?termsTab():tab==="decisions"?decisionsTab():risksTab();paintIcons(B)}
+$("itabs").addEventListener("click",e=>{const b=e.target.closest("button[data-t]");if(b)setTab(b.dataset.t)});
+function mapTab(){const st=stats(S);const tot=st.r+st.o+st.p;let h=`<div class="sec"><h3>${esc(T("Destination","终点"))}</h3><div class="ed uc" contenteditable="true" data-ed="destination" data-ph="${esc(T("What does reaching the end look like?","走到终点是什么样子？"))}">${esc(S.destination)}</div></div>`;
+  h+=`<div class="sec"><h3>${esc(T("Decision map","决策地图"))}</h3>`;
+  if(tot){h+=`<div class="prog"><i class="r" style="width:${st.r/tot*100}%"></i><i class="p" style="width:${st.p/tot*100}%"></i></div><div class="stats">${esc(T(`${st.r} resolved · ${st.o} open · ${st.p} parked`,`${st.r} 已解决 · ${st.o} 待答 · ${st.p} 暂缓`))}</div>`;
+    const groups=new Map();for(const q of Object.values(S.qs).sort((a,b)=>a.n-b.n)){const k=q.branch||T("General","综合");if(!groups.has(k))groups.set(k,[]);groups.get(k).push(q)}
+    for(const [k,qs] of groups){h+=`<div class="bname">${icon("tree")}<span class="uc">${esc(k)}</span></div><div class="branch">`+qs.map(q=>`<button class="node" data-q="${esc(q.id)}"><span class="dot ${q.status}">${q.status==="resolved"?icon("check"):q.status==="parked"?icon("pause"):""}</span><span class="nt"><b><span class="qn">${esc(q.id)}</span> <span class="uc">${esc(q.title)}</span></b>${q.status==="resolved"?`<span class="uc">${esc(clip(q.summary||q.answer,160))}</span>`:q.status==="parked"?`<span>${esc(T("Parked","暂缓"))}</span>`:""}</span></button>`).join("")+`</div>`}}
+  else h+=`<div class="pempty">${esc(aiOK?T("Questions appear here as Claude asks them. Click one to jump back to it and change your answer.","Claude 提出的问题会出现在这里。点击可以跳回去修改回答。"):T("Add the questions you need to answer. Click one to answer it.","添加你需要回答的问题，点击即可回答。"))}</div>`;
+  h+=`<button class="addb" data-add="q" style="margin-top:8px">${icon("plus")}${esc(T("Add a question","添加问题"))}</button></div>`;
+  h+=listSec("notYet",T("Not yet specified","尚未明确"),T("Questions you can see coming but can't phrase sharply yet.","能预见到、但还说不清楚的问题。"));
+  h+=listSec("outScope",T("Out of scope","不在范围内"),T("Things ruled out of this effort.","这次明确不做的事。"));return h}
+function listSec(key,title,hint){const a=S[key];return `<div class="sec"><h3>${esc(title)}</h3>${a.length?`<ul class="fl">${a.map((x,i)=>`<li><span class="ed uc" contenteditable="true" data-ed="${key}:${i}">${esc(x)}</span></li>`).join("")}</ul>`:`<div class="pempty">${esc(hint)}</div>`}<button class="addb" data-add="${key}">${icon("plus")}${esc(T("Add","添加"))}</button></div>`}
+function ideasTab(){let h=`<div class="sec"><h3>${esc(T("Ideas","想法"))}<span class="sp"></span><span class="small" style="text-transform:none;letter-spacing:0">${esc(T("Star the ones that resonate","给有感觉的标星"))}</span></h3>`;
+  h+=S.ideas.length?S.ideas.map(x=>`<div class="li${x.star?" ":""}" style="display:flex;gap:6px;align-items:flex-start;${x.star?"border-color:var(--warn);background:var(--warn-soft)":""}"><button class="starb${x.star?" on":""}" data-act="star" data-id="${esc(x.id)}">${icon("star")}</button><div style="flex:1;min-width:0">${x.lens?`<div class="m uc">${esc(x.lens)}</div>`:""}<div class="ed uc" contenteditable="true" data-ed="idea:${esc(x.id)}">${esc(x.text)}</div></div><button class="ib" data-del="idea:${esc(x.id)}" style="width:24px;height:24px" title="${esc(T("Delete","删除"))}">${icon("x")}</button></div>`).join(""):`<div class="pempty">${esc(T("In Brainstorm mode Claude generates idea variations through different lenses: inversion, audience shift, 10x, simplification and more.","在头脑风暴模式下，Claude 会从不同角度生成想法变体：反转、换受众、放大十倍、极简等。"))}</div>`;
+  h+=`<button class="addb" data-add="idea">${icon("plus")}${esc(T("Add an idea","添加想法"))}</button></div>`;
+  if(S.directions.length)h+=`<div class="sec"><h3>${esc(T("Directions","方向"))}</h3><div style="display:flex;flex-direction:column;gap:8px">${S.directions.map(dirHTML).join("")}</div></div>`;return h}
+function matrixHTML(edit){const m=S.matrix;if(!m||!m.options.length)return "";let best=null,bv=-1;for(const o of m.options){const t=mxTotal(o.id);if(t>bv){bv=t;best=o.id}}
+  let h=`<div class="mxwrap"><table class="mx"><thead><tr><th>${esc(T("Option","选项"))}</th>${m.criteria.map(c=>`<th class="num">${edit?`<input class="uc" data-mc="${esc(c.id)}" value="${esc(c.name)}" style="width:90px;text-align:center"><br><span class="muted">×</span><select data-mw="${esc(c.id)}" title="${esc(T("Weight","权重"))}" aria-label="${esc(T("Weight","权重"))}">${[1,2,3,4,5].map(v=>`<option value="${v}"${v===c.weight?" selected":""}>${v}</option>`).join("")}</select>`:`<span class="uc">${esc(c.name)}</span> <span class="muted">×${c.weight}</span>`}</th>`).join("")}<th class="num">${esc(T("Score","得分"))}</th>${edit?"<th></th>":""}</tr></thead><tbody>`;
+  for(const o of m.options){h+=`<tr class="${o.id===best?"best":""}"><td>${edit?`<input class="uc" data-mo="${esc(o.id)}" value="${esc(o.name)}">`:`<b class="uc">${esc(o.name)}</b>`}</td>${m.criteria.map(c=>{const v=m.scores?.[o.id]?.[c.id]??3;return `<td class="num">${edit?`<select data-ms="${esc(o.id)}:${esc(c.id)}">${[1,2,3,4,5].map(x=>`<option${x===v?" selected":""}>${x}</option>`).join("")}</select>`:v}</td>`}).join("")}<td class="num tot">${mxTotal(o.id)}%</td>${edit?`<td><button class="ib" data-del="opt:${esc(o.id)}" style="width:22px;height:22px" title="${esc(T("Remove option","移除选项"))}">${icon("x")}</button></td>`:""}</tr>`}
+  return h+"</tbody></table></div>"}
+function matrixTab(){if(!S.matrix)S.matrix={options:[],criteria:[],scores:{},notes:"",recommendation:""};const m=S.matrix;let h=`<div class="sec"><h3>${esc(T("Decision matrix","决策矩阵"))}</h3>`;
+  h+=m.options.length?matrixHTML(true):`<div class="pempty">${esc(T("Options and weighted criteria, scored 1-5. Claude fills this in Decide mode; you can change any weight or score and Claude will respect it.","选项和加权标准，按 1-5 打分。做决定模式下 Claude 会填写；你可以改任何权重或分数，Claude 会尊重你的修改。"))}</div>`;
+  h+=`<div style="display:flex;gap:6px;margin-top:8px"><button class="addb" data-add="opt">${icon("plus")}${esc(T("Option","选项"))}</button><button class="addb" data-add="crit">${icon("plus")}${esc(T("Criterion","标准"))}</button></div>`;
+  if(m.criteria.length)h+=`<div class="small muted" style="margin-top:8px">${esc(T("Remove a criterion:","移除标准："))} ${m.criteria.map(c=>`<button class="btn ghost" data-del="crit:${esc(c.id)}" style="padding:1px 6px"><span class="uc">${esc(c.name)}</span> ×</button>`).join(" ")}</div>`;h+=`</div>`;
+  h+=`<div class="sec"><h3>${esc(T("Recommendation","建议"))}</h3><div class="ed uc" contenteditable="true" data-ed="mxrec" data-ph="${esc(T("Which option, how confident, and what would change your mind.","选哪个、多有把握、什么情况会改变主意。"))}">${esc(m.recommendation)}</div></div>`;
+  h+=`<div class="sec"><h3>${esc(T("Trade-offs","取舍"))}</h3><div class="ed uc" contenteditable="true" data-ed="mxnotes" data-ph="${esc(T("Notes on the trade-offs.","关于取舍的笔记。"))}">${esc(m.notes)}</div></div>`;return h}
+function termsTab(){let h=`<div class="sec"><h3>${esc(T("Glossary","术语表"))}<span class="sp"></span>${S.glossary.length?`<button class="btn ghost" data-save="glossary" style="padding:1px 6px;text-transform:none;letter-spacing:0">${esc(T("Save GLOSSARY.md","保存 GLOSSARY.md"))}</button>`:""}</h3>`;
+  h+=S.glossary.length?S.glossary.map(g=>`<div class="li"><button class="ib lx" data-del="term:${esc(g.id)}" title="${esc(T("Delete","删除"))}">${icon("x")}</button><div class="k ed uc" contenteditable="true" data-ed="term:${esc(g.id)}:term">${esc(g.term)}</div><div class="ed uc" contenteditable="true" data-ed="term:${esc(g.id)}:def" data-ph="${esc(T("What it is, in one or two sentences","用一两句话说明它是什么"))}">${esc(g.def)}</div><div class="m"><span>${esc(T("Avoid:","避免使用："))}</span> <span class="ed uc" contenteditable="true" data-ed="term:${esc(g.id)}:avoid" data-ph="—">${esc((g.avoid||[]).join(", "))}</span></div></div>`).join(""):`<div class="pempty">${esc(T("When a fuzzy word comes up, Claude proposes one precise term and records it here with the words to avoid, so specs and tickets use the same language.","出现含糊的词时，Claude 会提出一个准确的术语，连同应避免的说法记在这里，让规格和任务单用同一套语言。"))}</div>`;
+  return h+`<button class="addb" data-add="term">${icon("plus")}${esc(T("Add a term","添加术语"))}</button></div>`}
+function decisionsTab(){let h=`<div class="sec"><h3>${esc(T("Decision log","决策日志"))}<span class="sp"></span>${S.decisions.length?`<button class="btn ghost" data-save="adr" style="padding:1px 6px;text-transform:none;letter-spacing:0">${esc(T("Save ADRs","保存 ADR"))}</button>`:""}</h3>`;
+  h+=S.decisions.length?S.decisions.map(d=>`<div class="li"><button class="ib lx" data-del="dec:${esc(d.id)}" title="${esc(T("Delete","删除"))}">${icon("x")}</button><div class="m">ADR ${esc(d.no)}</div><div class="k ed uc" contenteditable="true" data-ed="dec:${esc(d.id)}:title">${esc(d.title)}</div><div class="ed uc" contenteditable="true" data-ed="dec:${esc(d.id)}:decision">${esc(d.decision)}</div><div class="lbl">${esc(T("Why","原因"))}</div><div class="ed uc" contenteditable="true" data-ed="dec:${esc(d.id)}:why" data-ph="—">${esc(d.why)}</div><div class="lbl">${esc(T("Considered","考虑过"))}</div><div class="ed uc" contenteditable="true" data-ed="dec:${esc(d.id)}:alt" data-ph="—">${esc(d.alt)}</div></div>`).join(""):`<div class="pempty">${esc(T("Only decisions worth a record land here: hard to reverse, surprising without context, and the result of a real trade-off.","只有值得记录的决定才会放进来：难以撤回、没有背景会让人意外、并且是真实取舍的结果。"))}</div>`;
+  return h+`<button class="addb" data-add="dec">${icon("plus")}${esc(T("Record a decision","记录一个决定"))}</button></div>`}
+function risksTab(){const sevN={high:T("high","高"),medium:T("medium","中"),low:T("low","低")};const sec=(kind,title,empty)=>{const a=S.risks.filter(r=>r.kind===kind);return `<div class="sec"><h3>${esc(title)}</h3>${a.length?a.map(r=>`<div class="li"><button class="ib lx" data-del="risk:${esc(r.id)}" title="${esc(T("Delete","删除"))}">${icon("x")}</button>${kind==="risk"?`<button class="sev ${r.sev}" data-sev="${esc(r.id)}" title="${esc(T("Change severity","更改严重程度"))}">${esc(sevN[r.sev])}</button>`:""}<button class="kind" data-kind="${esc(r.id)}" title="${esc(kind==="risk"?T("Move to assumptions","移到假设"):T("Move to risks","移到风险"))}">⇄</button><div class="ed uc" contenteditable="true" data-ed="risk:${esc(r.id)}:text" style="padding-right:22px">${esc(r.text)}</div>${kind==="risk"?`<div class="m"><span>${esc(T("Mitigation:","应对："))}</span> <span class="ed uc" contenteditable="true" data-ed="risk:${esc(r.id)}:mit" data-ph="—">${esc(r.mit)}</span></div>`:""}</div>`).join(""):`<div class="pempty">${esc(empty)}</div>`}<button class="addb" data-add="${kind}">${icon("plus")}${esc(T("Add","添加"))}</button></div>`};
+  return sec("risk",T("Risks","风险"),T("What could go wrong, with how bad it would be and what you'd do about it.","可能出什么问题、有多严重、打算怎么应对。"))+sec("assumption",T("Assumptions","假设"),T("What you're betting is true but haven't checked yet.","你押注为真、但还没验证的事。"))}
+$("ibody").addEventListener("click",e=>{if(!S)return;const t=e.target;const nd=t.closest(".node");if(nd){const q=S.qs[nd.dataset.q];if(!q)return;if(q.status==="open"){S.activeQid=q.id;scrollTarget="q:"+q.id;renderThread();renderDock()}else{scrollTarget="q:"+q.id;renderThread()}if(narrow())toggleInsp(false);return}
+  const st=t.closest("[data-act=star]");if(st){toggleStar(st.dataset.id);return}
+  const sv=t.closest("[data-sev]");if(sv){const r=S.risks.find(x=>x.id===sv.dataset.sev);if(r){r.sev=r.sev==="high"?"medium":r.sev==="medium"?"low":"high";save();renderPanel()}return}
+  const kd=t.closest("[data-kind]");if(kd){const r=S.risks.find(x=>x.id===kd.dataset.kind);if(r){r.kind=r.kind==="risk"?"assumption":"risk";save();renderPanel()}return}
+  const sb=t.closest("[data-save]");if(sb){saveMd(sb.dataset.save==="glossary"?glossaryMd():adrMd(),sb.dataset.save==="glossary"?"GLOSSARY.md":slug(S.title)+"-decisions.md");return}
+  const d=t.closest("[data-del]");if(d){const [k,id]=d.dataset.del.split(":");const keep=JSON.stringify(S);
+    if(k==="idea")S.ideas=S.ideas.filter(x=>x.id!==id);else if(k==="term")S.glossary=S.glossary.filter(x=>x.id!==id);else if(k==="dec")S.decisions=S.decisions.filter(x=>x.id!==id);else if(k==="risk")S.risks=S.risks.filter(x=>x.id!==id);
+    else if(k==="opt"){S.matrix.options=S.matrix.options.filter(x=>x.id!==id);delete S.matrix.scores[id]}else if(k==="crit"){S.matrix.criteria=S.matrix.criteria.filter(x=>x.id!==id)}
+    save();renderPanel();renderThread();toast(T("Deleted.","已删除。"),T("Undo","撤销"),()=>{const p=JSON.parse(keep);if(S&&p.id===S.id){S=p;save();renderAll()}});return}
+  const a=t.closest("[data-add]");if(a)addItem(a.dataset.add)});
+function addItem(k){let focusSel=null;
+  if(k==="q"){S.qn=(S.qn||0)+1;const id="Q"+S.qn;S.qs[id]={id,n:S.qn,title:T("New question","新问题"),body:"",rec:"",options:[],branch:"",status:"open",answer:"",manual:true};let r=lastRound();if(!r||aiOK){r={t:"round",id:uid(),playback:"",qids:[],manual:true};S.thread.push(r)}r.qids.push(id);S.activeQid=id;save();scrollTarget="q:"+id;renderAll();editQTitle(id);return}
+  if(k==="notYet"||k==="outScope"){S[k].push("");focusSel=`[data-ed="${k}:${S[k].length-1}"]`}
+  else if(k==="idea"){const x={id:uid(),text:"",lens:"",star:false};S.ideas.push(x);focusSel=`[data-ed="idea:${x.id}"]`}
+  else if(k==="term"){const g={id:uid(),term:"",def:"",avoid:[]};S.glossary.push(g);focusSel=`[data-ed="term:${g.id}:term"]`}
+  else if(k==="dec"){S.adr=(S.adr||0)+1;const d={id:uid(),no:String(S.adr).padStart(4,"0"),title:"",decision:"",why:"",alt:"",at:Date.now()};S.decisions.push(d);focusSel=`[data-ed="dec:${d.id}:title"]`}
+  else if(k==="risk"||k==="assumption"){const r={id:uid(),kind:k,text:"",sev:"medium",mit:""};S.risks.push(r);focusSel=`[data-ed="risk:${r.id}:text"]`}
+  else if(k==="opt"||k==="crit"){const m=S.matrix;if(k==="opt"){const o={id:uid(),name:T("Option ","选项 ")+(m.options.length+1)};m.options.push(o);m.scores[o.id]={};for(const c of m.criteria)m.scores[o.id][c.id]=3;focusSel=`[data-mo="${o.id}"]`}else{const c={id:uid(),name:T("Criterion ","标准 ")+(m.criteria.length+1),weight:3};m.criteria.push(c);for(const o of m.options)(m.scores[o.id]||(m.scores[o.id]={}))[c.id]=3;focusSel=`[data-mc="${c.id}"]`}if(!m.options.length&&k==="crit"){}}
+  save();renderPanel();if(focusSel){const el=$("ibody").querySelector(focusSel);if(el){el.focus();if(el.select)el.select()}}}
+function editQTitle(id){const q=S.qs[id];openSheet(`<h2>${esc(T("Add a question","添加问题"))}</h2><label class="flab">${esc(T("Question","问题"))}</label><input class="fld" id="nqT" value=""><label class="flab">${esc(T("Branch (topic)","分支（主题）"))}</label><input class="fld" id="nqB" placeholder="${esc(T("e.g. Pricing","例如：定价"))}"><label class="flab">${esc(T("Your current best answer (optional)","你目前的最佳答案（可选）"))}</label><textarea class="fld" id="nqR" style="min-height:60px"></textarea><div class="rowe"><button class="btn" id="nqX">${esc(T("Cancel","取消"))}</button><button class="btn pri" id="nqOK">${esc(T("Add","添加"))}</button></div>`,{onClose:()=>{if(q&&q.title===T("New question","新问题")&&q.manual&&!q.edited){delete S.qs[id];for(const r of S.thread)if(r.qids)r.qids=r.qids.filter(x=>x!==id);S.thread=S.thread.filter(r=>!(r.t==="round"&&r.manual&&!r.qids.length));save();renderAll()}}});
+  $("nqT").focus();$("nqX").onclick=closeSheet;const ok=()=>{const t=$("nqT").value.trim();if(!t){$("nqT").focus();return}q.title=t;q.branch=$("nqB").value.trim();q.rec=$("nqR").value.trim();q.edited=true;save();closeSheet();renderAll();$("dockta").focus()};$("nqOK").onclick=ok;$("nqT").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();ok()}})}
+$("ibody").addEventListener("input",e=>{const el=e.target.closest("[data-ed]");if(!el||!S)return;const v=el.innerText.replace(/\n+$/,"");const [k,id,f]=el.dataset.ed.split(":");
+  if(k==="destination")S.destination=v.trim();else if(k==="notYet"||k==="outScope")S[k][+id]=v;else if(k==="idea"){const x=S.ideas.find(i=>i.id===id);if(x)x.text=v}
+  else if(k==="term"){const g=S.glossary.find(i=>i.id===id);if(g){if(f==="avoid")g.avoid=v.split(/[,，、]/).map(s=>s.trim()).filter(Boolean);else g[f]=v}}
+  else if(k==="dec"){const d=S.decisions.find(i=>i.id===id);if(d)d[f]=v}else if(k==="risk"){const r=S.risks.find(i=>i.id===id);if(r)r[f]=v}
+  else if(k==="mxrec")S.matrix.recommendation=v;else if(k==="mxnotes")S.matrix.notes=v;save()});
+$("ibody").addEventListener("focusout",e=>{const el=e.target.closest("[data-ed]");if(!el||!S)return;const k=el.dataset.ed.split(":")[0];if((k==="notYet"||k==="outScope")){const before=S[k].length;S[k]=S[k].map(s=>s.trim()).filter(Boolean);if(S[k].length!==before){save();setTimeout(renderPanel,0)}}});
+$("ibody").addEventListener("keydown",e=>{const el=e.target.closest("[data-ed]");if(el&&e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229&&/^(notYet|outScope|term|dec:.*:title|destination)/.test(el.dataset.ed)){e.preventDefault();el.blur()}});
+$("ibody").addEventListener("change",e=>{if(!S?.matrix)return;const t=e.target;const m=S.matrix;
+  if(t.dataset.mo){const o=m.options.find(x=>x.id===t.dataset.mo);if(o)o.name=t.value.trim()||o.name}
+  else if(t.dataset.mc){const c=m.criteria.find(x=>x.id===t.dataset.mc);if(c)c.name=t.value.trim()||c.name}
+  else if(t.dataset.mw){const c=m.criteria.find(x=>x.id===t.dataset.mw);if(c)c.weight=+t.value}
+  else if(t.dataset.ms){const [o,c]=t.dataset.ms.split(":");(m.scores[o]||(m.scores[o]={}))[c]=+t.value}else return;
+  m.edited=true;save();setTimeout(()=>{const a=document.activeElement;const k=a&&$("ibody").contains(a)&&["mo","mc","mw","ms"].find(x=>a.dataset[x]!=null);const sel=k?`[data-${k}="${CSS.escape(a.dataset[k])}"]`:null;renderPanel();renderThread();if(sel)$("ibody").querySelector(sel)?.focus()},0)});
+
+/* ---------- layout toggles ---------- */
+const narrow=()=>matchMedia("(max-width:900px)").matches;
+function toggleSide(v){const on=v??$("side").hidden;$("side").hidden=!on;document.body.classList.toggle("noside",!on);if(!narrow())store.set("tp.side",on);updScrim()}
+function toggleInsp(v){const on=v??$("insp").hidden;$("insp").hidden=!on;$("bInsp").classList.toggle("on",on);if(!narrow())store.set("tp.insp",on);updScrim()}
+function updScrim(){$("scrim").hidden=!(narrow()&&(!$("side").hidden||!$("insp").hidden))}
+$("scrim").onclick=()=>{toggleSide(false);toggleInsp(false)};
+$("bSide").onclick=()=>toggleSide();$("bInsp").onclick=()=>toggleInsp();$("bNew").onclick=goHome;
+$("bWait").onclick=()=>waitWhat();
+$("bExport").onclick=e=>exportMenu(e.currentTarget);
+$("bMore").onclick=e=>{const b=e.currentTarget;menu(b,[
+  {ic:"undo",label:T("Undo Claude's last round","撤销 Claude 的上一轮"),key:isMac?"⌘Z":"Ctrl+Z",disabled:!undoStack.length,fn:undoRound},
+  {ic:"refresh",label:T("Ask me more","继续提问"),desc:T("Look for branches not visited yet","寻找还没走过的分支"),disabled:!aiOK||!!busy,fn:()=>{S.outbox.push({kind:"more"});S.done=false;sendTurn()}},
+  "-",
+  {ic:"copy",label:T("Duplicate session","复制会话"),fn:duplicateSession},
+  {ic:"export",label:T("Save session file (.json)","保存会话文件（.json）"),desc:T("A backup you can open here again","可以在这里重新打开的备份"),fn:()=>saveFile(slug(S.title)+".thinking.json",JSON.stringify(S,null,1))},
+  {ic:"keyboard",label:T("Keyboard shortcuts","键盘快捷键"),key:isMac?"⌘/":"Ctrl+/",fn:showKeys},
+  "-",
+  {ic:"trash",label:T("Delete session","删除会话"),danger:true,fn:()=>deleteSession(S.id)}])};
+
+/* ---------- export ---------- */
+const DOCS={
+ notes:{n:"Session notes",zh:"会话笔记",d:"Every question, answer, term, decision and risk. No AI.",dz:"所有问题、回答、术语、决定和风险，不用 AI。",ai:false},
+ spec:{n:"Spec",zh:"规格说明",d:"Problem, solution, user stories, implementation decisions",dz:"问题、方案、用户故事、实现决定"},
+ prd:{n:"PRD",zh:"PRD",d:"Goals, users, requirements, metrics, risks, open questions",dz:"目标、用户、需求、指标、风险、待定问题"},
+ onepager:{n:"One-pager",zh:"一页纸",d:"Problem, direction, assumptions, MVP scope, not doing",dz:"问题、方向、假设、MVP 范围、不做清单"},
+ decision:{n:"Decision record",zh:"决策记录",d:"The choice, options, criteria, trade-offs, pre-mortem",dz:"选择、选项、标准、取舍、事前验尸"},
+ questionnaire:{n:"Questionnaire",zh:"问卷",d:"Send the open questions to someone who knows",dz:"把待定的问题发给知道答案的人"},
+ tickets:{n:"Tickets",zh:"任务单",d:"Vertical slices with blockers. CSV for Linear, Jira, Trello",dz:"带依赖关系的纵向切片，可导出 Linear、Jira、Trello 的 CSV"},
+ handoff:{n:"Handoff brief",zh:"交接简报",d:"Everything the next person or AI needs to pick it up",dz:"下一个人或 AI 接手所需的一切"}};
+function exportMenu(anchor){const items=[{head:T("Write with Claude","用 Claude 撰写")}];for(const k of ["spec","prd","onepager","decision","questionnaire","tickets","handoff"]){const d=DOCS[k];items.push({ic:k==="tickets"?"table":"doc",label:T(d.n,d.zh)+(S.docs?.[k]?" ✓":""),desc:T(d.d,d.dz),disabled:!aiOK&&!S.docs?.[k],fn:()=>openDoc(k)})}
+  items.push("-",{head:T("Without AI","不用 AI")},{ic:"doc",label:T(DOCS.notes.n,DOCS.notes.zh),desc:T(DOCS.notes.d,DOCS.notes.dz),fn:()=>openDoc("notes")});menu(anchor,items)}
+const TPL={
+spec:`Write a SPEC in Markdown from this session. Do not interview; synthesise only what was discussed. Use the glossary terms exactly; respect the decisions. Mark anything not settled as "Open question:" instead of inventing it. Template:
+# <Title>
+## Problem Statement
+The problem, from the user's perspective.
+## Solution
+The solution, from the user's perspective.
+## User Stories
+A LONG numbered list covering every aspect: "As a <actor>, I want <feature>, so that <benefit>".
+## Implementation Decisions
+Decisions made: the parts that will be built or changed, their interfaces, architectural and technical decisions, specific interactions. No file paths or code.
+## Testing Decisions
+What makes a good test here (external behaviour, not implementation details), what will be tested.
+## Out of Scope
+## Further Notes
+Include open and parked questions here.`,
+prd:`Write a PRODUCT REQUIREMENTS DOCUMENT in Markdown from this session. Synthesise only what was discussed; mark gaps as "Open question:". Use the glossary terms exactly. Template:
+# <Product or feature name>
+**Status:** Draft · **Last updated:** <today>
+## Overview
+Two or three sentences: what it is and why now.
+## Problem
+Who has it, how it shows up, what it costs them today.
+## Goals
+Measurable outcomes.
+## Non-goals
+## Target users
+Short personas or segments.
+## User stories
+Numbered "As a…, I want…, so that…".
+## Requirements
+A table: | # | Requirement | Priority (Must/Should/Could) | Notes |
+## User experience
+The main flow, step by step.
+## Success metrics
+Metric, target, how measured.
+## Risks and assumptions
+## Decisions
+One line each, with why.
+## Open questions
+## Out of scope`,
+onepager:`Write a ONE-PAGER in Markdown that moves this idea forward. Be honest, not supportive. Template:
+# <Idea name>
+## Problem Statement
+One "How might we…" sentence.
+## Recommended Direction
+The chosen direction and why, in a short paragraph.
+## Key Assumptions to Validate
+- [ ] each assumption, with how to test it cheaply
+## MVP Scope
+The simplest version that still solves the real problem.
+## Not Doing (and Why)
+## Open Questions`,
+decision:`Write a DECISION RECORD in Markdown. Template:
+# Decision: <the decision, phrased as a statement>
+**Status:** <Decided / Leaning / Open> · **Date:** <today> · **Reversibility:** <one-way or two-way door>
+## Context
+What prompted it, constraints, deadline.
+## Options considered
+A short paragraph per option.
+## Criteria and scores
+A Markdown table: options as rows, criteria (with weights) as columns, a weighted total column. Use the matrix numbers exactly if present.
+## Trade-offs
+## Decision and rationale
+## Pre-mortem
+It's a year later and this went wrong: the most likely reasons, and the early signs to watch.
+## What would change our mind
+## Next steps`,
+handoff:`Write a HANDOFF BRIEF in Markdown so a fresh person or AI agent can continue this work without reading the conversation. Do not duplicate long content: summarise it. Redact secrets, passwords and personal identifiers. Template:
+# Handoff: <title>
+## Where we are
+## Destination
+## Decisions so far
+One line each with the gist.
+## Open and parked questions
+## Glossary
+## Risks and assumptions to watch
+## Suggested next steps
+Numbered, the first one doable today.
+## Suggested approach for the next session
+Which kind of session to run next (grill, brainstorm, decide, write a spec, break into tickets) and why.`,
+questionnaire:`Write a DISCOVERY QUESTIONNAIRE in Markdown that the person will send to one recipient who holds knowledge the person lacks. Questions target the gap between what the recipient knows and what the person needs. Order most-important-first (async means one pass), group under ## theme headings once there are more than a handful. Every question is one idea, never compound, with an answer stub (a line with just ">") directly beneath, and a one-line _Why this matters:_ only where it could be misread. Template:
+# <Questionnaire title>
+**Purpose:** why this exists and the decision riding on it.
+**From:** <the person>, **To:** <the recipient>, **How your answers will be used:** <where they go>
+## Context
+One paragraph orienting a recipient who wasn't in the person's head.
+## How to answer
+Deadline and rough effort. Partial answers and "I don't know" are useful.
+## <Theme>
+### <Question>
+_Why this matters: …_
+>
+## Anything else?`};
+const TICKETS=`Break this session into TICKETS: tracer-bullet vertical slices. Each slice cuts a narrow but complete path through every layer and is demoable or verifiable on its own; small enough for one focused work session. Any prefactoring comes first. Give each ticket its blocking edges: the earlier tickets that must be done before it can start (none means it can start immediately). Order blockers first. Use the glossary terms. If the session is not about building software, make the tickets the concrete work items needed to carry out the decision or plan, with the same blocking logic.
+Reply with only JSON: {"tickets":[{"title":"short descriptive name","what":"the end-to-end behaviour this ticket makes work, from the user's perspective","blockedBy":[1],"acceptance":["criterion"],"type":"Feature, Task, Bug or Spike","priority":"Urgent, High, Medium or Low","labels":["label"],"estimate":2}]}
+"blockedBy" lists 1-based numbers of earlier tickets in this list. "estimate" is in points (1, 2, 3, 5 or 8).`;
+let docBusy=null;
+function openDoc(k){if(!S)return;const d=DOCS[k];if(!d)return;closeMenu();
+  if(k==="notes"){showDoc(k,notesMd());return}
+  if(k==="tickets"){if(S.docs.tickets?.list)showTickets();else genTickets();return}
+  if(S.docs[k]?.md){showDoc(k,S.docs[k].md);return}
+  if(!aiOK){toast(T("Writing documents needs Claude. Session notes work without it.","撰写文档需要 Claude。会话笔记不需要。"));return}
+  if(k==="questionnaire"){questionnaireForm();return}if(k==="handoff"){handoffForm();return}
+  genDoc(k)}
+function questionnaireForm(){const open=Object.values(S.qs).filter(q=>q.status!=="resolved").map(q=>"- "+q.title).join("\n");
+  openSheet(`<h2>${esc(T("Questionnaire","问卷"))}</h2><p class="fhint">${esc(T("Two things about the send, then Claude writes questions aimed at what they know and you don't.","先说清楚发给谁、要拿回什么，Claude 再针对对方知道而你不知道的部分出题。"))}</p>
+  <label class="flab">${esc(T("Who is it going to?","发给谁？"))}</label><p class="fhint">${esc(T("Their role, what they know, and how they relate to you.","对方的角色、懂什么、和你是什么关系。"))}</p><textarea class="fld" id="qfWho" style="min-height:60px" placeholder="${esc(T("e.g. Our head of sales, who talks to 20 customers a week","例如：我们的销售负责人，每周和 20 个客户沟通"))}"></textarea>
+  <label class="flab">${esc(T("What do you need back?","你需要拿回什么？"))}</label><p class="fhint">${esc(T("The decisions or facts you can't settle alone. Your open and parked questions are filled in.","你自己定不了的决定或事实。已填入待答和暂缓的问题。"))}</p><textarea class="fld" id="qfNeed" style="min-height:110px">${esc(open)}</textarea>
+  <div class="rowe"><button class="btn" id="qfX">${esc(T("Cancel","取消"))}</button><button class="btn pri" id="qfGo">${icon("spark")}${esc(T("Write questionnaire","生成问卷"))}</button></div>`);
+  $("qfWho").focus();$("qfX").onclick=closeSheet;$("qfGo").onclick=()=>{const who=$("qfWho").value.trim();if(!who){$("qfWho").focus();toast(T("Say who it's going to first.","先说明发给谁。"));return}genDoc("questionnaire",`RECIPIENT: ${who}\nWHAT THE PERSON NEEDS BACK:\n${$("qfNeed").value.trim()}`)}}
+function handoffForm(){openSheet(`<h2>${esc(T("Handoff brief","交接简报"))}</h2><label class="flab">${esc(T("What will the next session be used for? (optional)","下一次会话要做什么？（可选）"))}</label><input class="fld" id="hfN" placeholder="${esc(T("e.g. Write the onboarding emails","例如：写新用户引导邮件"))}"><div class="rowe"><button class="btn" id="hfX">${esc(T("Cancel","取消"))}</button><button class="btn pri" id="hfGo">${icon("spark")}${esc(T("Write brief","生成简报"))}</button></div>`);
+  $("hfN").focus();$("hfX").onclick=closeSheet;const go=()=>{const v=$("hfN").value.trim();genDoc("handoff",v?`THE NEXT SESSION WILL FOCUS ON: ${v}. Tailor the brief to that.`:"")};$("hfGo").onclick=go;$("hfN").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();go()}})}
+function docPrompt(k,extra){let p=`${TPL[k]}\n\n${langRule()}\nToday is ${new Date().toISOString().slice(0,10)}.${extra?"\n\n"+extra:""}\n\nReply with only the Markdown document.\n\n=== THE SESSION ===\n`;for(const m of [60000,25000,8000]){const q=p+ctxText(m);if(new TextEncoder().encode(q).length<240000)return q}return null}
+async function genDoc(k,extra){const sess=S;const p=docPrompt(k,extra);if(!p){toast(aiMsg({code:"prompt_too_large"}));return}
+  docBusy?.abort();const ctl=new AbortController();docBusy=ctl;docView="preview";showDoc(k,"",true);
+  let last=0;try{const {text,truncated}=await sample(p,{modelTier:"default",cache:false,signal:ctl.signal,onText:({text})=>{const now=Date.now();if(now-last>250){last=now;updDoc(text)}}});
+    if(docBusy!==ctl)return;docBusy=null;const md=text.replace(/^```(?:markdown|md)?\s*\n([\s\S]*?)\n```\s*$/,"$1").trim();sess.docs[k]={md,at:Date.now(),extra:extra||""};if(S===sess)save();
+    if(curDoc===k){showDoc(k,md);if(truncated)$("dstat").textContent=T("Cut short at the length limit. Regenerate or ask for less.","在长度上限处被截断。可重新生成。")}}
+  catch(e){if(docBusy===ctl)docBusy=null;if(curDoc!==k)return;if(e?.code==="cancelled"){if(e.text)showDoc(k,e.text);else closeSheet();return}$("dstat").textContent=aiMsg(e);if(e?.text)updDoc(e.text);setDocBusy(false)}}
+let curDoc=null,docView="preview";
+function mdHTML(md){try{return DOMPurify.sanitize(marked.parse(md||""))}catch{return `<pre>${esc(md)}</pre>`}}
+function showDoc(k,md,loading){curDoc=k;const d=DOCS[k];const ai=d.ai!==false;
+  openSheet(`<div class="dhead"><h2>${esc(T(d.n,d.zh))}</h2><div class="seg" id="dseg"><button data-v="preview" class="${docView==="preview"?"on":""}">${esc(T("Preview","预览"))}</button><button data-v="edit" class="${docView==="edit"?"on":""}">${esc(T("Edit","编辑"))}</button></div>${ai&&aiOK?`<button class="btn" id="dRegen" title="${esc(T("Write it again from the current session","根据当前会话重新撰写"))}">${icon("refresh")}<span class="wide2">${esc(T("Regenerate","重新生成"))}</span></button>`:""}<button class="btn" id="dCopy">${icon("copy")}<span class="wide2">${esc(T("Copy","复制"))}</span></button><button class="btn pri" id="dSave">${icon("export")}${esc(T("Save","保存"))}</button><button class="ib" id="dX" title="${esc(T("Close (Esc)","关闭（Esc）"))}">${icon("x")}</button></div>
+  <div class="dbody" id="dbody"></div><div class="dfoot"><span id="dstat"></span><span class="sp"></span><span id="dwc"></span></div>`,{wide:true,onClose:()=>{if(docBusy){docBusy.abort();docBusy=null}curDoc=null}});
+  $("dbody").innerHTML=docView==="edit"?`<textarea id="mdta" spellcheck="true"></textarea>`:`<div class="md uc" id="mdv"></div>`;
+  if($("mdta")){$("mdta").value=md;$("mdta").addEventListener("input",()=>{if(!S.docs[k]&&k!=="notes")S.docs[k]={md:"",at:Date.now()};if(k==="notes"){S.notesMd=$("mdta").value}else S.docs[k].md=$("mdta").value;save();$("dwc").textContent=T(wc($("mdta").value)+" words",wc($("mdta").value)+" 字")})}else $("mdv").innerHTML=mdHTML(md);
+  $("dwc").textContent=md?T(wc(md)+" words",wc(md)+" 字"):"";
+  $("dseg").onclick=e=>{const b=e.target.closest("button[data-v]");if(!b||docBusy)return;docView=b.dataset.v;showDoc(k,curMd())};
+  $("dX").onclick=closeSheet;$("dCopy").onclick=()=>{navigator.clipboard?.writeText(curMd()).then(()=>toast(T("Copied as Markdown.","已复制为 Markdown。")),()=>toast(T("Couldn't copy. Select the text in Edit and copy it.","无法复制。请在“编辑”中选中文本复制。")))};
+  $("dSave").onclick=e=>{const md=curMd(),base=slug(S.title)+"-"+k;menu(e.currentTarget,[{ic:"doc",label:T("Markdown (.md)","Markdown（.md）"),desc:T("Notion, Obsidian, GitHub, Linear docs","Notion、Obsidian、GitHub、Linear 文档"),fn:()=>saveMd(md,base+".md")},{ic:"doc",label:T("Word (.docx)","Word（.docx）"),desc:T("Word, Pages, Google Docs","Word、Pages、Google 文档"),fn:()=>saveDocx(md,base+".docx")}])};
+  if($("dRegen"))$("dRegen").onclick=()=>{if(k==="questionnaire")questionnaireForm();else if(k==="handoff")handoffForm();else genDoc(k,S.docs[k]?.extra)};
+  setDocBusy(!!loading);if(loading){$("dstat").innerHTML=`<span class="spin" style="display:inline-block;vertical-align:-3px;margin-right:6px"></span>${esc(T("Claude is writing…","Claude 正在撰写…"))}`}}
+function setDocBusy(b){for(const id of ["dRegen","dCopy","dSave"])if($(id))$(id).disabled=b;if(!b&&$("dstat")&&$("dstat").querySelector(".spin"))$("dstat").textContent="";if(b&&$("dX"))$("dX").title=T("Stop and close","停止并关闭")}
+function updDoc(text){if($("mdta"))$("mdta").value=text;else if($("mdv"))$("mdv").innerHTML=mdHTML(text);$("dwc").textContent=T(wc(text)+" words",wc(text)+" 字");const b=$("dbody");if(b)b.scrollTop=b.scrollHeight}
+function curMd(){return $("mdta")?$("mdta").value:(curDoc==="notes"?(S.notesMd||notesMd()):(S.docs[curDoc]?.md||""))}
+/* tickets */
+async function genTickets(){if(!aiOK){toast(T("Writing tickets needs Claude.","生成任务单需要 Claude。"));return}const sess=S;let p=null;for(const m of [60000,25000,8000]){const q=`${TICKETS}\n\n${langRule()}\n\n=== THE SESSION ===\n${ctxText(m)}`;if(new TextEncoder().encode(q).length<240000){p=q;break}}if(!p){toast(aiMsg({code:"prompt_too_large"}));return}
+  docBusy?.abort();const ctl=new AbortController();docBusy=ctl;curDoc="tickets";
+  openSheet(`<div class="dhead"><h2>${esc(T("Tickets","任务单"))}</h2><button class="ib" id="dX">${icon("x")}</button></div><div class="dbody" style="display:grid;place-items:center"><div class="think"><span class="spin"></span><span>${esc(T("Claude is slicing the work into tickets…","Claude 正在把工作拆成任务单…"))}</span></div></div>`,{wide:true,onClose:()=>{if(docBusy){docBusy.abort();docBusy=null}curDoc=null}});$("dX").onclick=closeSheet;
+  try{const r=await sample.json(p,{modelTier:"default",cache:false,signal:ctl.signal});if(docBusy!==ctl)return;docBusy=null;
+    const list=arr(r?.tickets||r).map((t,i)=>({n:i+1,title:str(t?.title)||T("Ticket ","任务 ")+(i+1),what:str(t?.what||t?.description),blockedBy:arr(t?.blockedBy).map(x=>+x).filter(x=>x>0&&x<=i),acceptance:arr(t?.acceptance).map(str).filter(Boolean),type:str(t?.type)||"Task",priority:str(t?.priority)||"Medium",labels:arr(t?.labels).map(str).filter(Boolean),estimate:+t?.estimate||""}));
+    if(!list.length)throw {code:"invalid_json"};sess.docs.tickets={list,at:Date.now()};if(S===sess){save();showTickets()}}
+  catch(e){if(docBusy===ctl)docBusy=null;if(e?.code==="cancelled"||curDoc!=="tickets")return;$("sheetin").querySelector(".dbody").innerHTML=`<div class="errc" style="margin:20px"><span>${esc(aiMsg(e))}</span><button class="btn" id="tkRetry">${esc(T("Try again","重试"))}</button></div>`;$("tkRetry").onclick=genTickets}}
+function ticketsMd(list){return `# ${S.title} — ${T("Tickets","任务单")}\n\n`+list.map(t=>`## ${String(t.n).padStart(2,"0")}: ${t.title}\n\n**${T("What to build","要做什么")}:** ${t.what}\n\n**${T("Blocked by","前置依赖")}:** ${t.blockedBy.length?t.blockedBy.map(b=>`${String(b).padStart(2,"0")} ${list[b-1]?.title||""}`).join(", "):T("None (can start immediately)","无（可以立即开始）")}\n\n**${T("Type","类型")}:** ${t.type} · **${T("Priority","优先级")}:** ${t.priority}${t.estimate?` · **${T("Estimate","估算")}:** ${t.estimate}`:""}${t.labels.length?` · **${T("Labels","标签")}:** ${t.labels.join(", ")}`:""}\n\n${t.acceptance.map(a=>`- [ ] ${a}`).join("\n")}`).join("\n\n---\n\n")+"\n"}
+function ticketDesc(t,list){return `${t.what}\n\n${T("Acceptance criteria","验收标准")}:\n${t.acceptance.map(a=>"- [ ] "+a).join("\n")}\n\n${T("Blocked by","前置依赖")}: ${t.blockedBy.length?t.blockedBy.map(b=>"#"+b+" "+(list[b-1]?.title||"")).join(", "):T("None","无")}`}
+const csvCell=v=>{v=String(v??"");return /[",\r\n]/.test(v)||/^\s|\s$/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+function ticketsCsv(list,flavor){const P={Urgent:"Urgent",High:"High",Medium:"Medium",Low:"Low"};const pr=t=>P[Object.keys(P).find(k=>k.toLowerCase()===String(t.priority).toLowerCase())]||"Medium";let rows;
+  if(flavor==="linear")rows=[["Title","Description","Status","Priority","Labels","Estimate"],...list.map(t=>[t.title,ticketDesc(t,list),"Backlog",pr(t),t.labels.join(","),t.estimate])];
+  else if(flavor==="jira")rows=[["Summary","Description","Issue Type","Priority","Labels","Story Points"],...list.map(t=>[t.title,ticketDesc(t,list),/bug/i.test(t.type)?"Bug":/spike|task/i.test(t.type)?"Task":"Story",pr(t)==="Urgent"?"Highest":pr(t),t.labels.map(l=>l.replace(/\s+/g,"-")).join(" "),t.estimate])];
+  else if(flavor==="trello")rows=[["Card Name","Card Description","List Name","Labels"],...list.map(t=>[t.title,ticketDesc(t,list),t.blockedBy.length?"Blocked":"To Do",t.labels.join(",")])];
+  else rows=[["ID","Title","Description","Acceptance Criteria","Blocked By","Type","Priority","Labels","Estimate"],...list.map(t=>[t.n,t.title,t.what,t.acceptance.join("\n"),t.blockedBy.join(","),t.type,pr(t),t.labels.join(","),t.estimate])];
+  return (flavor==="generic"?"﻿":"")+rows.map(r=>r.map(csvCell).join(",")).join("\r\n")+"\r\n"}
+function showTickets(){const tk=S.docs.tickets;const list=tk.list;curDoc="tickets";
+  openSheet(`<div class="dhead"><h2>${esc(T("Tickets","任务单"))}</h2>${aiOK?`<button class="btn" id="tkRegen">${icon("refresh")}<span class="wide2">${esc(T("Regenerate","重新生成"))}</span></button>`:""}<button class="btn" id="tkCopy">${icon("copy")}<span class="wide2">${esc(T("Copy","复制"))}</span></button><button class="btn pri" id="tkSave">${icon("export")}${esc(T("Save","保存"))}</button><button class="ib" id="dX">${icon("x")}</button></div>
+   <div class="dbody"><table class="tk"><thead><tr><th style="width:36px">#</th><th>${esc(T("Ticket","任务"))}</th><th style="width:90px">${esc(T("Blocked by","前置依赖"))}</th><th style="width:80px" class="wide2">${esc(T("Priority","优先级"))}</th><th style="width:28px"></th></tr></thead><tbody>${list.map((t,i)=>`<tr><td class="muted">${String(t.n).padStart(2,"0")}</td><td><input class="uc" data-tt="${i}" value="${esc(t.title)}"><div class="small uc" style="padding:2px 4px">${esc(t.what)}</div>${t.acceptance.length?`<ul class="ac uc">${t.acceptance.map(a=>`<li>${esc(a)}</li>`).join("")}</ul>`:""}</td><td class="small">${t.blockedBy.length?t.blockedBy.map(b=>String(b).padStart(2,"0")).join(", "):`<span class="muted">${esc(T("None","无"))}</span>`}</td><td class="small wide2 uc">${esc(t.priority)}</td><td><button class="ib" data-tdel="${i}" style="width:24px;height:24px" title="${esc(T("Remove ticket","移除任务"))}">${icon("x")}</button></td></tr>`).join("")}</tbody></table></div>
+   <div class="dfoot"><span>${esc(T(list.length+" tickets · blockers come first",list.length+" 个任务 · 前置任务排在前面"))}</span><span class="sp"></span><span>${esc(T("Linear: Settings › Import › CSV. Jira: System › External system import › CSV.","Linear：设置 › 导入 › CSV。Jira：系统 › 外部系统导入 › CSV。"))}</span></div>`,{wide:true,onClose:()=>{curDoc=null}});
+  $("dX").onclick=closeSheet;if($("tkRegen"))$("tkRegen").onclick=genTickets;
+  const tkt=$("sheetin").querySelector("table.tk");
+  tkt.addEventListener("change",e=>{const i=e.target.dataset.tt;if(i!=null){list[+i].title=e.target.value.trim()||list[+i].title;save()}});
+  tkt.addEventListener("click",e=>{const d=e.target.closest("[data-tdel]");if(!d)return;const i=+d.dataset.tdel;const gone=list[i].n;list.splice(i,1);
+    const map={};list.forEach((t,j)=>{map[t.n]=j+1});list.forEach(t=>{t.blockedBy=t.blockedBy.filter(b=>b!==gone).map(b=>map[b]).filter(Boolean);});list.forEach((t,j)=>t.n=j+1);save();showTickets()});
+  $("tkCopy").onclick=()=>navigator.clipboard?.writeText(ticketsMd(list)).then(()=>toast(T("Copied as Markdown.","已复制为 Markdown。")),()=>toast(T("Couldn't copy.","无法复制。")));
+  $("tkSave").onclick=e=>{const base=slug(S.title)+"-tickets";menu(e.currentTarget,[{head:T("CSV for import","用于导入的 CSV")},{ic:"table",label:"Linear (.csv)",fn:()=>saveFile(base+"-linear.csv",ticketsCsv(list,"linear"))},{ic:"table",label:"Jira (.csv)",fn:()=>saveFile(base+"-jira.csv",ticketsCsv(list,"jira"))},{ic:"table",label:"Trello (.csv)",desc:T("For a CSV import Power-Up","用于 CSV 导入插件"),fn:()=>saveFile(base+"-trello.csv",ticketsCsv(list,"trello"))},{ic:"table",label:T("Spreadsheet (.csv)","表格（.csv）"),desc:T("All fields, opens in Excel and Numbers","全部字段，可用 Excel 和 Numbers 打开"),fn:()=>saveFile(base+".csv",ticketsCsv(list,"generic"))},"-",{ic:"doc",label:T("Markdown (.md)","Markdown（.md）"),fn:()=>saveMd(ticketsMd(list),base+".md")},{ic:"doc",label:T("Word (.docx)","Word（.docx）"),fn:()=>saveDocx(ticketsMd(list),base+".docx")}])}}
+/* markdown builders without AI */
+function glossaryMd(){return `# ${S.title}\n\n${S.destination||""}\n\n## ${T("Language","术语")}\n\n`+S.glossary.filter(g=>g.term).map(g=>`**${g.term}**:\n${g.def}${g.avoid?.length?`\n_${T("Avoid","避免")}_: ${g.avoid.join(", ")}`:""}`).join("\n\n")+"\n"}
+function adrMd(){return S.decisions.filter(d=>d.title).map(d=>`# ${d.no}: ${d.title}\n\n${d.decision}${d.why?" "+d.why:""}${d.alt?`\n\n## ${T("Considered Options","考虑过的方案")}\n\n${d.alt}`:""}`).join("\n\n---\n\n")+"\n"}
+function notesMd(){const s=S;let o=`# ${s.title}\n\n_${modeName(s.mode)} · ${new Date(s.updated).toLocaleString(ZH()?"zh-CN":undefined)}_\n\n`;if(s.destination)o+=`## ${T("Destination","终点")}\n\n${s.destination}\n\n`;
+  if(s.seed)o+=`## ${T("Starting point","起点")}\n\n${s.seed.split("\n").map(l=>"> "+l).join("\n")}\n\n`;
+  const qs=Object.values(s.qs).sort((a,b)=>a.n-b.n);if(qs.length){o+=`## ${T("Questions","问题")}\n\n`;const g=new Map();for(const q of qs){const k=q.branch||T("General","综合");if(!g.has(k))g.set(k,[]);g.get(k).push(q)}
+    for(const [k,a] of g){o+=`### ${k}\n\n`;for(const q of a){o+=`**${q.id}. ${q.title}** ${q.status==="resolved"?"✓":q.status==="parked"?"⏸ "+T("parked","暂缓"):"○ "+T("open","待答")}\n\n`;if(q.body)o+=q.body+"\n\n";if(q.rec)o+=`_${T("Recommended","建议")}:_ ${q.rec}\n\n`;if(q.status==="resolved")o+=`**${T("Answer","回答")}:** ${q.answer}\n\n`;if(q.summary)o+=`→ ${q.summary}\n\n`}}}
+  if(s.ideas.length)o+=`## ${T("Ideas","想法")}\n\n`+s.ideas.map(x=>`- ${x.star?"★ ":""}${x.text}${x.lens?` _(${x.lens})_`:""}`).join("\n")+"\n\n";
+  if(s.directions.length)o+=`## ${T("Directions","方向")}\n\n`+s.directions.map(d=>`### ${d.name}\n\n${d.summary}\n\n- ${T("Value","价值")}: ${d.value}\n- ${T("Feasibility","可行性")}: ${d.feasibility}\n- ${T("Different","差异化")}: ${d.differentiation}\n- ${T("Betting on","押注")}: ${d.assumptions}`).join("\n\n")+"\n\n";
+  if(s.matrix?.options.length){const m=s.matrix;o+=`## ${T("Decision matrix","决策矩阵")}\n\n| ${T("Option","选项")} | ${m.criteria.map(c=>`${c.name} ×${c.weight}`).join(" | ")} | ${T("Score","得分")} |\n|---|${m.criteria.map(()=>"---|").join("")}---|\n`+m.options.map(op=>`| ${op.name} | ${m.criteria.map(c=>m.scores?.[op.id]?.[c.id]??"").join(" | ")} | ${mxTotal(op.id)}% |`).join("\n")+"\n\n";if(m.recommendation)o+=`**${T("Recommendation","建议")}:** ${m.recommendation}\n\n`;if(m.notes)o+=m.notes+"\n\n"}
+  if(s.glossary.length)o+=`## ${T("Glossary","术语表")}\n\n`+s.glossary.filter(g=>g.term).map(g=>`**${g.term}**: ${g.def}${g.avoid?.length?` _${T("Avoid","避免")}: ${g.avoid.join(", ")}_`:""}`).join("\n\n")+"\n\n";
+  if(s.decisions.length)o+=`## ${T("Decisions","决定")}\n\n`+s.decisions.filter(d=>d.title).map(d=>`### ADR ${d.no}: ${d.title}\n\n${d.decision}${d.why?`\n\n${T("Why","原因")}: ${d.why}`:""}${d.alt?`\n\n${T("Considered","考虑过")}: ${d.alt}`:""}`).join("\n\n")+"\n\n";
+  const rk=s.risks.filter(r=>r.kind==="risk"),as=s.risks.filter(r=>r.kind==="assumption");if(rk.length)o+=`## ${T("Risks","风险")}\n\n`+rk.map(r=>`- **${r.sev}**: ${r.text}${r.mit?` — ${T("mitigation","应对")}: ${r.mit}`:""}`).join("\n")+"\n\n";if(as.length)o+=`## ${T("Assumptions","假设")}\n\n`+as.map(r=>`- [ ] ${r.text}`).join("\n")+"\n\n";
+  if(s.notYet.length)o+=`## ${T("Not yet specified","尚未明确")}\n\n`+s.notYet.map(x=>"- "+x).join("\n")+"\n\n";if(s.outScope.length)o+=`## ${T("Out of scope","不在范围内")}\n\n`+s.outScope.map(x=>"- "+x).join("\n")+"\n\n";
+  return o.trim()+"\n"}
+const slug=t=>(String(t||"session").toLowerCase().replace(/[^\p{L}\p{N}]+/gu,"-").slice(0,48).replace(/^-+|-+$/g,"")||"session");
+/* saving */
+const DLERR={too_large:"That file is too large to save here.",rate_limited:"Another save is waiting for you. Finish that one first.",host_unavailable:"This app can't save files here. Open it on a computer.",unavailable:"Saving files isn't available here.",not_granted:"Saving files isn't allowed for this app.",rejected_extension:"This kind of file can't be saved here.",extension_not_enabled:"This kind of file can't be saved here."};
+const DLERRZH={too_large:"文件太大，无法在这里保存。",rate_limited:"还有一个保存在等你确认，先处理那个。",host_unavailable:"这里无法保存文件，请在电脑上打开。",unavailable:"这里无法保存文件。",not_granted:"这个应用不允许保存文件。",rejected_extension:"这里不能保存这种类型的文件。",extension_not_enabled:"这里不能保存这种类型的文件。"};
+async function saveFile(filename,data){if(!downloads){try{await navigator.clipboard.writeText(typeof data==="string"?data:"");toast(T("Saving files isn't available here, so it was copied to the clipboard instead.","这里无法保存文件，已改为复制到剪贴板。"))}catch{toast(T("Saving files isn't available here.","这里无法保存文件。"))}return}
+  try{await downloads.save({filename,data});toast(T("Saved "+filename,"已保存 "+filename))}catch(e){const c=e?.code;if(c==="declined")return;toast(ZH()?(DLERRZH[c]||"无法保存文件。"):(DLERR[c]||"Couldn't save the file."))}}
+function saveMd(md,name){saveFile(name,md)}
+async function saveDocx(md,name){try{const blob=await mdToDocx(md,S?.title||"Document");await saveFile(name,blob)}catch(e){toast(T("Couldn't build the Word file.","无法生成 Word 文件。"))}}
+
+/* ---------- Markdown → .docx ---------- */
+const xe=s=>String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F￾￿]/g,"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function wRun(t,o={}){const pr=(o.b?"<w:b/>":"")+(o.i?"<w:i/>":"")+(o.code?'<w:rFonts w:ascii="Menlo" w:hAnsi="Menlo"/><w:shd w:val="clear" w:color="auto" w:fill="F1F2F5"/>':"")+(o.color?`<w:color w:val="${o.color}"/>`:"");return `<w:r>${pr?`<w:rPr>${pr}</w:rPr>`:""}<w:t xml:space="preserve">${xe(t)}</w:t></w:r>`}
+function wInline(text,base={}){const out=[];const re=/(\*\*[^*]+\*\*|__[^_]+__|`[^`]+`|\*[^*\s][^*]*\*|_[^_\s][^_]*_|\[[^\]]+\]\([^)\s]+\))/g;let last=0,m;
+  while((m=re.exec(text))){if(m.index>last)out.push(wRun(text.slice(last,m.index),base));const t=m[0];
+    if(t.startsWith("**")||t.startsWith("__"))out.push(wRun(t.slice(2,-2),{...base,b:1}));else if(t.startsWith("`"))out.push(wRun(t.slice(1,-1),{...base,code:1}));else if(t.startsWith("[")){const mm=t.match(/^\[([^\]]+)\]\(([^)]+)\)$/);out.push(wRun(mm[1]+" ("+mm[2]+")",base))}else out.push(wRun(t.slice(1,-1),{...base,i:1}));last=m.index+t.length}
+  if(last<text.length)out.push(wRun(text.slice(last),base));return out.join("")||wRun("")}
+function wP(inner,style,extra=""){return `<w:p><w:pPr>${style?`<w:pStyle w:val="${style}"/>`:""}${extra}</w:pPr>${inner}</w:p>`}
+async function mdToDocx(md,title){const lines=String(md).replace(/\r\n?/g,"\n").split("\n");const body=[];let numId=1;const nums=[];let listType=null,curNum=0;let i=0;
+  const endList=()=>{listType=null};
+  while(i<lines.length){let l=lines[i];
+    if(/^```/.test(l)){endList();i++;while(i<lines.length&&!/^```/.test(lines[i])){body.push(wP(wRun(lines[i]||" ",{code:1}),"Code"));i++}i++;continue}
+    if(/^\s*\|.*\|\s*$/.test(l)&&i+1<lines.length&&/^\s*\|?\s*:?-{2,}/.test(lines[i+1])){endList();const rows=[];const cells=s=>s.trim().replace(/^\||\|$/g,"").split("|").map(c=>c.trim());rows.push(cells(l));i+=2;while(i<lines.length&&/^\s*\|.*\|\s*$/.test(lines[i])){rows.push(cells(lines[i]));i++}
+      const nc=Math.max(...rows.map(r=>r.length));const bd='<w:tblBorders>'+["top","left","bottom","right","insideH","insideV"].map(s=>`<w:${s} w:val="single" w:sz="4" w:space="0" w:color="C9CDD4"/>`).join("")+'</w:tblBorders>';
+      body.push(`<w:tbl><w:tblPr><w:tblW w:w="5000" w:type="pct"/>${bd}<w:tblCellMar><w:left w:w="80" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${'<w:gridCol/>'.repeat(nc)}</w:tblGrid>${rows.map((r,ri)=>`<w:tr>${Array.from({length:nc},(_,ci)=>`<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/>${ri===0?'<w:shd w:val="clear" w:color="auto" w:fill="EEF0F3"/>':""}</w:tcPr>${wP(wInline(r[ci]||"",ri===0?{b:1}:{}),"TableText")}</w:tc>`).join("")}</w:tr>`).join("")}</w:tbl>`);body.push(wP("",""));continue}
+    let m;
+    if((m=l.match(/^(#{1,6})\s+(.*)$/))){endList();const lv=m[1].length;body.push(wP(wInline(m[2].replace(/\s+#+\s*$/,"")),lv===1?"Title":"Heading"+Math.min(lv-1,3)));i++;continue}
+    if(/^\s*(---+|\*\*\*+|___+)\s*$/.test(l)){endList();body.push(wP("","","<w:pBdr><w:bottom w:val=\"single\" w:sz=\"6\" w:space=\"1\" w:color=\"C9CDD4\"/></w:pBdr>"));i++;continue}
+    if((m=l.match(/^(\s*)([-*+]|\d+[.)])\s+(.*)$/))){const ord=/\d/.test(m[2]);const lvl=Math.min(Math.floor(m[1].replace(/\t/g,"  ").length/2),2);let t=m[3];
+      if(ord&&lvl===0&&listType!=="ol"){numId++;curNum=numId;nums.push(numId)}if(!ord&&lvl===0)curNum=1;listType=lvl===0?(ord?"ol":"ul"):listType;
+      const cb=t.match(/^\[( |x|X)\]\s+(.*)$/);if(cb)t=(cb[1]===" "?"☐ ":"☑ ")+cb[2];
+      body.push(wP(wInline(t),"ListParagraph",`<w:numPr><w:ilvl w:val="${lvl}"/><w:numId w:val="${ord?(curNum>1?curNum:numId):1}"/></w:numPr>`));i++;continue}
+    if((m=l.match(/^>\s?(.*)$/))){endList();body.push(wP(wInline(m[1]),"Quote"));i++;continue}
+    if(!l.trim()){endList();i++;continue}
+    endList();let para=l.trim();i++;while(i<lines.length&&lines[i].trim()&&!/^(#{1,6}\s|```|>|\s*([-*+]|\d+[.)])\s|\s*\|)/.test(lines[i])&&!/^\s*(---+|\*\*\*+)\s*$/.test(lines[i])){para+=" "+lines[i].trim();i++}
+    body.push(wP(wInline(para),""))}
+  const W='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${W}><w:body>${body.join("")}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1300" w:right="1300" w:bottom="1300" w:left="1300" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  const font='<w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:eastAsia="PingFang SC" w:cs="Calibri"/>';
+  const sty=(id,name,ppr,rpr,based="Normal")=>`<w:style w:type="paragraph" w:styleId="${id}"><w:name w:val="${name}"/><w:basedOn w:val="${based}"/><w:next w:val="Normal"/><w:qFormat/><w:pPr>${ppr}</w:pPr><w:rPr>${rpr}</w:rPr></w:style>`;
+  const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles ${W}><w:docDefaults><w:rPrDefault><w:rPr>${font}<w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="en-US" w:eastAsia="zh-CN"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
+${sty("Title","Title",'<w:spacing w:after="240"/>','<w:b/><w:sz w:val="40"/>')}${sty("Heading1","heading 1",'<w:keepNext/><w:spacing w:before="320" w:after="120"/><w:outlineLvl w:val="0"/>','<w:b/><w:sz w:val="30"/>')}${sty("Heading2","heading 2",'<w:keepNext/><w:spacing w:before="240" w:after="80"/><w:outlineLvl w:val="1"/>','<w:b/><w:sz w:val="26"/>')}${sty("Heading3","heading 3",'<w:keepNext/><w:spacing w:before="200" w:after="60"/><w:outlineLvl w:val="2"/>','<w:b/><w:sz w:val="23"/>')}
+${sty("ListParagraph","List Paragraph",'<w:spacing w:after="60"/><w:ind w:left="720"/>',"")}${sty("Quote","Quote",'<w:ind w:left="567"/><w:pBdr><w:left w:val="single" w:sz="12" w:space="8" w:color="C9CDD4"/></w:pBdr>','<w:color w:val="555B66"/>')}${sty("Code","Code",'<w:spacing w:after="0"/>','<w:rFonts w:ascii="Menlo" w:hAnsi="Menlo"/><w:sz w:val="19"/>')}${sty("TableText","Table Text",'<w:spacing w:after="0"/>','<w:sz w:val="20"/>')}</w:styles>`;
+  const lvl=(fmt,i,txt)=>`<w:lvl w:ilvl="${i}"><w:start w:val="1"/><w:numFmt w:val="${fmt}"/><w:lvlText w:val="${txt}"/><w:lvlJc w:val="left"/><w:pPr><w:ind w:left="${720+i*360}" w:hanging="360"/></w:pPr></w:lvl>`;
+  const numbering=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:numbering ${W}><w:abstractNum w:abstractNumId="0"><w:multiLevelType w:val="hybridMultilevel"/>${lvl("bullet",0,"•")}${lvl("bullet",1,"◦")}${lvl("bullet",2,"▪")}</w:abstractNum><w:abstractNum w:abstractNumId="1"><w:multiLevelType w:val="hybridMultilevel"/>${lvl("decimal",0,"%1.")}${lvl("lowerLetter",1,"%2.")}${lvl("lowerRoman",2,"%3.")}</w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>${nums.map(n=>`<w:num w:numId="${n}"><w:abstractNumId w:val="1"/><w:lvlOverride w:ilvl="0"><w:startOverride w:val="1"/></w:lvlOverride></w:num>`).join("")}</w:numbering>`;
+  const now=new Date().toISOString().replace(/\.\d+Z$/,"Z");
+  const z=new JSZip();
+  z.file("[Content_Types].xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`);
+  z.file("_rels/.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`);
+  z.file("word/_rels/document.xml.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/></Relationships>`);
+  z.file("word/document.xml",doc);z.file("word/styles.xml",styles);z.file("word/numbering.xml",numbering);
+  z.file("docProps/core.xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xe(title)}</dc:title><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`);
+  return z.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})}
+
+/* ---------- keyboard ---------- */
+function showKeys(){const k=(a,b)=>`<div><span>${esc(a)}</span><kbd>${esc(b)}</kbd></div>`;const c=isMac?"⌘":"Ctrl+";
+  openSheet(`<h2>${esc(T("Keyboard shortcuts","键盘快捷键"))}</h2><div class="keys">${[[T("Send answer","发送回答"),"Enter"],[T("New line","换行"),"Shift+Enter"],[T("Go with the recommendation","采纳建议"),c+"Enter"],[T("Pick quick reply 1-6","选择快捷回答 1-6"),"Option+1…6"],[T("Park the question","暂缓这个问题"),"Option+P"],[T("Wait, what?","等等，什么意思？"),"Option+W"],[T("Dictate","听写"),c+"Shift+D"],[T("Stop Claude","停止 Claude"),c+"."],[T("Undo Claude's last round","撤销 Claude 的上一轮"),c+"Z"],[T("Export","导出"),c+"E"],[T("New session","新建会话"),c+"N"],[T("Show or hide sessions","显示或隐藏会话"),c+"\\"],[T("Show or hide the map","显示或隐藏地图"),c+"Option+I"],[T("Shortcuts","快捷键"),c+"/"]].map(x=>k(...x)).join("")}</div><div class="rowe"><button class="btn pri" id="kOK">${esc(T("Done","完成"))}</button></div>`);$("kOK").onclick=closeSheet;$("kOK").focus()}
+addEventListener("keydown",e=>{
+  if(e.key==="Escape"){if(!$("menu").hidden){closeMenu();e.preventDefault();return}if(!$("sheet").hidden){closeSheet();e.preventDefault();return}if(busy&&busy.kind==="turn"){stopTurn();renderAll();e.preventDefault();return}if(narrow()&&!$("scrim").hidden){toggleSide(false);toggleInsp(false);e.preventDefault()}return}
+  if(e.isComposing||e.keyCode===229)return;
+  const inField=/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)||e.target.isContentEditable;
+  const code=e.code||"";
+  if(MOD(e)&&!e.shiftKey&&!e.altKey&&e.key.toLowerCase()==="n"){e.preventDefault();goHome();return}
+  if(MOD(e)&&e.key==="\\"){e.preventDefault();toggleSide();return}
+  if(MOD(e)&&e.altKey&&(code==="KeyI"||e.key.toLowerCase()==="i")){e.preventDefault();toggleInsp();return}
+  if(MOD(e)&&e.key==="/"){e.preventDefault();showKeys();return}
+  if(MOD(e)&&e.key==="."){e.preventDefault();stopTurn();docBusy?.abort();renderAll();return}
+  if(MOD(e)&&e.shiftKey&&(code==="KeyD"||e.key.toLowerCase()==="d")){e.preventDefault();toggleDict(S?"dockta":"seedta");return}
+  if(!S)return;
+  if(MOD(e)&&!e.shiftKey&&e.key.toLowerCase()==="e"){e.preventDefault();exportMenu($("bExport"));return}
+  if(MOD(e)&&!e.shiftKey&&e.key.toLowerCase()==="z"&&!inField){e.preventDefault();undoRound();return}
+  if(MOD(e)&&e.key==="Enter"&&e.target.id!=="dockta"&&!inField){const q=activeQ();if(q&&q.rec){e.preventDefault();answer(q.id,q.rec,"accepted")}return}
+  if(e.altKey&&!MOD(e)&&$("sheet").hidden){const q=activeQ();const d=code.match(/^Digit([1-6])$/);if(q&&d&&q.options[+d[1]-1]!=null){e.preventDefault();answer(q.id,q.options[+d[1]-1],"chip");return}
+    if(q&&code==="KeyP"){e.preventDefault();answer(q.id,"","park");return}if(code==="KeyW"&&aiOK){e.preventDefault();waitWhat();return}}});
+$("thread").addEventListener("paste",e=>{if(S&&e.target===$("thread")){const t=e.clipboardData?.getData("text/plain");if(t){e.preventDefault();$("dockta").value+=t;autosize($("dockta"));$("dockta").focus()}}});
+
+/* ---------- desktop / install ---------- */
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"thinking-partner-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#FFC94D\"/><stop offset=\"1\" stop-color=\"#EF7A00\"/><\/linearGradient><radialGradient id=\"thinking-partner-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"thinking-partner-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"thinking-partner-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#thinking-partner-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#thinking-partner-sh)\"/><g filter=\"url(#thinking-partner-ds)\" transform=\"rotate(4 560 640)\"><rect x=\"360\" y=\"430\" width=\"470\" height=\"420\" rx=\"44\" fill=\"#fff\"/><rect x=\"404\" y=\"486\" width=\"56\" height=\"56\" rx=\"16\" fill=\"#2EB872\"/><path d=\"M418 514l12 12 20-24\" fill=\"none\" stroke=\"#fff\" stroke-width=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"484\" y=\"500\" width=\"290\" height=\"28\" rx=\"14\" fill=\"#3B2A12\"/><rect x=\"404\" y=\"584\" width=\"56\" height=\"56\" rx=\"16\" fill=\"#2EB872\"/><path d=\"M418 612l12 12 20-24\" fill=\"none\" stroke=\"#fff\" stroke-width=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"484\" y=\"598\" width=\"240\" height=\"28\" rx=\"14\" fill=\"#3B2A12\"/><rect x=\"404\" y=\"682\" width=\"56\" height=\"56\" rx=\"16\" fill=\"none\" stroke=\"#E0C9A6\" stroke-width=\"8\"/><rect x=\"484\" y=\"696\" width=\"270\" height=\"28\" rx=\"14\" fill=\"#E9DCC6\"/><rect x=\"404\" y=\"770\" width=\"56\" height=\"56\" rx=\"16\" fill=\"none\" stroke=\"#E0C9A6\" stroke-width=\"8\"/><rect x=\"484\" y=\"784\" width=\"200\" height=\"28\" rx=\"14\" fill=\"#E9DCC6\"/><\/g><g filter=\"url(#thinking-partner-ds)\"><path d=\"M200 170h330a80 80 0 0 1 80 80v170a80 80 0 0 1-80 80H330l-100 86v-86h-30a80 80 0 0 1-80-80V250a80 80 0 0 1 80-80z\" fill=\"#2B1D0E\"/><text x=\"365\" y=\"440\" text-anchor=\"middle\" font-family=\"-apple-system,'SF Pro Rounded',Helvetica,Arial\" font-weight=\"900\" font-size=\"300\" fill=\"#FFC94D\">?<\/text><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
+function dockIcon(){const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,0,256);g.addColorStop(0,"#6f7bf2");g.addColorStop(1,"#3b42b8");x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,56);x.fill();
+  x.fillStyle="#fff";x.beginPath();x.roundRect(46,50,164,116,30);x.fill();x.beginPath();x.moveTo(84,160);x.lineTo(70,198);x.lineTo(118,162);x.closePath();x.fill();
+  x.strokeStyle="#4f5bd5";x.lineWidth=9;x.lineCap="round";x.lineJoin="round";x.beginPath();x.moveTo(84,108);x.lineTo(128,108);x.moveTo(128,108);x.bezierCurveTo(146,108,146,84,170,84);x.moveTo(128,108);x.bezierCurveTo(146,108,146,132,170,132);x.stroke();
+  x.fillStyle="#4f5bd5";for(const [cx,cy] of [[84,108],[170,84],[170,132]]){x.beginPath();x.arc(cx,cy,11,0,7);x.fill()}x.fillStyle="#ffd45c";x.beginPath();x.arc(170,84,6,0,7);x.fill();x.fillStyle="#7be0a8";x.beginPath();x.arc(170,132,6,0,7);x.fill();
+  return c.toDataURL("image/png")}
+async function initDesktop(){if(!desktop)return;
+  if(!desktop.tray){const st=await desktop.install?.state?.().catch(()=>"unavailable");if(st==="available"){const b=document.createElement("button");b.className="btn pri";b.style.width="100%";b.style.justifyContent="center";b.textContent=T("Install as app","安装为应用");b.onclick=()=>desktop.install.request().catch(()=>{});$("inst").replaceChildren(b)}return}
+  document.body.classList.add("app");try{dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{})}catch{}
+  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:8,width:1240,height:820,minWidth:420,minHeight:460}).catch(()=>{})}
+
+/* ---------- start ---------- */
+(async()=>{
+  paintIcons();const nar=narrow();toggleSide(nar?false:store.get("tp.side",true));toggleInsp(nar?false:store.get("tp.insp",innerWidth>1100));
+  index=index.filter(e=>e&&e.id);const last=store.get("tp.last",null);if(last){const s=loadSession(last);if(s)S=s}
+  aiOK=null;renderAll();if(!S)setTimeout(()=>$("seedta").focus(),0);
+  addEventListener("resize",()=>{updScrim()});
+  const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
+  [sample,downloads,desktop,dictation,tts]=await Promise.all([use("sample"),use("downloads"),use("desktop"),use("dictation"),use("tts")]);
+  aiOK=!!sample;initDictation();
+  if(tts?.onState)tts.onState(({state,reason})=>{ttsState=state;if(reason==="not_granted"||reason==="unavailable"){tts=null;ttsOn=false}renderBar()});
+  renderAll();initDesktop();
+})();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
+</script>
