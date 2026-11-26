@@ -53,6 +53,7 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **[Zone of Protection](https://claude.ai/artifact/C5Yo7CEy9QJYw1yWN4L38U)** - A 60-second hand-hygiene challenge scored like an antibiotic sensitivity plate: S, I or R. ([post](https://x.com/drasumant/status/2125575149852525054) by [@drasumant](https://x.com/drasumant))
 - **[Daisy Tube](https://claude.ai/artifact/B6wkzHzDYf3PWhTNhjTme1)** - Recreates the 1961 Bell Labs voice that sang Daisy Bell. Drag the scope to shape a vowel in a 44-section vocal tube and adjust pitch, lips and breath. ([post](https://www.reddit.com/r/claude/comments/1xfa116/opus_55_recreating_original_vocaloid_program/) by [@Ok_Nectarine_4445](https://www.reddit.com/user/Ok_Nectarine_4445))
 - **[Gigantua](https://claude.ai/artifact/XmWGFtQPgn8aJvU193Ksf8)** - An interactive black hole: hover, orbit or fall in and watch light bend around it. Toggle Doppler and redshift effects, or take the guided tour with sound. ([post](https://news.ycombinator.com/item?id=49864907) by [@robotsmakelove](https://news.ycombinator.com/user?id=robotsmakelove))
+- **[Computers and Architectural Design](https://claude.ai/artifact/JymufDkhU3GMBKwS1fpzHm)** - A growing slide deck on how computers changed architectural design in Japan and around the world, starting from the era when large buildings were drawn without them. The author plans to try it as a university lecture. Japanese. ([post](https://x.com/shuta0331/status/2125592907679990026) by [@shuta0331](https://x.com/shuta0331))
 
 ## Work
 
@@ -74,10 +75,12 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **[AI Design Studio](https://claude.ai/artifact/1smquJDEao4CY2JmZyYQGY)** - Describe an app or a business, or drop in a screenshot, and Claude designs mobile screens you can click through, landing pages in 2 to 3 styles, or posters and social graphics, all sharing one design system you can change live. Get a scored critique with one-click fixes, and export PNG, HTML/CSS, SVG or design tokens. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/design-studio), made by this repo)
 - **[AI Thinking Partner](https://claude.ai/artifact/JSTkjR21LMT7q5uTrtAGxz)** - Paste a plan, idea or decision and Claude asks the hard questions, each with a recommended answer you can accept in one keystroke. A live map tracks resolved, open and parked questions, plus terms, decisions and risks. Export a spec, PRD, questionnaire, tickets for Linear or Jira, or a handoff brief. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/thinking-partner), made by this repo)
 - **[Felt](https://claude.ai/artifact/MJCLd2d8tuoqiXk4dvPzJR)** - Draws seamless felt-like background textures live with a shader. Pick the colour, pattern, tile size and resolution, then download a 1024 px tile. ([post](https://www.reddit.com/r/claude/comments/1woxz0z/i_wanted_a_felt_texture_generator_to_create/) by [@A-Marko](https://www.reddit.com/user/A-Marko))
+- **Kit Subscriber Map** - Kit's founder installed an artifact that maps his newsletter subscribers around the world by count and by influence, pulling the data from his Kit account. Video in the post; no public artifact link. ([post](https://x.com/nathanbarry/status/2125643652802515053) by [@nathanbarry](https://x.com/nathanbarry))
 
 ## Life
 
 - **[Grow One Thing](https://claude.ai/artifact/3tMn8Y3f1hcNjEVUTwMzsX)** - Pick one of six living things, from a chrysalis (3 days) to a bonsai (60 days), and raise it through five stages into your collection. Japanese. ([post](https://x.com/fighthub_jp/status/2125477701020774880) by [@fighthub_jp](https://x.com/fighthub_jp))
+- **[Warikan Roulette](https://claude.ai/artifact/DEkhPSG48cYwaafJy2NzG6)** - A bill splitter for group dinners: mark each person as paying more, normal or less, round to 100, 500 or 1,000 yen, and let a roulette decide who covers the leftover. The result copies straight into LINE. Japanese. ([post](https://x.com/fighthub_jp/status/2125907440201814228) by [@fighthub_jp](https://x.com/fighthub_jp))
 
 ## Prompts and ideas
 

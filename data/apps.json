@@ -582,6 +582,42 @@
    "artifact": "https://claude.ai/artifact/XmWGFtQPgn8aJvU193Ksf8",
    "lang": "",
    "added": "2026-11-26"
+  },
+  {
+   "id": "warikan-roulette",
+   "name": "Warikan Roulette",
+   "subtitle": "Split the bill, spin the remainder",
+   "category": "life",
+   "desc": "A bill splitter for group dinners: mark each person as paying more, normal or less, round to 100, 500 or 1,000 yen, and let a roulette decide who covers the leftover. The result copies straight into LINE.",
+   "author": "fighthub_jp",
+   "post": "https://x.com/fighthub_jp/status/2125907440201814228",
+   "artifact": "https://claude.ai/artifact/DEkhPSG48cYwaafJy2NzG6",
+   "lang": "Japanese",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "computers-and-architecture",
+   "name": "Computers and Architectural Design",
+   "subtitle": "A slide history of design tools",
+   "category": "learn",
+   "desc": "A growing slide deck on how computers changed architectural design in Japan and around the world, starting from the era when large buildings were drawn without them. The author plans to try it as a university lecture.",
+   "author": "shuta0331",
+   "post": "https://x.com/shuta0331/status/2125592907679990026",
+   "artifact": "https://claude.ai/artifact/JymufDkhU3GMBKwS1fpzHm",
+   "lang": "Japanese",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "kit-subscriber-map",
+   "name": "Kit Subscriber Map",
+   "subtitle": "Newsletter subscribers on a globe",
+   "category": "work",
+   "desc": "Kit's founder installed an artifact that maps his newsletter subscribers around the world by count and by influence, pulling the data from his Kit account. Video in the post; no public artifact link.",
+   "author": "nathanbarry",
+   "post": "https://x.com/nathanbarry/status/2125643652802515053",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-26"
   }
  ],
  "official": [
