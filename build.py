@@ -66,7 +66,9 @@ def entry(a):
     lang = f" {a['lang']}." if a["lang"] else ""
     if a.get("maker"):
         return f"- **{name}** - {a['desc']} ([source]({a['post']}), made by this repo)"
-    return f"- **{name}** - {a['desc']}{lang} ([post]({a['post']}) by [@{a['author']}](https://x.com/{a['author']}))"
+    site = "Hacker News" if "news.ycombinator.com" in a["post"] else "Reddit" if "reddit.com" in a["post"] else "X"
+    prof = {"Hacker News": "https://news.ycombinator.com/user?id=", "Reddit": "https://www.reddit.com/user/"}.get(site, "https://x.com/") + a["author"]
+    return f"- **{name}** - {a['desc']}{lang} ([post]({a['post']}) by [@{a['author']}]({a.get('authorUrl', prof)}))"
 def links(items):
     return "\n".join(f"- [{x['title']}]({x['url']}) - {x['note']}" for x in items)
 

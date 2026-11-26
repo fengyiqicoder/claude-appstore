@@ -498,6 +498,90 @@
    "ai": true,
    "replaces": "ChatPRD, Notion AI",
    "batch": 2
+  },
+  {
+   "id": "saltline",
+   "name": "Saltline",
+   "subtitle": "First-person shooter, built from scratch",
+   "category": "play",
+   "desc": "A full first-person shooter Felix Rieseberg had Fable 5.2 build from one-shot prompts. Every model, sound and texture is generated in code, with no outside assets.",
+   "author": "felixrieseberg",
+   "post": "https://x.com/felixrieseberg/status/2119925633564463609",
+   "artifact": "https://claude.ai/artifact/BGY1SztrAYcJQHSsnHHGmp",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "weird-web-demos",
+   "name": "Weird Web Demos",
+   "subtitle": "HTML-in-Canvas playground",
+   "category": "play",
+   "desc": "A set of odd, animated demos that show off HTML-in-Canvas in the Claude desktop apps, made by the engineer who switched it on. Flash-era fun in one page.",
+   "author": "felixrieseberg",
+   "post": "https://x.com/felixrieseberg/status/2122036839238492493",
+   "artifact": "https://claude.ai/artifact/7cCNqKnoFSoib9SuNLB3vk",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "desktop-shark",
+   "name": "Nori Desktop Shark",
+   "subtitle": "A shark pet for your desktop",
+   "category": "play",
+   "desc": "A small shark swims along the bottom of your screen once you install it as an app. Rub it, double-click its fin to make it leap, or right-click to toss it fish.",
+   "author": "felixrieseberg",
+   "post": "https://x.com/felixrieseberg/status/2125341947179290938",
+   "artifact": "https://claude.ai/artifact/75cGBx19aZZXjWdbqUhmy1",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "felt-texture",
+   "name": "Felt",
+   "subtitle": "Seamless felt texture generator",
+   "category": "work",
+   "desc": "Draws seamless felt-like background textures live with a shader. Pick the colour, pattern, tile size and resolution, then download a 1024 px tile.",
+   "author": "A-Marko",
+   "post": "https://www.reddit.com/r/claude/comments/1woxz0z/i_wanted_a_felt_texture_generator_to_create/",
+   "artifact": "https://claude.ai/artifact/MJCLd2d8tuoqiXk4dvPzJR",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "facade-synth",
+   "name": "Facade Synth",
+   "subtitle": "Build a street like a synth",
+   "category": "play",
+   "desc": "A synthesiser for Georgian terrace streets: turn knobs and step a sequencer where each step is one house. Randomise, mutate, snapshot and save designs as patch code.",
+   "author": "Tomasmillar",
+   "post": "https://news.ycombinator.com/item?id=50068405",
+   "artifact": "https://claude.ai/artifact/BF6MjSg1RJBsp1ZZiQX6D2",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "daisy-tube",
+   "name": "Daisy Tube",
+   "subtitle": "Make a computer sing",
+   "category": "learn",
+   "desc": "Recreates the 1961 Bell Labs voice that sang Daisy Bell. Drag the scope to shape a vowel in a 44-section vocal tube and adjust pitch, lips and breath.",
+   "author": "Ok_Nectarine_4445",
+   "post": "https://www.reddit.com/r/claude/comments/1xfa116/opus_55_recreating_original_vocaloid_program/",
+   "artifact": "https://claude.ai/artifact/B6wkzHzDYf3PWhTNhjTme1",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "gigantua",
+   "name": "Gigantua",
+   "subtitle": "Fly around a black hole",
+   "category": "learn",
+   "desc": "An interactive black hole: hover, orbit or fall in and watch light bend around it. Toggle Doppler and redshift effects, or take the guided tour with sound.",
+   "author": "robotsmakelove",
+   "post": "https://news.ycombinator.com/item?id=49864907",
+   "artifact": "https://claude.ai/artifact/XmWGFtQPgn8aJvU193Ksf8",
+   "lang": "",
+   "added": "2026-11-26"
   }
  ],
  "official": [
