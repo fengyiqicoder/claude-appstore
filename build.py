@@ -16,6 +16,14 @@ tpl = (ROOT / "site/template.html").read_text()
 start, end = tpl.index("/*APPS_DATA*/"), tpl.index("/*END*/") + len("/*END*/")
 page = tpl[:start] + json.dumps(data, ensure_ascii=False) + tpl[end:]
 page = page.replace("/*UPDATED*/", today)
+import urllib.parse
+ICONS = {f.stem: f.read_text() for f in sorted((ROOT / "data/icons").glob("*.svg"))}
+i0, i1 = page.index("/*ICONS*/"), page.index("/*ENDICONS*/") + len("/*ENDICONS*/")
+page = page[:i0] + json.dumps(ICONS, ensure_ascii=False).replace("</", "<\\/") + page[i1:]
+ZH = json.loads((ROOT / "data/zh.json").read_text()) if (ROOT / "data/zh.json").exists() else {}
+z0, z1 = page.index("/*ZH_DATA*/"), page.index("/*END_ZH*/") + len("/*END_ZH*/")
+page = page[:z0] + json.dumps(ZH, ensure_ascii=False).replace("</", "<\\/") + page[z1:]
+FAVICON = "data:image/svg+xml," + urllib.parse.quote(ICONS.get("store", ""), safe=":/=,;'")
 
 art_url = (ROOT / "data/artifact_url.txt").read_text().strip() if (ROOT / "data/artifact_url.txt").exists() else ""
 page = page.replace("/*STORE_ARTIFACT*/", art_url)
@@ -24,18 +32,31 @@ page = page.replace("/*STORE_ARTIFACT*/", art_url)
 site_page = page.replace("const SITE = /*SITE*/false;", "const SITE = true;")
 
 STORE = "https://claudeappstore.000ooo.ooo"
-head = f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+ALT = f'<link rel="alternate" hreflang="en" href="{STORE}/"><link rel="alternate" hreflang="zh-CN" href="{STORE}/zh/"><link rel="alternate" hreflang="x-default" href="{STORE}/">'
+def site_head(lang):
+    zh = lang == "zh"
+    title = "Claude AppStore：别再为 App 付费了" if zh else "Claude AppStore: Stop paying for apps"
+    desc = ("跑在你已有的 Claude 套餐上的免费 AI app：文档、表格、幻灯片、PDF、语法检查、思维导图，装到 Mac 或 PC 就能用。" if zh
+            else "Free AI apps that run on the Claude plan you already have. Install them on your Mac or PC.")
+    # Chinese browsers landing on the English page go to /zh/ unless they chose English
+    redirect = "" if zh else """<script>try{if(/^zh/i.test(navigator.language||"")&&!/[?&]lang=en/.test(location.search)&&localStorage.getItem("lang")!=="en")location.replace("zh/"+location.hash)}catch(e){}</script>"""
+    return f"""<!doctype html>
+<html lang="{'zh-CN' if zh else 'en'}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="canonical" href="{STORE}/">
-<title>Claude AppStore: Stop paying for apps</title>\n<meta property="og:title" content="Claude AppStore: Stop paying for apps">
-<meta property="og:description" content="Free AI apps that run on the Claude plan you already have. Install them on your Mac or PC.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='5.5' fill='%230a6cdf'/%3E%3Cpath d='M7 7h4v4H7zM13 7h4v4h-4zM7 13h4v4H7z' fill='%23fff'/%3E%3Ccircle cx='15' cy='15' r='2.3' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="canonical" href="{STORE}/{'zh/' if zh else ''}">
+{ALT}{redirect}
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<link rel="icon" href="{FAVICON}">
 <style>:root{{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);height:100%}}[hidden]{{display:none!important}}</style>
 </head><body>
 """
 (ROOT / "docs").mkdir(exist_ok=True)
-(ROOT / "docs/index.html").write_text(head + site_page + "\n</body></html>\n")
+(ROOT / "docs/zh").mkdir(exist_ok=True)
+(ROOT / "docs/index.html").write_text(site_head("en") + site_page.replace("/*LANG*/null", '"en"') + "\n</body></html>\n")
+(ROOT / "docs/zh/index.html").write_text(site_head("zh") + site_page.replace("/*LANG*/null", '"zh"') + "\n</body></html>\n")
 (ROOT / "docs/CNAME").write_text("claudeappstore.000ooo.ooo\n")
 
 # README

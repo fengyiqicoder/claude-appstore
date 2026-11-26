@@ -1,0 +1,53 @@
+{
+  "apps": {
+    "gridbloom": {"subtitle": "有独立窗口的竞技场射击游戏", "desc": "一个改造成工件的小型竞技场射击游戏，装好后在 Dock 里有自己的图标。帖子里还拆解了装好的 app 里面到底有什么。"},
+    "geography-trainer": {"subtitle": "记国家和首都", "desc": "用 Claude 做的地理学习工件，装成了桌面 app。"},
+    "titan-colony": {"subtitle": "花 60 年建一座殖民地", "desc": "一颗可以安装的星球：人类登陆土卫六，在 60 年里建起殖民地，整个画面只用一个着色器画成，没用任何库。"},
+    "todo-list": {"subtitle": "简单的待办清单", "desc": "不到两小时做出来、分享给 @ClaudeDevs 的待办 app。"},
+    "ai-architecture-lab": {"subtitle": "9 个任务，12 种出错方式", "desc": "设计一个 AI 系统，然后扛过预算削减、服务商宕机和安全审查，一共 9 个任务、12 种故障。"},
+    "podcast-flashcards": {"subtitle": "50 多档播客做成的抽认卡", "desc": "把 Acquired、Invest Like the Best、Farnam Street 等 50 多档播客的精华做成互动页面和抽认卡。"},
+    "grow-one-thing": {"subtitle": "养一盆盆景、一只蛹等", "desc": "从 6 种生物里选一种，从蛹（3 天）到盆景（60 天），养过五个阶段后收进你的收藏。"},
+    "isekai-quiz": {"subtitle": "测测你会转生成什么", "desc": "30 个像素风 RPG 场景，决定你转生到 16 种奇幻人生里的哪一种。"},
+    "tarot-love-quiz": {"subtitle": "320 多种结果，抽成一张牌", "desc": "30 道题、320 多种结果，以塔罗牌形式呈现，附带依恋类型和配对检测。"},
+    "science-500": {"subtitle": "科学成就排行", "desc": "过去五个世纪重要科学成就的排行榜，一直排到做它的前一天。"},
+    "school-site": {"subtitle": "一句话生成学校介绍站", "desc": "一句提示词生成的完整学校介绍网站，有活动、照片、愿景和教职员。"},
+    "signal-operator": {"subtitle": "亲手控制每一盏红绿灯", "desc": "你手动切换一个路口的每一盏灯。切早了撞车，切晚了堵车；到了傍晚还有右转车、公交和救护车。任何方向排到 8 辆车游戏就结束。"},
+    "exact-birthday": {"subtitle": "按地球公转算的生日", "desc": "把你的生日算成绕太阳整数圈的精确时刻，而不是日历日期。MIT 教授做的，适合住在和出生地不同时区、或 2 月 29 日出生的人。"},
+    "walking-while-texting": {"subtitle": "边走路边看手机", "desc": "一个关于边走路边看手机有多危险的小模拟。免费、不用注册，手机电脑都能玩；同一条帖子还有姊妹游戏 Walk Beside Me，作者也做了日文版。"},
+    "document-editor": {"name": "AI 文档", "subtitle": "用 Claude 编辑 .docx 文件", "replaces": "Word 里的 Copilot, WPS AI", "desc": "打开你的 .docx 文件，在真实的分页视图里继续写：页面、页眉页脚、页码、分节、分栏、目录、公式、批注、脚注和修订都原样保留。让 Claude 起草、改写、缩写、换语气、校对、翻译，或把文字变成表格；每处 AI 修改都是一条修订，由你接受或拒绝。自带听写、朗读和版本历史，可以导出回 Word、PDF、Markdown、HTML 或纯文本。"},
+    "spreadsheet": {"name": "AI 表格", "subtitle": "Excel 文件，内置 Claude", "replaces": "Excel 里的 Copilot, GPT for Sheets, Formula Bot", "desc": "打开 .xlsx、.xls 和 .csv 文件，所有工作表、公式、格式、图表和图片都在。用大白话提问，得到准确数字和背后的公式。能做真正的数据透视表、数据验证、条件格式、迷你图、分组和带趋势线的图表，用 Claude 清洗或分类成千上万行，保存回 Excel 时什么都不丢。"},
+    "slide-maker": {"name": "AI 幻灯片", "subtitle": "从一个主题或你的 .pptx 做出演示", "replaces": "PowerPoint 里的 Copilot, Gamma, Beautiful.ai", "desc": "描述一场演讲、粘贴笔记，或者拖进 .pptx、.docx、PDF，Claude 用智能版式和主题写好幻灯片。然后像 PowerPoint 一样编辑：形状、图片、表格、图表、图示、动画、切换、视频、母版、分节和批注。带演讲者备注和画笔放映，导出可编辑的 PowerPoint、PDF 或讲义；你没动过的幻灯片原样导出。"},
+    "pdf-chat": {"name": "PDF 对话", "subtitle": "阅读、签名、编辑和提问 PDF", "replaces": "Adobe Acrobat（AI 助手、填写和签名）, ChatPDF", "desc": "打开 PDF、Word、PowerPoint 或文本文件直接提问，每个回答都标出页码并高亮原文。可以高亮、批注、画图、填表和签名，重新排序、旋转、合并和提取页面，保存出的真 PDF 能在 Acrobat 和预览里打开。内置摘要、大纲、表格导出到 Excel、翻译和朗读，文件只留在你的设备上。"},
+    "grammar-checker": {"name": "语法检查", "subtitle": "改语法、改清晰度、改语气", "replaces": "Grammarly Premium, QuillBot, Wordtune", "desc": "写或粘贴文字，实时标出正确性、清晰度、吸引力和表达方面的问题，每条都有解释，一键接受。任何句子都能改得更短、更清楚、更正式或更亲切，有 9 种改写模式，还能设目标、语气和团队用语规范。能打开和保存 .docx、.md、.txt，按 Option+Shift+G 浮在其他 app 上面。"},
+    "mind-map": {"name": "思维导图", "subtitle": "打开你的 Xmind 和 MindNode 导图", "replaces": "Xmind Pro, MindNode Plus, MindMeister", "desc": "用 Xmind 和 MindNode 的快捷键画导图，有十四种结构，包括矩阵、括号图、树形表格、时间线和鱼骨图，每个分支能用不同结构；还有自由主题、区域、标注、编号、模板和版本历史。打开你的 .xmind、.opml、.mm 和 Markdown 文件，按 Cmd+S 存回原文件。Claude 能从一句话或一篇文章画出整张导图、展开任意主题、总结一个分支，或把导图写成文章。"},
+    "image-to-text": {"name": "图片转文字", "subtitle": "从任意图片里复制文字", "replaces": "TextSniper, Prizmo", "desc": "粘贴截图、拖入照片或打开 PDF，得到可以编辑、复制、朗读或导出的文字。保留排版、生成 Markdown、把表格变成 Excel 或 CSV、翻译，还能把小票和名片拆成字段。二维码和条形码在本机识别。"},
+    "translator": {"name": "AI 翻译", "subtitle": "翻译、润色和讲解任何文字", "desc": "粘贴文字，Claude 在你的两种语言之间翻译，按自然、口语或正式的语气润色到像母语一样，或者讲解关键词和语法。可以朗读结果。装好后它浮在最上层，在任何地方按 Option+Shift+T 唤出。"},
+    "speaking-coach": {"name": "口语教练", "subtitle": "练口语，马上得到反馈", "desc": "Claude 按你的水平用 9 种语言之一写一小段口语材料并读给你听。你跟读或大声回答它的问题，Claude 给你打分、纠错，并读一遍更地道的说法。"},
+    "party-game": {"name": "派对游戏", "subtitle": "Claude 主持，朋友比拼", "desc": "3 到 8 个朋友在一台电脑上轮流玩的派对游戏。Claude 出题，大家偷偷作答再投票选最好笑的，然后 Claude 逐个吐槽，并挑出它自己最喜欢的答案加分。"},
+    "pomodoro": {"name": "番茄钟", "subtitle": "Claude 把你的一天排成番茄", "desc": "把要做的事一股脑倒进来，Claude 排成有先后的任务，并算好每项要几个番茄。计时器按顺序走，在菜单栏和 Dock 里倒计时，番茄结束时通知你，在任何地方按 Option+Shift+P 开始或暂停。"},
+    "world-clock": {"name": "世界时钟", "subtitle": "时区和会议时间规划", "desc": "把常打交道的城市并排放着，每个都有昼夜条。用大白话问，比如“和伦敦、东京开会什么时间最好”，Claude 回答并把时间滑块拖过去。装好后，你选的城市会常驻菜单栏。"},
+    "sticky-notes": {"name": "便签", "subtitle": "浮在最上层的便签", "desc": "一个小窗口里四张彩色便签。Claude 能把乱糟糟的便签变成清单、整理文字、总结、建议下一步或翻译，一键撤销。装好后它浮在所有窗口上面，按 Option+Shift+J 隐藏或唤回。"},
+    "future-of-ai-deck": {"subtitle": "可以飞着看的 3D 演示", "desc": "一份讲 AI 未来和智能爆炸的演示，每页都是完整的 3D 场景，用镜头运动和音效串起来。看完大约 8 分钟；作者说是早期的 Opus 5.6 做的。"},
+    "zone-of-protection": {"subtitle": "60 秒手卫生测试", "desc": "一个 60 秒的手卫生挑战，像抗生素药敏试验一样按 S、I、R 打分。"},
+    "mac-cleaner": {"subtitle": "聊天里做出来的磁盘清理工具", "desc": "作者一直想要的 Mac 清理 app，在 Claude 里做出来并装成了桌面 app；帖子里有运行画面。"}
+  },
+  "official": {
+    "https://x.com/ClaudeDevs/status/2125315491522650299": {"title": "X 上的发布公告", "note": "@ClaudeDevs 发布，演示了一句提示词变成一个装好的太空垃圾追踪器。"},
+    "https://claude.com/resources/articles/install-as-app": {"title": "把工件变成 Mac 和 Windows app", "note": "发布文章：装好的 app 能做什么，权限怎么管。"},
+    "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app": {"title": "把工件安装为 app", "note": "帮助中心指南：安装、打开、卸载、权限列表和限制。"},
+    "https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans": {"title": "Team 和 Enterprise 的工件管理指南", "note": "管理员在哪里开关这个功能和完整电脑访问权限。"},
+    "https://x.com/felixrieseberg/status/2125310111149416682": {"title": "Felix Rieseberg 的演示 app", "note": "Claude 桌面端团队的发布帖，附一页用到系统接口、连接器和 Claude 的演示 app。"}
+  },
+  "prompts": {
+    "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app": {"title": "官方示例提示词", "note": "“做一个住在菜单栏里的番茄钟”“每小时提醒我伸展一下”“按日期重命名一个文件夹里的照片”。"},
+    "https://x.com/pundiranusha/status/2125510269267014054": {"title": "这个周末就能做的 10 个 app", "note": "菜单栏番茄钟、PR 审查清单、发票生成器、带通知的习惯追踪、会议成本计算器等。"},
+    "https://x.com/YH31377807/status/2125380955255026128": {"title": "先加一个导出按钮", "note": "安装前先让 Claude 加一个“导出为 JSON”的按钮，免得数据困在绑定你账号的 app 里。"},
+    "https://x.com/minchoi/status/2125564860255658247": {"title": "个人 app 生成提示词", "note": "分四步：问你每周烦心的一件事，选定一个 app 写需求，做成独立的工件，再测试并列出它会申请的所有权限。"}
+  },
+  "guides": {
+    "https://x.com/realamlug/status/2125493255173288159": {"title": "拆开一个装好的 app：只有 404 KB", "note": "两个很小的原生程序加一个图标；页面其实在 Claude 自己的 Electron 进程里渲染。"},
+    "https://x.com/de1mat/status/2125334953479315834": {"title": "拆解 Gridbloom", "note": "装好的 app 只是个启动器，里面没有代码；它打开 Claude 桌面端，用你的登录在独立窗口里显示工件。"},
+    "https://x.com/dotey/status/2125368995746308453": {"title": "和网页套壳 app 有什么区别", "note": "@dotey 讲为什么它用起来像 Chrome 网页 app，以及为什么仍然需要联网。"},
+    "https://x.com/lvntblsn/status/2125736966624776242": {"title": "同一句提示词两种结果：Swift app 对比安装的工件", "note": "同样要一个菜单栏番茄钟：Code 标签页做出 832 KB 的 Swift app，不依赖 Claude 能跑但不会再变；工件每次编辑都会更新，只是当时账号还没开放安装选项。"}
+  }
+}
