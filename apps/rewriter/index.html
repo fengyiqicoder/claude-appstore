@@ -1,0 +1,1460 @@
+<title>Rewriter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script type="application/json" id="claude-artifacts-manifest">{"permissions":["shortcuts"]}</script>
+<style>
+/* Layout: top bar (history, file, export, voice, more), a mode bar (modes, synonym strength, freeze words),
+   then two panes: your text on the left (with AI-tell highlights drawn behind the textarea) and the rewrite on
+   the right (changed words highlighted, click a word or sentence for alternatives, or switch to the AI tells list). */
+:root{
+  --bg:#f4f4f6; --panel:#ffffff; --fg:#17181d; --muted:#6b6f7a; --line:#e2e3e8; --chip:#eeeef2; --hover:#f0f0f4;
+  --accent:#6d4ed8; --accent-fg:#ffffff; --accent-soft:rgba(109,78,216,.11);
+  --chg:#c2510b; --long:rgba(37,99,235,.13); --tell:rgba(234,179,8,.28); --tell-line:#d97706; --tell-on:rgba(234,88,12,.32);
+  --ok:#1f9d63; --danger:#d23f3f;
+  --shadow:0 10px 30px rgba(15,18,35,.14),0 1px 3px rgba(15,18,35,.08);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141518;--panel:#1c1d22;--fg:#ecedf1;--muted:#949aa6;--line:#2d2f36;--chip:#26282e;--hover:#25272d;--accent:#a68ffc;--accent-fg:#160f33;--accent-soft:rgba(166,143,252,.15);--chg:#fb9a55;--long:rgba(96,165,250,.18);--tell:rgba(234,179,8,.22);--tell-line:#f0b429;--tell-on:rgba(251,146,60,.35);--ok:#3ccf8e;--danger:#ff7676;--shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141518;--panel:#1c1d22;--fg:#ecedf1;--muted:#949aa6;--line:#2d2f36;--chip:#26282e;--hover:#25272d;--accent:#a68ffc;--accent-fg:#160f33;--accent-soft:rgba(166,143,252,.15);--chg:#fb9a55;--long:rgba(96,165,250,.18);--tell:rgba(234,179,8,.22);--tell-line:#f0b429;--tell-on:rgba(251,146,60,.35);--ok:#3ccf8e;--danger:#ff7676;--shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:13px/1.4 var(--font);display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.ic{width:16px;height:16px;flex:none}
+kbd{font:500 11px/1 var(--font);opacity:.72;margin-left:4px}
+/* top bar */
+.top{display:flex;align-items:center;gap:4px;padding:10px max(12px,env(safe-area-inset-right,0px)) 6px max(12px,env(safe-area-inset-left,0px));flex:none}
+body.app .top{app-region:drag;-webkit-app-region:drag;padding-left:max(80px,env(safe-area-inset-left,0px))}
+.top>*{app-region:no-drag;-webkit-app-region:no-drag}
+.top .sp{flex:1;align-self:stretch;app-region:drag;-webkit-app-region:drag}
+.brand{font-weight:650;font-size:13.5px;margin:0 6px 0 4px;letter-spacing:-.01em}
+.ib{border:0;background:transparent;border-radius:7px;width:30px;height:30px;display:inline-grid;place-items:center;cursor:pointer;color:var(--fg);flex:none;padding:0}
+.ib:hover{background:var(--hover)}
+.ib:disabled{opacity:.4;cursor:default}
+.tb{border:0;background:transparent;border-radius:7px;height:30px;padding:0 9px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:550;white-space:nowrap}
+.tb:hover{background:var(--hover)}
+.tb.on{background:var(--accent-soft);color:var(--accent)}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;height:30px;padding:0 11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-weight:560}
+.btn:hover{background:var(--hover)}
+.btn.pri{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.btn.pri:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.5;cursor:default}
+.lnk{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:3px 6px;border-radius:6px;font-weight:550}
+.lnk:hover{color:var(--fg);background:var(--hover)}
+.menuwrap{position:relative}
+.menu{position:absolute;top:34px;right:0;min-width:230px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:5px;z-index:40}
+.menu button{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;text-align:left;padding:7px 9px;border-radius:7px;cursor:pointer}
+.menu button:hover,.menu button:focus-visible{background:var(--hover);outline:none}
+.menu button kbd{margin-left:auto}
+.menu hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+/* mode bar */
+.modebar{display:flex;align-items:center;gap:10px;padding:0 max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));flex:none;flex-wrap:wrap}
+.chips{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1 1 420px;padding:1px}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:0 11px;height:28px;cursor:pointer;font-weight:560;color:var(--muted);white-space:nowrap;flex:none}
+.chip:hover{color:var(--fg)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.ctrl{display:flex;align-items:center;gap:8px;flex:none}
+.syn{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:550;white-space:nowrap}
+.syn input{width:96px;accent-color:var(--accent)}
+.syn b{color:var(--fg);font-weight:600;min-width:52px}
+.subrow{display:flex;align-items:center;gap:8px;padding:0 max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));flex:none}
+.subrow label{color:var(--muted);font-weight:550;white-space:nowrap}
+.subrow input{flex:1;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;height:30px;padding:0 10px;outline:none}
+.subrow input:focus{border-color:var(--accent)}
+/* panes */
+main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden}
+.ph{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 14px;border-bottom:1px solid var(--line);min-height:41px;flex:none}
+.ph .pt{font-weight:650}
+.ph .meta{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph .sp{flex:1}
+.tab{border:0;background:transparent;height:28px;padding:0 10px;border-radius:7px;cursor:pointer;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.tab:hover{color:var(--fg)}
+.tab.on{color:var(--fg);background:var(--chip)}
+.badge{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--tell);color:var(--fg);font-size:11px;font-weight:650;display:inline-grid;place-items:center}
+.badge:empty{display:none}
+.badge.zero{background:rgba(31,157,99,.16);color:var(--ok)}
+.vers{display:flex;align-items:center;gap:2px;color:var(--muted);font-size:12px;white-space:nowrap}
+.vers .ib{width:24px;height:24px}
+.edwrap{position:relative;flex:1;min-height:0}
+#backdrop,#in{position:absolute;inset:0;margin:0;padding:14px 16px 40px;font:15.5px/1.62 var(--font);white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;letter-spacing:normal;scrollbar-gutter:stable;tab-size:4}
+#backdrop{color:transparent;overflow:hidden;pointer-events:none;z-index:0}
+#backdrop mark{color:transparent;background:var(--tell);border-radius:3px;box-shadow:inset 0 -2px 0 var(--tell-line)}
+#backdrop mark.on{background:var(--tell-on)}
+#in{z-index:1;background:transparent;border:0;resize:none;outline:none;color:var(--fg);overflow:auto;width:100%;height:100%}
+#in::placeholder{color:var(--muted)}
+.inempty{position:absolute;left:14px;right:14px;bottom:12px;z-index:2;display:flex;gap:6px;flex-wrap:wrap}
+.pf{display:flex;align-items:center;gap:4px;padding:6px 8px;border-top:1px solid var(--line);flex:none;flex-wrap:wrap;min-height:44px}
+.pf .st{flex:1;min-width:80px;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:4px}
+.tg{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:12px;font-weight:550;cursor:pointer;padding:0 5px;white-space:nowrap}
+.tg input{accent-color:var(--accent);margin:0}
+.outbody{flex:1;min-height:0;overflow:auto;position:relative}
+#out{padding:14px 16px 24px;font:15.5px/1.62 var(--font);white-space:pre-wrap;overflow-wrap:break-word;outline:none;min-height:100%;-webkit-user-select:text;user-select:text}
+#out .s{border-radius:4px;cursor:pointer}
+#out .s:hover{background:var(--hover)}
+#out .w{border-radius:3px}
+#out .w:hover{text-decoration:underline;text-decoration-color:var(--muted);text-underline-offset:3px}
+#out .c{color:var(--chg);font-weight:560}
+#out .l{background:var(--long)}
+#out .tl{background:var(--tell);box-shadow:inset 0 -2px 0 var(--tell-line)}
+#out .tl.on{background:var(--tell-on)}
+#out .pk{background:var(--accent-soft);outline:1px solid var(--accent);border-radius:3px}
+#out.streaming .s,#out.streaming .w{cursor:default}
+#out.streaming::after{content:"";display:inline-block;width:7px;height:16px;background:var(--accent);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+#outEdit{position:absolute;inset:0;width:100%;height:100%;border:0;resize:none;outline:none;background:var(--panel);padding:14px 16px 24px;font:15.5px/1.62 var(--font)}
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--muted);gap:10px}
+.empty h3{margin:0;color:var(--fg);font-size:15px;font-weight:650}
+.empty p{margin:0;max-width:340px;line-height:1.5}
+.keys{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:12px}
+.keys span b{color:var(--fg);font-weight:600;margin-right:4px}
+.shim{padding:16px;display:flex;flex-direction:column;gap:10px}
+.shim i{display:block;height:12px;border-radius:6px;background:linear-gradient(90deg,var(--chip),var(--hover),var(--chip));background-size:200% 100%;animation:sh 1.2s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+/* tells */
+.tsrc{display:flex;align-items:center;gap:8px;padding:10px 12px 6px;flex-wrap:wrap;position:sticky;top:0;background:var(--panel);z-index:2}
+.seg{display:flex;background:var(--chip);border-radius:8px;padding:2px}
+.seg button{border:0;background:transparent;color:var(--muted);font-weight:600;padding:0 10px;height:26px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--panel);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.tsum{flex:1;color:var(--muted);font-size:12px;min-width:120px}
+#tellsList{padding:2px 12px 16px}
+.tgrp{margin-top:10px}
+.tgh{display:flex;align-items:center;gap:6px;font-weight:650;margin-bottom:2px}
+.tgh .n{color:var(--muted);font-weight:550}
+.twhy{color:var(--muted);font-size:12px;margin:0 0 6px;line-height:1.45}
+.ti{border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-bottom:6px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.ti:hover,.ti.on{border-color:var(--tell-line)}
+.snip{font-size:13px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
+.snip b{color:var(--fg);background:var(--tell);border-radius:3px;font-weight:550;padding:0 1px}
+.tact{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tact .sug{font-size:12.5px;color:var(--ok);font-weight:600;flex:1;min-width:0;overflow-wrap:anywhere}
+.tact .sug.ai{color:var(--accent)}
+.sm{height:26px;padding:0 9px;font-size:12px;border-radius:7px}
+.tnone{padding:30px 10px;text-align:center;color:var(--muted)}
+.tnone h3{margin:0 0 6px;color:var(--fg);font-size:15px}
+/* popover */
+.pop{position:fixed;z-index:60;width:min(360px,calc(100vw - 24px));background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:8px;display:flex;flex-direction:column;gap:4px;max-height:min(440px,calc(100vh - 24px));overflow:auto}
+.poph{display:flex;align-items:center;gap:8px;padding:2px 4px 4px;color:var(--muted);font-size:12px}
+.poph b{color:var(--fg);font-size:13px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.poph .sp{flex:1}
+.alt{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;border:0;background:transparent;border-radius:7px;padding:6px 8px;cursor:pointer;line-height:1.45}
+.alt:hover,.alt:focus-visible{background:var(--accent-soft);outline:none}
+.alt .k{color:var(--muted);font-size:11px;min-width:10px;padding-top:2px}
+.ld{color:var(--muted);padding:8px;font-size:12.5px}
+.pstyles{display:flex;gap:4px;flex-wrap:wrap;padding:4px 2px 2px;border-top:1px solid var(--line);margin-top:2px}
+.pstyles button{border:1px solid var(--line);background:transparent;border-radius:999px;height:24px;padding:0 9px;font-size:12px;cursor:pointer;color:var(--muted);font-weight:550}
+.pstyles button:hover,.pstyles button.on{color:var(--accent);border-color:var(--accent)}
+/* drawer */
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(340px,92vw);background:var(--panel);border-right:1px solid var(--line);box-shadow:var(--shadow);z-index:45;display:flex;flex-direction:column}
+.drawer .dh{display:flex;align-items:center;gap:6px;padding:12px 10px 8px 14px}
+body.app .drawer .dh{padding-top:30px}
+.drawer .dh h2{font-size:14px;margin:0;flex:1}
+.drawer .ds{margin:0 12px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;height:30px;padding:0 10px;outline:none}
+.drawer .ds:focus{border-color:var(--accent)}
+#histList{flex:1;overflow:auto;padding:0 6px 10px}
+.hitem{display:flex;align-items:flex-start;gap:6px;padding:8px;border-radius:8px;cursor:pointer;width:100%;border:0;background:transparent;text-align:left}
+.hitem:hover{background:var(--hover)}
+.hitem.on{background:var(--accent-soft)}
+.hitem .hb{flex:1;min-width:0}
+.hitem .hp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}
+.hitem .hm{color:var(--muted);font-size:11.5px;margin-top:2px}
+.hitem .ib{width:24px;height:24px;opacity:0}
+.hitem:hover .ib,.hitem:focus-within .ib{opacity:1}
+.scrim{position:fixed;inset:0;z-index:44;background:rgba(10,10,20,.18)}
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,10,20,.35);display:grid;place-items:center;padding:16px}
+.dlg{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);width:min(560px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden}
+.dlg.wide{width:min(1040px,100%)}
+.dlg .dh{display:flex;align-items:center;gap:8px;padding:14px 14px 10px 18px;border-bottom:1px solid var(--line)}
+.dlg .dh h2{margin:0;font-size:15px;flex:1}
+.dlg .db{padding:14px 18px;overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:0}
+.dlg .df{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.dlg .df .sp{flex:1}
+.dlg p.note{margin:0;color:var(--muted);line-height:1.5}
+.dlg label.f{display:flex;flex-direction:column;gap:5px;font-weight:600}
+.dlg label.f span.h{font-weight:450;color:var(--muted);font-size:12px}
+.dlg input[type=text],.dlg select,.dlg textarea{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 10px;outline:none;font-weight:400}
+.dlg textarea{resize:vertical;line-height:1.5;min-height:90px}
+.dlg input:focus,.dlg select:focus,.dlg textarea:focus{border-color:var(--accent)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chk{display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer}
+.chk input{accent-color:var(--accent)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.card{border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:150px}
+.card .chh{display:flex;align-items:center;gap:6px;padding:7px 8px 7px 12px;border-bottom:1px solid var(--line);font-weight:650}
+.card .chh .sp{flex:1}
+.card .ct{padding:10px 12px;white-space:pre-wrap;overflow-wrap:break-word;line-height:1.55;font-size:14px;flex:1;max-height:340px;overflow:auto}
+.card .ct .c{color:var(--chg);font-weight:560}
+.card .ct del{color:var(--danger);text-decoration:line-through;opacity:.8}
+.kl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0}
+.kl dt{font-weight:600;white-space:nowrap}
+.kl dd{margin:0;color:var(--muted)}
+/* toast, drop */
+.toast{position:fixed;left:50%;bottom:62px;transform:translateX(-50%);background:#1d1e24;color:#fff;border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:12px;z-index:70;box-shadow:var(--shadow);max-width:calc(100vw - 32px);font-size:13px}
+.toast button{border:0;background:transparent;color:#c4b5fd;font-weight:650;cursor:pointer;padding:2px 4px}
+.drop{position:fixed;inset:8px;border:2px dashed var(--accent);border-radius:16px;background:var(--accent-soft);z-index:80;display:grid;place-items:center;font-weight:650;font-size:15px;color:var(--accent);pointer-events:none}
+@media (max-width:760px){
+  body{overflow:auto}
+  main{display:flex;flex-direction:column;min-height:auto;flex:none}
+  .pane{height:58vh;min-height:300px;flex:none}
+  .brand{display:none}
+  .tb .lbl{display:none}
+  .syn input{width:72px}
+  .syn b{min-width:0}
+}
+@media (max-width:460px){
+  .modebar{gap:6px}
+  .vers .lnk{display:none}
+}
+</style>
+
+<div class="top" id="top">
+  <button class="ib" id="histBtn" title="History (⌘⇧H)" aria-label="History"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg></button>
+  <button class="ib" id="newBtn" title="New text (⌥N)" aria-label="New text"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  <span class="brand">Rewriter</span>
+  <span class="sp"></span>
+  <button class="tb" id="openBtn" title="Open a .docx, .txt or .md file (⌘O)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-8l-2-3H4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1z"/></svg><span class="lbl">Open</span></button>
+  <div class="menuwrap"><button class="tb" id="exportBtn" title="Export or copy the result" aria-haspopup="menu"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span class="lbl">Export</span></button>
+    <div class="menu" id="exportMenu" role="menu" hidden>
+      <button data-x="docx">Result as Word (.docx)<kbd>⌘S</kbd></button>
+      <button data-x="md">Result as Markdown (.md)</button>
+      <button data-x="txt">Result as plain text (.txt)</button>
+      <hr>
+      <button data-x="all">Your text and all versions (.md)</button>
+      <button data-x="copy">Copy result<kbd>⌘⇧C</kbd></button>
+    </div></div>
+  <button class="tb" id="voiceBtn" title="Teach Rewriter how you write"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span class="lbl">My voice</span></button>
+  <div class="menuwrap"><button class="ib" id="moreBtn" title="More" aria-label="More" aria-haspopup="menu"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+    <div class="menu" id="moreMenu" role="menu" hidden>
+      <button data-m="compare">Compare modes<kbd>⌥M</kbd></button>
+      <button data-m="versions">Compare versions</button>
+      <hr>
+      <button data-m="settings">Settings</button>
+      <button data-m="keys">Keyboard shortcuts<kbd>?</kbd></button>
+      <button data-m="hotkey" id="hotkeyItem" hidden>Turn on ⌥⇧R from any app</button>
+      <button data-m="install" id="installItem" hidden>Install as app</button>
+    </div></div>
+</div>
+
+<div class="modebar">
+  <div class="chips" id="modes" role="tablist" aria-label="Mode"></div>
+  <div class="ctrl">
+    <label class="syn" title="How many words to change (⌥[ and ⌥])">Synonyms <input type="range" id="strength" min="1" max="4" step="1" aria-label="Synonyms"><b id="strengthLbl"></b></label>
+    <button class="tb" id="freezeBtn" title="Words to keep exactly as written">Freeze words</button>
+  </div>
+</div>
+<div class="subrow" id="customRow" hidden><label for="customIn">Sound</label><input id="customIn" placeholder="Describe the sound you want, e.g. warm, direct, a little funny" maxlength="200"></div>
+<div class="subrow" id="voiceRow" hidden><label>Voice</label><select id="voiceSel" class="btn" aria-label="Voice"></select><button class="lnk" id="voiceEdit">Edit samples</button></div>
+<div class="subrow" id="freezeRow" hidden><label for="freezeIn">Keep as is</label><input id="freezeIn" placeholder="Words or phrases to keep, separated by commas"></div>
+
+<main id="main">
+  <section class="pane" id="inPane">
+    <div class="ph"><span class="pt">Your text</span><span class="meta" id="inMeta"></span><span class="sp"></span><button class="lnk" id="pasteHint" hidden>⌘V to paste</button><button class="lnk" id="clearBtn">Clear</button></div>
+    <div class="edwrap">
+      <div id="backdrop" aria-hidden="true"></div>
+      <textarea id="in" spellcheck="true" aria-label="Your text" placeholder="Paste or type your text here. ⌘V anywhere pastes and rewrites. ⌘↵ rewrites."></textarea>
+      <div class="inempty" id="inEmpty"><button class="btn" id="sampleBtn">Try a sample</button><button class="btn" id="openBtn2">Open a file</button></div>
+    </div>
+    <div class="pf"><button class="tb" id="tellsBtn" title="Highlight AI-writing habits (⌘⇧K)">AI tells <span class="badge" id="tellsInN"></span></button><span class="st" id="inSt"></span><button class="btn pri" id="goBtn"><span id="goLbl">Rewrite</span><kbd id="goKbd">⌘↵</kbd></button></div>
+  </section>
+  <section class="pane" id="outPane">
+    <div class="ph">
+      <button class="tab on" data-tab="result">Result</button>
+      <button class="tab" data-tab="tells">AI tells <span class="badge" id="tellsTabN"></span></button>
+      <span class="sp"></span>
+      <span class="vers" id="vers" hidden><button class="ib" id="vPrev" title="Previous version" aria-label="Previous version"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button><span id="vLbl" data-no-i18n></span><button class="ib" id="vNext" title="Next version" aria-label="Next version"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button><button class="lnk" id="cmpVerBtn">Compare</button></span>
+    </div>
+    <div class="outbody" id="resultView">
+      <div id="out" tabindex="0" aria-live="polite" aria-label="Result"></div>
+      <textarea id="outEdit" aria-label="Edit result" hidden></textarea>
+      <div class="empty" id="outEmpty"><h3>Your rewrite appears here</h3><p id="outEmptyP">Pick a mode, then press Rewrite. Click any word for synonyms, or a sentence to rephrase it.</p><div class="keys"><span><b>⌘V</b>paste</span><span><b>⌘↵</b>rewrite</span><span><b>⌘⇧C</b>copy</span></div></div>
+    </div>
+    <div class="outbody" id="tellsView" hidden>
+      <div class="tsrc"><div class="seg" id="tsrc"><button data-src="in" class="on">Your text</button><button data-src="out">Result</button></div><span class="tsum" id="tsum"></span><button class="btn sm" id="fixAllBtn">Fix all</button></div>
+      <div id="tellsList"></div>
+    </div>
+    <div class="pf" id="outFoot">
+      <span class="st" id="outSt"></span>
+      <label class="tg" title="Highlight words that changed"><input type="checkbox" id="showChg">Changed</label>
+      <label class="tg" title="Highlight the longest run of words that did not change"><input type="checkbox" id="showLong">Unchanged</label>
+      <button class="ib" id="undoBtn" title="Undo change to result (⌘Z)" aria-label="Undo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+      <button class="ib" id="redoBtn" title="Redo (⌘⇧Z)" aria-label="Redo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
+      <button class="tb" id="editBtn" title="Edit the result by hand">Edit</button>
+      <button class="tb" id="useBtn" title="Move the result into Your text (⌘⇧U)">Use as input</button>
+      <button class="btn pri" id="copyBtn" title="Copy result (⌘⇧C)">Copy</button>
+    </div>
+  </section>
+</main>
+
+<div class="pop" id="pop" role="dialog" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="hist" hidden>
+  <div class="dh"><h2>History</h2><button class="ib" id="histClose" title="Close (Esc)" aria-label="Close"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <input class="ds" id="histSearch" placeholder="Search history" aria-label="Search history">
+  <div id="histList"></div>
+</aside>
+<div class="modal" id="modal" hidden><div class="dlg" id="dlg" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<div class="drop" id="drop" hidden>Drop a .docx, .txt or .md file to open it</div>
+<input type="file" id="file" accept=".docx,.txt,.md,.markdown,.text,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/diff@5.2.0/dist/diff.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"Rewriter": "改写器", "History (⌘⇧H)": "历史 (⌘⇧H)", "History": "历史", "New text (⌥N)": "新建 (⌥N)", "New text": "新建", "Open a .docx, .txt or .md file (⌘O)": "打开 .docx、.txt 或 .md 文件 (⌘O)", "Open": "打开", "Export or copy the result": "导出或复制结果", "Export": "导出", "Result as Word (.docx)": "结果导出为 Word (.docx)", "Result as Markdown (.md)": "结果导出为 Markdown (.md)", "Result as plain text (.txt)": "结果导出为纯文本 (.txt)", "Your text and all versions (.md)": "原文和全部版本 (.md)", "Copy result": "复制结果", "Teach Rewriter how you write": "让改写器学会你的写法", "My voice": "我的语气", "More": "更多", "Compare modes": "比较模式", "Compare versions": "比较版本", "Settings": "设置", "Keyboard shortcuts": "快捷键", "Turn on ⌥⇧R from any app": "开启全局快捷键 ⌥⇧R", "Install as app": "安装为应用", "Mode": "模式", "How many words to change (⌥[ and ⌥])": "改动多少词 (⌥[ 和 ⌥])", "Synonyms": "同义词", "Words to keep exactly as written": "原样保留的词", "Freeze words": "冻结词", "Sound": "感觉", "Describe the sound you want, e.g. warm, direct, a little funny": "描述你想要的感觉，比如：温暖、直接、带点幽默", "Voice": "语气", "Edit samples": "编辑样本", "Keep as is": "原样保留", "Words or phrases to keep, separated by commas": "要保留的词或短语，用逗号分隔", "Your text": "你的文字", "⌘V to paste": "⌘V 粘贴", "Clear": "清空", "Paste or type your text here. ⌘V anywhere pastes and rewrites. ⌘↵ rewrites.": "在这里粘贴或输入文字。在任意处按 ⌘V 会粘贴并改写，⌘↵ 改写。", "Try a sample": "试试示例", "Open a file": "打开文件", "Highlight AI-writing habits (⌘⇧K)": "标出 AI 写作习惯 (⌘⇧K)", "AI tells": "AI 痕迹", "Rewrite": "改写", "Result": "结果", "Previous version": "上一个版本", "Next version": "下一个版本", "Compare": "比较", "Your rewrite appears here": "改写结果会显示在这里", "Pick a mode, then press Rewrite. Click any word for synonyms, or a sentence to rephrase it.": "选一个模式，然后点“改写”。点任意词看同义词，点句子可整句改写。", "paste": "粘贴", "rewrite": "改写", "copy": "复制", "Fix all": "全部修改", "Highlight words that changed": "标出改动的词", "Changed": "改动", "Highlight the longest run of words that did not change": "标出最长的未改动片段", "Unchanged": "未改动", "Undo change to result (⌘Z)": "撤销对结果的修改 (⌘Z)", "Undo": "撤销", "Redo (⌘⇧Z)": "重做 (⌘⇧Z)", "Redo": "重做", "Edit the result by hand": "手动编辑结果", "Edit": "编辑", "Move the result into Your text (⌘⇧U)": "把结果放入“你的文字” (⌘⇧U)", "Use as input": "作为输入", "Copy result (⌘⇧C)": "复制结果 (⌘⇧C)", "Copy": "复制", "Close (Esc)": "关闭 (Esc)", "Close": "关闭", "Search history": "搜索历史", "Drop a .docx, .txt or .md file to open it": "拖入 .docx、.txt 或 .md 文件即可打开", "Edit result": "编辑结果", "Delete": "删除"};
+  const PATTERNS=([]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",#in,#out,#outEdit,#backdrop,.snip,.alts,.hp,.ct,#vLbl,#vSamples,#vProfile,#vName");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const T=(en,zh)=>window.__ZH?zh:en;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36);
+const ta=$("in"), out=$("out");
+
+/* ---------- storage ---------- */
+let storageWarned=false;
+function warnStorage(){if(storageWarned)return;storageWarned=true;setTimeout(()=>toast(T("This browser isn't saving data, so history and voices won't be kept after you close the app.","此浏览器无法保存数据，关闭后历史和语气样本不会保留。")),600);}
+const store={
+  get(k,d){try{const v=localStorage.getItem("rewriter."+k);return v==null?d:JSON.parse(v)}catch{return d}},
+  set(k,v){try{localStorage.setItem("rewriter."+k,JSON.stringify(v));return true}catch{warnStorage();return false}}
+};
+const settings=Object.assign({onPaste:true,model:"auto",spelling:"keep",script:"keep",showChg:true,showLong:false},store.get("settings",{})||{});
+const saveSettings=()=>store.set("settings",settings);
+
+/* ---------- modes ---------- */
+const MODES=[
+  {id:"standard",en:"Standard",zh:"标准",tier:"quick",d:"Standard: reword it in a balanced way. New wording, same meaning, same tone, about the same length."},
+  {id:"fluent",en:"Fluent",zh:"流畅",tier:"quick",d:"Fluent: fix grammar and awkward or non-native phrasing so it reads smoothly. Change only what improves the flow."},
+  {id:"natural",en:"Natural",zh:"自然",tier:"default",d:"Natural: make it sound like a real person wrote it. Plain everyday words, a mix of short and long sentences, contractions where they fit, specific rather than generic phrasing, no filler, no stock transitions, no hype, no tidy summary at the end."},
+  {id:"formal",en:"Formal",zh:"正式",tier:"quick",d:"Formal: professional and polished. Precise words, no slang or contractions, courteous and confident."},
+  {id:"academic",en:"Academic",zh:"学术",tier:"default",d:"Academic: precise, objective scholarly register with discipline-appropriate vocabulary. Hedge only where the evidence calls for it. No filler."},
+  {id:"simple",en:"Simple",zh:"简明",tier:"quick",d:"Simple: easy to read. Short sentences and common words, about an 8th-grade reading level. Keep every important point."},
+  {id:"shorten",en:"Shorten",zh:"精简",tier:"quick",d:"Shorten: make it 30-50% shorter. Cut repetition, filler and weak words. Keep every key point."},
+  {id:"expand",en:"Expand",zh:"扩写",tier:"default",d:"Expand: make it 30-60% longer with useful detail, explanation or an example that fits. Do not invent facts, numbers, names or quotes."},
+  {id:"creative",en:"Creative",zh:"创意",tier:"default",d:"Creative: rewrite freely and vividly. Fresh word choices, varied structure, concrete images. Keep the meaning."},
+  {id:"voice",en:"My voice",zh:"我的语气",tier:"default",d:"My voice: write it the way this person writes (see their style and samples below)."},
+  {id:"custom",en:"Custom",zh:"自定义",tier:"default",d:"Custom"}
+];
+const MODE=Object.fromEntries(MODES.map(m=>[m.id,m]));
+const mName=id=>MODE[id]?T(MODE[id].en,MODE[id].zh):id;
+const STRENGTH={1:"Light: change only a few words and keep most of the original wording and structure.",2:"Moderate: replace a fair number of words and restructure a few sentences.",3:"Strong: replace most words that have a good alternative and restructure sentences where it reads better.",4:"Maximum: change as much of the wording and sentence structure as possible while keeping the meaning."};
+const SLBL={1:["Fewer","少量"],2:["Some","适中"],3:["More","较多"],4:["Most","最多"]};
+const AVOID=`Avoid AI-writing habits: words like delve, tapestry, testament, pivotal, crucial, seamless, robust, leverage, utilize, foster, showcase, underscore, realm, landscape, navigate, embark, elevate, unlock, harness, vibrant, furthermore, moreover, additionally; openers like "It's important to note", "In today's fast-paced world", "When it comes to"; the "It's not X, it's Y" contrast; em dashes (use commas, periods or parentheses instead); stacked hedges; reflexive lists of three; setup questions like "The result?"; summaries like "In conclusion"; chatbot lines like "I hope this helps". In Chinese avoid 套话 such as 值得注意的是、需要指出的是、综上所述、总而言之、在当今社会、随着…的不断发展、扮演着重要的角色、至关重要、赋能、助力、打造, avoid 排比 and "不是…而是…" contrasts, and avoid ——.`;
+
+let mode=store.get("mode","standard"); if(!MODE[mode])mode="standard";
+let strength=+store.get("strength",2)||2;
+let voices=store.get("voices",[]); if(!Array.isArray(voices))voices=[];
+let activeVoice=store.get("activeVoice",null);
+const curVoice=()=>voices.find(v=>v.id===activeVoice)||voices[0]||null;
+
+/* ---------- text helpers ---------- */
+const cjkCount=s=>(s.match(/[\u3400-\u9fff\uf900-\ufaff]/g)||[]).length;
+function isZh(s){const c=cjkCount(s);const l=(s.match(/[A-Za-z]/g)||[]).length;return c>0&&c>=l*0.25;}
+function wordCount(s){const c=cjkCount(s);const w=(s.replace(/[\u3400-\u9fff\uf900-\ufaff]/g," ").match(/[A-Za-z0-9\u00C0-\u024F]+(?:['’][A-Za-z]+)*/g)||[]).length;return c+w;}
+let segW=null,segS=null;
+try{segW=new Intl.Segmenter(undefined,{granularity:"word"});segS=new Intl.Segmenter(undefined,{granularity:"sentence"});}catch{}
+function tokenize(s){
+  const out=[];
+  if(segW){for(const g of segW.segment(s))out.push({t:g.segment,s:g.index,e:g.index+g.segment.length,w:!!g.isWordLike});return out;}
+  const re=/[A-Za-z0-9\u00C0-\u024F]+(?:['’][A-Za-z]+)*|[\u3400-\u9fff]|\s+|[\s\S]/g;let m;
+  while((m=re.exec(s)))out.push({t:m[0],s:m.index,e:m.index+m[0].length,w:/[\p{L}\p{N}]/u.test(m[0])});
+  return out;
+}
+function sentences(s){
+  const out=[];
+  if(segS){for(const g of segS.segment(s))out.push({s:g.index,e:g.index+g.segment.length});}
+  else{const re=/[^.!?。！？\n]+(?:[.!?。！？]+["'”’)]*|\n|$)\s*/g;let m;while((m=re.exec(s))&&m[0])out.push({s:m.index,e:m.index+m[0].length});}
+  // Segmenter keeps a newline inside the sentence that follows a heading without punctuation; split on newlines too
+  const res=[];
+  for(const x of out){let a=x.s;
+    for(let i=x.s;i<x.e;i++){if(s[i]!=="\n")continue;let j=i;while(j<x.e&&/\s/.test(s[j]))j++;if(j<x.e&&j>a){res.push({s:a,e:j});a=j;}i=j-1;}
+    res.push({s:a,e:x.e});}
+  return res.filter(x=>x.e>x.s);
+}
+const coreEnd=(text,sn)=>{let e=sn.e;while(e>sn.s&&/\s/.test(text[e-1]))e--;return e;};
+function sentenceAt(text,pos){const ss=sentences(text);return ss.find(x=>pos>=x.s&&pos<x.e)||ss[ss.length-1]||{s:0,e:text.length};}
+function sameArr(a,b){ // which tokens of b also appear (in order) in a
+  const A=a.map(x=>x.t.toLowerCase()),B=b.map(x=>x.t.toLowerCase());
+  const same=new Uint8Array(B.length);
+  let parts=null;
+  if(window.Diff?.diffArrays){try{parts=Diff.diffArrays(A,B,{maxEditLength:6000});}catch{parts=null;}}
+  if(parts){let j=0;for(const p of parts){const n=p.value?p.value.length:(p.count||0);if(p.removed)continue;if(!p.added)for(let k=0;k<n;k++)same[j+k]=1;j+=n;}}
+  else{const bag=new Map();for(const t of A)bag.set(t,(bag.get(t)||0)+1);B.forEach((t,i)=>{const n=bag.get(t)||0;if(n){same[i]=1;bag.set(t,n-1);}});}
+  return same;
+}
+function capFirst(s){return s.replace(/^(\s*)(\p{Ll})/u,(m,a,b)=>a+b.toUpperCase());}
+function matchCase(src,rep){if(!rep)return rep;if(src===src.toUpperCase()&&/[A-Z]{2}/.test(src))return rep.toUpperCase();if(/^\p{Lu}/u.test(src))return rep[0].toUpperCase()+rep.slice(1);return rep;}
+
+/* ---------- AI tells ---------- */
+const CAT={
+  words:{en:"Overused AI words",zh:"AI 高频词",why:["These words show up far more often in AI text than in people's writing. A plainer word sounds more like you.","这类词在 AI 文字里出现得比人写的多得多，换个朴素的词更像你自己写的。"]},
+  filler:{en:"Stock phrases",zh:"套话",why:["Throat-clearing openers and stock transitions add words without adding meaning. Start with the point.","开场白和套路过渡只占字数、不加意思，直接说重点。"]},
+  dash:{en:"Em dashes",zh:"破折号",why:["Frequent em dashes are a well-known AI habit. A comma, period or parentheses usually reads more naturally.","频繁用破折号是典型的 AI 习惯，换成逗号、句号或括号通常更自然。"]},
+  contrast:{en:"“Not X, it's Y”",zh:"“不是…而是…”",why:["Setting up something to knock down (“It's not X, it's Y”) is a signature AI move. Just say Y.","先立一个靶子再推翻（“不是…而是…”）是 AI 的招牌句式，直接说后半句。"]},
+  hedge:{en:"Hedging",zh:"含糊其辞",why:["Stacked hedges (“could potentially”, “it could be argued”) make writing sound unsure and machine-made. Commit, or hedge once.","层层保留（“可能或许”“在某种程度上”）显得没底气，像机器写的。要么说定，要么只留一层。"]},
+  three:{en:"Lists of three",zh:"三连排列",why:["AI reaches for three items by reflex (“fast, simple, and reliable”). Keep the one or two that matter.","AI 习惯性凑三个并列项，只留真正重要的一两个。"]},
+  setup:{en:"Setup questions",zh:"自问自答",why:["“The result? …” style setups are a copywriting tic AI overuses. State it directly.","“结果呢？……”这种自问自答是 AI 爱用的文案腔，直接说出来。"]},
+  signoff:{en:"Chatbot phrases",zh:"客服腔",why:["Lines like “I hope this helps” or “Feel free to reach out” read like a chatbot reply, not your own writing.","“希望对你有所帮助”这类话像聊天机器人的回复，不像你自己写的。"]},
+  parallel:{en:"Parallel clauses",zh:"排比",why:["Three or more clauses with the same opening read like a speech template.","三个以上同样开头的分句像演讲稿模板，AI 很爱用。"]},
+  rhythm:{en:"Same-length sentences",zh:"句子长短一样",why:["Most sentences are about the same length. People mix short and long ones.","大多数句子长度差不多。人写东西会长短句交错。"]}
+};
+const CAT_ORDER=["contrast","filler","words","dash","hedge","setup","three","parallel","signoff","rhythm"];
+function infl(v){const IRR={build:["build","builds","built","building"],lead:["lead","leads","led","leading"],dig:["dig","digs","dug","digging"],simplify:["simplify","simplifies","simplified","simplifying"],show:["show","shows","showed","showing"]};
+  if(IRR[v])return IRR[v];
+  return [v,/(s|sh|ch|x|z)$/.test(v)?v+"es":v+"s",v.endsWith("e")?v+"d":v+"ed",v.endsWith("e")&&!v.endsWith("ee")?v.slice(0,-1)+"ing":v+"ing"];}
+const RULES=[]; // {re, cat, rep: string|function|null, cap}
+function rule(src,cat,rep,cap,flags="gi"){RULES.push({re:new RegExp(src,flags),cat,rep,cap:!!cap});}
+// stock phrases (deleted; the next word is capitalized)
+rule("\\bIt(?:'s|’s| is) (?:important|worth|crucial|essential|vital) (?:to note|noting|mentioning|to mention|to remember|to keep in mind|to understand|to recognize) that,? ?","filler","",1);
+rule("\\b(?:It should be noted|Needless to say|It goes without saying) that,? ?","filler","",1);
+rule("\\b(?:Needless to say|It goes without saying),\\s?","filler","",1);
+rule("\\bIn today(?:'s|’s) (?:(?:fast-paced|digital|modern|ever-changing|ever-evolving|rapidly (?:changing|evolving)|increasingly \\w+|interconnected|competitive) )*(?:world|age|era|landscape|society|environment|market),\\s?","filler","",1);
+rule("\\bIn the (?:ever-evolving|ever-changing|rapidly (?:evolving|changing)|fast-paced|dynamic|modern|digital|complex) (?:world|landscape|realm|arena|space) of ","filler","In ");
+rule("\\bWhen it comes to ","filler","For ");
+rule("\\bAt the end of the day,? ","filler","",1);
+rule("\\bLet(?:'s|’s) (?:dive|delve) (?:in|deeper|right in)[.!:]?\\s?","filler","",1);
+rule("\\b(?:Interestingly|Notably|Importantly|Ultimately|Essentially|Fundamentally|Undoubtedly|Indeed),\\s","filler","",1);
+rule("\\b(?:In conclusion|In summary|In essence|To sum up|All in all|In a nutshell),\\s","filler","",1);
+rule("\\b(?:Here(?:'s|’s) the thing|The truth is|Simply put|Put simply)[:,]?\\s","filler","",1);
+rule("\\bWhether you(?:'re|’re| are) (?:a |an )?[^,.!?\\n]{1,40} or (?:a |an )?[^,.!?\\n]{1,40},\\s?","filler",null);
+rule("\\b(?:navigat(?:e|es|ed|ing)) the (?:complexities|intricacies|challenges) of\\b","words",m=>({navigate:"handle",navigates:"handles",navigated:"handled",navigating:"handling"}[m.split(" ")[0].toLowerCase()]||"handle"));
+rule("\\bplay(?:s|ed|ing)? an? (?:crucial|pivotal|vital|key|significant|important|critical) role in\\b","words",null);
+rule("\\b(?:is|stands as|serves as) a testament to\\b","words","shows");
+rule("\\ba testament to\\b","words","proof of");
+rule("\\b(?:serves|stands) as\\b","words","is");
+rule("\\b(?:delve|delves|delved|delving) (?:into|deeper into)\\b","words",m=>({delve:"dig into",delves:"digs into",delved:"dug into",delving:"digging into"}[m.split(" ")[0].toLowerCase()]));
+rule("\\bdiv(?:e|es|ing) (?:deep )?into\\b","words",m=>({dive:"look at",dives:"looks at",diving:"looking at"}[m.split(" ")[0].toLowerCase()]||"look at"));
+rule("\\bembark(?:s|ed|ing)? (?:on|upon)\\b","words",m=>{const w=m.split(" ")[0].toLowerCase();return {embark:"start",embarks:"starts",embarked:"started",embarking:"starting"}[w];});
+rule("\\b(?:a )?(?:plethora|myriad|multitude) of\\b","words","many");
+rule("\\bmyriad\\b","words","many");
+const VERBS={utilize:"use",leverage:"use",foster:"build",showcase:"show",underscore:"stress",elevate:"improve",harness:"use",streamline:"simplify",empower:"help",revolutionize:"change",bolster:"strengthen",spearhead:"lead",facilitate:"help",delve:"dig",illuminate:"show"};
+for(const [v,r] of Object.entries(VERBS)){const a=infl(v),b=infl(r);a.forEach((f,i)=>rule("\\b"+f+"\\b","words",b[i]));}
+const ADJ={tapestry:"mix",pivotal:"key",crucial:"key",paramount:"most important",seamless:"smooth",seamlessly:"smoothly",robust:"strong",comprehensive:"thorough",meticulous:"careful",meticulously:"carefully",intricate:"detailed",multifaceted:"complex",nuanced:"subtle",vibrant:"lively",bustling:"busy",unwavering:"steady",transformative:"big",groundbreaking:"new","cutting-edge":"latest","game-changer":"big change","game-changing":"major",holistic:"whole",synergy:"teamwork",commendable:"good",invaluable:"very useful","ever-evolving":"changing","ever-changing":"changing",beacon:"example",realm:"area",furthermore:"also",moreover:"also",additionally:"also",unparalleled:"unmatched",enhance:"improve",enhances:"improves",enhanced:"improved",enhancing:"improving",resonate:"connect",resonates:"connects",resonated:"connected",resonating:"connecting",captivating:"gripping",profound:"deep",landscape:null};
+for(const [w,r] of Object.entries(ADJ)){if(r===null)continue;rule("\\b"+w.replace(/-/g,"\\-")+"\\b","words",r);}
+// hedging
+rule("\\b(could|may|might|can) (?:potentially|possibly|perhaps|conceivably)\\b","hedge",m=>m.split(" ")[0]);
+rule("\\bit (?:could|can|might|may) be argued that\\s?","hedge","",1);
+rule("\\b(?:It seems|It appears|It would seem) that\\s?","hedge","",1);
+rule("\\b(?:arguably|to some extent|to a certain extent|to a certain degree|in many ways|generally speaking|in some ways),?\\s","hedge","",1);
+// chatbot lines
+rule("\\bI hope this (?:helps|email finds you well|message finds you well|clarifies[^.!?\\n]*)[.!]?\\s?","signoff","",1);
+rule("\\bFeel free to (?:reach out|contact me|let me know|ask)[^.!?\\n]*[.!?]?\\s?","signoff","",1);
+rule("\\b(?:Please )?(?:let me know|don(?:'|’)t hesitate to (?:reach out|contact me|ask)) if you have any (?:other |further |more |additional )?questions[^.!?\\n]*[.!?]?\\s?","signoff","",1);
+rule("\\b(?:Great|Excellent|Good) question[.!]\\s?","signoff","",1);
+rule("(?:^|(?<=[.!?]\\s))(?:Absolutely|Certainly|Of course)[!,]\\s?","signoff","",1);
+rule("\\bHappy to help[.!]?\\s?","signoff","",1);
+// contrast
+rule("\\b(?:it(?:'s|’s| is)|this is|that(?:'s|’s| is)|they(?:'re|’re| are)|we(?:'re|’re| are)|you(?:'re|’re| are))\\s+not\\s+(?:just\\s+|only\\s+|merely\\s+|simply\\s+)?[^.!?\\n;:]{1,80}?[,;—–-]+\\s*(?:it(?:'s|’s| is)|but|they(?:'re|’re| are)|we(?:'re|’re| are)|this is|you(?:'re|’re| are))\\s+[^.!?\\n]{1,120}","contrast",null);
+rule("\\b(?:isn(?:'|’)t|aren(?:'|’)t|wasn(?:'|’)t|weren(?:'|’)t)\\s+(?:just\\s+|only\\s+|merely\\s+|simply\\s+)?(?:about\\s+)?[^.!?\\n]{1,80}?[.;—,]\\s*(?:it(?:'s|’s| is| was)|they(?:'re|’re| are)|but|this is)\\s+(?:about\\s+)?[^.!?\\n]{1,120}","contrast",null);
+rule("\\bnot (?:only|just|merely) [^.!?\\n]{1,80}? but (?:also )?","contrast",null);
+// setup questions
+rule("\\b(?:The|And the|But the|So the|Here(?:'s|’s) the) (?:result|answer|catch|truth|best part|kicker|twist|secret|reason|problem|bottom line|takeaway|upshot|difference|good news|bad news|outcome)\\?","setup",null);
+// em dashes
+rule("\\s?(?:—|--)\\s?|\\s–\\s","dash",null,0,"g");
+// Chinese
+rule("(?:值得(?:注意|一提|关注)的是|需要(?:注意|指出|强调|说明)的是|不可否认|众所周知|毋庸置疑|显而易见|总的来说)[，,]?","filler","",0,"g");
+rule("(?:综上所述|总而言之|总之而言)[，,]?","filler","总之，",0,"g");
+rule("在当今(?:社会|时代|世界)[，,]?","filler","如今，",0,"g");
+rule("在这个(?:快速|飞速|日新月异|瞬息万变|信息爆炸|数字化)?(?:发展|变化)?的(?:时代|社会|世界)(?:里|中)?[，,]?","filler","如今，",0,"g");
+rule("随着[^，。！？\\n]{1,20}的(?:不断|快速|飞速|日益|蓬勃|持续)(?:发展|进步|普及)[，,]?","filler",null,0,"g");
+rule("希望(?:这|以上|本文|这些)?(?:篇|些)?(?:内容|回答|信息)?(?:能)?对(?:你|您)有所帮助[。！!]?","signoff","",0,"g");
+rule("如果(?:你|您)(?:还)?有(?:其他|任何)(?:问题|疑问)[^。！\\n]*[。！]?","signoff","",0,"g");
+rule("让我们一起[^。！\\n]*[。！]?","signoff",null,0,"g");
+rule("至关重要","words","很重要",0,"g");
+rule("扮演着?(?:重要|关键|至关重要|不可或缺)的?角色","words",null,0,"g");
+rule("发挥着?(?:重要|关键|积极|巨大)的?作用","words",null,0,"g");
+rule("具有(?:重要|深远|重大)的?意义","words","很重要",0,"g");
+rule("赋能","words","帮助",0,"g");
+rule("助力","words","帮助",0,"g");
+rule("打造","words","做",0,"g");
+rule("深度融合","words","结合",0,"g");
+rule("全方位(?:地)?","words","全面",0,"g");
+rule("多维度","words","多方面",0,"g");
+rule("一站式","words",null,0,"g");
+rule("无缝","words","顺畅",0,"g");
+rule("底层逻辑","words","道理",0,"g");
+rule("(?:抓手|闭环|颗粒度|组合拳)","words",null,0,"g");
+rule("深入探讨","words","细说",0,"g");
+rule("开启[^，。！？\\n]{0,8}(?:新篇章|新征程|新纪元)","words",null,0,"g");
+rule("(?:画卷|熠熠生辉|璀璨|交响曲|织就|绽放光彩)","words",null,0,"g");
+rule("不仅仅是","words","不只是",0,"g");
+rule("(?:这|它|那)?(?:并)?不(?:仅仅|仅|只|单)?是[^，。；！？\\n]{1,30}[，,；]\\s*(?:而|更|还)是","contrast",null,0,"g");
+rule("(?:结果|答案|原因|秘诀|关键|真相)(?:呢|是什么)?？","setup",null,0,"g");
+rule("——","dash","，",0,"g");
+
+let ignored=new Set(store.get("ignored",[]));
+function detectTells(text){
+  if(!text||!text.trim())return [];
+  const zh=isZh(text); const found=[];
+  for(const r of RULES){r.re.lastIndex=0;let m;let guard=0;
+    while((m=r.re.exec(text))&&guard++<500){
+      if(!m[0]){r.re.lastIndex++;continue;}
+      let s=m.index,e=s+m[0].length;
+      if(r.cat==="dash"){ // skip a dash between digits (ranges) and list markers at line start
+        const prev=text[s-1]||"",next=text[e]||"";
+        if(/\d/.test(prev)&&/\d/.test(next))continue;
+        if(m[0].trim()==="--"&&(/^\s*$/.test(text.slice(text.lastIndexOf("\n",s-1)+1,s))))continue;
+      }
+      let rep=r.rep;
+      if(typeof rep==="function")rep=rep(m[0]);
+      if(r.cat==="dash"&&rep==null){const after=text.slice(e);rep=zh?"，":/^\s*([,.;:!?)]|$)/.test(after)?"":/^\s/.test(after)?",":", ";}
+      if(typeof rep==="string"&&rep&&r.cat!=="dash"&&!/[\u3400-\u9fff]/.test(rep))rep=matchCase(m[0],rep);
+      found.push({s,e,cat:r.cat,rep,cap:r.cap,m:m[0]});
+    }
+  }
+  // lists of three: only when it's a habit (2+ in the text)
+  const triads=[];
+  const tre=zh?/[\u4e00-\u9fff]{1,8}、[\u4e00-\u9fff]{1,8}(?:、|和|与|及|以及)[\u4e00-\u9fff]{1,8}/g:/\b([\w'’-]+(?: [\w'’-]+){0,2}), ([\w'’-]+(?: [\w'’-]+){0,2}),? (?:and|or) ([\w'’-]+(?: [\w'’-]+){0,2})\b/g;
+  let m;while((m=tre.exec(text)))triads.push({s:m.index,e:m.index+m[0].length,cat:"three",rep:null,m:m[0]});
+  if(triads.length>=2)found.push(...triads);
+  // parallel clauses: 3+ consecutive clauses with the same opening
+  const cl=[];const cre=zh?/[^，,；;。！？!?\n、]+/g:/[^,;.!?\n]+/g;while((m=cre.exec(text))){const t=m[0];const lead=t.match(/^\s*/)[0].length;cl.push({s:m.index+lead,e:m.index+t.length,t:t.trim()});}
+  const head=c=>zh?c.t[0]:(c.t.split(/\s+/)[0]||"").toLowerCase();
+  const okC=x=>x.t.length>=(zh?3:8)&&!/^(the|a|an|and|or|but|i|we|it|of|to|in|this|that|you)$/.test(head(x));
+  for(let i=0;i<cl.length;){
+    let j=i+1;const h=head(cl[i]);
+    while(j<cl.length&&okC(cl[j])&&head(cl[j])===h&&text.slice(cl[j-1].e,cl[j].s).length<=3)j++;
+    let a=i;
+    // Chinese: "它让…，让…，让…" — the first clause starts with a subject, the rest repeat the verb
+    if(zh&&j-i===2&&i>0&&cl[i-1].t.slice(1,3).includes(h)&&text.slice(cl[i-1].e,cl[i].s).length<=3)a=i-1;
+    if(j-a>=3&&okC(cl[i]))found.push({s:cl[a].s,e:cl[j-1].e,cat:"parallel",rep:null,m:text.slice(cl[a].s,cl[j-1].e)});
+    i=Math.max(j,i+1);
+  }
+  // keep the longest at each spot, no overlaps
+  found.sort((a,b)=>a.s-b.s||(b.e-b.s)-(a.e-a.s));
+  const res=[];let end=-1;
+  for(const f of found){if(f.s<end)continue;if(ignored.has(f.cat+":"+f.m.trim().toLowerCase()))continue;res.push(f);end=f.e;}
+  // rhythm (whole text)
+  const ss=sentences(text).map(x=>text.slice(x.s,x.e).trim()).filter(x=>x.length>2&&!/^#/.test(x));
+  if(ss.length>=6){const L=ss.map(x=>wordCount(x));const avg=L.reduce((a,b)=>a+b,0)/L.length;const sd=Math.sqrt(L.reduce((a,b)=>a+(b-avg)**2,0)/L.length);
+    if(avg>=6&&sd/avg<0.28&&!ignored.has("rhythm:"))res.push({s:0,e:0,cat:"rhythm",rep:null,m:"",doc:true});}
+  return res;
+}
+function applyLocal(text,f){ // returns {s,e,t}
+  let s=f.s,e=f.e,t=f.rep;
+  if(t===""){ // deletion: tidy the spaces and capitalize what follows when it starts a sentence
+    const before=text.slice(0,s);
+    if(/\s$/.test(before)&&/^\s/.test(text.slice(e)))e++;
+    if(f.cap){const atStart=/(^|[.!?。！？]\s*|\n\s*)$/.test(before);if(atStart){const m=text.slice(e).match(/^\s*(\p{Ll})/u);if(m){const k=e+m[0].length-1;return {s,e:k+1,t:text.slice(e,k)+m[1].toUpperCase()};}}}
+  }
+  return {s,e,t};
+}
+
+/* ---------- state: sessions & versions ---------- */
+let sessions=store.get("sessions",[]); if(!Array.isArray(sessions))sessions=[];
+sessions=sessions.filter(s=>s&&typeof s.id==="string"&&Array.isArray(s.versions));
+const freshSession=()=>({id:uid(),at:Date.now(),input:"",versions:[],cur:-1});
+let S=sessions.find(x=>x.id===store.get("current",null))||freshSession();
+const curV=()=>S.versions[S.cur]||null;
+let undoSt=[],redoSt=[];
+function saveSessions(){
+  let list=sessions.slice(0,100);
+  for(let n=list.length;n>=0;n=n?Math.floor(n*0.6):-1){
+    try{localStorage.setItem("rewriter.sessions",JSON.stringify(list.slice(0,n)));sessions=sessions.slice(0,Math.max(n,1));return;}catch(e){if(n===0){warnStorage();return;}}
+  }
+}
+let persistT=0;
+function persist(now){
+  clearTimeout(persistT);
+  const go=()=>{const has=S.input.trim()||S.versions.length;
+    const i=sessions.indexOf(S);
+    if(has){S.at=Date.now();if(i<0)sessions.unshift(S);else if(i>0){sessions.splice(i,1);sessions.unshift(S);}}
+    else if(i>=0)sessions.splice(i,1);
+    saveSessions();store.set("current",S.id);if(!$("hist").hidden)renderHist();};
+  if(now)go();else persistT=setTimeout(go,400);
+}
+
+/* ---------- UI: modes ---------- */
+function renderModes(){
+  $("modes").innerHTML=MODES.map((m,i)=>`<button class="chip${m.id===mode?" on":""}" role="tab" aria-selected="${m.id===mode}" data-mode="${m.id}" title="${esc(T(m.en,m.zh))}${i<10?` (⌥${(i+1)%10})`:""}">${esc(T(m.en,m.zh))}</button>`).join("");
+  $("customRow").hidden=mode!=="custom";
+  $("voiceRow").hidden=mode!=="voice";
+  if(mode==="voice")renderVoiceSel();
+}
+function setMode(id,focusInput){
+  if(!MODE[id])return;mode=id;store.set("mode",id);renderModes();
+  const b=$("modes").querySelector(".on");b?.scrollIntoView({block:"nearest",inline:"nearest"});
+  if(id==="voice"&&!voices.some(v=>(v.samples||"").trim())){openVoice();return;}
+  if(id==="custom"&&focusInput!==false&&!$("customIn").value.trim())$("customIn").focus();
+  setInStatus(T(`Mode: ${MODE[id].en}. Press ⌘↵ to rewrite.`,`模式：${MODE[id].zh}。按 ⌘↵ 改写。`));
+}
+$("modes").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(b)setMode(b.dataset.mode);});
+function renderStrength(){$("strength").value=strength;$("strengthLbl").textContent=T(...SLBL[strength]);}
+$("strength").addEventListener("input",()=>{strength=+$("strength").value;store.set("strength",strength);renderStrength();});
+$("customIn").value=store.get("custom","");
+$("customIn").addEventListener("input",()=>store.set("custom",$("customIn").value));
+$("freezeIn").value=store.get("freeze","");
+function freezeList(){return $("freezeIn").value.split(/[,，;；\n]/).map(x=>x.trim()).filter(Boolean).slice(0,40);}
+function renderFreezeBtn(){const n=freezeList().length;$("freezeBtn").textContent=n?T(`Freeze words (${n})`,`冻结词 (${n})`):T("Freeze words","冻结词");$("freezeBtn").classList.toggle("on",!$("freezeRow").hidden||n>0);}
+$("freezeIn").addEventListener("input",()=>{store.set("freeze",$("freezeIn").value);renderFreezeBtn();});
+$("freezeBtn").onclick=()=>{$("freezeRow").hidden=!$("freezeRow").hidden;renderFreezeBtn();if(!$("freezeRow").hidden)$("freezeIn").focus();};
+function renderVoiceSel(){
+  $("voiceSel").innerHTML=voices.length?voices.map(v=>`<option value="${v.id}">${esc(v.name||T("Untitled voice","未命名语气"))}</option>`).join(""):`<option value="">${esc(T("No voice yet","还没有语气"))}</option>`;
+  const v=curVoice();if(v)$("voiceSel").value=v.id;
+}
+$("voiceSel").onchange=()=>{activeVoice=$("voiceSel").value;store.set("activeVoice",activeVoice);};
+$("voiceEdit").onclick=()=>openVoice();
+
+/* ---------- input pane ---------- */
+let tellsIn=[],tellsOut=[],tab="result",tellsSrc="in",activeTell=-1;
+function setInStatus(t){$("inSt").textContent=t||"";}
+function updateInMeta(){
+  const v=ta.value;const n=wordCount(v);
+  $("inMeta").textContent=v.trim()?T(`${n} words · ${v.length} characters`,`${n} ${isZh(v)?"字":"词"} · ${v.length} 字符`):"";
+  $("inEmpty").hidden=!!v;
+}
+let tellT=0;
+function onInput(){
+  S.input=ta.value;updateInMeta();persist();
+  clearTimeout(tellT);tellT=setTimeout(()=>{tellsIn=detectTells(ta.value);renderTellCounts();if(tab==="tells"&&tellsSrc==="in")renderTells();drawBackdrop();},140);
+}
+ta.addEventListener("input",onInput);
+ta.addEventListener("scroll",()=>{$("backdrop").scrollTop=ta.scrollTop;});
+function drawBackdrop(){
+  const bd=$("backdrop");
+  if(!(tab==="tells"&&tellsSrc==="in")||!tellsIn.length){bd.textContent="";return;}
+  const v=ta.value;let h="",p=0;
+  tellsIn.forEach((t,i)=>{if(t.doc||t.s<p)return;h+=esc(v.slice(p,t.s))+`<mark class="${i===activeTell?"on":""}">${esc(v.slice(t.s,t.e))}</mark>`;p=t.e;});
+  h+=esc(v.slice(p))+"\n ";bd.innerHTML=h;bd.scrollTop=ta.scrollTop;
+}
+function setInput(text){ // replace all input text, keeping native undo
+  ta.focus();ta.select();
+  let ok=false;try{ok=document.execCommand("insertText",false,text);}catch{}
+  if(!ok||ta.value!==text){ta.value=text;}
+  ta.setSelectionRange(0,0);ta.scrollTop=0;onInput();
+}
+function replaceInputRange(s,e,t){
+  const st=ta.scrollTop;ta.focus();ta.setSelectionRange(s,e);
+  let ok=false;try{ok=document.execCommand("insertText",false,t);}catch{}
+  if(!ok){ta.setRangeText(t,s,e,"end");}
+  ta.scrollTop=st;onInput();
+}
+$("clearBtn").onclick=()=>{if(!ta.value){ta.focus();return;}setInput("");toast(T("Cleared.","已清空。"),()=>{ta.focus();document.execCommand("undo");});};
+const SAMPLE_EN="In today's fast-paced world, remote work has become more than just a trend — it's a fundamental shift in how we live and work. It's important to note that companies must leverage cutting-edge tools to foster collaboration, boost productivity, and drive innovation. This isn't just about technology; it's about culture. By embracing flexibility, organizations can unlock their full potential and navigate the complexities of the modern workplace. The result? A happier, healthier, and more engaged workforce.";
+const SAMPLE_ZH="在当今这个快速发展的时代，远程办公已经不仅仅是一种趋势，更是一场深刻的变革。值得注意的是，企业需要借助先进的工具来赋能团队协作。它让沟通更高效，让管理更透明，让员工更自由。这不是简单的技术升级，而是一次文化的重塑。综上所述，远程办公在未来的工作方式中扮演着至关重要的角色。";
+$("sampleBtn").onclick=()=>{setInput(window.__ZH?SAMPLE_ZH:SAMPLE_EN);setInStatus(T("Sample loaded. Press ⌘↵ to rewrite, or open AI tells.","已载入示例。按 ⌘↵ 改写，或打开 AI 痕迹。"));};
+
+/* ---------- Claude ---------- */
+let sample=null,downloads=null,desktop=null,ctl=null,running=false,streamText="";
+const ERR={rate_limited:["Claude is busy or you hit your usage limit. Try again in a bit.","Claude 正忙，或你已达到用量上限，请稍后再试。"],not_granted:["Claude isn't allowed for this app. Allow it to rewrite.","此应用未获准使用 Claude，允许后才能改写。"],sampling_disabled:["Claude isn't available on this account.","此账号无法使用 Claude。"],refused:["Claude declined this text.","Claude 拒绝处理这段文字。"],session_expired:["Sign in to Claude again.","请重新登录 Claude。"],prompt_too_large:["That's too long for one request. Try a shorter piece.","一次处理的内容太长，换短一点的试试。"],invalid_json:["Claude's answer couldn't be read. Try again.","没能读懂 Claude 的回答，请重试。"]};
+const errText=e=>{const x=ERR[e?.code];return x?T(x[0],x[1]):T("Something went wrong. Try again.","出了点问题，请重试。");};
+function noClaude(){toast(T("Rewriting needs Claude. Open Rewriter in the Claude app. The AI tells check works without it.","改写需要 Claude：请在 Claude 应用中打开改写器。AI 痕迹检查不需要 Claude。"));}
+function tierOpts(m){
+  if(settings.model==="fast")return {modelTier:"quick"};
+  if(settings.model==="best")return {modelTier:"default"};
+  return MODE[m]?.tier==="quick"?{modelTier:"quick"}:{modelTier:"default",effort:"low"};
+}
+function buildPrompt(text,o){
+  const zh=isZh(text);const L=[];
+  L.push("Rewrite the text below so it reads like a thoughtful person wrote it by hand.");
+  if(o.mode==="voice"){
+    const v=o.voice;
+    L.push(`Write it the way this person writes. Match their word choice, sentence length, punctuation habits, formality and quirks. Do not copy their content.`);
+    if(v?.profile?.trim())L.push(`Their style, described:\n${v.profile.trim().slice(0,3000)}`);
+    if(v?.samples?.trim())L.push(`Samples of their own writing:\n<<<\n${v.samples.trim().slice(0,9000)}\n>>>`);
+  }else if(o.mode==="custom"){
+    L.push(`Make it sound: ${(o.custom||"natural").slice(0,200)}.`);
+  }else L.push(`Mode: ${MODE[o.mode].d}`);
+  L.push(`How much to change: ${STRENGTH[o.strength]||STRENGTH[2]}`);
+  if(o.freeze?.length)L.push(`Keep these words and phrases exactly as written: ${o.freeze.map(x=>`"${x}"`).join(", ")}.`);
+  if(!zh&&settings.spelling!=="keep")L.push(`Use ${settings.spelling} English spelling and vocabulary.`);
+  if(zh&&settings.script==="simplified")L.push("Write in Simplified Chinese characters.");
+  if(zh&&settings.script==="traditional")L.push("Write in Traditional Chinese characters.");
+  L.push(`Keep the meaning, facts, names, numbers, links, code and Markdown formatting (headings, lists, bold). Keep the paragraph breaks. Write in the same language as the text${zh?" (Chinese)":""}; do not translate.`);
+  L.push(AVOID);
+  L.push("Output only the rewritten text: no preface, no quotes around it, no notes.");
+  L.push(`\nText:\n<<<\n${text}\n>>>`);
+  return L.join("\n");
+}
+function cleanOut(t){
+  t=String(t||"").replace(/^\s*<<<\s*\n?/,"").replace(/\n?\s*>>>\s*$/,"");
+  t=t.replace(/^(?:here(?:'s|’s| is)[^\n]{0,80}:|sure[^\n]{0,60}:|rewritten(?: text)?:)\s*\n+/i,"");
+  return t.replace(/^\n+|\s+$/g,"");
+}
+function chunks(text,max=6000){
+  if(text.length<=max)return [text];
+  const paras=text.split(/(\n{2,})/);const res=[];let cur="";
+  for(const p of paras){if((cur+p).length>max&&cur.trim()){res.push(cur);cur="";}cur+=p;}
+  if(cur.trim())res.push(cur);
+  // a single giant paragraph: split by sentences
+  return res.flatMap(c=>{if(c.length<=max*1.3)return [c];const out=[];let b="";for(const sn of sentences(c)){const x=c.slice(sn.s,sn.e);if((b+x).length>max&&b){out.push(b);b="";}b+=x;}if(b)out.push(b);return out;});
+}
+function setRunning(on){
+  running=on;$("goLbl").textContent=on?T("Stop","停止"):T("Rewrite","改写");$("goKbd").textContent=on?"Esc":"⌘↵";
+  $("goBtn").title=on?T("Stop (Esc)","停止 (Esc)"):T("Rewrite (⌘↵)","改写 (⌘↵)");
+  updateButtons();
+}
+async function rewrite(){
+  if(running){ctl?.abort();return;}
+  const text=ta.value;
+  if(!text.trim()){ta.focus();setInStatus(T("Type or paste some text first.","先输入或粘贴要改写的文字。"));return;}
+  if(!sample){noClaude();return;}
+  const o={mode,strength,freeze:freezeList(),custom:$("customIn").value.trim()};
+  if(mode==="voice"){o.voice=curVoice();if(!o.voice||!(o.voice.samples||"").trim()){openVoice();return;}}
+  if(mode==="custom"&&!o.custom){$("customRow").hidden=false;$("customIn").focus();setInStatus(T("Describe the sound you want first.","先描述你想要的感觉。"));return;}
+  closePop();finishEdit(false);setTab("result");
+  const my=ctl=new AbortController();setRunning(true);
+  const parts=chunks(text);let done="";streamText="";
+  $("outEmpty").hidden=true;out.classList.remove("streaming");out.innerHTML=`<div class="shim"><i style="width:92%"></i><i style="width:80%"></i><i style="width:88%"></i><i style="width:60%"></i></div>`;
+  $("outSt").textContent=T("Thinking…","思考中…");
+  try{
+    for(let i=0;i<parts.length;i++){
+      const prefix=done;
+      const r=await sample(buildPrompt(parts[i],o),{signal:my.signal,cache:false,...tierOpts(mode),onText:({text:t})=>{if(ctl!==my)return;streamText=prefix+cleanOut(t);out.classList.add("streaming");out.textContent=streamText;$("outSt").textContent=parts.length>1?T(`Writing part ${i+1} of ${parts.length}…`,`正在写第 ${i+1}/${parts.length} 部分…`):T("Writing…","输出中…");}});
+      const piece=cleanOut(r.text);
+      const sep=parts[i].match(/\n*$/)[0]||(i<parts.length-1?"\n\n":"");
+      done=prefix+piece+(i<parts.length-1?(sep.length>=2?sep:"\n\n"):"");
+      if(r.truncated){toast(T("The answer was cut short. Try a shorter piece.","回答被截断了，换短一点的试试。"));}
+    }
+    if(ctl!==my)return;
+    ctl=null;setRunning(false);streamText="";
+    const v={id:uid(),mode:o.mode,strength:o.strength,custom:o.custom,voice:o.voice?.name||"",input:text,text:done,at:Date.now()};
+    S.versions.push(v);S.cur=S.versions.length-1;S.input=text;persist(true);
+    out.classList.remove("streaming");renderAll();
+    const miss=o.freeze.filter(f=>!done.toLowerCase().includes(f.toLowerCase()));
+    if(miss.length)toast(T(`Not kept: ${miss.join(", ")}. Click the word to fix it, or rewrite again.`,`没保留：${miss.join("、")}。可点击该词修改，或再改写一次。`));
+  }catch(e){
+    if(ctl!==my)return;
+    ctl=null;setRunning(false);streamText="";
+    out.classList.remove("streaming");renderOut();updateButtons();
+    if(e?.code==="cancelled")$("outSt").textContent=T("Stopped.","已停止。");
+    else{$("outSt").textContent=errText(e);if(e?.code==="not_granted"){sample=null;}}
+  }finally{if(ctl===my){ctl=null;setRunning(false);}}
+}
+$("goBtn").onclick=()=>rewrite();
+
+/* ---------- result rendering ---------- */
+let OT=null; // analysed result: {key,text,toks,same,sents,best,pct}
+function analyze(){
+  const v=curV();if(!v){OT=null;return null;}
+  const key=v.input+"\u0000"+v.text;if(OT&&OT.key===key)return OT;
+  const toks=tokenize(v.text);const same=sameArr(tokenize(v.input),toks);const sents=sentences(v.text);
+  let best=[0,-1],bestW=0,runS=-1,runW=0,words=0,chg=0;
+  toks.forEach((t,i)=>{if(t.w){words++;if(!same[i])chg++;}
+    if(t.w&&!same[i]){runS=-1;runW=0;return;}
+    if(runS<0){if(!t.w)return;runS=i;runW=0;}
+    if(t.w){runW++;if(runW>bestW){bestW=runW;best=[runS,i];}}});
+  if(bestW<3)best=[0,-1];
+  OT={key,text:v.text,toks,same,sents,best,pct:words?Math.round(chg/words*100):0,words};
+  return OT;
+}
+function renderOut(){
+  const v=curV();
+  $("outEmpty").hidden=!!v||running;
+  $("vers").hidden=!S.versions.length;
+  if(!v){out.innerHTML="";$("outSt").textContent="";renderVers();return;}
+  if(running&&streamText)return;
+  const A=analyze();const showT=tab==="tells"&&tellsSrc==="out";const tl=showT?tellsOut.filter(t=>!t.doc):[];
+  let h="",cs=-1,sp=0,tp=0;
+  A.toks.forEach((t,i)=>{
+    while(sp<A.sents.length-1&&t.s>=A.sents[sp].e)sp++;
+    if(sp!==cs){if(cs>=0)h+="</span>";h+=`<span class="s" data-s="${sp}">`;cs=sp;}
+    let c=t.w?"w":"p";
+    if(t.w&&!A.same[i]&&settings.showChg)c+=" c";
+    if(settings.showLong&&i>=A.best[0]&&i<=A.best[1])c+=" l";
+    while(tp<tl.length&&tl[tp].e<=t.s)tp++;
+    let k="";if(tp<tl.length&&tl[tp].s<t.e&&tl[tp].e>t.s){const idx=tellsOut.indexOf(tl[tp]);c+=" tl"+(idx===activeTell?" on":"");k=` data-k="${idx}"`;}
+    h+=`<span class="${c}" data-i="${i}"${k}>${esc(t.t)}</span>`;
+  });
+  if(cs>=0)h+="</span>";
+  out.innerHTML=h;
+  $("outSt").textContent=T(`${mName(v.mode)} · ${A.pct}% changed · ${wordCount(v.text)} words`,`${mName(v.mode)} · 改动 ${A.pct}% · ${wordCount(v.text)} ${isZh(v.text)?"字":"词"}`);
+  renderVers();
+}
+function renderVers(){
+  const n=S.versions.length;$("vers").hidden=!n;if(!n)return;
+  const v=curV();
+  $("vLbl").textContent=`${S.cur+1} / ${n}`+(v?` · ${mName(v.mode)}`:"");
+  $("vPrev").disabled=S.cur<=0;$("vNext").disabled=S.cur>=n-1;$("cmpVerBtn").hidden=n<2;
+}
+function renderAll(){renderOut();tellsOut=curV()?detectTells(curV().text):[];renderTellCounts();if(tab==="tells")renderTells();drawBackdrop();updateButtons();}
+function updateButtons(){const has=!!curV();["copyBtn","useBtn","editBtn"].forEach(id=>$(id).disabled=!has||running);$("undoBtn").disabled=!undoSt.length;$("redoBtn").disabled=!redoSt.length;}
+$("vPrev").onclick=()=>{if(S.cur>0){S.cur--;persist();closePop();renderAll();}};
+$("vNext").onclick=()=>{if(S.cur<S.versions.length-1){S.cur++;persist();closePop();renderAll();}};
+$("showChg").checked=settings.showChg;$("showLong").checked=settings.showLong;
+$("showChg").onchange=()=>{settings.showChg=$("showChg").checked;saveSettings();renderOut();};
+$("showLong").onchange=()=>{settings.showLong=$("showLong").checked;saveSettings();renderOut();};
+
+/* result edits with undo */
+function pushUndo(){const v=curV();if(!v)return;undoSt.push({sid:S.id,vi:S.cur,text:v.text});if(undoSt.length>200)undoSt.shift();redoSt=[];}
+function setOutText(t){const v=curV();if(!v)return;v.text=t;persist();renderAll();}
+function replaceOut(s,e,t,msg){const v=curV();if(!v)return;pushUndo();setOutText(v.text.slice(0,s)+t+v.text.slice(e));if(msg)toast(msg,doUndo);}
+function stepHistory(from,to,label){
+  const u=from.pop();if(!u){toast(label);return;}
+  let s=S;if(u.sid!==S.id){const f=sessions.find(x=>x.id===u.sid);if(!f){return;}loadSession(f);s=S;}
+  const v=s.versions[u.vi];if(!v)return;to.push({sid:s.id,vi:u.vi,text:v.text});s.cur=u.vi;v.text=u.text;persist();closePop();renderAll();
+}
+const doUndo=()=>stepHistory(undoSt,redoSt,T("Nothing to undo in the result.","结果里没有可撤销的操作。"));
+const doRedo=()=>stepHistory(redoSt,undoSt,T("Nothing to redo.","没有可重做的操作。"));
+$("undoBtn").onclick=doUndo;$("redoBtn").onclick=doRedo;
+
+/* edit result by hand */
+let editing=false;
+function startEdit(){const v=curV();if(!v||running)return;closePop();editing=true;$("outEdit").value=v.text;$("outEdit").hidden=false;out.hidden=true;$("editBtn").textContent=T("Done","完成");$("outEdit").focus();}
+function finishEdit(commit=true){
+  if(!editing)return;editing=false;const v=curV();const t=$("outEdit").value;
+  $("outEdit").hidden=true;out.hidden=false;$("editBtn").textContent=T("Edit","编辑");
+  if(commit&&v&&t!==v.text){pushUndo();setOutText(t);}
+}
+$("editBtn").onclick=()=>editing?finishEdit():startEdit();
+$("outEdit").addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.isComposing){e.preventDefault();e.stopPropagation();finishEdit();out.focus();}});
+
+/* copy / use as input */
+async function copyText(t,okMsg){
+  try{await navigator.clipboard.writeText(t);toast(okMsg||T("Copied.","已复制。"));return;}catch{}
+  const x=document.createElement("textarea");x.value=t;x.style.cssText="position:fixed;opacity:0;top:0";document.body.append(x);x.select();let ok=false;try{ok=document.execCommand("copy");}catch{}x.remove();
+  toast(ok?(okMsg||T("Copied.","已复制。")):T("Couldn't copy. Select the text and press ⌘C.","复制失败，请选中文字后按 ⌘C。"));
+}
+function copyResult(){if(editing)finishEdit();const v=curV();if(!v){toast(T("Nothing to copy yet. Rewrite something first.","还没有可复制的结果，先改写一段文字。"));return;}copyText(v.text,T("Result copied.","结果已复制。"));}
+$("copyBtn").onclick=copyResult;
+function useAsInput(){const v=curV();if(!v)return;if(editing)finishEdit();setInput(v.text);setInStatus(T("Result moved to Your text. Rewrite again or check AI tells.","结果已放入“你的文字”，可以再改写或检查 AI 痕迹。"));}
+$("useBtn").onclick=useAsInput;
+out.addEventListener("copy",e=>{const sel=getSelection().toString();if(!sel){const v=curV();if(v){e.preventDefault();e.clipboardData.setData("text/plain",v.text);toast(T("Result copied.","结果已复制。"));}}});
+
+/* ---------- word & sentence popover ---------- */
+const pop=$("pop");let popId=0;const altCache=new Map();
+function closePop(){if(pop.hidden)return;pop.hidden=true;popId++;out.querySelectorAll(".pk").forEach(x=>x.classList.remove("pk"));}
+function placePop(rect){
+  pop.hidden=false;const w=pop.offsetWidth,h=pop.offsetHeight,vw=innerWidth,vh=innerHeight;
+  let x=Math.min(Math.max(12,rect.left),vw-w-12),y=rect.bottom+6;
+  if(y+h>vh-12)y=Math.max(12,rect.top-h-6);
+  pop.style.left=x+"px";pop.style.top=y+"px";
+}
+function markRange(a,b){out.querySelectorAll(".pk").forEach(x=>x.classList.remove("pk"));for(let i=a;i<=b;i++)out.querySelector(`[data-i="${i}"]`)?.classList.add("pk");}
+function popShell(title,sub,body,foot){
+  pop.innerHTML=`<div class="poph"><b data-no-i18n>${esc(title)}</b><span>${esc(sub)}</span><span class="sp"></span><button class="ib" data-close title="${esc(T("Close (Esc)","关闭 (Esc)"))}" aria-label="Close" style="width:24px;height:24px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="alts" data-no-i18n>${body}</div>${foot||""}`;
+}
+function renderAlts(list,onPick){
+  const box=pop.querySelector(".alts");if(!box)return;
+  if(!list.length){box.innerHTML=`<div class="ld">${esc(T("No good alternatives found.","没找到合适的替换。"))}</div>`;return;}
+  box.innerHTML=list.map((a,i)=>`<button class="alt" data-v="${i}"><span class="k">${i+1}</span><span>${esc(a)}</span></button>`).join("");
+  box.onclick=e=>{const b=e.target.closest(".alt");if(b)onPick(list[+b.dataset.v]);};
+  box.querySelector(".alt")?.focus({preventScroll:true});
+}
+function popError(e){const box=pop.querySelector(".alts");if(box)box.innerHTML=`<div class="ld">${esc(errText(e))}</div>`;}
+async function wordPop(a,b,anchorRect){
+  const A=analyze();if(!A||running)return;
+  const s=A.toks[a].s,e=A.toks[b].e;const phrase=A.text.slice(s,e);if(!phrase.trim())return;
+  const sn=sentenceAt(A.text,s);const sent=A.text.slice(sn.s,coreEnd(A.text,sn));
+  const my=++popId;markRange(a,b);
+  popShell(phrase,a===b?T("Synonyms","同义词"):T("Alternatives","替换说法"),`<div class="ld">${esc(T("Finding alternatives…","正在找替换词…"))}</div>`,`<div class="pstyles"><button data-sent>${esc(T("Rephrase sentence","改写整句"))}</button></div>`);
+  placePop(anchorRect);
+  pop.querySelector("[data-sent]").onclick=()=>sentPop(sn,anchorRect);
+  if(!sample){popError({code:"none"});pop.querySelector(".alts").innerHTML=`<div class="ld">${esc(T("Synonyms need Claude. Open Rewriter in the Claude app.","同义词需要 Claude，请在 Claude 应用中打开。"))}</div>`;return;}
+  const key="w\u0000"+phrase+"\u0000"+sent;
+  try{
+    let list=altCache.get(key);
+    if(!list){
+      const zh=isZh(sent);
+      const r=await sample.json(`Suggest up to 6 replacements for the ${zh?"word":"word or phrase"} "${phrase}" as it is used in the sentence below. Each replacement must drop into exactly that spot with no other change and keep the meaning, grammar, tense, number and language${zh?" (Chinese)":""}. Prefer common, natural words a person would use. Do not repeat the original. Reply with only JSON: {"alts":["...","..."]}\n\nSentence: ${sent}`,{modelTier:"quick"});
+      list=[...new Set((Array.isArray(r?.alts)?r.alts:[]).map(x=>String(x).trim()).filter(x=>x&&x.toLowerCase()!==phrase.toLowerCase()))].slice(0,8);
+      altCache.set(key,list);
+    }
+    if(my!==popId)return;
+    renderAlts(list,alt=>{closePop();const rep=/^\p{Lu}/u.test(phrase)?alt[0].toUpperCase()+alt.slice(1):alt;replaceOut(s,e,rep,T(`Replaced “${phrase}” with “${rep}”.`,`已把“${phrase}”换成“${rep}”。`));out.focus({preventScroll:true});});
+    placePop(anchorRect);
+  }catch(err){if(my===popId)popError(err);}
+}
+const SSTYLES=[["rephrase","Rephrase","换个说法"],["shorter","Shorter","更短"],["longer","Longer","更长"],["formal","Formal","正式"],["casual","Casual","口语"],["natural","More natural","更自然"]];
+async function sentPop(sn,anchorRect,style="rephrase"){
+  const A=analyze();if(!A||running)return;
+  const e=coreEnd(A.text,sn);const sent=A.text.slice(sn.s,e);if(!sent.trim())return;
+  const my=++popId;
+  const ia=A.toks.findIndex(t=>t.e>sn.s),ib=A.toks.findIndex(t=>t.s>=e);markRange(ia,(ib<0?A.toks.length:ib)-1);
+  popShell(T("Sentence","整句"),T("Pick a version","选一个版本"),`<div class="ld">${esc(T("Rewriting this sentence…","正在改写这句…"))}</div>`,
+    `<div class="pstyles">${SSTYLES.map(([k,en,zh])=>`<button data-st="${k}" class="${k===style?"on":""}">${esc(T(en,zh))}</button>`).join("")}</div>`);
+  placePop(anchorRect);
+  pop.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>sentPop(sn,anchorRect,b.dataset.st));
+  if(!sample){pop.querySelector(".alts").innerHTML=`<div class="ld">${esc(T("Rephrasing needs Claude. Open Rewriter in the Claude app.","改写整句需要 Claude，请在 Claude 应用中打开。"))}</div>`;return;}
+  const before=A.text.slice(Math.max(0,sn.s-300),sn.s),after=A.text.slice(sn.e,sn.e+300);
+  const how={rephrase:`in the current mode (${MODE[curV().mode]?.d||"Standard"})`,shorter:"noticeably shorter",longer:"a little longer with a useful detail (no invented facts)",formal:"more formal",casual:"more casual and conversational",natural:"more natural, like a person talking: plain words, no AI-writing habits"}[style];
+  const key=`s\u0000${style}\u0000${sent}`;
+  try{
+    let list=altCache.get(key);
+    if(!list){
+      const r=await sample.json(`Rewrite the sentence below in 4 different ways, ${how}. Keep its meaning and its language${isZh(sent)?" (Chinese)":""}, and make each version fit between the text before and after it. ${AVOID}\nReply with only JSON: {"alts":["...","...","...","..."]}\n\nBefore: ${before}\nSentence: ${sent}\nAfter: ${after}`,{modelTier:"quick"});
+      list=[...new Set((Array.isArray(r?.alts)?r.alts:[]).map(x=>String(x).trim()).filter(x=>x&&x!==sent))].slice(0,6);
+      altCache.set(key,list);
+    }
+    if(my!==popId)return;
+    renderAlts(list,alt=>{closePop();replaceOut(sn.s,e,alt,T("Sentence replaced.","已替换整句。"));out.focus({preventScroll:true});});
+    placePop(anchorRect);
+  }catch(err){if(my===popId)popError(err);}
+}
+pop.addEventListener("click",e=>{if(e.target.closest("[data-close]"))closePop();});
+pop.addEventListener("keydown",e=>{
+  if(e.isComposing)return;
+  const btns=[...pop.querySelectorAll(".alt")];const i=btns.indexOf(document.activeElement);
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();if(!btns.length)return;const n=e.key==="ArrowDown"?(i+1)%btns.length:(i-1+btns.length)%btns.length;btns[n].focus();}
+  else if(/^[1-9]$/.test(e.key)&&btns[+e.key-1]){e.preventDefault();btns[+e.key-1].click();}
+  else if(e.key==="Escape"){e.preventDefault();e.stopPropagation();closePop();out.focus({preventScroll:true});}
+});
+let downAt=null;
+out.addEventListener("mousedown",e=>{downAt=[e.clientX,e.clientY];});
+out.addEventListener("mouseup",e=>{
+  if(running||editing||!curV())return;
+  const sel=getSelection();const moved=downAt&&Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>4;
+  if(moved&&sel&&!sel.isCollapsed&&out.contains(sel.anchorNode)){
+    const ends=[sel.anchorNode,sel.focusNode].map(n=>(n.nodeType===3?n.parentElement:n)?.closest?.("[data-i]")).filter(Boolean);
+    if(ends.length===2){let a=+ends[0].dataset.i,b=+ends[1].dataset.i;if(a>b)[a,b]=[b,a];const A=analyze();
+      while(a<b&&!A.toks[a].w)a++;while(b>a&&!A.toks[b].w)b--;
+      if(b-a<=12&&A.toks[a].w){wordPop(a,b,sel.getRangeAt(0).getBoundingClientRect());return;}}
+    return;
+  }
+  if(sel&&!sel.isCollapsed)return;
+  const w=e.target.closest(".w"),s=e.target.closest(".s");
+  if(w&&!e.altKey){const i=+w.dataset.i;wordPop(i,i,w.getBoundingClientRect());}
+  else if(s){const A=analyze();const sn=A.sents[+s.dataset.s];if(sn)sentPop(sn,(w||e.target).getBoundingClientRect());}
+});
+document.addEventListener("mousedown",e=>{if(!pop.hidden&&!pop.contains(e.target)&&!out.contains(e.target))closePop();});
+$("resultView").addEventListener("scroll",closePop);
+
+/* ---------- tabs & AI tells ---------- */
+function setTab(t){
+  tab=t;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  $("resultView").hidden=t!=="result";$("tellsView").hidden=t!=="tells";$("outFoot").hidden=t!=="result";
+  $("tellsBtn").classList.toggle("on",t==="tells"&&tellsSrc==="in");
+  if(t==="result"){activeTell=-1;}
+  if(t==="tells"){tellsIn=detectTells(ta.value);renderTells();}
+  drawBackdrop();renderOut();
+  if(t==="tells"&&tellsSrc==="out"){$("resultView").hidden=false;$("outFoot").hidden=true;}
+  layoutTellsOut();
+}
+function layoutTellsOut(){ // when checking the result, show it above the list
+  const both=tab==="tells"&&tellsSrc==="out"&&!!curV();
+  $("resultView").hidden=!(tab==="result"||both);
+  $("resultView").style.flex=both?"0 0 45%":"";$("resultView").style.borderBottom=both?"1px solid var(--line)":"";
+}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+function setSrc(src){tellsSrc=src;activeTell=-1;document.querySelectorAll("#tsrc button").forEach(b=>b.classList.toggle("on",b.dataset.src===src));$("tellsBtn").classList.toggle("on",tab==="tells"&&src==="in");renderTells();drawBackdrop();renderOut();layoutTellsOut();}
+$("tsrc").addEventListener("click",e=>{const b=e.target.closest("[data-src]");if(b)setSrc(b.dataset.src);});
+function toggleTells(){if(tab==="tells"&&tellsSrc==="in"){setTab("result");return;}tellsSrc="in";document.querySelectorAll("#tsrc button").forEach(b=>b.classList.toggle("on",b.dataset.src==="in"));setTab("tells");}
+$("tellsBtn").onclick=toggleTells;
+function renderTellCounts(){
+  const n=tellsIn.length;$("tellsInN").textContent=ta.value.trim()?String(n):"";$("tellsInN").classList.toggle("zero",n===0);
+  const m=(tellsSrc==="out"?tellsOut:tellsIn).length;const has=tellsSrc==="out"?!!curV():!!ta.value.trim();
+  $("tellsTabN").textContent=has?String(m):"";$("tellsTabN").classList.toggle("zero",m===0);
+}
+function snippet(text,t){
+  const a=Math.max(0,t.s-40),b=Math.min(text.length,t.e+40);
+  return (a>0?"…":"")+esc(text.slice(a,t.s)).replace(/\n/g," ")+"<b>"+esc(text.slice(t.s,t.e)).replace(/\n/g," ")+"</b>"+esc(text.slice(t.e,b)).replace(/\n/g," ")+(b<text.length?"…":"");
+}
+function renderTells(){
+  renderTellCounts();
+  const src=tellsSrc;const text=src==="in"?ta.value:(curV()?.text||"");
+  const list=src==="in"?tellsIn:tellsOut;const L=$("tellsList");
+  if(!text.trim()){$("tsum").textContent="";$("fixAllBtn").hidden=true;L.innerHTML=`<div class="tnone"><h3>${esc(src==="in"?T("Nothing to check yet","还没有可检查的文字"):T("No result yet","还没有结果"))}</h3>${esc(src==="in"?T("Paste or type text on the left. Rewriter highlights habits that make writing sound machine-made, and fixes them in one click.","在左边粘贴或输入文字。改写器会标出让文字显得像机器写的习惯，一键就能改掉。"):T("Rewrite something first, then check the result here.","先改写一段文字，再在这里检查结果。"))}</div>`;return;}
+  const fixable=list.filter(t=>!t.doc&&(t.rep!=null||sample)).length;
+  $("fixAllBtn").hidden=!fixable;$("fixAllBtn").textContent=T(`Fix all (${fixable})`,`全部修改 (${fixable})`);
+  $("tsum").textContent=list.length?T(`${list.length} AI tells in ${wordCount(text)} words`,`${wordCount(text)} 字词中有 ${list.length} 处 AI 痕迹`):"";
+  if(!list.length){L.innerHTML=`<div class="tnone"><h3>${esc(T("No AI tells found","没发现 AI 痕迹"))}</h3>${esc(T("This reads like a person wrote it. This check looks for common writing habits; it isn't an AI detector.","读起来像人写的。这个检查找的是常见写作习惯，不是 AI 检测器。"))}</div>`;return;}
+  const groups={};list.forEach((t,i)=>{(groups[t.cat]=groups[t.cat]||[]).push([t,i]);});
+  let h="";
+  for(const c of CAT_ORDER){const g=groups[c];if(!g)continue;const C=CAT[c];
+    h+=`<div class="tgrp"><div class="tgh">${esc(T(C.en,C.zh))} <span class="n">${g.length}</span></div><p class="twhy">${esc(T(C.why[0],C.why[1]))}</p>`;
+    for(const [t,i] of g){
+      if(t.doc){h+=`<div class="ti" data-k="${i}"><div class="tact"><span class="sug ai">${esc(T("Rewrite with varied rhythm","改写成长短句交错"))}</span><button class="btn sm" data-natural="${i}">${esc(T("Rewrite in Natural mode","用“自然”模式改写"))}</button><button class="lnk sm" data-ign="${i}">${esc(T("Ignore","忽略"))}</button></div></div>`;continue;}
+      const sug=t.rep==null?`<span class="sug ai">${esc(T("Claude rewrites this sentence","由 Claude 改写这句"))}</span>`:t.rep.trim()===""?`<span class="sug">${esc(T("Remove it","删掉"))}</span>`:`<span class="sug" data-no-i18n>→ ${esc(t.rep.trim())}</span>`;
+      const fixBtn=t.rep==null&&!sample?`<button class="btn sm" disabled title="${esc(T("Needs Claude","需要 Claude"))}">${esc(T("Needs Claude","需要 Claude"))}</button>`:`<button class="btn sm" data-fix="${i}">${esc(t.rep==null?T("Fix with Claude","用 Claude 修改"):T("Fix","修改"))}</button>`;
+      h+=`<div class="ti${i===activeTell?" on":""}" data-k="${i}"><div class="snip" data-no-i18n>${snippet(text,t)}</div><div class="tact">${sug}${fixBtn}<button class="lnk sm" data-ign="${i}">${esc(T("Ignore","忽略"))}</button></div></div>`;
+    }
+    h+="</div>";
+  }
+  L.innerHTML=h;
+}
+$("tellsList").addEventListener("click",e=>{
+  const fx=e.target.closest("[data-fix]"),ig=e.target.closest("[data-ign]"),nat=e.target.closest("[data-natural]"),it=e.target.closest(".ti");
+  const list=tellsSrc==="in"?tellsIn:tellsOut;
+  if(fx){fixTells([list[+fx.dataset.fix]]);return;}
+  if(ig){const t=list[+ig.dataset.ign];if(!t)return;ignored.add(t.cat+":"+t.m.trim().toLowerCase());store.set("ignored",[...ignored].slice(-300));refreshTells();toast(T("Ignored. It won't be flagged again.","已忽略，之后不再标出。"),()=>{ignored.delete(t.cat+":"+t.m.trim().toLowerCase());store.set("ignored",[...ignored]);refreshTells();});return;}
+  if(nat){if(tellsSrc==="out")useAsInput();setMode("natural");rewrite();return;}
+  if(it){focusTell(+it.dataset.k);}
+});
+function refreshTells(){tellsIn=detectTells(ta.value);tellsOut=curV()?detectTells(curV().text):[];renderTells();drawBackdrop();renderOut();}
+function focusTell(i){
+  activeTell=i;const list=tellsSrc==="in"?tellsIn:tellsOut;const t=list[i];if(!t)return;
+  document.querySelectorAll(".ti").forEach(x=>x.classList.toggle("on",+x.dataset.k===i));
+  if(t.doc)return;
+  if(tellsSrc==="in"){drawBackdrop();ta.focus({preventScroll:true});ta.setSelectionRange(t.s,t.e);
+    const bd=$("backdrop");const mk=bd.querySelector("mark.on");if(mk){ta.scrollTop=Math.max(0,mk.offsetTop-ta.clientHeight/3);bd.scrollTop=ta.scrollTop;}}
+  else{renderOut();out.querySelector(".tl.on")?.scrollIntoView({block:"center",behavior:"smooth"});}
+}
+async function fixTells(items){
+  const src=tellsSrc;const text=src==="in"?ta.value:(curV()?.text||"");
+  items=items.filter(t=>t&&!t.doc);if(!items.length)return;
+  const local=items.filter(t=>t.rep!=null),ai=items.filter(t=>t.rep==null);
+  const edits=[];
+  // Claude: one call for all sentences that need a rewrite
+  if(ai.length){
+    if(!sample){if(!local.length){noClaude();return;}}
+    else{
+      const sents=[];for(const t of ai){const sn=sentenceAt(text,t.s);const e=Math.max(coreEnd(text,sn),Math.min(t.e,text.length));let x=sents.find(q=>q.s===sn.s);if(x){x.cats.add(t.cat);x.e=Math.max(x.e,e);}else sents.push({s:sn.s,e,cats:new Set([t.cat])});}
+      sents.sort((a,b)=>a.s-b.s);for(let i=1;i<sents.length;i++)if(sents[i].s<sents[i-1].e){sents[i-1].e=Math.max(sents[i-1].e,sents[i].e);sents[i].cats.forEach(c=>sents[i-1].cats.add(c));sents.splice(i--,1);}
+      const use=sents.slice(0,40);
+      $("tsum").textContent=T("Claude is fixing…","Claude 正在修改…");$("fixAllBtn").disabled=true;
+      try{
+        const r=await sample.json(`Each numbered sentence below has an AI-writing habit, named after it. Rewrite each sentence to remove that habit so it sounds like a person wrote it. Keep the meaning, the language${isZh(text)?" (Chinese)":""}, names and numbers. Do not introduce other habits (em dashes, "it's not X, it's Y", stock phrases, lists of three). Keep any leading Markdown such as "- " or "## ".\nReply with only JSON: {"fixes":[{"id":0,"text":"rewritten sentence"}]}\n\n`+use.map((x,i)=>`${i}. ${text.slice(x.s,x.e)}\n   Habit: ${[...x.cats].map(c=>CAT[c].en+" ("+CAT[c].why[0]+")").join("; ")}`).join("\n"),{modelTier:"quick",cache:false});
+        const fixes=Array.isArray(r?.fixes)?r.fixes:[];
+        for(const f of fixes){const x=use[+f.id];if(x&&typeof f.text==="string"&&f.text.trim())edits.push({s:x.s,e:x.e,t:f.text.trim()});}
+      }catch(e){toast(errText(e));}
+      finally{$("fixAllBtn").disabled=false;}
+      if((src==="in"?ta.value:(curV()?.text||""))!==text){toast(T("The text changed while Claude was working. Try again.","Claude 修改期间文字变了，请重试。"));renderTells();return;}
+    }
+  }
+  for(const t of local){if(edits.some(x=>t.s<x.e&&t.e>x.s))continue;edits.push(applyLocal(text,t));}
+  if(!edits.length){renderTells();return;}
+  edits.sort((a,b)=>b.s-a.s);
+  let nt=text;for(const x of edits)nt=nt.slice(0,x.s)+x.t+nt.slice(x.e);
+  nt=nt.replace(/ ,/g,",").replace(/,\s*,/g,",").replace(/，，/g,"，").replace(/([.!?])\s*,/g,"$1");
+  const msg=edits.length===1?T("Fixed.","已修改。"):T(`Fixed ${edits.length} spots.`,`已修改 ${edits.length} 处。`);
+  if(src==="in"){
+    if(edits.length===1&&nt===text.slice(0,edits[0].s)+edits[0].t+text.slice(edits[0].e))replaceInputRange(edits[0].s,edits[0].e,edits[0].t);
+    else{const st=ta.scrollTop;setInput(nt);ta.scrollTop=st;}
+    tellsIn=detectTells(ta.value);activeTell=-1;renderTells();drawBackdrop();
+    toast(msg,()=>{ta.focus();document.execCommand("undo");});
+  }else{pushUndo();setOutText(nt);activeTell=-1;toast(msg,doUndo);}
+}
+$("fixAllBtn").onclick=()=>{const list=tellsSrc==="in"?tellsIn:tellsOut;fixTells(list.filter(t=>!t.doc&&(t.rep!=null||sample)));};
+
+/* ---------- sessions UI ---------- */
+function loadSession(s){S=s;ta.value=s.input||"";undoSt=undoSt.filter(u=>sessions.some(x=>x.id===u.sid));finishEdit(false);closePop();updateInMeta();tellsIn=detectTells(ta.value);persist();renderAll();}
+function newSession(silent){
+  if(running)ctl?.abort();
+  const had=S.input.trim()||S.versions.length;
+  S=freshSession();ta.value="";updateInMeta();tellsIn=[];finishEdit(false);closePop();persist(true);renderAll();
+  if(had&&!silent)toast(T("Started a new text. The last one is in History.","已新建。上一段在“历史”里。"));
+  ta.focus();
+}
+$("newBtn").onclick=()=>newSession();
+const fmtTime=t=>{const d=new Date(t),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):d.toLocaleDateString([],{month:"short",day:"numeric"});};
+function renderHist(){
+  const q=$("histSearch").value.trim().toLowerCase();
+  const list=sessions.filter(s=>!q||s.input.toLowerCase().includes(q)||s.versions.some(v=>v.text.toLowerCase().includes(q)));
+  $("histList").innerHTML=list.length?list.map(s=>{const modes=[...new Set(s.versions.map(v=>mName(v.mode)))].join(", ");
+    return `<div class="hitem${s===S?" on":""}" data-id="${s.id}" role="button" tabindex="0"><div class="hb"><div class="hp" data-no-i18n>${esc((s.input||s.versions[0]?.text||"").slice(0,160)||T("Empty","空"))}</div><div class="hm">${esc(fmtTime(s.at))}${s.versions.length?" · "+esc(T(`${s.versions.length} versions`,`${s.versions.length} 个版本`))+" · "+esc(modes):""}</div></div><button class="ib" data-del="${s.id}" title="${esc(T("Delete","删除"))}" aria-label="Delete"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;}).join("")
+    :`<div class="tnone">${esc(q?T("Nothing matches.","没有匹配的记录。"):T("Your rewrites are saved here, on this computer.","你的改写会保存在这里，只存在这台电脑上。"))}</div>`;
+}
+function openHist(){$("hist").hidden=false;$("scrim").hidden=false;renderHist();$("histSearch").focus();}
+function closeHist(){$("hist").hidden=true;$("scrim").hidden=true;}
+$("histBtn").onclick=()=>$("hist").hidden?openHist():closeHist();
+$("histClose").onclick=closeHist;$("scrim").onclick=closeHist;
+$("histSearch").addEventListener("input",renderHist);
+$("histList").addEventListener("click",e=>{
+  const d=e.target.closest("[data-del]");
+  if(d){e.stopPropagation();const s=sessions.find(x=>x.id===d.dataset.del);if(!s)return;const i=sessions.indexOf(s);sessions.splice(i,1);saveSessions();
+    if(s===S){S=freshSession();ta.value="";loadSession(S);}renderHist();
+    toast(T("Deleted from history.","已从历史中删除。"),()=>{sessions.splice(i,0,s);saveSessions();renderHist();});return;}
+  const it=e.target.closest(".hitem");if(it){const s=sessions.find(x=>x.id===it.dataset.id);if(s){loadSession(s);closeHist();}}
+});
+$("histList").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("hitem")){e.preventDefault();e.target.click();}});
+
+/* ---------- menus ---------- */
+function closeMenus(){$("exportMenu").hidden=true;$("moreMenu").hidden=true;}
+$("exportBtn").onclick=e=>{e.stopPropagation();const h=$("exportMenu").hidden;closeMenus();$("exportMenu").hidden=!h;if(h)$("exportMenu").querySelector("button").focus();};
+$("moreBtn").onclick=e=>{e.stopPropagation();const h=$("moreMenu").hidden;closeMenus();$("moreMenu").hidden=!h;if(h)$("moreMenu").querySelector("button:not([hidden])").focus();};
+document.addEventListener("click",e=>{if(!e.target.closest(".menuwrap"))closeMenus();});
+for(const id of["exportMenu","moreMenu"])$(id).addEventListener("keydown",e=>{const b=[...$(id).querySelectorAll("button:not([hidden])")];const i=b.indexOf(document.activeElement);if(e.key==="ArrowDown"){e.preventDefault();b[(i+1)%b.length].focus();}if(e.key==="ArrowUp"){e.preventDefault();b[(i-1+b.length)%b.length].focus();}});
+$("exportMenu").addEventListener("click",e=>{const b=e.target.closest("[data-x]");if(!b)return;closeMenus();const x=b.dataset.x;if(x==="copy")copyResult();else exportAs(x);});
+$("moreMenu").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;closeMenus();const m=b.dataset.m;
+  if(m==="compare")openCompare();else if(m==="versions")openVersions();else if(m==="settings")openSettings();else if(m==="keys")openKeys();
+  else if(m==="hotkey")requestHotkey();else if(m==="install")desktop?.install.request().catch(()=>{});});
+
+/* ---------- open files ---------- */
+async function readFile(f){
+  const ext=(f.name.split(".").pop()||"").toLowerCase();
+  try{
+    if(ext==="docx"){if(!window.mammoth)throw new Error("lib");const r=await mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()});return r.value.replace(/\n{3,}/g,"\n\n").trim();}
+    if(["doc","pdf","pages","rtf","odt"].includes(ext)){toast(T(`.${ext} files can't be opened here. Save it as .docx, .txt or .md first.`,`这里打不开 .${ext} 文件，请先另存为 .docx、.txt 或 .md。`));return null;}
+    return (await f.text()).replace(/\r\n?/g,"\n").replace(/^\uFEFF/,"");
+  }catch(e){toast(e?.message==="lib"?T("The Word reader didn't load. Check your connection and reopen the app.","Word 读取组件没加载，请检查网络后重新打开。"):T(`Couldn't read “${f.name}”. Is it a valid .${ext} file?`,`读不了“${f.name}”，确认是有效的 .${ext} 文件吗？`));return null;}
+}
+async function openFile(f){
+  if(!f)return;const text=await readFile(f);if(text==null)return;
+  if(!$("modal").hidden&&$("dlg").dataset.kind==="voice"){addSample(text,f.name);return;}
+  if(S.input.trim()||S.versions.length)newSession(true);
+  setInput(text);setInStatus(T(`Opened “${f.name}”. Press ⌘↵ to rewrite.`,`已打开“${f.name}”。按 ⌘↵ 改写。`));
+}
+$("openBtn").onclick=$("openBtn2").onclick=()=>$("file").click();
+$("file").onchange=()=>{const f=$("file").files[0];$("file").value="";openFile(f);};
+let dragN=0;
+window.addEventListener("dragenter",e=>{if([...(e.dataTransfer?.types||[])].includes("Files")){dragN++;$("drop").hidden=false;e.preventDefault();}});
+window.addEventListener("dragover",e=>{if([...(e.dataTransfer?.types||[])].includes("Files"))e.preventDefault();});
+window.addEventListener("dragleave",()=>{dragN=Math.max(0,dragN-1);if(!dragN)$("drop").hidden=true;});
+window.addEventListener("drop",e=>{if(!e.dataTransfer?.files?.length)return;e.preventDefault();dragN=0;$("drop").hidden=true;openFile(e.dataTransfer.files[0]);});
+
+/* paste: anywhere outside a text field pastes into Your text and rewrites */
+ta.addEventListener("paste",e=>{
+  const wasEmpty=!ta.value.trim()||(ta.selectionStart===0&&ta.selectionEnd===ta.value.length);
+  const t=e.clipboardData?.getData("text/plain")||"";
+  if(!wasEmpty||!t.trim())return;
+  if(S.versions.length){S=freshSession();undoSt=[];redoSt=[];renderAll();}
+  setTimeout(()=>{onInput();if(settings.onPaste&&sample&&!running)rewrite();},20);
+});
+document.addEventListener("paste",e=>{
+  if(!$("modal").hidden)return;
+  const tg=e.target;if(tg.closest?.("input,textarea,select,[contenteditable]"))return;
+  const t=e.clipboardData?.getData("text/plain");if(!t||!t.trim())return;
+  e.preventDefault();
+  if(S.input.trim()||S.versions.length)newSession(true);
+  setInput(t.replace(/\r\n?/g,"\n"));
+  if(settings.onPaste&&sample&&!running)rewrite();else setInStatus(T("Pasted. Press ⌘↵ to rewrite.","已粘贴。按 ⌘↵ 改写。"));
+});
+
+/* ---------- export ---------- */
+const xmlEsc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,"");
+function runs(s){
+  const out=[];const re=/(\*\*[^*\n]+\*\*|__[^_\n]+__|\*[^*\n]+\*|_[^_\n]+_)/g;let last=0,m;
+  const r=(t,b,i)=>`<w:r>${b||i?`<w:rPr>${b?"<w:b/>":""}${i?"<w:i/>":""}</w:rPr>`:""}<w:t xml:space="preserve">${xmlEsc(t)}</w:t></w:r>`;
+  while((m=re.exec(s))){if(m.index>last)out.push(r(s.slice(last,m.index)));const tk=m[0];if(/^(\*\*|__)/.test(tk))out.push(r(tk.slice(2,-2),true));else out.push(r(tk.slice(1,-1),false,true));last=m.index+tk.length;}
+  if(last<s.length)out.push(r(s.slice(last)));
+  return out.join("");
+}
+async function buildDocx(text,title){
+  const z=new JSZip();
+  z.file("[Content_Types].xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`);
+  z.file("_rels/.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`);
+  z.file("docProps/core.xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xmlEsc(title)}</dc:title><dcterms:modified xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0,19)}Z</dcterms:modified></cp:coreProperties>`);
+  z.file("word/_rels/document.xml.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/></Relationships>`);
+  const st=(id,name,ppr,rpr)=>`<w:style w:type="paragraph" w:styleId="${id}"><w:name w:val="${name}"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr>${ppr}</w:pPr><w:rPr>${rpr}</w:rPr></w:style>`;
+  z.file("word/styles.xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:eastAsia="PingFang SC" w:cs="Calibri"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>${st("Heading1","heading 1",'<w:keepNext/><w:spacing w:before="360" w:after="120"/><w:outlineLvl w:val="0"/>','<w:b/><w:sz w:val="36"/>')}${st("Heading2","heading 2",'<w:keepNext/><w:spacing w:before="240" w:after="100"/><w:outlineLvl w:val="1"/>','<w:b/><w:sz w:val="30"/>')}${st("Heading3","heading 3",'<w:keepNext/><w:spacing w:before="200" w:after="80"/><w:outlineLvl w:val="2"/>','<w:b/><w:sz w:val="26"/>')}${st("ListParagraph","List Paragraph",'<w:spacing w:after="60"/><w:ind w:left="720" w:hanging="360"/><w:contextualSpacing/>',"")}${st("Quote","Quote",'<w:ind w:left="720"/>','<w:i/>')}</w:styles>`);
+  const paras=[],nums=[];let olNum=0,prevOl=false;
+  const lvlXml=(fmt,i)=>`<w:lvl w:ilvl="${i}"><w:start w:val="1"/><w:numFmt w:val="${fmt}"/><w:lvlText w:val="${fmt==="bullet"?["•","◦","▪"][i%3]:`%${i+1}.`}"/><w:lvlJc w:val="left"/><w:pPr><w:ind w:left="${720+i*360}" w:hanging="360"/></w:pPr></w:lvl>`;
+  const li=(lvl,numId,body)=>`<w:p><w:pPr><w:pStyle w:val="ListParagraph"/><w:numPr><w:ilvl w:val="${Math.min(lvl,8)}"/><w:numId w:val="${numId}"/></w:numPr></w:pPr>${body}</w:p>`;
+  for(const raw of text.split("\n")){
+    if(!raw.trim())continue;
+    let m;const isOl=/^\s*\d+[.)]\s+/.test(raw);
+    if(isOl&&!prevOl){olNum=3+nums.length;nums.push(olNum);}prevOl=isOl;
+    if((m=/^(#{1,6})\s+(.*)$/.exec(raw)))paras.push(`<w:p><w:pPr><w:pStyle w:val="Heading${Math.min(3,m[1].length)}"/></w:pPr>${runs(m[2])}</w:p>`);
+    else if((m=/^(\s*)([-*•])\s+(.*)$/.exec(raw)))paras.push(li(Math.floor(m[1].replace(/\t/g,"  ").length/2),1,runs(m[3])));
+    else if((m=/^(\s*)(\d+[.)])\s+(.*)$/.exec(raw)))paras.push(li(Math.floor(m[1].length/2),olNum,runs(m[3])));
+    else if((m=/^>\s?(.*)$/.exec(raw)))paras.push(`<w:p><w:pPr><w:pStyle w:val="Quote"/></w:pPr>${runs(m[1])}</w:p>`);
+    else paras.push(`<w:p>${runs(raw.replace(/\t/g,"    "))}</w:p>`);
+  }
+  z.file("word/numbering.xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:abstractNum w:abstractNumId="0"><w:multiLevelType w:val="hybridMultilevel"/>${[0,1,2,3,4,5,6,7,8].map(i=>lvlXml("bullet",i)).join("")}</w:abstractNum><w:abstractNum w:abstractNumId="1"><w:multiLevelType w:val="hybridMultilevel"/>${[0,1,2,3,4,5,6,7,8].map(i=>lvlXml("decimal",i)).join("")}</w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>${nums.map(n=>`<w:num w:numId="${n}"><w:abstractNumId w:val="1"/><w:lvlOverride w:ilvl="0"><w:startOverride w:val="1"/></w:lvlOverride></w:num>`).join("")}</w:numbering>`);
+  z.file("word/document.xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${paras.join("")||"<w:p/>"}<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr></w:body></w:document>`);
+  return z.generateAsync({type:"uint8array",mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+}
+function baseName(){const src=(S.input||curV()?.text||"").trim();let t=src.split("\n")[0].replace(/^#+\s*/,"");t=isZh(t)?t.slice(0,16):t.split(/\s+/).slice(0,6).join(" ");t=t.replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();return t||T("Rewrite","改写");}
+async function save(filename,data){
+  if(!downloads){toast(T("Saving files isn't available here. Use Copy instead.","这里无法保存文件，请改用复制。"));return;}
+  try{await downloads.save({filename,data});toast(T(`Saved ${filename}.`,`已保存 ${filename}。`));}
+  catch(e){if(e?.code==="declined")return;toast(T("Couldn't save the file. Try again.","没能保存文件，请重试。"));}
+}
+async function exportAs(kind){
+  if(editing)finishEdit();
+  const v=curV();
+  if(kind==="all"){
+    if(!S.input.trim()&&!v){toast(T("Nothing to export yet.","还没有可导出的内容。"));return;}
+    const md=[`# ${baseName()}`,"",`## ${T("Your text","你的文字")}`,"",S.input.trim(),""];
+    S.versions.forEach((x,i)=>{md.push(`## ${T("Version","版本")} ${i+1} · ${mName(x.mode)} · ${new Date(x.at).toLocaleString()}`,"",x.text.trim(),"");});
+    save(`${baseName()} - ${T("all versions","全部版本")}.md`,md.join("\n"));return;
+  }
+  if(!v){toast(T("Nothing to export yet. Rewrite something first.","还没有可导出的结果，先改写一段文字。"));return;}
+  const name=`${baseName()} (${T("rewritten","改写")})`;
+  if(kind==="docx"){if(!window.JSZip){toast(T("The Word exporter didn't load. Check your connection and reopen the app.","Word 导出组件没加载，请检查网络后重新打开。"));return;}save(name+".docx",await buildDocx(v.text,name));}
+  else if(kind==="md")save(name+".md",v.text);
+  else if(kind==="txt")save(name+".txt",v.text.replace(/^#{1,6}\s+/gm,"").replace(/\*\*([^*\n]+)\*\*/g,"$1"));
+}
+
+/* ---------- dialogs ---------- */
+const dlg=$("dlg");let onCloseDlg=null;
+function openModal(kind,html,wide){closePop();closeMenus();dlg.dataset.kind=kind;dlg.className="dlg"+(wide?" wide":"");dlg.innerHTML=html;$("modal").hidden=false;dlg.querySelectorAll("[data-closedlg]").forEach(b=>b.onclick=closeModal);}
+function closeModal(){if($("modal").hidden)return;$("modal").hidden=true;const f=onCloseDlg;onCloseDlg=null;dlg.innerHTML="";dlg.dataset.kind="";f?.();if(!editing)ta.focus({preventScroll:true});}
+$("modal").addEventListener("mousedown",e=>{if(e.target===$("modal"))closeModal();});
+const X=`<button class="ib" data-closedlg title="Close (Esc)" aria-label="Close"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`;
+
+/* My voice */
+let vEdit=null,profCtl=null;
+function openVoice(){
+  if(!voices.length){voices.push({id:uid(),name:T("My voice","我的语气"),samples:"",profile:""});activeVoice=voices[0].id;saveVoices();}
+  vEdit=curVoice();
+  openModal("voice",`<div class="dh"><h2>${esc(T("My voice","我的语气"))}</h2>${X}</div>
+  <div class="db">
+    <p class="note">${esc(T("Paste a few things you wrote yourself: emails, posts, essays. Rewriter matches your word choice and rhythm. Samples stay on this computer and are only sent to Claude when you rewrite in My voice.","粘贴几段你自己写的东西：邮件、帖子、文章。改写器会模仿你的用词和节奏。样本只存在这台电脑上，只有用“我的语气”改写时才会发给 Claude。"))}</p>
+    <div class="row"><select id="vSel" aria-label="${esc(T("Voice","语气"))}" style="flex:1;min-width:140px"></select><button class="btn" id="vNew">${esc(T("New voice","新建语气"))}</button><button class="btn" id="vDel">${esc(T("Delete","删除"))}</button></div>
+    <label class="f">${esc(T("Name","名称"))}<input type="text" id="vName" maxlength="60" data-no-i18n></label>
+    <label class="f">${esc(T("Your writing samples","你的文字样本"))}<span class="h" id="vCount"></span><textarea id="vSamples" rows="8" data-no-i18n placeholder="${esc(T("Paste your own writing here. Separate pieces with a blank line.","在这里粘贴你自己写的文字，不同段落之间空一行。"))}"></textarea></label>
+    <div class="row"><button class="btn" id="vFile">${esc(T("Add from file…","从文件添加…"))}</button><span class="note" style="color:var(--muted);font-size:12px">${esc(T(".docx, .txt or .md. You can also drop files here.",".docx、.txt 或 .md，也可以直接拖进来。"))}</span></div>
+    <label class="f">${esc(T("Style notes","风格说明"))}<span class="h">${esc(T("Optional. Let Claude describe your style, then edit it.","可选。让 Claude 总结你的风格，再自己改。"))}</span><textarea id="vProfile" rows="5" data-no-i18n placeholder="${esc(T("e.g. Short sentences. Dry humor. Never uses exclamation marks.","例如：句子短，冷幽默，从不用感叹号。"))}"></textarea></label>
+  </div>
+  <div class="df"><button class="btn" id="vDescribe">${esc(T("Describe my style","总结我的风格"))}</button><span class="sp"></span><button class="btn" data-closedlg>${esc(T("Close","关闭"))}</button><button class="btn pri" id="vUse">${esc(T("Use this voice","使用这个语气"))}</button></div>`);
+  onCloseDlg=()=>{profCtl?.abort();saveVoices();renderVoiceSel();};
+  fillVoice();
+  $("vSel").onchange=()=>{vEdit=voices.find(v=>v.id===$("vSel").value);activeVoice=vEdit.id;store.set("activeVoice",activeVoice);fillVoice();};
+  $("vNew").onclick=()=>{const v={id:uid(),name:T(`Voice ${voices.length+1}`,`语气 ${voices.length+1}`),samples:"",profile:""};voices.push(v);vEdit=v;activeVoice=v.id;store.set("activeVoice",v.id);saveVoices();fillVoice();$("vName").select();};
+  $("vDel").onclick=()=>{const v=vEdit;const i=voices.indexOf(v);if(i<0)return;voices.splice(i,1);if(!voices.length)voices.push({id:uid(),name:T("My voice","我的语气"),samples:"",profile:""});vEdit=voices[Math.max(0,i-1)];activeVoice=vEdit.id;store.set("activeVoice",activeVoice);saveVoices();fillVoice();
+    toast(T("Voice deleted.","已删除语气。"),()=>{voices.splice(i,0,v);vEdit=v;activeVoice=v.id;store.set("activeVoice",v.id);saveVoices();if(dlg.dataset.kind==="voice")fillVoice();renderVoiceSel();});};
+  $("vName").oninput=()=>{vEdit.name=$("vName").value;saveVoices();const o=$("vSel").selectedOptions[0];if(o)o.textContent=vEdit.name||T("Untitled voice","未命名语气");};
+  $("vSamples").oninput=()=>{vEdit.samples=$("vSamples").value;saveVoices();vCount();};
+  $("vProfile").oninput=()=>{vEdit.profile=$("vProfile").value;saveVoices();};
+  $("vFile").onclick=()=>$("file").click();
+  $("vDescribe").onclick=describeVoice;
+  $("vUse").onclick=()=>{if(!(vEdit.samples||"").trim()&&!(vEdit.profile||"").trim()){$("vSamples").focus();toast(T("Add a sample of your writing first.","先添加一段你自己写的文字。"));return;}activeVoice=vEdit.id;store.set("activeVoice",activeVoice);closeModal();setMode("voice");};
+  setTimeout(()=>(vEdit.samples?$("vName"):$("vSamples")).focus(),0);
+}
+function fillVoice(){
+  $("vSel").innerHTML=voices.map(v=>`<option value="${v.id}">${esc(v.name||T("Untitled voice","未命名语气"))}</option>`).join("");
+  $("vSel").value=vEdit.id;$("vName").value=vEdit.name||"";$("vSamples").value=vEdit.samples||"";$("vProfile").value=vEdit.profile||"";vCount();
+}
+function vCount(){const n=($("vSamples").value||"").trim().length;$("vCount").textContent=n?T(`${n} characters. ${n<800?"Aim for 1,000 or more for a good match.":"Good."}`,`${n} 个字符。${n<800?"建议 1000 以上，效果更好。":"足够了。"}`):T("Aim for 1,000 characters or more.","建议 1000 个字符以上。");}
+function saveVoices(){store.set("voices",voices);}
+function addSample(text,name){vEdit.samples=((vEdit.samples||"").trim()+"\n\n"+text.trim()).trim();saveVoices();$("vSamples").value=vEdit.samples;vCount();toast(T(`Added “${name}”.`,`已添加“${name}”。`));}
+async function describeVoice(){
+  const s=($("vSamples").value||"").trim();if(!s){$("vSamples").focus();toast(T("Add a sample of your writing first.","先添加一段你自己写的文字。"));return;}
+  if(!sample){noClaude();return;}
+  if(profCtl){profCtl.abort();return;}
+  const my=profCtl=new AbortController();const b=$("vDescribe");b.textContent=T("Stop","停止");const prev=$("vProfile").value;$("vProfile").value=T("Reading your samples…","正在阅读你的样本…");
+  try{
+    const r=await sample(`Describe this person's writing style so another writer could imitate it. Cover sentence length and rhythm, vocabulary level and favorite words or phrases, formality, punctuation habits (dashes, exclamation marks, emoji, capitalization), how they open and close, humor, and quirks. Use 6 to 10 short bullet points starting with "- ". Write the description in ${window.__ZH?"Simplified Chinese":"English"}. Do not quote long passages.\n\nSamples:\n<<<\n${s.slice(0,12000)}\n>>>`,{signal:my.signal,modelTier:"default",effort:"low",onText:({text})=>{if(profCtl===my&&dlg.dataset.kind==="voice")$("vProfile").value=text;}});
+    if(dlg.dataset.kind==="voice"&&profCtl===my){$("vProfile").value=r.text.trim();vEdit.profile=r.text.trim();saveVoices();}
+  }catch(e){if(dlg.dataset.kind==="voice"){$("vProfile").value=e?.text||prev;if(e?.code!=="cancelled")toast(errText(e));}}
+  finally{if(profCtl===my){profCtl=null;if(dlg.dataset.kind==="voice")$("vDescribe").textContent=T("Describe my style","总结我的风格");}}
+}
+$("voiceBtn").onclick=()=>openVoice();
+
+/* Compare modes */
+let cmpCtl=[];
+function openCompare(){
+  const text=ta.value;if(!text.trim()){ta.focus();setInStatus(T("Type or paste some text first.","先输入或粘贴要改写的文字。"));return;}
+  if(!sample){noClaude();return;}
+  const pick=new Set(store.get("cmpModes",["standard","fluent","natural","formal"]));
+  const avail=MODES.filter(m=>m.id!=="custom"&&(m.id!=="voice"||curVoice()?.samples?.trim()));
+  openModal("compare",`<div class="dh"><h2>${esc(T("Compare modes","比较模式"))}</h2>${X}</div>
+  <div class="db"><div class="row" id="cmpPick">${avail.map(m=>`<label class="chk"><input type="checkbox" value="${m.id}"${pick.has(m.id)?" checked":""}>${esc(T(m.en,m.zh))}</label>`).join("")}</div>
+  <div class="cgrid" id="cmpGrid"></div></div>
+  <div class="df"><span class="note" style="color:var(--muted);font-size:12px">${esc(T("Runs your text through several modes at once. Pick the one you like.","同时用几种模式改写，挑你喜欢的那个。"))}</span><span class="sp"></span><button class="btn pri" id="cmpGo">${esc(T("Compare","比较"))}</button></div>`,true);
+  onCloseDlg=()=>{cmpCtl.forEach(c=>c.abort());cmpCtl=[];};
+  $("cmpGo").onclick=runCompare;
+}
+async function runCompare(){
+  if(cmpCtl.length){cmpCtl.forEach(c=>c.abort());cmpCtl=[];$("cmpGo").textContent=T("Compare","比较");return;}
+  const ids=[...dlg.querySelectorAll("#cmpPick input:checked")].map(x=>x.value).slice(0,6);
+  if(!ids.length){toast(T("Pick at least one mode.","至少选一种模式。"));return;}
+  store.set("cmpModes",ids);
+  const text=ta.value;const base={strength,freeze:freezeList(),custom:"",voice:curVoice()};
+  $("cmpGrid").innerHTML=ids.map(id=>`<div class="card" data-m="${id}"><div class="chh">${esc(mName(id))}<span class="sp"></span><button class="btn sm" data-use="${id}" disabled>${esc(T("Use this","用这个"))}</button></div><div class="ct" data-no-i18n><span style="color:var(--muted)">${esc(T("Thinking…","思考中…"))}</span></div></div>`).join("");
+  $("cmpGo").textContent=T("Stop","停止");const res={};
+  $("cmpGrid").onclick=e=>{const b=e.target.closest("[data-use]");if(!b)return;const id=b.dataset.use;const t=res[id];if(!t)return;
+    S.versions.push({id:uid(),mode:id,strength,custom:"",voice:id==="voice"?base.voice?.name||"":"",input:text,text:t,at:Date.now()});S.cur=S.versions.length-1;S.input=text;persist(true);closeModal();setTab("result");renderAll();toast(T(`Added the ${mName(id)} version.`,`已加入“${mName(id)}”版本。`));};
+  await Promise.all(ids.map(async id=>{
+    const c=new AbortController();cmpCtl.push(c);const card=$("cmpGrid").querySelector(`[data-m="${id}"]`);const ct=card.querySelector(".ct");
+    try{const r=await sample(buildPrompt(text.slice(0,12000),{...base,mode:id}),{signal:c.signal,cache:false,...tierOpts(id),onText:({text:t})=>{ct.textContent=cleanOut(t);}});
+      res[id]=cleanOut(r.text);const tk=tokenize(res[id]);const same=sameArr(tokenize(text),tk);ct.innerHTML=tk.map((t,i)=>t.w&&!same[i]?`<span class="c">${esc(t.t)}</span>`:esc(t.t)).join("");card.querySelector("[data-use]").disabled=false;}
+    catch(e){ct.textContent=e?.code==="cancelled"?T("Stopped.","已停止。"):errText(e);}
+  }));
+  cmpCtl=[];if(dlg.dataset.kind==="compare")$("cmpGo").textContent=T("Compare again","再比较一次");
+}
+
+/* Compare versions */
+function openVersions(){
+  if(S.versions.length<2){toast(T("Rewrite at least twice to compare versions.","至少改写两次才能比较版本。"));return;}
+  const opt=(sel)=>S.versions.map((v,i)=>`<option value="${i}"${i===sel?" selected":""}>${i+1} · ${esc(mName(v.mode))} · ${esc(fmtTime(v.at))}</option>`).join("");
+  const a=Math.max(0,S.cur-1),b=S.cur>0?S.cur:1;
+  openModal("versions",`<div class="dh"><h2>${esc(T("Compare versions","比较版本"))}</h2>${X}</div>
+  <div class="db"><div class="cgrid"><div class="card"><div class="chh"><select id="vaSel" aria-label="A">${opt(a)}</select><span class="sp"></span><button class="btn sm" id="vaUse">${esc(T("Use this","用这个"))}</button></div><div class="ct" id="vaTxt" data-no-i18n></div></div>
+  <div class="card"><div class="chh"><select id="vbSel" aria-label="B">${opt(b)}</select><span class="sp"></span><button class="btn sm" id="vbUse">${esc(T("Use this","用这个"))}</button></div><div class="ct" id="vbTxt" data-no-i18n></div></div></div>
+  <p class="note">${esc(T("Red is only in the left version, orange is only in the right one.","红色只在左边的版本里，橙色只在右边的版本里。"))}</p></div>`,true);
+  const draw=()=>{const A=S.versions[+$("vaSel").value].text,B=S.versions[+$("vbSel").value].text;const ta_=tokenize(A),tb=tokenize(B);const sb=sameArr(ta_,tb),sa=sameArr(tb,ta_);
+    $("vaTxt").innerHTML=ta_.map((t,i)=>t.w&&!sa[i]?`<del>${esc(t.t)}</del>`:esc(t.t)).join("");$("vbTxt").innerHTML=tb.map((t,i)=>t.w&&!sb[i]?`<span class="c">${esc(t.t)}</span>`:esc(t.t)).join("");};
+  $("vaSel").onchange=$("vbSel").onchange=draw;draw();
+  $("vaUse").onclick=()=>{S.cur=+$("vaSel").value;persist();closeModal();renderAll();};
+  $("vbUse").onclick=()=>{S.cur=+$("vbSel").value;persist();closeModal();renderAll();};
+}
+$("cmpVerBtn").onclick=openVersions;
+
+/* Settings & keys */
+function openSettings(){
+  openModal("settings",`<div class="dh"><h2>${esc(T("Settings","设置"))}</h2>${X}</div><div class="db">
+  <label class="chk"><input type="checkbox" id="stPaste"${settings.onPaste?" checked":""}>${esc(T("Rewrite as soon as I paste into an empty box","粘贴到空白输入框后立即改写"))}</label>
+  <label class="f">${esc(T("Speed","速度"))}<select id="stModel"><option value="auto">${esc(T("Automatic: fast for simple modes, careful for Natural, My voice and Creative","自动：简单模式求快，自然、我的语气、创意求好"))}</option><option value="fast">${esc(T("Always fastest","始终最快"))}</option><option value="best">${esc(T("Always best quality","始终最佳质量"))}</option></select></label>
+  <label class="f">${esc(T("English spelling","英语拼写"))}<select id="stSpell"><option value="keep">${esc(T("Keep the original","保持原样"))}</option><option value="American">${esc(T("American","美式"))}</option><option value="British">${esc(T("British","英式"))}</option><option value="Canadian">${esc(T("Canadian","加拿大"))}</option><option value="Australian">${esc(T("Australian","澳大利亚"))}</option></select></label>
+  <label class="f">${esc(T("Chinese characters","中文字形"))}<select id="stScript"><option value="keep">${esc(T("Keep the original","保持原样"))}</option><option value="simplified">${esc(T("Simplified","简体"))}</option><option value="traditional">${esc(T("Traditional","繁体"))}</option></select></label>
+  <div class="row"><button class="btn" id="stIgn">${esc(T(`Clear ignored AI tells (${ignored.size})`,`清除已忽略的 AI 痕迹 (${ignored.size})`))}</button></div>
+  <p class="note">${esc(T("Your history, voices and settings are stored only on this computer.","历史、语气和设置只保存在这台电脑上。"))}</p></div>
+  <div class="df"><span class="sp"></span><button class="btn pri" data-closedlg>${esc(T("Done","完成"))}</button></div>`);
+  $("stModel").value=settings.model;$("stSpell").value=settings.spelling;$("stScript").value=settings.script;
+  $("stPaste").onchange=()=>{settings.onPaste=$("stPaste").checked;saveSettings();};
+  $("stModel").onchange=()=>{settings.model=$("stModel").value;saveSettings();};
+  $("stSpell").onchange=()=>{settings.spelling=$("stSpell").value;saveSettings();};
+  $("stScript").onchange=()=>{settings.script=$("stScript").value;saveSettings();};
+  $("stIgn").onclick=()=>{ignored.clear();store.set("ignored",[]);refreshTells();$("stIgn").textContent=T("Clear ignored AI tells (0)","清除已忽略的 AI 痕迹 (0)");};
+}
+function openKeys(){
+  const K=[["⌘V",T("Paste anywhere: fills Your text and rewrites","在任意处粘贴：填入并立即改写")],["⌘↵",T("Rewrite","改写")],["Esc",T("Stop, or close a panel","停止，或关闭面板")],["⌘⇧C",T("Copy result","复制结果")],["⌘C",T("Copy result (when the result is focused and nothing is selected)","复制结果（焦点在结果上且未选中文字时）")],["⌘⇧U",T("Use result as input","把结果作为输入")],["⌘⇧K",T("AI tells","AI 痕迹")],["⌘⇧H",T("History","历史")],["⌥1 … ⌥9, ⌥0",T("Switch mode (Standard … Creative, My voice)","切换模式（标准…创意、我的语气）")],["⌥[  ⌥]",T("Fewer or more synonyms","减少或增加同义词")],["⌥M",T("Compare modes","比较模式")],["⌥N",T("New text","新建")],["⌘Z  ⌘⇧Z",T("Undo or redo changes to the result","撤销或重做对结果的修改")],["⌘O",T("Open a file","打开文件")],["⌘S",T("Export result as Word","把结果导出为 Word")],["↑ ↓  1–9",T("In a synonym list: move and pick","在同义词列表中：移动和选择")],["⌥ click",T("Rephrase the whole sentence","改写整句")]];
+  openModal("keys",`<div class="dh"><h2>${esc(T("Keyboard shortcuts","快捷键"))}</h2>${X}</div><div class="db"><dl class="kl">${K.map(([k,d])=>`<dt>${esc(k)}</dt><dd>${esc(d)}</dd>`).join("")}</dl></div>`);
+}
+
+/* ---------- keyboard ---------- */
+const MODEKEYS=["standard","fluent","natural","formal","academic","simple","shorten","expand","creative","voice"];
+document.addEventListener("keydown",e=>{
+  if(e.isComposing||e.keyCode===229)return;
+  const mod=e.metaKey||e.ctrlKey,k=e.key,inField=!!e.target.closest?.("input,textarea,select,[contenteditable]");
+  if(k==="Escape"){
+    if(!pop.hidden){closePop();e.preventDefault();return;}
+    if(!$("exportMenu").hidden||!$("moreMenu").hidden){closeMenus();e.preventDefault();return;}
+    if(!$("modal").hidden){closeModal();e.preventDefault();return;}
+    if(!$("hist").hidden){closeHist();e.preventDefault();return;}
+    if(editing){finishEdit();e.preventDefault();return;}
+    if(running){ctl?.abort();e.preventDefault();return;}
+    if(tab==="tells"){setTab("result");e.preventDefault();}
+    return;
+  }
+  if(!$("modal").hidden)return;
+  if(mod&&k==="Enter"){e.preventDefault();if(editing)finishEdit();rewrite();return;}
+  if(mod&&k==="."){if(running){e.preventDefault();ctl?.abort();}return;}
+  if(mod&&e.shiftKey&&e.code==="KeyC"){e.preventDefault();copyResult();return;}
+  if(mod&&e.shiftKey&&e.code==="KeyU"){e.preventDefault();useAsInput();return;}
+  if(mod&&e.shiftKey&&e.code==="KeyK"){e.preventDefault();toggleTells();return;}
+  if(mod&&e.shiftKey&&e.code==="KeyH"){e.preventDefault();$("hist").hidden?openHist():closeHist();return;}
+  if(mod&&!e.shiftKey&&!e.altKey&&e.code==="KeyO"){e.preventDefault();$("file").click();return;}
+  if(mod&&!e.shiftKey&&!e.altKey&&e.code==="KeyS"){e.preventDefault();exportAs("docx");return;}
+  if(e.altKey&&!mod){
+    const d=e.code.match(/^Digit(\d)$/);
+    if(d){e.preventDefault();const id=MODEKEYS[(+d[1]+9)%10];setMode(id);return;}
+    if(e.code==="BracketLeft"||e.code==="BracketRight"){e.preventDefault();strength=Math.min(4,Math.max(1,strength+(e.code==="BracketRight"?1:-1)));store.set("strength",strength);renderStrength();setInStatus(T(`Synonyms: ${SLBL[strength][0]}`,`同义词：${SLBL[strength][1]}`));return;}
+    if(e.code==="KeyN"){e.preventDefault();newSession();return;}
+    if(e.code==="KeyM"){e.preventDefault();openCompare();return;}
+  }
+  if(!inField&&mod&&e.code==="KeyZ"){e.preventDefault();e.shiftKey?doRedo():doUndo();return;}
+  if(!inField&&!mod&&!e.altKey&&k==="?"){e.preventDefault();openKeys();return;}
+},true);
+
+/* ---------- desktop ---------- */
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"rewriter-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#8B6CFF\"/><stop offset=\"1\" stop-color=\"#4A25C9\"/><\/linearGradient><radialGradient id=\"rewriter-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"rewriter-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"rewriter-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#rewriter-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#rewriter-sh)\"/><g filter=\"url(#rewriter-ds)\"><rect x=\"200\" y=\"210\" width=\"624\" height=\"230\" rx=\"40\" fill=\"#fff\"/><rect x=\"250\" y=\"262\" width=\"470\" height=\"42\" rx=\"21\" fill=\"#C7C9D6\"/><rect x=\"250\" y=\"340\" width=\"340\" height=\"42\" rx=\"21\" fill=\"#C7C9D6\"/><rect x=\"200\" y=\"600\" width=\"624\" height=\"230\" rx=\"40\" fill=\"#fff\"/><rect x=\"250\" y=\"652\" width=\"470\" height=\"42\" rx=\"21\" fill=\"#FF8A4C\"/><rect x=\"250\" y=\"730\" width=\"380\" height=\"42\" rx=\"21\" fill=\"#FFC09A\"/><\/g><g filter=\"url(#rewriter-ds2)\" fill=\"none\" stroke=\"#fff\" stroke-width=\"34\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M740 440c90 30 90 130 10 160\"/><path d=\"M790 560l-44 42 58 14\"/><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
+function dockIcon(){
+  const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#8b6cf6");g.addColorStop(1,"#4c2fb8");
+  x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
+  x.fillStyle="rgba(255,255,255,.95)";[[52,62,150],[52,88,118]].forEach(([a,b,w])=>{x.beginPath();x.roundRect(a,b,w,14,7);x.fill();});
+  x.fillStyle="#ffb36b";[[52,160,152],[52,186,104]].forEach(([a,b,w])=>{x.beginPath();x.roundRect(a,b,w,14,7);x.fill();});
+  x.strokeStyle="#fff";x.lineWidth=12;x.lineCap="round";x.beginPath();x.moveTo(184,92);x.bezierCurveTo(214,104,214,136,184,146);x.stroke();
+  x.fillStyle="#fff";x.beginPath();x.moveTo(166,146);x.lineTo(192,128);x.lineTo(194,162);x.closePath();x.fill();
+  return c.toDataURL("image/png");
+}
+let perms={};
+async function summon(){await desktop.window.show().catch(()=>{});ta.focus();ta.select();}
+async function requestHotkey(){
+  try{perms=await desktop.permissions.request(["shortcuts"]);}catch{}
+  if(perms.shortcuts==="granted"){await desktop.globalShortcut.register("Alt+Shift+R",summon).then(()=>{$("hotkeyItem").hidden=true;toast(T("Press ⌥⇧R in any app to bring Rewriter up, then ⌘V.","在任何应用中按 ⌥⇧R 唤出改写器，再按 ⌘V。"));}).catch(()=>toast(T("That shortcut is taken by another app.","这个快捷键被其他应用占用了。")));}
+}
+(async()=>{
+  const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
+  [sample,downloads,desktop]=await Promise.all([use("sample"),use("downloads"),use("desktop")]);
+  if(!sample)$("outEmptyP").textContent=T("Rewriting needs Claude: open Rewriter in the Claude app. The AI tells check works here without it.","改写需要 Claude：请在 Claude 应用中打开改写器。AI 痕迹检查不需要 Claude，在这里也能用。");
+  renderTells();
+  if(!desktop)return;
+  if(!desktop.tray){const st=await desktop.install?.state().catch(()=>"unavailable");if(st==="available")$("installItem").hidden=false;return;}
+  document.body.classList.add("app");
+  try{dockIconArt().then(u=>desktop.app.dock.setIcon(u));}catch{}
+  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:8,width:1180,height:760,minWidth:380,minHeight:480}).catch(()=>{});
+  try{perms=await desktop.permissions.state();}catch{}
+  if(perms.shortcuts==="granted")desktop.globalShortcut.register("Alt+Shift+R",summon).catch(()=>{$("hotkeyItem").hidden=false;});
+  else $("hotkeyItem").hidden=false;
+})();
+
+/* ---------- toast & init ---------- */
+let toastT=0;
+function toast(msg,undo){const t=$("toast");t.innerHTML=`<span>${esc(msg)}</span>${undo?`<button>${esc(T("Undo","撤销"))}</button>`:""}`;t.hidden=false;if(undo)t.querySelector("button").onclick=()=>{t.hidden=true;undo();};clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,undo?6000:2800);}
+renderModes();renderStrength();renderFreezeBtn();
+ta.value=S.input||"";updateInMeta();tellsIn=detectTells(ta.value);renderAll();
+if(!ta.value)ta.focus();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
+</script>

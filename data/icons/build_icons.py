@@ -260,6 +260,143 @@ I["thinking-partner"] = tile("tp", "#FFC94D", "#EF7A00", '''
  <text x="365" y="440" text-anchor="middle" font-family="-apple-system,'SF Pro Rounded',Helvetica,Arial" font-weight="900" font-size="300" fill="#FFC94D">?</text>
 </g>''')
 
+# Job Search Kit: resume sheet with photo + header bar, green check badge
+I["job-search"] = tile("js", "#4C8DFF", "#173FA8", '''
+<g filter="url(#ds)" transform="rotate(-6 470 500)">
+ <rect x="250" y="170" width="460" height="640" rx="36" fill="#fff"/>
+ <rect x="250" y="170" width="460" height="150" rx="36" fill="#1E3A8A"/><rect x="250" y="270" width="460" height="50" fill="#1E3A8A"/>
+ <circle cx="340" cy="245" r="48" fill="#9FC3FF"/>
+ <rect x="410" y="214" width="230" height="30" rx="15" fill="#fff"/>
+ <rect x="410" y="262" width="160" height="20" rx="10" fill="#9FC3FF"/>
+ <rect x="296" y="370" width="150" height="24" rx="12" fill="#2F64F5"/>
+ <rect x="296" y="420" width="368" height="20" rx="10" fill="#D3DBEA"/>
+ <rect x="296" y="462" width="320" height="20" rx="10" fill="#D3DBEA"/>
+ <rect x="296" y="530" width="150" height="24" rx="12" fill="#2F64F5"/>
+ <rect x="296" y="580" width="368" height="20" rx="10" fill="#D3DBEA"/>
+ <rect x="296" y="622" width="280" height="20" rx="10" fill="#D3DBEA"/>
+ <rect x="296" y="664" width="330" height="20" rx="10" fill="#D3DBEA"/>
+</g>
+<g filter="url(#ds2)">
+ <circle cx="730" cy="730" r="130" fill="#22C55E"/>
+ <path d="M668 732l44 44 88-96" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+</g>''')
+
+# Flashcards: two tilted cards, front with bold A, green check dot
+I["flashcards"] = tile("fc", "#5AB2FF", "#1C5FD6", '''
+<g filter="url(#ds2)"><rect x="300" y="210" width="480" height="340" rx="40" fill="#CFE4FF" transform="rotate(10 540 380)"/></g>
+<g filter="url(#ds)" transform="rotate(-6 480 560)">
+ <rect x="220" y="370" width="520" height="370" rx="44" fill="#fff"/>
+ <text x="480" y="640" text-anchor="middle" font-family="-apple-system,'SF Pro Rounded',Helvetica,Arial" font-weight="900" font-size="250" fill="#1C4FC4">A</text>
+ <rect x="270" y="690" width="420" height="14" rx="7" fill="#E2EAF7"/>
+</g>
+<g filter="url(#ds2)">
+ <circle cx="760" cy="300" r="96" fill="#2BD27A"/>
+ <path d="M714 302l32 32 62-68" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+</g>''')
+
+# Rewriter: two white text bars -> curved arrow -> two orange text bars
+I["rewriter"] = tile("rw", "#8B6CFF", "#4A25C9", '''
+<g filter="url(#ds)">
+ <rect x="200" y="210" width="624" height="230" rx="40" fill="#fff"/>
+ <rect x="250" y="262" width="470" height="42" rx="21" fill="#C7C9D6"/>
+ <rect x="250" y="340" width="340" height="42" rx="21" fill="#C7C9D6"/>
+ <rect x="200" y="600" width="624" height="230" rx="40" fill="#fff"/>
+ <rect x="250" y="652" width="470" height="42" rx="21" fill="#FF8A4C"/>
+ <rect x="250" y="730" width="380" height="42" rx="21" fill="#FFC09A"/>
+</g>
+<g filter="url(#ds2)" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M740 440c90 30 90 130 10 160"/><path d="M790 560l-44 42 58 14"/>
+</g>''')
+
+# Budget: green tile, envelope-like bars and a $ coin
+I["budget"] = tile("bg", "#34D399", "#047857", '''
+<g filter="url(#ds)">
+ <rect x="210" y="560" width="120" height="250" rx="28" fill="#fff"/>
+ <rect x="362" y="440" width="120" height="370" rx="28" fill="#fff"/>
+ <rect x="514" y="500" width="120" height="310" rx="28" fill="#fff"/>
+ <rect x="666" y="380" width="120" height="430" rx="28" fill="#fff"/>
+ <rect x="210" y="740" width="120" height="70" rx="0" fill="#A7F3D0"/><rect x="362" y="740" width="120" height="70" fill="#A7F3D0"/><rect x="514" y="740" width="120" height="70" fill="#A7F3D0"/><rect x="666" y="740" width="120" height="70" fill="#A7F3D0"/>
+</g>
+<g filter="url(#ds2)">
+ <circle cx="420" cy="280" r="130" fill="#FFD45C"/>
+ <circle cx="420" cy="280" r="104" fill="none" stroke="#E0A21C" stroke-width="10"/>
+ <text x="420" y="352" text-anchor="middle" font-family="-apple-system,'SF Pro Rounded',Helvetica,Arial" font-weight="900" font-size="200" fill="#7A4A06">$</text>
+</g>''')
+
+# Read Aloud: book page with highlighted line + sound waves
+I["read-aloud"] = tile("ra", "#6E7CFF", "#2B2FB8", '''
+<g filter="url(#ds)" transform="rotate(-5 440 520)">
+ <rect x="190" y="200" width="470" height="620" rx="36" fill="#fff"/>
+ <rect x="240" y="270" width="370" height="26" rx="13" fill="#D3D6E6"/>
+ <rect x="240" y="330" width="330" height="26" rx="13" fill="#D3D6E6"/>
+ <rect x="226" y="386" width="398" height="54" rx="14" fill="#BFD4FF"/>
+ <rect x="240" y="400" width="360" height="26" rx="13" fill="#2F55E0"/>
+ <rect x="240" y="470" width="370" height="26" rx="13" fill="#D3D6E6"/>
+ <rect x="240" y="530" width="300" height="26" rx="13" fill="#D3D6E6"/>
+ <rect x="240" y="590" width="350" height="26" rx="13" fill="#D3D6E6"/>
+ <rect x="240" y="650" width="250" height="26" rx="13" fill="#D3D6E6"/>
+</g>
+<g fill="none" stroke="#fff" stroke-linecap="round" filter="url(#ds2)">
+ <path d="M720 430q60 90 0 180" stroke-width="34"/>
+ <path d="M800 360q110 160 0 320" stroke-width="34" stroke-opacity=".7"/>
+</g>''')
+
+# Homework Helper: lined paper with x², green check
+I["homework-helper"] = tile("hh", "#3FA9F5", "#0B5CAD", '''
+<g filter="url(#ds)" transform="rotate(-5 480 500)">
+ <rect x="210" y="200" width="560" height="600" rx="36" fill="#fff"/>
+ <path d="M210 330h560M210 430h560M210 530h560M210 630h560M210 730h560" stroke="#CFE3F7" stroke-width="8"/>
+ <path d="M300 200v600" stroke="#FFB4B4" stroke-width="8"/>
+ <text x="530" y="560" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="700" font-size="300" fill="#16325C">x</text>
+ <text x="660" y="420" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="150" fill="#16325C">2</text>
+</g>
+<g filter="url(#ds2)">
+ <path d="M560 720l90 90 190-210" fill="none" stroke="#22C55E" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
+</g>''')
+
+# Whiteboard: tilted board with hand-drawn box -> arrow -> ellipse, yellow sticky
+I["whiteboard"] = tile("wb", "#7C6CFF", "#3B2AB8", '''
+<g filter="url(#ds)" transform="rotate(-4 512 500)">
+ <rect x="160" y="210" width="704" height="560" rx="40" fill="#fff"/>
+ <path d="M236 312l192-6 4 140-198 6z" fill="#E3E9FF" stroke="#2A2F52" stroke-width="14" stroke-linejoin="round"/>
+ <path d="M432 380c90 10 140 60 168 150" fill="none" stroke="#2A2F52" stroke-width="14" stroke-linecap="round"/>
+ <path d="M568 500l34 36 18-48" fill="none" stroke="#2A2F52" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+ <ellipse cx="660" cy="620" rx="130" ry="80" fill="#FFE0EC" stroke="#2A2F52" stroke-width="14"/>
+</g>
+<g filter="url(#ds2)" transform="rotate(-8 300 700)">
+ <path d="M190 600h230v190l-50 50H190z" fill="#FFD84D"/>
+ <path d="M420 790h-40a10 10 0 0 0-10 10v40z" fill="#E8B92A"/>
+ <rect x="226" y="650" width="150" height="18" rx="9" fill="#B58D00" opacity=".6"/>
+ <rect x="226" y="696" width="110" height="18" rx="9" fill="#B58D00" opacity=".6"/>
+</g>''')
+
+# Fitness Coach: white dumbbell with rising progress arc
+I["fitness-coach"] = tile("fit", "#FF7A45", "#D3261E", '''
+<g filter="url(#ds)" transform="rotate(-30 512 470)">
+ <rect x="300" y="440" width="424" height="60" rx="30" fill="#E9EBF0"/>
+ <rect x="210" y="330" width="90" height="280" rx="34" fill="#fff"/>
+ <rect x="140" y="380" width="70" height="180" rx="28" fill="#fff"/>
+ <rect x="724" y="330" width="90" height="280" rx="34" fill="#fff"/>
+ <rect x="814" y="380" width="70" height="180" rx="28" fill="#fff"/>
+</g>
+<g filter="url(#ds2)">
+ <path d="M230 830C400 800 560 760 790 650" fill="none" stroke="#FFE08A" stroke-width="30" stroke-linecap="round"/>
+ <path d="M740 620l60 26-24 60" fill="none" stroke="#FFE08A" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+</g>''')
+
+# Classroom Activities: chalkboard with 2x2 colored answer tiles
+I["classroom"] = tile("cr", "#FFB547", "#E8590C", '''
+<g filter="url(#ds)">
+ <rect x="170" y="200" width="684" height="500" rx="40" fill="#B07A45"/>
+ <rect x="200" y="230" width="624" height="440" rx="24" fill="#1F5C45"/>
+ <rect x="244" y="270" width="250" height="170" rx="22" fill="#FF6FA8"/>
+ <rect x="530" y="270" width="250" height="170" rx="22" fill="#4DA3FF"/>
+ <rect x="244" y="466" width="250" height="170" rx="22" fill="#FFD54F"/>
+ <rect x="530" y="466" width="250" height="170" rx="22" fill="#3DDC84"/>
+ <circle cx="369" cy="355" r="34" fill="#fff"/><path d="M655 320l44 70h-88z" fill="#fff"/><rect x="335" y="517" width="68" height="68" rx="8" fill="#fff"/><path d="M655 510l40 40-40 40-40-40z" fill="#fff"/>
+</g>
+<g filter="url(#ds2)"><path d="M380 700l-70 150M644 700l70 150" stroke="#fff" stroke-width="30" stroke-linecap="round"/><rect x="300" y="760" width="424" height="28" rx="14" fill="#fff"/></g>''')
+
 # Store: an App Store-style "A" built from three rounded bars, in Claude's colors, with the Claude spark
 I["store"] = tile("store", "#E58B68", "#B9532F", '''
 <g filter="url(#ds)" stroke-linecap="round" fill="none">

@@ -1,0 +1,26 @@
+{
+ "dict": {
+  "Fitness Coach": "健身教练",
+  "Sections": "栏目",
+  "Today": "今天",
+  "Can't save on this computer. Your changes will be lost when you close the app. Export a backup in Data.": "无法在这台电脑上保存。关闭应用后改动会丢失，请到“数据”里导出备份。",
+  "Undo (⌘Z)": "撤销（⌘Z）",
+  "Redo (⌘⇧Z)": "重做（⌘⇧Z）",
+  "Undo": "撤销",
+  "Redo": "重做",
+  "Keyboard shortcuts (?)": "键盘快捷键（?）",
+  "Keyboard shortcuts": "键盘快捷键",
+  "Rest": "休息",
+  "15 seconds less": "减少 15 秒",
+  "15 seconds more": "增加 15 秒",
+  "Skip rest": "跳过休息",
+  "Skip": "跳过",
+  "−15s": "−15秒",
+  "+15s": "+15秒",
+  "Stop": "停止",
+  "Close (Esc)": "关闭（Esc）",
+  "Close": "关闭"
+ },
+ "patterns": [],
+ "skip": ".li .n, .sch, .mc .mn, .exn, .md .mhd h2, .wohead"
+}

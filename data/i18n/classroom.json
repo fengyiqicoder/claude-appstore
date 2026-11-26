@@ -1,0 +1,25 @@
+{"dict":{
+"Classroom Activities":"课堂活动",
+"Keyboard shortcuts and help (?)":"快捷键和帮助（?）","Keyboard shortcuts and help":"快捷键和帮助",
+"✦ Create with Claude":"✦ 用 Claude 创建","Create an activity set with Claude (⌘G)":"用 Claude 创建活动（⌘G）",
+"New blank set (⌘N)":"新建空白活动（⌘N）","New blank set":"新建空白活动",
+"Search activities":"搜索活动","Import word list":"导入词表","Back up all":"全部备份","Restore":"恢复",
+"Needs Claude to write content: open it in the Claude app.":"需要 Claude 才能写内容：请在 Claude 应用中打开。",
+"Library":"资料库","Projector mode":"投影模式","Close":"关闭","Close (Esc)":"关闭（Esc）","Sort":"排序","More actions":"更多操作","Show library":"显示资料库",
+"Undo (⌘Z)":"撤销（⌘Z）","Undo":"撤销","Redo (⇧⌘Z)":"重做（⇧⌘Z）","Redo":"重做",
+"Generate content with Claude (⌘G)":"用 Claude 生成内容（⌘G）","Import a word list (⌘I)":"导入词表（⌘I）","Print worksheets, PDF and Word (⌘P)":"打印练习纸、导出 PDF 和 Word（⌘P）","Present on the projector (⌘↩)":"在投影上放映（⌘↩）",
+"Title":"标题","Grade":"年级","Subject":"学科","Topic":"主题","Standards":"课程标准",
+"Claude adds more items that fit this set":"Claude 会补充适合本活动的内容",
+"Correct answer A":"正确答案 A","Correct answer B":"正确答案 B","Correct answer C":"正确答案 C","Correct answer D":"正确答案 D","Correct answer E":"正确答案 E","Correct answer F":"正确答案 F",
+"Explanation":"解析","Delete row":"删除这一行","Delete question":"删除题目","Delete statement":"删除陈述","Delete sentence":"删除句子","Delete group":"删除分组",
+"Lesson length":"课时长度","Lesson plan":"教案","Length":"篇幅","Kind of text":"文体",
+"Make below-grade, on-grade, above-grade and English learner versions":"生成低于年级、高于年级和语言学习者版本",
+"Level name":"等级名称","Passage title":"文章标题","Passage text":"文章正文","Assignment":"作业","Levels":"等级数",
+"Delete criterion":"删除维度","Class name":"班级名称","Delete class":"删除班级","Students":"学生","Number of teams":"队伍数量",
+"Pasted list":"粘贴的列表","How many":"数量","Install as app":"安装为应用"
+},
+"patterns":[
+["Term (\\d+)","词语 $1"],["Definition (\\d+)","释义 $1"],["Question (\\d+)","题目 $1"],["Statement (\\d+)","陈述 $1"],["Sentence (\\d+)","句子 $1"],
+["Group name (\\d+)","组名 $1"],["Items in group (\\d+)","第 $1 组的项目"],["Answer (\\d+)","答案 $1"],["Level (\\d+)","等级 $1"],["Criterion (\\d+)","维度 $1"],["Criterion (\\d+) level (\\d+)","维度 $1 等级 $2"]
+],
+"skip":".uc, #present, .doc, .preview, #exPrev, #sheetHost, #toast"}

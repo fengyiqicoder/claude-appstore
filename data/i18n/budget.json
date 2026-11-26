@@ -1,0 +1,33 @@
+{
+ "dict": {
+  "Budget": "预算",
+  "Reports": "报表",
+  "Bills & subscriptions": "账单和订阅",
+  "All accounts": "全部账户",
+  "To review": "待复核",
+  "Sidebar": "侧边栏",
+  "+ Add account": "+ 添加账户",
+  "↓ Import bank file…": "↓ 导入银行文件…",
+  "✦ Ask Claude": "✦ 问 Claude",
+  "Ask Claude": "问 Claude",
+  "Back up now": "立即备份",
+  "Save a full backup file (⌘S)": "保存完整备份文件（⌘S）",
+  "Show sidebar": "显示侧边栏",
+  "Undo (⌘Z)": "撤销（⌘Z）",
+  "Undo": "撤销",
+  "Redo (⇧⌘Z)": "重做（⇧⌘Z）",
+  "Redo": "重做",
+  "Settings, rules, backup and export": "设置、规则、备份和导出",
+  "Settings": "设置",
+  "New conversation": "新对话",
+  "Close (Esc)": "关闭（Esc）",
+  "Close": "关闭",
+  "Ask about your spending, budget or bills…": "问问你的开销、预算或账单…",
+  "Question": "问题",
+  "Enter to send · Shift+Enter for a new line": "回车发送 · Shift+回车换行",
+  "Ask": "提问",
+  "Drop to import": "松开即可导入"
+ },
+ "patterns": [],
+ "skip": ".u,select,option,.clog,.mapt,.prev,#cq,.ritem .nm"
+}

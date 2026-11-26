@@ -1,0 +1,1384 @@
+<title>Homework Helper</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: history + mistake notebook in a sidebar on the left; the main pane shows the composer (type with a math
+   keyboard or drop a photo), a solved problem (answer + verification, expandable steps, graph, practice, follow-ups),
+   a hint-only tutoring thread, or the mistake notebook and its review mode. */
+:root{
+  --bg:#f3f4f7; --panel:#ffffff; --fg:#16181d; --muted:#6a7080; --line:#e2e5eb; --chip:#eef0f4; --hover:#f0f2f6;
+  --accent:#2f66db; --accent-fg:#ffffff; --accent-soft:rgba(47,102,219,.11);
+  --ok:#1b8f5a; --ok-soft:rgba(27,143,90,.12); --warn:#b8720a; --warn-soft:rgba(200,130,10,.14); --bad:#cf3b3b; --bad-soft:rgba(207,59,59,.11);
+  --canvas:#fbfcfd; --grid:#e9ecf1; --axis:#9aa1ae;
+  --shadow:0 10px 30px rgba(15,20,40,.12),0 1px 3px rgba(15,20,40,.08);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+  --math:"STIX Two Math","Cambria Math","Latin Modern Math",math,serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141619;--panel:#1c1f24;--fg:#eceef2;--muted:#959cab;--line:#2c3038;--chip:#262a31;--hover:#252930;--accent:#7aa2ff;--accent-fg:#0d1730;--accent-soft:rgba(122,162,255,.15);--ok:#4cc98f;--ok-soft:rgba(76,201,143,.15);--warn:#f0b04a;--warn-soft:rgba(240,176,74,.15);--bad:#ff7070;--bad-soft:rgba(255,112,112,.13);--canvas:#181b1f;--grid:#262a31;--axis:#6c7380;--shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141619;--panel:#1c1f24;--fg:#eceef2;--muted:#959cab;--line:#2c3038;--chip:#262a31;--hover:#252930;--accent:#7aa2ff;--accent-fg:#0d1730;--accent-soft:rgba(122,162,255,.15);--ok:#4cc98f;--ok-soft:rgba(76,201,143,.15);--warn:#f0b04a;--warn-soft:rgba(240,176,74,.15);--bad:#ff7070;--bad-soft:rgba(255,112,112,.13);--canvas:#181b1f;--grid:#262a31;--axis:#6c7380;--shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:14px/1.5 var(--font);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+input,textarea,select{font:inherit;color:var(--fg)}
+.ic{width:16px;height:16px;flex:none}
+#app{display:flex;height:100vh;height:100dvh;width:100vw;overflow:hidden}
+math{font-family:var(--math);font-size:1.08em}
+/* sidebar */
+#side{width:256px;flex:none;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--bg);min-height:0}
+.sidehead{display:flex;align-items:center;gap:6px;padding:12px 10px 8px max(12px,env(safe-area-inset-left,0px));min-height:48px}
+body.app .sidehead{padding-left:80px;app-region:drag;-webkit-app-region:drag}
+body.app .sidehead>*{app-region:no-drag;-webkit-app-region:no-drag}
+.sidehead h1{font-size:13px;font-weight:650;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app .sidehead h1{app-region:drag;-webkit-app-region:drag}
+.navb{display:flex;align-items:center;gap:8px;width:calc(100% - 12px);margin:0 6px 2px max(6px,env(safe-area-inset-left,0px));padding:7px 9px;border:0;border-radius:8px;background:transparent;cursor:pointer;text-align:left;font-weight:550}
+.navb:hover{background:var(--hover)}
+.navb.on{background:var(--accent-soft);color:var(--accent)}
+.navb .ct{margin-left:auto;font-size:11.5px;font-weight:650;color:var(--muted);background:var(--chip);border-radius:999px;padding:1px 7px}
+.navb .ct.due{background:var(--warn-soft);color:var(--warn)}
+.sidesearch{margin:8px 10px 6px max(10px,env(safe-area-inset-left,0px));position:relative}
+.sidesearch input{width:100%;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 8px 6px 28px;outline:none;font-size:13px}
+.sidesearch input:focus{border-color:var(--accent)}
+.sidesearch .ic{position:absolute;left:8px;top:8px;width:14px;height:14px;color:var(--muted)}
+.slabel{font-size:11px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:8px 16px 4px}
+#hlist{flex:1;overflow:auto;padding:0 6px 10px max(6px,env(safe-area-inset-left,0px))}
+.hi{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;width:100%;border:0;background:transparent;text-align:left;cursor:pointer;position:relative}
+.hi:hover{background:var(--hover)}
+.hi.on{background:var(--accent-soft)}
+.hi .sj{width:26px;height:26px;border-radius:7px;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--chip);color:var(--muted)}
+.hi .tx{flex:1;min-width:0}
+.hi .tt{display:block;font-size:13px;font-weight:520;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi .ts{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi .x{opacity:0;border:0;background:transparent;color:var(--muted);border-radius:6px;width:24px;height:24px;display:grid;place-items:center;cursor:pointer;flex:none}
+.hi:hover .x,.hi.on .x,.hi:focus-within .x{opacity:1}
+.hi .x:hover{background:var(--chip);color:var(--fg)}
+.emptyside{color:var(--muted);font-size:12.5px;padding:10px 12px}
+.sidefoot{border-top:1px solid var(--line);padding:8px 10px max(10px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+/* main */
+#main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
+.top{display:flex;align-items:center;gap:6px;min-height:48px;padding:10px max(14px,env(safe-area-inset-right,0px)) 6px max(10px,env(safe-area-inset-left,0px))}
+body.app .top{app-region:drag;-webkit-app-region:drag}
+body.app .top>*{app-region:no-drag;-webkit-app-region:no-drag}
+body.app .top .sp,body.app .top .crumb{app-region:drag;-webkit-app-region:drag}
+body.app.noside .top{padding-left:80px}
+.top .crumb{font-weight:650;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.top .sp{flex:1;align-self:stretch}
+#scroll{flex:1;overflow:auto;min-height:0;padding:4px max(16px,env(safe-area-inset-right,0px)) 90px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:820px;margin:0 auto}
+/* buttons */
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-weight:550;font-size:13px;line-height:1.2}
+.btn:hover{background:var(--hover)}
+.btn.pri{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.btn.pri:hover{filter:brightness(1.07);background:var(--accent)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.ghost:hover{background:var(--hover);color:var(--fg)}
+.btn.warn{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.btn.bad{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn kbd,.kb{font:500 11px/1 var(--font);opacity:.7;margin-left:2px}
+.btn.big{padding:9px 16px;font-size:14px;border-radius:10px}
+.ib{border:0;background:transparent;border-radius:7px;width:30px;height:30px;display:inline-grid;place-items:center;cursor:pointer;color:var(--muted);flex:none;padding:0}
+.ib:hover{background:var(--hover);color:var(--fg)}
+.ib.on{background:var(--accent-soft);color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.seg{display:inline-flex;background:var(--chip);border-radius:9px;padding:2px;gap:2px}
+.seg button{border:0;background:transparent;color:var(--muted);font-weight:600;font-size:12.5px;padding:5px 11px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--panel);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:550;cursor:pointer}
+.chip:hover{background:var(--hover)}
+.chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+select.sel{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:5px 8px;font-size:12.5px;font-weight:550}
+/* cards */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 12px}
+.card h3{flex-wrap:wrap;margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:650;display:flex;align-items:center;gap:8px}
+.card h3 .sp{flex:1}
+.md{font-size:14.5px;line-height:1.6;overflow-wrap:anywhere}
+.md p{margin:.35em 0}
+.md ul,.md ol{margin:.3em 0;padding-left:1.4em}
+.md code{background:var(--chip);border-radius:5px;padding:1px 5px;font-size:.92em}
+.md pre{background:var(--chip);border-radius:8px;padding:10px;overflow:auto}
+.md table{border-collapse:collapse;margin:.4em 0;display:block;overflow:auto}
+.md td,.md th{border:1px solid var(--line);padding:4px 8px}
+.md .mdisp{overflow-x:auto;overflow-y:hidden;padding:4px 0;margin:.3em 0}
+.md .mdisp math{font-size:1.15em}
+.md h1,.md h2,.md h3,.md h4{font-size:1em;margin:.6em 0 .2em;text-transform:none;letter-spacing:0;color:var(--fg)}
+.texraw{font-family:ui-monospace,Menlo,monospace;font-size:.9em;background:var(--chip);border-radius:4px;padding:0 4px}
+/* composer */
+.hero{padding:18px 0 10px}
+.hero h2{margin:0 0 4px;font-size:22px;letter-spacing:-.02em}
+.hero p{margin:0;color:var(--muted)}
+.opts{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}
+.opts .lbl{font-size:12px;color:var(--muted);font-weight:600}
+.composer{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.composer:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.composer.drag{border-color:var(--accent);border-style:dashed;background:var(--accent-soft)}
+#q{display:block;width:100%;min-height:96px;max-height:40vh;border:0;outline:0;resize:vertical;background:transparent;padding:14px 16px 8px;font-size:15px;line-height:1.55}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 8px}
+.thumb{position:relative;width:92px;height:72px;border-radius:9px;overflow:hidden;border:1px solid var(--line);background:var(--chip)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb button{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.62);color:#fff;cursor:pointer;display:grid;place-items:center;padding:0}
+.cbar{display:flex;align-items:center;gap:6px;padding:8px 10px;border-top:1px solid var(--line);flex-wrap:wrap}
+.cbar .sp{flex:1}
+.cbar .note{font-size:12px;color:var(--muted)}
+.preview{border-top:1px dashed var(--line);padding:8px 16px 10px;min-height:20px}
+.preview .pl{font-size:11px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+/* math keyboard */
+.mkb{border-top:1px solid var(--line);background:var(--canvas);padding:8px 10px 10px}
+.mkb .tabs{display:flex;gap:2px;margin-bottom:8px;flex-wrap:wrap}
+.mkb .tabs button{border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:600;padding:4px 9px;border-radius:6px;cursor:pointer}
+.mkb .tabs button.on{background:var(--chip);color:var(--fg)}
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:5px}
+.key{height:38px;border:1px solid var(--line);background:var(--panel);border-radius:8px;cursor:pointer;display:grid;place-items:center;font-size:14px;padding:0 2px;overflow:hidden;white-space:nowrap}
+.key:hover{background:var(--hover)}
+.key:active{transform:translateY(1px)}
+.key.fn{background:var(--chip);color:var(--muted);font-size:12.5px;font-weight:600}
+.key math{font-size:15px;pointer-events:none}
+.examples{margin:18px 0 6px}
+.examples .lbl{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px}
+.ex{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 12px;margin-bottom:6px;cursor:pointer}
+.ex:hover{background:var(--hover)}
+.ex .s{font-size:11.5px;color:var(--muted);font-weight:600;display:block}
+.ex .md .mdisp{text-align:left;padding:0;margin:0}.ex .md .mdisp math{display:inline-block}
+.tip{font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.6}
+.tip b{color:var(--fg);font-weight:600}
+/* result */
+.qhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.tag{text-transform:none;letter-spacing:0;font-size:11.5px;font-weight:650;border-radius:999px;padding:2px 9px;background:var(--chip);color:var(--muted)}
+.qimgs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.qimgs img{max-height:150px;max-width:100%;border-radius:8px;border:1px solid var(--line);cursor:zoom-in}
+.ans{border-width:1.5px}
+.ans .big{font-size:19px;font-weight:600}
+.ans .big math{font-size:1.2em}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;text-transform:none;letter-spacing:0;white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+.badge.warn{background:var(--warn-soft);color:var(--warn)}
+.badge.bad{background:var(--bad-soft);color:var(--bad)}
+.badge.wait{background:var(--chip);color:var(--muted)}
+.ans.ok{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.ans.bad{border-color:color-mix(in srgb,var(--bad) 50%,var(--line))}
+.ans.warn{border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}
+.alert{border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13.5px}
+.alert.bad{background:var(--bad-soft)}
+.alert.warn{background:var(--warn-soft)}
+.alert .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.checks{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.checks summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--muted);list-style:none;display:flex;align-items:center;gap:6px}
+.checks summary::-webkit-details-marker{display:none}
+.checks summary::before{content:"▸";font-size:10px}
+.checks[open] summary::before{content:"▾"}
+.chk{display:grid;grid-template-columns:22px 1fr;gap:4px 8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.chk:last-child{border-bottom:0}
+.chk .st{font-weight:800;font-size:14px;text-align:center}
+.chk .st.ok{color:var(--ok)}.chk .st.bad{color:var(--bad)}.chk .st.wait{color:var(--muted)}.chk .st.warn{color:var(--warn)}
+.chk .nm{font-weight:600;font-size:13px}
+.chk .dt{grid-column:2;font-size:13px;color:var(--muted)}
+.chk .dt .md{font-size:13.5px;color:var(--fg)}
+.mc{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.steps{counter-reset:s}
+.step{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;background:var(--panel)}
+.step .sh{display:flex;align-items:flex-start;gap:10px}
+.step .n{width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:12px;display:grid;place-items:center;flex:none;margin-top:1px}
+.step .t{font-weight:600;flex:1;min-width:0}
+.step .work{margin:6px 0 0 34px}
+.step .why{margin:8px 0 0 34px;background:var(--canvas);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:8px 12px;font-size:13.5px}
+.step .whyb{margin:6px 0 0 30px}
+.whyb{border:0;background:transparent;color:var(--accent);font-weight:600;font-size:12.5px;cursor:pointer;padding:3px 6px;border-radius:6px}
+.whyb:hover{background:var(--accent-soft)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 14px}
+.skel{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;padding:6px 0}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:sp .8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.shimmer{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--chip),var(--hover),var(--chip));background-size:200% 100%;animation:sh 1.2s ease-in-out infinite;margin:8px 0}
+@keyframes sh{to{background-position:-200% 0}}
+.err{background:var(--bad-soft);color:var(--fg);border-radius:10px;padding:10px 12px;font-size:13.5px;margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.err .sp{flex:1}
+/* graph */
+.gwrap{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--canvas);touch-action:none}
+.gwrap canvas{display:block;width:100%;height:320px;cursor:grab}
+.gwrap canvas.drag{cursor:grabbing}
+.gtools{position:absolute;right:8px;top:8px;display:flex;gap:4px}
+.gtools .ib{background:var(--panel);border:1px solid var(--line);width:28px;height:28px;color:var(--fg)}
+.ginfo{position:absolute;left:8px;bottom:6px;font:12px ui-monospace,Menlo,monospace;color:var(--muted);background:color-mix(in srgb,var(--panel) 80%,transparent);padding:1px 6px;border-radius:5px;pointer-events:none}
+.gfns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.gfn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 4px 2px 10px;font:12.5px ui-monospace,Menlo,monospace}
+.gfn i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.gfn button{border:0;background:transparent;color:var(--muted);cursor:pointer;width:20px;height:20px;border-radius:50%;padding:0}
+.gfn button:hover{background:var(--chip)}
+.gadd{display:flex;gap:6px;margin-top:8px}
+.gadd input{flex:1;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 9px;font:13px ui-monospace,Menlo,monospace;outline:none}
+.gadd input:focus{border-color:var(--accent)}
+/* chat */
+.msg{margin:10px 0;display:flex;flex-direction:column}
+.msg.me{align-items:flex-end}
+.msg .b{max-width:88%;border-radius:14px;padding:9px 13px}
+.msg.me .b{background:var(--accent-soft);border-bottom-right-radius:4px;white-space:pre-wrap}
+.msg.ai .b{background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg .who{font-size:11px;color:var(--muted);font-weight:600;margin:0 4px 3px}
+.ask{display:flex;gap:8px;align-items:flex-end;margin-top:8px}
+.ask textarea{flex:1;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:9px 12px;resize:none;outline:none;min-height:42px;max-height:160px;font-size:14px;line-height:1.45}
+.ask textarea:focus{border-color:var(--accent)}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+/* practice */
+.pq{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.pq .ph{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;color:var(--muted);font-weight:650}
+.pq .row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+.pq input{flex:1;min-width:140px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 9px;outline:none}
+.pq input:focus{border-color:var(--accent)}
+.pq .reveal{margin-top:8px;background:var(--canvas);border-radius:8px;padding:8px 12px}
+.pq .res{font-weight:700;font-size:12.5px}
+.pq .res.ok{color:var(--ok)}.pq .res.bad{color:var(--bad)}
+/* notebook */
+.nbhead{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:14px 0 8px}
+.nbhead h2{margin:0;font-size:21px;letter-spacing:-.02em}
+.nbhead .sp{flex:1}
+.stats{display:flex;gap:8px;margin:6px 0 12px;flex-wrap:wrap}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;min-width:96px}
+.stat b{display:block;font-size:20px;letter-spacing:-.02em}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+.nbf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.nbf input{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:5px 9px;outline:none;min-width:160px;flex:1;max-width:260px}
+.mi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.mi .mh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.mi .mh .sp{flex:1}
+.mi .due{font-size:11.5px;font-weight:650;color:var(--muted)}
+.mi .due.now{color:var(--warn)}
+.mi .due.done{color:var(--ok)}
+.mi .clamp{max-height:9.5em;overflow:hidden;position:relative}
+.mi .clamp::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2em;background:linear-gradient(transparent,var(--panel))}
+.mi .more{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.mi .lab{font-size:11.5px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:8px 0 2px}
+.mi textarea{width:100%;border:1px solid var(--line);background:var(--canvas);border-radius:8px;padding:7px 10px;resize:vertical;min-height:52px;outline:none}
+.mi textarea:focus{border-color:var(--accent)}
+.mi .bar{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.empty{text-align:center;color:var(--muted);padding:48px 20px}
+.empty .art{font-size:34px;margin-bottom:6px}
+.empty h3{color:var(--fg);margin:0 0 6px;font-size:16px}
+.empty p{margin:0 auto 14px;max-width:420px}
+/* review */
+.rv{max-width:680px;margin:0 auto;padding-top:10px}
+.rv .prog{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:10px}
+.rv .prog .bar{flex:1;height:5px;border-radius:3px;background:var(--chip);overflow:hidden}
+.rv .prog .bar i{display:block;height:100%;background:var(--accent)}
+.rv textarea{width:100%;min-height:90px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 12px;outline:none;resize:vertical}
+.rv textarea:focus{border-color:var(--accent)}
+.rv .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;justify-content:center}
+/* dialogs, menus, toast */
+.scrim{position:fixed;inset:0;background:rgba(10,12,20,.38);display:grid;place-items:center;z-index:50;padding:16px}
+.dlg{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);width:min(560px,100%);max-height:calc(100dvh - 32px);overflow:auto;padding:18px 20px}
+.dlg h2{margin:0 0 4px;font-size:17px}
+.dlg .sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+.dlg label{display:block;font-size:12px;font-weight:650;color:var(--muted);margin:10px 0 4px}
+.dlg input,.dlg textarea,.dlg select{width:100%;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 10px;outline:none}
+.dlg textarea{resize:vertical;min-height:70px}
+.dlg input:focus,.dlg textarea:focus{border-color:var(--accent)}
+.dlg .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.dlg .chips{margin-top:6px}
+.menu{position:fixed;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:4px;min-width:200px}
+.menu button{display:flex;width:100%;align-items:center;gap:8px;border:0;background:transparent;padding:7px 10px;border-radius:7px;cursor:pointer;text-align:left;font-size:13px}
+.menu button:hover,.menu button:focus{background:var(--hover);outline:0}
+.menu .sepr{height:1px;background:var(--line);margin:4px 2px}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1d2026;color:#fff;border-radius:10px;padding:8px 10px 8px 14px;font-size:13px;display:flex;gap:10px;align-items:center;z-index:70;box-shadow:var(--shadow);max-width:calc(100vw - 32px)}
+#toast button{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:7px;padding:4px 10px;font-weight:600;cursor:pointer}
+.zoomimg{max-width:min(1000px,96vw);max-height:90dvh;border-radius:10px}
+.kbdlist{display:grid;grid-template-columns:1fr auto;gap:6px 14px;font-size:13px}
+.kbdlist kbd{font:12px var(--font);background:var(--chip);border-radius:5px;padding:2px 7px;justify-self:end}
+#nohint{font-size:12px;color:var(--muted)}
+/* narrow */
+@media (max-width:760px){
+  #side{position:fixed;left:0;top:0;bottom:0;z-index:40;box-shadow:var(--shadow);transform:translateX(-105%);visibility:hidden;transition:transform .18s,visibility 0s .18s}
+  body.sideopen #side{transform:none;visibility:visible;transition:transform .18s}
+  #sidescrim{position:fixed;inset:0;z-index:39;background:rgba(0,0,0,.25)}
+  .ans .big{font-size:17px}
+  .card{padding:14px 14px}
+  .step .work,.step .why{margin-left:0}
+  .step .whyb{margin-left:-4px}
+}
+@media (min-width:761px){ body.hideside #side{display:none} #sidescrim{display:none} }
+@media print{#side,.top{display:none}}
+</style>
+
+<div id="app">
+  <aside id="side" aria-label="Sidebar">
+    <div class="sidehead"><h1>Homework Helper</h1>
+      <button class="ib" id="newBtn" title="New problem (⌘N)" aria-label="New problem"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3v10M3 8h10"/></svg></button></div>
+    <button class="navb" id="navNew"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="2.5" width="11" height="11" rx="2.5"/><path d="M8 5.5v5M5.5 8h5"/></svg><span>New problem</span></button>
+    <button class="navb" id="navNb"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.5 2.5h8a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-8z"/><path d="M3.5 2.5v11M6 6l3 3M9 6l-3 3"/></svg><span>Mistake notebook</span><span class="ct" id="nbCt">0</span></button>
+    <div class="sidesearch"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><input id="hsearch" placeholder="Search problems" aria-label="Search problems"></div>
+    <div class="slabel">Recent</div>
+    <div id="hlist"></div>
+    <div class="sidefoot"><span id="storeNote"></span><span class="sp" style="flex:1"></span><button class="btn ghost" id="helpBtn" title="Keyboard shortcuts (?)">Shortcuts</button></div>
+  </aside>
+  <div id="sidescrim" hidden></div>
+  <section id="main">
+    <div class="top">
+      <button class="ib" id="sideBtn" title="Show or hide sidebar (⌘\)" aria-label="Show or hide sidebar"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="2"/><path d="M6 3v10"/></svg></button>
+      <span class="crumb" id="crumb">New problem</span>
+      <span class="sp"></span>
+      <span id="act"></span>
+    </div>
+    <div id="scroll"><div class="wrap" id="view"></div></div>
+  </section>
+</div>
+<input type="file" id="filePick" accept="image/*" multiple hidden>
+<input type="file" id="jsonPick" accept=".json,application/json" hidden>
+<div id="toast" hidden><span id="toastMsg"></span><button id="toastBtn" hidden>Undo</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
+<script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"Homework Helper": "作业助手", "Sidebar": "侧边栏", "New problem": "新题目", "New problem (⌘N)": "新题目 (⌘N)", "Mistake notebook": "错题本", "Search problems": "搜索题目", "Recent": "最近", "Shortcuts": "快捷键", "Keyboard shortcuts (?)": "键盘快捷键 (?)", "Show or hide sidebar (⌘\\)": "显示或隐藏侧边栏 (⌘\\)", "Show or hide sidebar": "显示或隐藏侧边栏", "Undo": "撤销", "Untitled": "未命名", "Delete problem": "删除题目", "Close": "关闭", "Install as app": "安装为应用", "Mode": "模式", "Solve": "解题", "Step-by-step solution (⌘1)": "分步解答 (⌘1)", "Hint only": "仅提示", "Hints only, no answer (⌘2)": "只给提示，不给答案 (⌘2)", "Auto": "自动", "Math": "数学", "Physics": "物理", "Chemistry": "化学", "Other": "其他", "Level": "年级", "Type a problem, e.g. 2x + 3 = 11, or paste a screenshot (⌘V)": "输入题目，比如 2x + 3 = 11，或粘贴截图 (⌘V)", "Problem": "题目", "Preview": "预览", "Basic": "基础", "Functions": "函数", "Calculus": "微积分", "Greek": "希腊字母", "Chem & units": "化学和单位", "Add a photo or screenshot": "添加照片或截图", "Photo": "照片", "Math keyboard (⌘E)": "数学键盘 (⌘E)", "Math keys": "数学键盘", "Use the strongest model for hard problems; slower": "难题用最强的模型，速度会慢一些", "Extra careful": "格外仔细", "Start hints": "开始提示", "Try one": "试一道", "Move left": "左移", "Move right": "右移", "Mark as math with $…$": "用 $…$ 标成数学式", "Mark as math": "标成数学式", "Delete": "删除", "Remove photo": "移除照片", "Edit & re-solve": "编辑并重解", "Edit the problem and solve again": "修改题目后重新解", "Correct the reading": "更正读题", "Try again": "重试", "Stop": "停止", "Answer": "答案", "Undo re-solve": "撤销重解", "Steps": "步骤", "Hide all whys": "收起全部原因", "Show all whys": "展开全部原因", "Why?": "为什么？", "Hide why": "收起原因", "Graph": "函数图像", "Zoom in": "放大", "Zoom out": "缩小", "Reset view": "重置视图", "Add a function, e.g. 2*x+1": "添加函数，比如 2*x+1", "Add a function": "添加函数", "Plot": "画图", "Remove function": "移除函数", "I got this wrong · Save": "我做错了 · 收录", "✓ In mistake notebook": "✓ 已在错题本", "Save to mistake notebook (⌘S)": "存入错题本 (⌘S)", "Practice similar": "练习同类题", "Practice similar problems (⌘J)": "练习同类题 (⌘J)", "Copy as Markdown": "复制为 Markdown", "More actions": "更多操作", "More…": "更多…", "Re-solve carefully": "仔细重解", "Ask which is right": "问问哪个对", "Check again": "再核对一次", "Practice": "练习", "More problems": "再来几道", "Your answer": "你的答案", "Check": "核对", "Show answer": "显示答案", "Hide answer": "隐藏答案", "Hide solution": "隐藏解答", "Show solution": "显示解答", "I got it right": "我做对了", "I got it wrong · Save": "我做错了 · 收录", "✓ Saved to notebook": "✓ 已存入错题本", "Ask a follow-up": "继续追问", "Ask about any step… (↩ to send, ⇧↩ for a new line)": "问问任何一步…（↩ 发送，⇧↩ 换行）", "Follow-up question": "追问", "Send": "发送", "Hints": "提示", "Write your next step or your answer… (↩ to send)": "写下你的下一步或答案…（↩ 发送）", "Your work": "你的过程", "Another hint": "再给个提示", "Another hint (⌘H)": "再给个提示 (⌘H)", "Am I on track?": "我做得对吗？", "Show full solution": "显示完整解答", "Save to mistake notebook": "存入错题本", "Your answer (optional)": "你的答案（可选）", "What you wrote": "你写的答案", "What went wrong?": "错在哪里？", "Calculation slip": "计算失误", "Sign error": "符号错误", "Didn't know the concept": "概念不会", "Misread the question": "审题不清", "Units": "单位问题", "Forgot a step": "漏了步骤", "Ran out of time": "时间不够", "Note to self (optional)": "给自己的提醒（可选）", "e.g. Remember to flip the inequality when dividing by a negative": "例如：除以负数时不等号要变向", "Cancel": "取消", "Save": "保存", "Nothing due": "没有待复习", "Add a mistake": "添加错题", "Export…": "导出…", "Saved": "已收录", "Due now": "待复习", "Mastered": "已掌握", "All": "全部", "Learning": "学习中", "Due": "到期", "Search notebook": "搜索错题本", "Review now": "现在复习", "Open solution": "打开解答", "Mark as learning": "标为学习中", "Mark mastered": "标为已掌握", "Import backup": "导入备份", "What to remember next time": "下次要记住什么", "Type the problem, or paste a photo of it": "输入题目，或粘贴题目照片", "Add photo": "添加照片", "Correct answer": "正确答案", "e.g. x = 3": "例如 x = 3", "Subject": "科目", "Add": "添加", "End review": "结束复习", "Still wrong": "还是错了", "Got it right": "做对了", "Reveal answer": "显示答案", "Work it out here (optional), then reveal the answer.": "可以先在这里算一算，再显示答案。", "Back to notebook": "回到错题本", "Keyboard shortcuts": "键盘快捷键", "Solve / send": "解题 / 发送", "Solve mode": "解题模式", "Hint-only mode": "仅提示模式", "Math keyboard": "数学键盘", "Save to mistake notebook ": "存入错题本", "Mistake notebook ": "错题本", "Show or hide sidebar ": "显示或隐藏侧边栏", "Reveal answer in review": "复习时显示答案", "Still wrong / Got it right": "还是错了 / 做对了", "Paste a screenshot": "粘贴截图", "Done": "完成", "Graph ": "函数图像", "Problem photo": "题目照片"};
+  const PATTERNS=([["Review (\\d+) due", "复习 $1 道到期题"], ["Problem photo (\\d+)", "题目照片 $1"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.uc,.md,.texraw,math,.mc,#prevBody");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const ZH=!!window.__ZH;
+const T=(en,zh)=>window.__t?window.__t(en,zh):en;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const DAY=86400000;
+
+/* ---------- storage ---------- */
+let storageOK=true;
+const LS={get(k,d){try{const v=localStorage.getItem("hwh."+k);return v==null?d:JSON.parse(v)}catch{storageOK=false;return d}},
+  set(k,v){try{localStorage.setItem("hwh."+k,JSON.stringify(v));return true}catch(e){if(e&&/quota/i.test(e.name+e.message))return "quota";storageOK=false;return false}}};
+const S={
+  history:LS.get("history",[]),
+  notebook:LS.get("notebook",[]),
+  settings:Object.assign({subject:"auto",level:"auto",mode:"solve",thorough:false,kb:true,kbTab:"basic",side:true},LS.get("settings",{})),
+};
+if(!Array.isArray(S.history))S.history=[];
+if(!Array.isArray(S.notebook))S.notebook=[];
+function saveSettings(){LS.set("settings",S.settings)}
+function saveHistory(){
+  let r=LS.set("history",S.history.slice(0,80));
+  if(r==="quota"){ // free space: drop photos from the oldest problems first
+    for(let i=S.history.length-1;i>=0&&r==="quota";i--){const h=S.history[i];if(h.images?.length){h.images=[];h.imagesDropped=true;r=LS.set("history",S.history.slice(0,80));}}
+    if(r==="quota"){S.history=S.history.slice(0,20);r=LS.set("history",S.history);}
+    if(r==="quota")toast(T("Storage is full. Export your notebook and delete old problems.","存储空间已满。请导出错题本并删除旧题目。"));
+  }
+}
+function saveNotebook(){const r=LS.set("notebook",S.notebook);if(r==="quota"){saveHistoryTrim();if(LS.set("notebook",S.notebook)==="quota")toast(T("Storage is full. Export your notebook and delete old problems.","存储空间已满。请导出错题本并删除旧题目。"));}}
+function saveHistoryTrim(){for(let i=S.history.length-1;i>=0;i--){if(S.history[i].images?.length){S.history[i].images=[];S.history[i].imagesDropped=true}}LS.set("history",S.history)}
+
+/* ---------- math + markdown rendering ---------- */
+function tex(t,disp){
+  t=String(t??"").trim();
+  if(window.katex){try{const h=katex.renderToString(t,{output:"mathml",displayMode:!!disp,throwOnError:false,strict:"ignore",trust:false});return disp?`<div class="mdisp">${h}</div>`:h}catch{}}
+  return `<span class="texraw">${esc(t)}</span>`;
+}
+function md(src){
+  if(src==null||src==="")return "";
+  const math=[];let s=String(src);
+  s=s.replace(/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]/g,(m,a,b)=>{math.push([a??b,true]);return `@@M${math.length-1}@@`});
+  s=s.replace(/\\\(([\s\S]+?)\\\)|(?<![\\$\w])\$(?![\s$])([^$\n]+?)(?<![\s\\])\$(?![\w$])/g,(m,a,b)=>{math.push([a??b,false]);return `@@M${math.length-1}@@`});
+  let h;
+  if(window.marked&&window.DOMPurify){try{h=DOMPurify.sanitize(marked.parse(s,{breaks:true,gfm:true}))}catch{h=null}}
+  if(h==null)h=esc(s).replace(/\n/g,"<br>");
+  h=h.replace(/@@M(\d+)@@/g,(m,i)=>tex(math[+i][0],math[+i][1]));
+  return h;
+}
+const mdEl=(src,cls="md")=>`<div class="${cls}">${md(src)}</div>`;
+/* What the person typed: lines with $…$ are Markdown; a line that looks like pure math renders as math. */
+function inputHtml(t){
+  if(!t.trim())return "";
+  if(/\$|\\\(|\\\[/.test(t))return md(t);
+  return t.split("\n").map(line=>{
+    if(!line.trim())return "";
+    const words=line.replace(/\\[a-zA-Z]+/g," ").match(/[A-Za-z]{4,}/g)||[];
+    const plain=words.filter(w=>!/^(sin|cos|tan|cot|sec|csc|log|exp|sqrt|lim|arcsin|arccos|arctan|sinh|cosh|tanh|frac|cdot|times|right|left|mathrm|text|begin|end|cases|pmatrix|infty|theta|alpha|beta|gamma|delta|lambda|sigma|omega|sum|int|partial|vec|over|pm|circ|rightarrow|leftarrow|rightleftharpoons|xrightarrow|Delta)$/i.test(w));
+    if(!plain.length&&!/[\u3000-\u9fff\uff00-\uffef]/.test(line))return tex(line,true);
+    // prose: wrap stretches of LaTeX commands so they still render
+    const wrapped=line.replace(/(?:[A-Za-z0-9().,+\-=^_{}]*\\[a-zA-Z]+[A-Za-z0-9\\{}()^_+\-=*/.,|[\]]*)+/g,m=>"$"+m+"$");
+    return md(wrapped);
+  }).join("");
+}
+
+/* ---------- small UI helpers ---------- */
+let toastT=null;
+function toast(msg,undo){
+  $("toastMsg").textContent=msg;$("toastBtn").hidden=!undo;$("toast").hidden=false;
+  $("toastBtn").onclick=()=>{$("toast").hidden=true;undo&&undo()};
+  clearTimeout(toastT);toastT=setTimeout(()=>$("toast").hidden=true,undo?7000:3200);
+}
+let openDlg=null;
+function dialog(html,onMount){
+  closeDlg();
+  const sc=document.createElement("div");sc.className="scrim";sc.innerHTML=`<div class="dlg" role="dialog" aria-modal="true">${html}</div>`;
+  sc.addEventListener("mousedown",e=>{if(e.target===sc)closeDlg()});
+  document.body.appendChild(sc);openDlg={el:sc,prev:document.activeElement};
+  onMount&&onMount(sc.firstElementChild);
+  return sc.firstElementChild;
+}
+function closeDlg(){if(!openDlg)return;openDlg.el.remove();const p=openDlg.prev;openDlg=null;try{p&&p.focus&&p.isConnected&&p.focus()}catch{}}
+let openMenu=null;
+function menu(anchor,items){
+  closeMenu();
+  const m=document.createElement("div");m.className="menu";m.setAttribute("role","menu");
+  for(const it of items){if(it==="-"){const d=document.createElement("div");d.className="sepr";m.appendChild(d);continue}
+    const b=document.createElement("button");b.setAttribute("role","menuitem");b.textContent=it.label;b.onclick=()=>{closeMenu();it.run()};m.appendChild(b)}
+  document.body.appendChild(m);
+  const r=anchor.getBoundingClientRect();const w=m.offsetWidth,h=m.offsetHeight;
+  m.style.left=Math.max(8,Math.min(r.right-w,innerWidth-w-8))+"px";
+  m.style.top=(r.bottom+4+h>innerHeight?Math.max(8,r.top-h-4):r.bottom+4)+"px";
+  openMenu={el:m,anchor};m.querySelector("button")?.focus();
+}
+function closeMenu(){if(openMenu){openMenu.el.remove();openMenu=null}}
+document.addEventListener("mousedown",e=>{if(openMenu&&!openMenu.el.contains(e.target)&&!openMenu.anchor.contains(e.target))closeMenu()});
+const fmtDate=ts=>{const d=new Date(ts);const now=new Date();if(d.toDateString()===now.toDateString())return d.toLocaleTimeString(ZH?"zh-CN":undefined,{hour:"2-digit",minute:"2-digit"});return d.toLocaleDateString(ZH?"zh-CN":undefined,{month:"short",day:"numeric"})};
+const SUBJ={auto:["Auto","自动"],math:["Math","数学"],physics:["Physics","物理"],chemistry:["Chemistry","化学"],other:["Other","其他"]};
+const subjName=k=>{const v=SUBJ[k]||SUBJ.other;return ZH?v[1]:v[0]};
+const subjLetter=k=>({math:"∑",physics:"F",chemistry:"⚗",other:"?"}[k]||"∑");
+
+/* ---------- Claude ---------- */
+let sample=null,downloads=null,desktop=null,canImages=false,maxImages=1;
+const ERR={rate_limited:["Claude is busy or you hit your usage limit. Try again later.","Claude 正忙，或你已达到用量上限，请稍后再试。"],
+  not_granted:["Claude isn't allowed for this app. Allow it to solve problems.","此应用未获准使用 Claude。允许后才能解题。"],
+  sampling_disabled:["Claude isn't available on this account.","此账号无法使用 Claude。"],
+  refused:["Claude declined this one. Try rewording the problem.","Claude 拒绝处理这道题，换个说法试试。"],
+  session_expired:["Sign in to Claude again.","请重新登录 Claude。"],
+  prompt_too_large:["That's too long. Send one problem at a time.","内容太长，请一次只发一道题。"],
+  images_unavailable:["Photos can't be sent from here. Type the problem instead.","这里无法发送照片，请把题目打出来。"],
+  image_rejected:["That photo couldn't be read. Try a JPEG or PNG under 20 MB.","这张照片读不了，换成 20 MB 以内的 JPEG 或 PNG 试试。"],
+  invalid_json:["Claude's answer came back garbled. Try again.","Claude 的回答格式有误，请再试一次。"]};
+const errText=e=>{const v=ERR[e?.code];return v?T(v[0],v[1]):T("Something went wrong. Try again.","出了点问题，请重试。")};
+const LANG=()=>ZH?"Write every explanation, step title, hint and note in Simplified Chinese (keep math in LaTeX).":"Write explanations in the same language as the problem (English if unclear).";
+function dataURLtoBlob(u){const [h,b]=u.split(",");const mime=(h.match(/data:([^;]+)/)||[])[1]||"image/jpeg";const bin=atob(b);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime})}
+
+/* math.js is loaded on first use: it evaluates Claude's computed checks locally and powers the graph */
+let mathP=null;
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("load"));document.head.appendChild(s)})}
+function ensureMath(){if(window.math)return Promise.resolve(window.math);return mathP??=loadScript("https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js").then(()=>window.math).catch(()=>{mathP=null;return null})}
+function normExpr(e){return String(e||"").replace(/\*\*/g,"^").replace(/\bln\(/g,"log(").replace(/π/g,"pi").replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/√\(/g,"sqrt(")}
+function evalNum(expr,scope){const m=window.math;if(!m)throw new Error("nomath");let v=m.evaluate(normExpr(expr),Object.assign({},scope||{}));if(v&&typeof v==="object"){if(m.isComplex?.(v)){if(Math.abs(v.im)<1e-9)v=v.re;else throw new Error("complex")}else if(m.isUnit?.(v))v=v.toNumber();else if(m.isFraction?.(v)||m.isBigNumber?.(v))v=Number(v);else throw new Error("notnum")}
+  if(typeof v!=="number"||!isFinite(v))throw new Error("notnum");return v}
+const close=(a,b,rel=1e-6)=>Math.abs(a-b)<=Math.max(1e-9,rel*Math.max(1,Math.abs(a),Math.abs(b)));
+
+/* LaTeX inside JSON: an unescaped "\frac" arrives as form-feed + "rac", "\times" as tab + "imes". Put the backslashes back. */
+function fixTex(v){
+  if(typeof v==="string")return v.replace(/\f/g,"\\f").replace(/\x08/g,"\\b").replace(/\t(?=[a-zA-Z])/g,"\\t").replace(/\r(?=[a-zA-Z])/g,"\\r").replace(/\x0b/g,"\\v")
+    .replace(/\n(?=(?:eq|eg|ot|abla|u\b|u[^a-z]|exists|i\b|leq|geq|parallel|subset|mid|ewline|leftarrow|rightarrow|cong|sim|ormalsize))/g,"\\n");
+  if(Array.isArray(v))return v.map(fixTex);
+  if(v&&typeof v==="object"){const o={};for(const k in v)o[k]=fixTex(v[k]);return o}
+  return v;
+}
+/* ---------- prompts ---------- */
+const JSONTEX=`JSON rule: inside JSON strings escape every backslash, so LaTeX is written \\\\frac{1}{2}, \\\\times, \\\\sqrt{2} in the raw JSON text.`;
+const SHAPE=`{
+ "problem": "the full problem as you read it, Markdown with LaTeX ($...$ inline, $$...$$ display). Copy numbers exactly.",
+ "subject": "math" | "physics" | "chemistry" | "other",
+ "topic": "short topic name, e.g. Quadratic equations",
+ "unclear": "" or one sentence on anything you could not read or that is ambiguous (and the reading you chose),
+ "steps": [ {"title": "short action, e.g. Factor the left side", "work": "the math of this step, Markdown+LaTeX, every line of arithmetic shown", "why": "1-3 sentences: the rule or reason that makes this step valid"} ],
+ "answer": "final answer, Markdown+LaTeX, with units if any",
+ "answer_values": [numbers] the final numeric value(s) in SI/as stated, or [] if the answer is not numeric (e.g. an expression or proof),
+ "self_check": {"method": "substitution" | "second method" | "units and estimate" | "...", "work": "Markdown+LaTeX showing the check actually carried out", "passed": true|false},
+ "machine_checks": [ {"expr": "a math.js expression with numbers only (no unknowns), e.g. (2)^2 - 5*(2) + 6", "expect": number, "tol": optional relative tolerance, "note": "what it confirms"} ] (2-6 items that would catch a wrong answer: plug the answer back in, recompute key quantities; use exact values, not rounded ones; [] only for proofs),
+ "graph": null or {"functions": ["expressions in x using math.js syntax, e.g. x^2 - 5*x + 6"], "xmin": number, "xmax": number, "points": [[x,y], ...]} (include a graph whenever a function, equation in one variable, inequality or motion over time is involved),
+ "concepts": ["1-3 key ideas the student should learn"]
+}`;
+function solvePrompt(p){
+  return `You are a meticulous tutor solving a student's homework problem. Accuracy matters more than speed: a wrong answer harms the student.
+Subject: ${p.subject==="auto"?"work it out from the problem":p.subject}. Student level: ${p.level==="auto"?"infer from the problem":p.level}.
+${p.images?`The problem is in the attached photo${p.images>1?"s":""}. Read it carefully, including diagrams, units and every sign and exponent.${p.text?" The person also typed the text below; where the typed text and the photo differ, the typed text is their correction and wins.":""}`:""}
+${p.text?`Problem:\n${p.text}`:""}
+${p.extra||""}
+How to work:
+1. Restate exactly what is asked. 2. Solve step by step, showing every line of arithmetic and algebra; never skip a calculation. Keep each step small enough that a student can follow it. 3. Check the final answer by substituting it back, or by solving with a second method, or for physics/chemistry by units and an order-of-magnitude estimate. If the check fails, find the error and fix the solution BEFORE answering, then report the check honestly. 4. Write machine_checks that a calculator can run to confirm the answer.
+If the problem has several parts, answer every part (answer lists each part).
+${LANG()}
+Reply with only this JSON object. ${JSONTEX}
+${SHAPE}`;
+}
+function verifyPrompt(p,methodHint){
+  return `Independently solve this homework problem to check another tutor's work. Do not assume any answer; work it out yourself from scratch, carefully, and ${methodHint||"if possible by a different method than the most obvious one"}.
+${p.images?"The problem is in the attached photo(s)."+(p.text?" The typed text below is the person's correction where it differs from the photo.":""):""}
+${p.text?`Problem:\n${p.text}`:""}
+${JSONTEX} Reply with only JSON: {"answer": "final answer, Markdown+LaTeX, every part", "answer_values": [final numeric value(s), or [] if not numeric], "method": "one line naming the method you used"}`;
+}
+function hintRules(problem,subject,level){
+  return `You are a Socratic tutor. The student wants HINTS ONLY and must solve the problem themselves.
+Rules: Never state the final answer and never carry out the decisive step for them, even if they ask; if they ask for the answer, tell them they can press "Show full solution". Give ONE hint or one guiding question at a time, at most about 70 words. Start from what they know. When they send work, check it line by line: if it is right, say so briefly and nudge the next step; if there is an error, point to where it is (which line/quantity) and ask a question that helps them see it, without giving the corrected result. If their final answer is correct, confirm it clearly and congratulate them; if it is wrong, say it is not right yet and hint where to look. Use LaTeX in $...$ for math. ${LANG()}
+Subject: ${subject}. Level: ${level}.
+Problem:
+${problem}`;
+}
+
+/* ---------- state ---------- */
+let view={name:"compose",id:null};
+let draft={text:LS.get("draft",""),images:[]};
+const running=new Map(); // id -> {ctl, kind}
+let reviewQ=null;
+const cur=()=>S.history.find(h=>h.id===view.id);
+
+/* ---------- sidebar ---------- */
+function renderSide(){
+  const q=$("hsearch").value.trim().toLowerCase();
+  const items=S.history.filter(h=>!q||(h.title+" "+(h.topic||"")+" "+(h.text||"")).toLowerCase().includes(q));
+  const L=$("hlist");
+  if(!S.history.length)L.innerHTML=`<div class="emptyside">${esc(T("Problems you solve show up here.","解过的题会出现在这里。"))}</div>`;
+  else if(!items.length)L.innerHTML=`<div class="emptyside">${esc(T("No problems match.","没有匹配的题目。"))}</div>`;
+  else L.innerHTML=items.map(h=>`<div class="hi${view.id===h.id&&(view.name==="problem")?" on":""}" data-id="${h.id}" role="button" tabindex="0"><span class="sj">${subjLetter(h.subject)}</span><span class="tx"><span class="tt uc">${esc(h.title||T("Untitled","未命名"))}</span><span class="ts">${esc((h.mode==="hint"?T("Hints · ","提示 · "):"")+(h.topic?h.topic+" · ":"")+fmtDate(h.updated||h.created))}</span></span><button class="x" data-del="${h.id}" title="Delete problem" aria-label="Delete problem"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg></button></div>`).join("");
+  $("navNew").classList.toggle("on",view.name==="compose");
+  $("navNb").classList.toggle("on",view.name==="notebook"||view.name==="review");
+  const due=S.notebook.filter(m=>!m.mastered&&m.due<=Date.now()).length;
+  const ct=$("nbCt");ct.textContent=due?String(due):String(S.notebook.length);ct.classList.toggle("due",!!due);ct.title=due?T(due+" due for review",due+" 道待复习"):T(S.notebook.length+" saved",S.notebook.length+" 道已收录");
+  $("storeNote").textContent=storageOK?"":T("Not saved on this device","此设备无法保存");
+}
+$("hlist").addEventListener("click",e=>{
+  const d=e.target.closest("[data-del]");if(d){e.stopPropagation();delProblem(d.dataset.del);return}
+  const it=e.target.closest(".hi");if(it)openProblem(it.dataset.id);
+});
+$("hlist").addEventListener("keydown",e=>{const it=e.target.closest(".hi");if(it&&e.target===it&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openProblem(it.dataset.id)}if(it&&e.target===it&&(e.key==="Backspace"||e.key==="Delete")){e.preventDefault();delProblem(it.dataset.id)}});
+$("hsearch").addEventListener("input",renderSide);
+function delProblem(id){
+  const i=S.history.findIndex(h=>h.id===id);if(i<0)return;const [h]=S.history.splice(i,1);
+  running.get(id)?.ctl.abort();saveHistory();
+  if(view.id===id)go({name:"compose"});else renderSide();
+  toast(T("Problem deleted","已删除题目"),()=>{S.history.splice(Math.min(i,S.history.length),0,h);saveHistory();renderSide()});
+}
+function closeSideIfNarrow(){if(innerWidth<=760)document.body.classList.remove("sideopen"),$("sidescrim").hidden=true}
+$("navNew").onclick=()=>{go({name:"compose"});closeSideIfNarrow()};
+$("newBtn").onclick=()=>{go({name:"compose"});closeSideIfNarrow()};
+$("navNb").onclick=()=>{go({name:"notebook"});closeSideIfNarrow()};
+function toggleSide(){
+  if(innerWidth<=760){const o=!document.body.classList.contains("sideopen");document.body.classList.toggle("sideopen",o);$("sidescrim").hidden=!o}
+  else{S.settings.side=!S.settings.side;saveSettings();applySide()}
+}
+function applySide(){document.body.classList.toggle("hideside",!S.settings.side);document.body.classList.toggle("noside",!S.settings.side||innerWidth<=760)}
+$("sideBtn").onclick=toggleSide;
+$("sidescrim").onclick=()=>{document.body.classList.remove("sideopen");$("sidescrim").hidden=true};
+addEventListener("resize",()=>{applySide();if(innerWidth>760){document.body.classList.remove("sideopen");$("sidescrim").hidden=true}});
+function openProblem(id){go({name:"problem",id});closeSideIfNarrow()}
+
+/* ---------- router ---------- */
+function go(v){view=Object.assign({name:"compose",id:null},v);render();$("scroll").scrollTop=0}
+function render(){
+  closeMenu();
+  const V=$("view");
+  if(view.name==="compose"){$("crumb").textContent=T("New problem","新题目");renderCompose(V)}
+  else if(view.name==="problem"){const h=cur();if(!h){view={name:"compose"};return render()}$("crumb").textContent=h.title||"";$("crumb").classList.add("uc");renderProblem(V,h)}
+  else if(view.name==="notebook"){$("crumb").textContent=T("Mistake notebook","错题本");renderNotebook(V)}
+  else if(view.name==="review"){$("crumb").textContent=T("Review","复习");renderReview(V)}
+  if(view.name!=="problem")$("crumb").classList.remove("uc");
+  renderSide();
+}
+
+/* ---------- composer ---------- */
+const KB={
+  basic:[["x","x"],["y","y"],["x^{\\square}","^{|}"],["x^2","^2"],["\\sqrt{\\square}","\\sqrt{|}"],["\\sqrt[n]{\\square}","\\sqrt[|]{}"],["\\frac{\\square}{\\square}","\\frac{|}{}"],["(\\,)","(|)"],["|x|","\\left|{|}\\right|"],["\\pm","\\pm "],["\\times","\\times "],["\\div","\\div "],["\\cdot","\\cdot "],["=","="],["\\neq","\\neq "],["<","<"],[">",">"],["\\le","\\le "],["\\ge","\\ge "],["\\approx","\\approx "],["\\pi","\\pi "],["\\infty","\\infty "],["^\\circ","^\\circ "],["\\%","\\%"]],
+  func:[["\\sin","\\sin "],["\\cos","\\cos "],["\\tan","\\tan "],["\\sin^{-1}","\\arcsin "],["\\cos^{-1}","\\arccos "],["\\tan^{-1}","\\arctan "],["\\log","\\log "],["\\ln","\\ln "],["\\log_{\\square}","\\log_{|}"],["e^{\\square}","e^{|}"],["x_{\\square}","_{|}"],["f(x)","f(x)"],["\\begin{cases}..\\end{cases}","\\begin{cases} | \\\\  \\end{cases}"],["\\{\\,\\}","\\{|\\}"],["[\\,]","[|]"],["\\overline{AB}","\\overline{|}"],["\\angle","\\angle "],["\\triangle","\\triangle "],["\\parallel","\\parallel "],["\\perp","\\perp "]],
+  calc:[["\\lim","\\lim_{x\\to |}"],["\\frac{d}{dx}","\\frac{d}{dx}"],["f'","'"],["\\int","\\int | \\,dx"],["\\int_a^b","\\int_{|}^{} \\,dx"],["\\sum","\\sum_{i=1}^{|}"],["\\prod","\\prod_{i=1}^{|}"],["\\partial","\\partial "],["\\vec{v}","\\vec{|}"],["\\begin{pmatrix}..\\end{pmatrix}","\\begin{pmatrix} | & \\\\  & \\end{pmatrix}"],["\\det","\\det "],["n!","!"],["\\binom{n}{k}","\\binom{|}{}"],["\\to","\\to "],["\\Rightarrow","\\Rightarrow "],["\\in","\\in "],["\\mathbb{R}","\\mathbb{R}"],["\\cup","\\cup "],["\\cap","\\cap "]],
+  greek:[["\\alpha","\\alpha "],["\\beta","\\beta "],["\\gamma","\\gamma "],["\\delta","\\delta "],["\\Delta","\\Delta "],["\\epsilon","\\epsilon "],["\\theta","\\theta "],["\\lambda","\\lambda "],["\\mu","\\mu "],["\\rho","\\rho "],["\\sigma","\\sigma "],["\\tau","\\tau "],["\\phi","\\phi "],["\\omega","\\omega "],["\\Omega","\\Omega "],["\\eta","\\eta "]],
+  chem:[["\\mathrm{H_2O}","\\mathrm{|}"],["X_{2}","_{|}"],["X^{+}","^{+}"],["X^{-}","^{-}"],["X^{2+}","^{|+}"],["\\rightarrow","\\rightarrow "],["\\rightleftharpoons","\\rightleftharpoons "],["\\xrightarrow{\\Delta}","\\xrightarrow{|} "],["\\uparrow","\\uparrow "],["\\downarrow","\\downarrow "],["[\\,]","[|]"],["\\cdot","\\cdot "],["\\mathrm{mol}","\\,\\mathrm{mol}"],["\\mathrm{g}","\\,\\mathrm{g}"],["\\mathrm{L}","\\,\\mathrm{L}"],["\\mathrm{^\\circ C}","\\,^\\circ\\mathrm{C}"],["\\mathrm{kJ}","\\,\\mathrm{kJ}"],["\\mathrm{m/s}","\\,\\mathrm{m/s}"],["\\mathrm{N}","\\,\\mathrm{N}"],["\\mathrm{J}","\\,\\mathrm{J}"]],
+};
+const KBT=[["basic","Basic"],["func","Functions"],["calc","Calculus"],["greek","Greek"],["chem","Chem & units"]];
+const EXAMPLES=[
+  ["math","Solve x^2-5x+6=0","x^2-5x+6=0"],
+  ["math","Find the derivative of f(x)=x^3\\ln x","Find the derivative of $f(x)=x^3\\ln x$"],
+  ["physics","A ball is thrown straight up at 12 m/s. How high does it go?","A ball is thrown straight up at 12 m/s. How high does it go? (g = 9.8 m/s²)"],
+  ["chemistry","Balance: Fe + O₂ → Fe₂O₃","Balance: $\\mathrm{Fe + O_2 \\rightarrow Fe_2O_3}$"],
+];
+function renderCompose(V){
+  const st=S.settings;
+  V.innerHTML=`
+  <div class="hero"><h2>${esc(T("What are we solving?","要解哪道题？"))}</h2><p>${esc(T("Type it, paste a screenshot, or drop a photo. Every answer is checked twice before you see it.","打字、粘贴截图或拖入照片都行。每个答案给你看之前都会核对两遍。"))}</p></div>
+  <div id="cerr"></div>
+  <div class="opts">
+    <div class="seg" role="tablist" aria-label="Mode"><button data-mode="solve" class="${st.mode==="solve"?"on":""}" title="Step-by-step solution (⌘1)">Solve</button><button data-mode="hint" class="${st.mode==="hint"?"on":""}" title="Hints only, no answer (⌘2)">Hint only</button></div>
+    <span class="chips" id="subjChips">${["auto","math","physics","chemistry","other"].map(k=>`<button class="chip${st.subject===k?" on":""}" data-subj="${k}">${esc(SUBJ[k][0])}</button>`).join("")}</span>
+    <select class="sel" id="level" aria-label="Level">${[["auto","Any level"],["middle school","Middle school"],["high school","High school"],["college","College"]].map(([v,l])=>`<option value="${v}"${st.level===v?" selected":""}>${T(l,{"Any level":"任意年级","Middle school":"初中","High school":"高中","College":"大学"}[l])}</option>`).join("")}</select>
+  </div>
+  <div class="composer" id="composer">
+    <textarea id="q" placeholder="Type a problem, e.g. 2x + 3 = 11, or paste a screenshot (⌘V)" aria-label="Problem"></textarea>
+    <div class="thumbs" id="thumbs" hidden></div>
+    <div class="preview" id="preview" hidden><div class="pl">Preview</div><div class="md" id="prevBody"></div></div>
+    <div class="mkb" id="mkb" ${st.kb?"":"hidden"}><div class="tabs">${KBT.map(([k,l])=>`<button data-kt="${k}" class="${st.kbTab===k?"on":""}">${l}</button>`).join("")}</div><div class="keys" id="keys"></div></div>
+    <div class="cbar">
+      <button class="btn ghost" id="photoBtn" title="Add a photo or screenshot"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3.5" width="13" height="10" rx="2"/><circle cx="8" cy="8.5" r="2.5"/><path d="M5.5 3.5l1-1.5h3l1 1.5"/></svg>Photo</button>
+      <button class="btn ghost${st.kb?" on":""}" id="kbBtn" title="Math keyboard (⌘E)"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3.5" width="13" height="9" rx="2"/><path d="M4 6.5h1M7.5 6.5h1M11 6.5h1M4 9.5h8"/></svg><span>Math keys</span></button>
+      <label class="btn ghost" title="Use the strongest model for hard problems; slower"><input type="checkbox" id="thorough" ${st.thorough?"checked":""} style="margin:0"> <span>Extra careful</span></label>
+      <span class="sp"></span>
+      <button class="btn pri big" id="goBtn">${st.mode==="hint"?"Start hints":"Solve"} <kbd>⌘↩</kbd></button>
+    </div>
+  </div>
+  <div id="nohint" hidden></div>
+  <div class="examples" id="examples"><div class="lbl">Try one</div>${EXAMPLES.map((e,i)=>`<button class="ex" data-ex="${i}"><span class="s">${esc(subjName(e[0]))}</span><span class="md">${inputHtml(e[2])}</span></button>`).join("")}</div>
+  <div class="tip">${T("Drop or paste a photo anywhere on this page. Write math as you would on a calculator (<b>x^2</b>, <b>sqrt(2)</b>, <b>1/3</b>) or in LaTeX; the preview shows how it reads.","可以把照片拖到或粘贴到页面任意位置。数学式像计算器那样写（<b>x^2</b>、<b>sqrt(2)</b>、<b>1/3</b>）或用 LaTeX；预览会显示读出来的样子。")}</div>`;
+  const q=$("q");q.value=draft.text;
+  V.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+  V.querySelectorAll("[data-subj]").forEach(b=>b.onclick=()=>{st.subject=b.dataset.subj;saveSettings();V.querySelectorAll("[data-subj]").forEach(x=>x.classList.toggle("on",x===b))});
+  $("level").onchange=e=>{st.level=e.target.value;saveSettings()};
+  $("thorough").onchange=e=>{st.thorough=e.target.checked;saveSettings()};
+  $("photoBtn").onclick=()=>$("filePick").click();
+  $("kbBtn").onclick=toggleKb;
+  V.querySelectorAll("[data-kt]").forEach(b=>b.onclick=()=>{st.kbTab=b.dataset.kt;saveSettings();V.querySelectorAll("[data-kt]").forEach(x=>x.classList.toggle("on",x===b));renderKeys();q.focus()});
+  $("goBtn").onclick=submit;
+  V.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>{const e=EXAMPLES[+b.dataset.ex];q.focus();q.select();document.execCommand("insertText",false,e[2])||(q.value=e[2]);st.subject=e[0];saveSettings();V.querySelectorAll("[data-subj]").forEach(x=>x.classList.toggle("on",x.dataset.subj===e[0]));onInput()});
+  q.addEventListener("input",onInput);
+  q.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();submit()}});
+  renderKeys();renderThumbs();onInput();
+  if(!sample){$("nohint").hidden=false;$("nohint").textContent=T("Solving needs Claude: open Homework Helper in the Claude app. Your mistake notebook works without it.","解题需要 Claude：请在 Claude 应用中打开作业助手。错题本不需要 Claude 也能用。")}
+  setTimeout(()=>q.focus(),0);
+}
+function setMode(m){S.settings.mode=m;saveSettings();if(view.name==="compose"){document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("on",x.dataset.mode===m));$("goBtn").firstChild.textContent=m==="hint"?T("Start hints","开始提示")+" ":T("Solve","解题")+" "}}
+function toggleKb(){S.settings.kb=!S.settings.kb;saveSettings();if($("mkb")){$("mkb").hidden=!S.settings.kb;$("kbBtn").classList.toggle("on",S.settings.kb);$("q").focus()}}
+function renderKeys(){
+  const K=$("keys");if(!K)return;
+  K.innerHTML=KB[S.settings.kbTab||"basic"].map(([l,ins],i)=>`<button class="key" data-k="${i}" title="${esc(ins.replace("|","").trim())}" aria-label="${esc(ins.replace("|","").trim())}">${tex(l,false)}</button>`).join("")+
+   `<button class="key fn" data-fn="left" title="Move left" aria-label="Move left">←</button><button class="key fn" data-fn="right" title="Move right" aria-label="Move right">→</button><button class="key fn" data-fn="wrap" title="Mark as math with $…$" aria-label="Mark as math">$…$</button><button class="key fn" data-fn="back" title="Delete" aria-label="Delete">⌫</button>`;
+  K.onmousedown=e=>{if(e.target.closest(".key"))e.preventDefault()}; // keep focus in the textarea
+  K.onclick=e=>{const b=e.target.closest(".key");if(!b)return;const q=$("q");q.focus();
+    if(b.dataset.fn){const fn=b.dataset.fn;
+      if(fn==="left"){const p=Math.max(0,q.selectionStart-1);q.setSelectionRange(p,p)}
+      else if(fn==="right"){const p=Math.min(q.value.length,q.selectionEnd+1);q.setSelectionRange(p,p)}
+      else if(fn==="back"){if(q.selectionStart===q.selectionEnd&&q.selectionStart>0)q.setSelectionRange(q.selectionStart-1,q.selectionStart);document.execCommand("delete")}
+      else if(fn==="wrap"){const s=q.value.slice(q.selectionStart,q.selectionEnd);insertAtCaret(q,"$"+(s||"|")+"$")}
+      return}
+    insertAtCaret(q,KB[S.settings.kbTab||"basic"][+b.dataset.k][1]);
+  };
+}
+function insertAtCaret(q,ins){
+  const caret=ins.indexOf("|");const txt=ins.replace("|","");const start=q.selectionStart;
+  if(!document.execCommand("insertText",false,txt)){q.setRangeText(txt,q.selectionStart,q.selectionEnd,"end");q.dispatchEvent(new Event("input"))}
+  if(caret>=0){const p=start+caret;q.setSelectionRange(p,p)}
+}
+let prevT=null;
+function onInput(){
+  const q=$("q");if(!q)return;draft.text=q.value;LS.set("draft",draft.text);
+  clearTimeout(prevT);prevT=setTimeout(()=>{if(!$("preview")||!q.isConnected)return;const t=q.value;$("preview").hidden=!t.trim();$("prevBody").innerHTML=inputHtml(t)},120);
+  if($("examples"))$("examples").hidden=!!(q.value.trim()||draft.images.length);
+}
+function renderThumbs(){
+  const th=$("thumbs");if(!th)return;th.hidden=!draft.images.length;
+  th.innerHTML=draft.images.map((u,i)=>`<div class="thumb"><img src="${u}" alt="Problem photo ${i+1}"><button data-rm="${i}" title="Remove photo" aria-label="Remove photo">×</button></div>`).join("");
+  th.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{draft.images.splice(+b.dataset.rm,1);renderThumbs();onInput()});
+}
+async function fileToDataURL(f,max=1280,q=.8){
+  const url=URL.createObjectURL(f);
+  try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
+    const s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.naturalWidth*s));c.height=Math.max(1,Math.round(img.naturalHeight*s));
+    const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);return c.toDataURL("image/jpeg",q)}
+  finally{URL.revokeObjectURL(url)}
+}
+let imgTarget=null; // a function that receives data URLs (composer by default; dialogs override)
+async function addImages(files){
+  const list=[...files].filter(f=>/^image\//.test(f.type));if(!list.length)return false;
+  const urls=[];for(const f of list){try{urls.push(await fileToDataURL(f))}catch{toast(T("That image couldn't be opened.","这张图片打不开。"))}}
+  if(imgTarget){imgTarget(urls);return true}
+  if(view.name!=="compose")go({name:"compose"});
+  const cap=Math.max(1,Math.min(maxImages,4));
+  draft.images=draft.images.concat(urls).slice(-cap);
+  if(urls.length&&draft.images.length===cap&&urls.length+0>cap)toast(T(`Up to ${cap} photos per problem.`,`每道题最多 ${cap} 张照片。`));
+  renderThumbs();onInput();$("q")?.focus();return true;
+}
+$("filePick").onchange=async e=>{await addImages(e.target.files);e.target.value=""};
+document.addEventListener("paste",e=>{const fs=[...(e.clipboardData?.files||[])];if(fs.some(f=>/^image\//.test(f.type))){e.preventDefault();addImages(fs)}});
+let dragN=0;
+document.addEventListener("dragenter",e=>{if([...(e.dataTransfer?.types||[])].includes("Files")){dragN++;$("composer")?.classList.add("drag")}});
+document.addEventListener("dragleave",()=>{dragN=Math.max(0,dragN-1);if(!dragN)$("composer")?.classList.remove("drag")});
+document.addEventListener("dragover",e=>{if([...(e.dataTransfer?.types||[])].includes("Files"))e.preventDefault()});
+document.addEventListener("drop",e=>{dragN=0;$("composer")?.classList.remove("drag");const fs=e.dataTransfer?.files;if(fs&&fs.length){e.preventDefault();addImages(fs)}});
+
+function titleFrom(text){const t=String(text||"").replace(/\$+/g,"").replace(/\\(mathrm|text)\{([^}]*)\}/g,"$2").replace(/\\[a-zA-Z]+/g,m=>({"\\frac":"","\\sqrt":"√","\\pi":"π","\\rightarrow":"→","\\times":"×","\\cdot":"·","\\le":"≤","\\ge":"≥","\\pm":"±","\\int":"∫","\\sum":"Σ","\\infty":"∞","\\theta":"θ"}[m]??"")).replace(/[{}]/g,"").replace(/\s+/g," ").trim();return t.length>70?t.slice(0,68)+"…":t}
+function submit(){
+  const text=($("q")?.value||"").trim();
+  if(!text&&!draft.images.length){$("q")?.focus();showComposeErr(T("Type a problem or add a photo first.","先输入题目或添加照片。"));return}
+  if(!sample){showComposeErr(T("Solving needs Claude: open Homework Helper in the Claude app.","解题需要 Claude：请在 Claude 应用中打开作业助手。"));return}
+  if(draft.images.length&&!canImages){showComposeErr(T("Photos can't be sent to Claude here. Type the problem instead, or remove the photo.","这里无法把照片发给 Claude。请把题目打出来，或移除照片。"));return}
+  const st=S.settings;
+  const h={id:uid(),created:Date.now(),updated:Date.now(),mode:st.mode,subject:st.subject==="auto"?"math":st.subject,subjectSet:st.subject,level:st.level,thorough:st.thorough,
+    text,images:draft.images.slice(),title:titleFrom(text)||T("Problem from photo","照片里的题"),result:null,verify:null,chat:[],hint:[],practice:[]};
+  S.history.unshift(h);saveHistory();
+  draft={text:"",images:[]};LS.set("draft","");
+  go({name:"problem",id:h.id});
+  if(h.mode==="hint")startHints(h);else solve(h);
+}
+function showComposeErr(m){const c=$("cerr");if(c){c.innerHTML=`<div class="err">${esc(m)}</div>`}}
+
+/* ---------- solving + verification ---------- */
+function pinfo(h){return {subject:h.subjectSet||h.subject,level:h.level,text:h.text,images:h.images?.length||0}}
+function imgs(h){return h.images?.length?h.images.map(dataURLtoBlob):undefined}
+async function solve(h,extra){
+  if(!sample)return;
+  running.get(h.id)?.ctl.abort();
+  const ctl=new AbortController();running.set(h.id,{ctl,kind:"solve"});
+  h.error=null;h.progress=T("Reading the problem…","正在读题…");
+  if(!extra){h.result=null;h.verify=null}
+  rerender(h);
+  const p=pinfo(h);if(extra)p.extra=extra;
+  try{
+    const r=await sample.json(solvePrompt(p),{signal:ctl.signal,images:imgs(h),cache:false,modelTier:h.thorough||extra?"complex":"default",
+      onText:({text})=>{const n=(text.match(/"title"\s*:/g)||[]).length;const np=n?T(`Writing step ${n}…`,`正在写第 ${n} 步…`):T("Solving…","正在解题…");if(np!==h.progress){h.progress=np;updProgress(h)}}});
+    if(!r||typeof r!=="object"||!Array.isArray(r.steps))throw {code:"invalid_json"};
+    if(h.result&&extra)h.prevResult={result:h.result,verify:h.verify};
+    h.result=normResult(fixTex(r));h.progress=null;
+    if(["math","physics","chemistry","other"].includes(r.subject))h.subject=r.subject;
+    h.topic=String(r.topic||"").slice(0,60);
+    if(!h.text||h.title===T("Problem from photo","照片里的题"))h.title=titleFrom(r.problem)||h.title;
+    h.updated=Date.now();saveHistory();running.delete(h.id);rerender(h);
+    verify(h);
+  }catch(e){
+    running.delete(h.id);
+    if(e?.code==="cancelled"){h.progress=null;h.error=T("Stopped.","已停止。");}
+    else{h.progress=null;h.error=errText(e);}
+    saveHistory();rerender(h);
+  }
+}
+function normResult(r){
+  const arr=x=>Array.isArray(x)?x:[];
+  return {problem:String(r.problem||""),unclear:String(r.unclear||""),steps:arr(r.steps).map(s=>({title:String(s?.title||""),work:String(s?.work||""),why:String(s?.why||"")})),
+    answer:String(r.answer||""),values:arr(r.answer_values).map(Number).filter(isFinite),
+    self:r.self_check&&typeof r.self_check==="object"?{method:String(r.self_check.method||""),work:String(r.self_check.work||""),passed:r.self_check.passed!==false}:null,
+    machine:arr(r.machine_checks).filter(c=>c&&c.expr!=null).slice(0,8).map(c=>({expr:String(c.expr),expect:Number(c.expect),tol:c.tol!=null?Number(c.tol):null,note:String(c.note||"")})),
+    graph:r.graph&&Array.isArray(r.graph.functions)&&r.graph.functions.length?{functions:r.graph.functions.map(String).slice(0,5),xmin:Number(r.graph.xmin),xmax:Number(r.graph.xmax),points:arr(r.graph.points).filter(p=>Array.isArray(p)&&p.length===2&&p.every(v=>isFinite(+v))).map(p=>p.map(Number)).slice(0,12)}:null,
+    concepts:arr(r.concepts).map(String).slice(0,4)};
+}
+async function verify(h){
+  const R=h.result;if(!R)return;
+  h.verify={machine:null,indep:{state:"wait"},compare:null};rerender(h);
+  // 1) computed checks, run locally
+  const m=await ensureMath();
+  if(!m)h.verify.machine={state:"na",items:[]};
+  else{const items=R.machine.map(c=>{try{const v=evalNum(c.expr);const ok=isFinite(c.expect)?close(v,c.expect,c.tol&&c.tol>0?Math.min(c.tol,.05):1e-6):false;return {...c,value:v,ok}}catch{return {...c,value:null,ok:null}}});
+    h.verify.machine={state:"done",items}}
+  rerender(h);
+  // 2) independent solve by a second, separate call
+  if(!sample)return;
+  const ctl=new AbortController();running.set(h.id+":v",{ctl,kind:"verify"});
+  try{
+    let r=await sample.json(verifyPrompt(pinfo(h)),{signal:ctl.signal,images:imgs(h),cache:false,modelTier:"default"});
+    r=fixTex(r);const ind={state:"done",answer:String(r?.answer||""),values:(Array.isArray(r?.answer_values)?r.answer_values:[]).map(Number).filter(isFinite),method:String(r?.method||"")};
+    h.verify.indep=ind;rerender(h);
+    let agree=null;
+    if(R.values.length&&ind.values.length){
+      const a=[...R.values].sort((x,y)=>x-y),b=[...ind.values].sort((x,y)=>x-y);
+      agree=a.length===b.length&&a.every((v,i)=>close(v,b[i],.006));
+      if(!agree&&a.length!==b.length&&new Set(a.map(v=>v.toPrecision(6))).size===new Set(b.map(v=>v.toPrecision(6))).size)agree=[...new Set(a.map(v=>+v.toPrecision(6)))].every((v,i)=>close(v,[...new Set(b.map(v=>+v.toPrecision(6)))][i],.006));
+    }
+    if(agree===null||agree===false){
+      const j=await sample.json(`Two tutors solved the same problem. Are their final answers mathematically equivalent (same value(s), allowing different but equivalent forms, rounding to the stated precision, and order)? If the problem has several parts, every part must match.\nProblem:\n${R.problem.slice(0,4000)}\nAnswer A:\n${R.answer}\nAnswer B:\n${ind.answer}\nReply with only JSON: {"equivalent": true|false, "note": "one short sentence${ZH?" in Simplified Chinese":""}"}`,{signal:ctl.signal,modelTier:"quick",cache:false});
+      h.verify.compare={equivalent:!!j?.equivalent,note:String(j?.note||"")};
+    }else h.verify.compare={equivalent:agree,note:""};
+  }catch(e){
+    if(e?.code==="cancelled"){h.verify.indep={state:"na",why:T("Stopped","已停止")}}
+    else h.verify.indep={state:"na",why:errText(e)};
+  }
+  running.delete(h.id+":v");h.updated=Date.now();saveHistory();rerender(h);
+}
+function verdict(h){
+  const R=h.result,V=h.verify;if(!R)return null;
+  const self=R.self?R.self.passed:null;
+  const mi=V?.machine?.items||[];const mFail=mi.filter(x=>x.ok===false).length,mPass=mi.filter(x=>x.ok===true).length;
+  const ind=V?.indep;const agree=V?.compare?V.compare.equivalent:null;
+  if(!V||ind?.state==="wait"&&!V.compare)return {cls:"wait",label:T("Checking…","核对中…"),state:"wait"};
+  if(self===false||mFail||agree===false)return {cls:"bad",label:T("Checks disagree","核对结果不一致"),state:"bad",mFail,agree,self};
+  if(self&&agree&&(mPass||!mi.length))return {cls:"ok",label:T("Checked","已核对"),state:"ok"};
+  return {cls:"warn",label:T("Partly checked","部分核对"),state:"warn",agree,self};
+}
+function badgeHtml(v){if(!v)return "";const ic={ok:"✓",bad:"!",warn:"~",wait:""}[v.cls];return `<span class="badge ${v.cls}">${v.cls==="wait"?'<span class="spin" style="width:11px;height:11px;border-width:2px"></span>':ic} ${esc(v.label)}</span>`}
+
+/* ---------- problem view ---------- */
+function rerender(h){if(view.name==="problem"&&view.id===h.id){const y=$("scroll").scrollTop;renderProblem($("view"),h);$("scroll").scrollTop=y}renderSide()}
+function updProgress(h){const el=document.querySelector("#prog .t");if(el&&view.id===h.id)el.textContent=h.progress}
+function renderProblem(V,h){
+  if(h.mode==="hint")return renderHint(V,h);
+  const R=h.result;const busy=running.get(h.id);
+  const imgsHtml=h.images?.length?`<div class="qimgs">${h.images.map((u,i)=>`<img src="${u}" data-zoom="${i}" alt="Problem photo">`).join("")}</div>`:"";
+  let html=`<div class="card"><h3>Problem<span class="sp"></span><span class="tag">${esc(subjName(h.subject))}</span>${h.topic?`<span class="tag uc">${esc(h.topic)}</span>`:""}<button class="btn ghost" id="editBtn" title="Edit the problem and solve again">Edit &amp; re-solve</button></h3>
+    ${R?.problem?mdEl(R.problem):`<div class="md uc">${inputHtml(h.text||"")}</div>`}${imgsHtml}
+    ${R?.unclear?`<div class="alert warn"><b>${esc(T("Read with a guess:","读题时做了推测："))}</b> <span class="md" style="display:inline">${md(R.unclear)}</span><div class="row"><button class="btn" id="fixRead">Correct the reading</button></div></div>`:""}
+    ${h.images?.length&&R?.problem?`<div style="margin-top:8px;font-size:12px;color:var(--muted)">${esc(T("Above is how Claude read your photo. If anything is off, use Edit & re-solve.","上面是 Claude 从照片里读到的题目。如有不对，点“编辑并重解”。"))}</div>`:""}
+  </div>`;
+  if(h.error&&!busy)html+=`<div class="err"><span>${esc(h.error)}</span><span class="sp"></span><button class="btn" id="retryBtn">Try again</button></div>`;
+  if(busy&&busy.kind==="solve")html+=`<div class="card" id="prog"><div class="skel"><span class="spin"></span><span class="t">${esc(h.progress||T("Solving…","正在解题…"))}</span><span style="flex:1"></span><button class="btn" id="stopBtn">Stop</button></div><div class="shimmer" style="width:70%"></div><div class="shimmer" style="width:90%"></div><div class="shimmer" style="width:55%"></div></div>`;
+  if(R){
+    const v=verdict(h);
+    html+=`<div class="card ans ${v.cls}"><h3>Answer<span class="sp"></span>${badgeHtml(v)}</h3><div class="md big">${md(R.answer)}</div>${verdictAlert(h,v)}${checksHtml(h)}</div>`;
+    if(h.prevResult)html+=`<div class="alert warn" style="margin:-4px 0 12px">${esc(T("This is a careful re-solve. ","这是仔细重解后的结果。"))}<button class="btn ghost" id="undoResolve">Undo re-solve</button></div>`;
+    html+=`<div class="card"><h3>Steps<span class="sp"></span><button class="btn ghost" id="allWhy">${h.allWhy?"Hide all whys":"Show all whys"}</button></h3><div class="steps">${R.steps.map((s,i)=>`<div class="step"><div class="sh"><span class="n">${i+1}</span><div class="t md">${md(s.title)}</div></div>${s.work?`<div class="work md">${md(s.work)}</div>`:""}${s.why?((h.open||[]).includes(i)||h.allWhy?`<div class="why md">${md(s.why)}</div><button class="whyb" data-why="${i}">Hide why</button>`:`<button class="whyb" data-why="${i}">Why?</button>`):""}</div>`).join("")}</div>
+      ${R.concepts.length?`<div style="margin-top:6px;font-size:13px;color:var(--muted)"><b style="color:var(--fg)">${esc(T("Key ideas: ","要点："))}</b><span class="md" style="display:inline">${R.concepts.map(c=>md(c).replace(/^<p>|<\/p>\s*$/g,"")).join(" · ")}</span></div>`:""}</div>`;
+    if(R.graph||h.userFns?.length)html+=`<div class="card"><h3>Graph<span class="sp"></span></h3><div class="gwrap"><canvas id="gcv" aria-label="Graph"></canvas><div class="gtools"><button class="ib" id="gIn" title="Zoom in" aria-label="Zoom in">+</button><button class="ib" id="gOut" title="Zoom out" aria-label="Zoom out">−</button><button class="ib" id="gReset" title="Reset view" aria-label="Reset view">⟲</button></div><div class="ginfo" id="ginfo"></div></div><div class="gfns" id="gfns"></div><div class="gadd"><input id="gnew" placeholder="Add a function, e.g. 2*x+1" aria-label="Add a function"><button class="btn" id="gAddBtn">Plot</button></div></div>`;
+    html+=`<div class="acts"><button class="btn" id="saveMis" title="Save to mistake notebook (⌘S)">${h.savedMistake?"✓ In mistake notebook":"I got this wrong · Save"} <kbd>⌘S</kbd></button><button class="btn" id="pracBtn" title="Practice similar problems (⌘J)">Practice similar <kbd>⌘J</kbd></button><button class="btn" id="copyMd">Copy as Markdown</button><button class="btn ghost" id="moreBtn" aria-label="More actions" title="More actions">More…</button></div>`;
+    html+=practiceHtml(h);
+    html+=chatHtml(h);
+  }
+  V.innerHTML=html;
+  wireProblem(V,h);
+}
+function verdictAlert(h,v){
+  if(v.state==="bad"){
+    const ind=h.verify?.indep;
+    return `<div class="alert bad"><b>${esc(T("Don't trust this answer yet.","先别相信这个答案。"))}</b> ${esc(v.self===false?T("The solver's own check failed. ","解题时的自检没有通过。"):"")}${esc(v.mFail?T(`${v.mFail} computed check(s) failed. `,`${v.mFail} 项计算核对没有通过。`):"")}${esc(v.agree===false?T("An independent solve got a different answer: ","独立重解得到了不同的答案："):"")}${v.agree===false&&ind?.answer?`<span class="md" style="display:inline">${md(ind.answer).replace(/^<p>|<\/p>\s*$/g,"")}</span>`:""}${h.verify?.compare?.note?`<div class="md" style="margin-top:4px;color:var(--muted)">${md(h.verify.compare.note)}</div>`:""}
+      <div class="row"><button class="btn pri" id="resolveBtn">Re-solve carefully</button><button class="btn" id="askDiff">Ask which is right</button></div></div>`;
+  }
+  if(v.state==="warn"&&h.verify?.indep?.state==="na")return `<div class="alert warn">${esc(T("The independent check didn't run: ","独立核对没有运行："))}${esc(h.verify.indep.why||"")} <div class="row"><button class="btn" id="recheckBtn">Check again</button></div></div>`;
+  return "";
+}
+function checksHtml(h){
+  const R=h.result,V=h.verify||{};
+  const row=(st,nm,dt)=>`<div class="chk"><span class="st ${st}">${{ok:"✓",bad:"✗",wait:"…",warn:"–"}[st]}</span><span class="nm">${nm}</span><div class="dt">${dt}</div></div>`;
+  let s="";
+  if(R.self)s+=row(R.self.passed?"ok":"bad",esc(T("Self-check","自检"))+(R.self.method?` · <span class="uc">${esc(R.self.method)}</span>`:""),mdEl(R.self.work));
+  else s+=row("warn",esc(T("Self-check","自检")),esc(T("Not provided.","没有提供。")));
+  const ind=V.indep;
+  if(!ind||ind.state==="wait")s+=row("wait",esc(T("Independent solve","独立重解")),esc(T("Solving again from scratch with a different method…","正在用另一种方法从头再解一遍…")));
+  else if(ind.state==="na")s+=row("warn",esc(T("Independent solve","独立重解")),esc(ind.why||T("Didn't run.","没有运行。")));
+  else{const eq=V.compare?.equivalent;s+=row(eq==null?"wait":eq?"ok":"bad",esc(T("Independent solve","独立重解"))+(ind.method?` · <span class="uc">${esc(ind.method)}</span>`:""),`${mdEl(ind.answer)}${eq==null?esc(T("Comparing answers…","正在比对答案…")):eq?esc(T("Same answer.","答案一致。")):esc(T("Different answer.","答案不同。"))}`)}
+  const mc=V.machine;
+  if(!mc)s+=row("wait",esc(T("Computed checks","计算核对")),esc(T("Running…","运行中…")));
+  else if(mc.state==="na")s+=row("warn",esc(T("Computed checks","计算核对")),esc(T("The calculator didn't load, so these were skipped.","计算器没有加载，已跳过。")));
+  else if(!mc.items.length)s+=row("warn",esc(T("Computed checks","计算核对")),esc(T("None for this kind of problem.","这类题没有计算核对。")));
+  else{const p=mc.items.filter(x=>x.ok).length,f=mc.items.filter(x=>x.ok===false).length;
+    s+=row(f?"bad":p?"ok":"warn",esc(T(`Computed checks · ${p} of ${mc.items.length} passed`,`计算核对 · 通过 ${p}/${mc.items.length} 项`)),mc.items.map(c=>`<div><span class="mc uc">${esc(c.expr)}</span> → <b class="mc">${c.value==null?"?":esc(+c.value.toPrecision(10))}</b> ${c.ok===true?`<span style="color:var(--ok)">✓</span>`:c.ok===false?`<span style="color:var(--bad)">✗ ${esc(T("expected","应为"))} ${esc(c.expect)}</span>`:`<span>${esc(T("couldn't run","无法运行"))}</span>`}${c.note?` <span class="uc">· ${esc(c.note)}</span>`:""}</div>`).join(""))}
+  const v=verdict(h);
+  return `<details class="checks"${v.state==="bad"?" open":""}><summary>${esc(T("How this was checked","核对方式"))}</summary>${s}</details>`;
+}
+function wireProblem(V,h){
+  const on=(id,f)=>{const el=$(id);if(el)el.onclick=f};
+  on("editBtn",()=>editProblem(h));on("fixRead",()=>editProblem(h));
+  on("retryBtn",()=>solve(h));on("stopBtn",()=>{running.get(h.id)?.ctl.abort()});
+  on("resolveBtn",()=>resolveCarefully(h));on("recheckBtn",()=>verify(h));
+  on("askDiff",()=>{const t=$("fq");if(t){t.value=T("The independent check got a different answer. Re-examine your solution step by step and tell me which answer is right and why.","独立核对得到的答案不同。请逐步检查你的解法，告诉我哪个答案是对的，为什么。");t.focus();sendFollow(h)}});
+  on("undoResolve",()=>{if(!h.prevResult)return;const p=h.prevResult;h.prevResult=null;h.result=p.result;h.verify=p.verify;saveHistory();rerender(h);toast(T("Went back to the earlier solution","已恢复之前的解法"))});
+  on("allWhy",()=>{h.allWhy=!h.allWhy;if(!h.allWhy)h.open=[];rerender(h)});
+  V.querySelectorAll("[data-why]").forEach(b=>b.onclick=()=>{const i=+b.dataset.why;h.open=h.open||[];if(h.allWhy){h.allWhy=false;h.open=h.result.steps.map((_,k)=>k)}const k=h.open.indexOf(i);k<0?h.open.push(i):h.open.splice(k,1);rerender(h)});
+  V.querySelectorAll("[data-zoom]").forEach(im=>im.onclick=()=>dialog(`<img class="zoomimg" src="${im.src}" alt="Problem photo"><div class="row"><button class="btn" data-close>Close</button></div>`,d=>{d.style.width="auto";d.style.maxWidth="96vw";d.querySelector("[data-close]").onclick=closeDlg}));
+  on("saveMis",()=>saveMistakeDlg(h));on("pracBtn",()=>practice(h));
+  on("copyMd",()=>copyText(problemMd(h)));
+  on("moreBtn",()=>menu($("moreBtn"),[{label:T("Save solution as Markdown","将解答存为 Markdown"),run:()=>saveFile(fileName(h.title)+".md",problemMd(h),"text/markdown")},{label:T("Solve again from scratch","从头重新解"),run:()=>solve(h)},{label:T("Re-solve carefully (strongest model)","仔细重解（最强模型）"),run:()=>resolveCarefully(h)},"-",{label:T("Delete problem","删除题目"),run:()=>delProblem(h.id)}]));
+  if($("gcv"))initGraph(h);
+  wirePractice(V,h);wireChat(V,h);
+}
+function editProblem(h){
+  draft={text:h.result?.problem||h.text||"",images:(h.images||[]).slice()};LS.set("draft",draft.text);
+  S.settings.mode=h.mode;S.settings.subject=h.subjectSet||h.subject;saveSettings();go({name:"compose"});
+}
+function resolveCarefully(h){
+  const R=h.result;if(!R||!sample)return;
+  const ind=h.verify?.indep;
+  const extra=`A first attempt gave this answer: ${R.answer}\n${ind?.answer?`An independent check got: ${ind.answer}\n`:""}${(h.verify?.machine?.items||[]).filter(x=>x.ok===false).map(x=>`Computed check failed: ${x.expr} gave ${x.value} but ${x.expect} was expected (${x.note}).\n`).join("")}At least one of these is wrong. Do not trust either; solve from scratch with extra care, double-check each arithmetic step, and decide which answer (if any) is right.`;
+  solve(h,extra);
+}
+
+/* ---------- graph ---------- */
+const GCOL=["#2f66db","#d9480f","#2b8a3e","#ae3ec9","#e8590c"];
+function initGraph(h){
+  const cv=$("gcv");const R=h.result;
+  const fns=[...(R.graph?.functions||[]),...(h.userFns||[])];
+  const pts=R.graph?.points||[];
+  let compiled=[];let ready=false;
+  const g=h._g||(h._g={});
+  const defaults=()=>{let a=R.graph&&isFinite(R.graph.xmin)?R.graph.xmin:-10,b=R.graph&&isFinite(R.graph.xmax)?R.graph.xmax:10;if(!(b>a)){a=-10;b=10}
+    let ys=[];for(const f of compiled){if(!f)continue;for(let i=0;i<=200;i++){const x=a+(b-a)*i/200;try{const y=f(x);if(isFinite(y))ys.push(y)}catch{}}}
+    pts.forEach(p=>ys.push(p[1]));ys.sort((p,q)=>p-q);
+    let lo=ys.length?ys[Math.floor(ys.length*.03)]:-10,hi=ys.length?ys[Math.ceil(ys.length*.97)-1]:10;if(!(hi>lo)){lo-=5;hi+=5}const pad=(hi-lo)*.12;
+    lo=Math.min(lo-pad,0-pad*.3);hi=Math.max(hi+pad,0+pad*.3);
+    return {x0:a,x1:b,y0:lo,y1:hi}};
+  ensureMath().then(m=>{
+    if(!m){$("ginfo").textContent=T("The graphing engine didn't load.","绘图引擎没有加载。");return}
+    compiled=fns.map(f=>{try{const c=m.compile(normExpr(f));return x=>{let v=c.evaluate({x});if(v&&typeof v==="object"&&m.isComplex?.(v))v=Math.abs(v.im)<1e-9?v.re:NaN;return typeof v==="number"?v:Number(v)}}catch{return null}});
+    if(!g.vp)g.vp=defaults();ready=true;draw();
+  });
+  $("gfns").innerHTML=fns.map((f,i)=>`<span class="gfn"><i style="background:${GCOL[i%GCOL.length]}"></i><span class="uc">y = ${esc(f)}</span>${i>=(R.graph?.functions||[]).length?`<button data-rmf="${i-(R.graph?.functions||[]).length}" title="Remove function" aria-label="Remove function">×</button>`:""}</span>`).join("");
+  $("gfns").querySelectorAll("[data-rmf]").forEach(b=>b.onclick=()=>{h.userFns.splice(+b.dataset.rmf,1);saveHistory();rerender(h)});
+  const add=()=>{const v=$("gnew").value.trim();if(!v)return;const m=window.math;if(m){try{m.compile(normExpr(v.replace(/^y\s*=\s*/,"")))}catch{toast(T("That function couldn't be read. Try something like 2*x+1.","这个函数读不懂，试试 2*x+1 这样的写法。"));return}}(h.userFns=h.userFns||[]).push(v.replace(/^y\s*=\s*/,""));saveHistory();rerender(h)};
+  $("gAddBtn").onclick=add;$("gnew").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();add()}};
+  const zoom=(k,cx,cy)=>{const v=g.vp;if(!v)return;const px=cx??(v.x0+v.x1)/2,py=cy??(v.y0+v.y1)/2;g.vp={x0:px+(v.x0-px)*k,x1:px+(v.x1-px)*k,y0:py+(v.y0-py)*k,y1:py+(v.y1-py)*k};draw()};
+  $("gIn").onclick=()=>zoom(.7);$("gOut").onclick=()=>zoom(1/.7);$("gReset").onclick=()=>{g.vp=defaults();draw()};
+  function draw(){
+    if(!ready||!cv.isConnected)return;
+    const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+    const x=cv.getContext("2d");x.setTransform(dpr,0,0,dpr,0,0);
+    const cs=getComputedStyle(document.documentElement);const col=n=>cs.getPropertyValue(n).trim();
+    const v=g.vp;const sx=X=>(X-v.x0)/(v.x1-v.x0)*W,sy=Y=>H-(Y-v.y0)/(v.y1-v.y0)*H;
+    x.fillStyle=col("--canvas");x.fillRect(0,0,W,H);
+    const step=r=>{const raw=r/8;const p=Math.pow(10,Math.floor(Math.log10(raw)));const n=raw/p;return (n<1.5?1:n<3.5?2:n<7.5?5:10)*p};
+    const dx=step(v.x1-v.x0),dy=step(v.y1-v.y0);
+    x.lineWidth=1;x.strokeStyle=col("--grid");x.beginPath();
+    for(let X=Math.ceil(v.x0/dx)*dx;X<=v.x1;X+=dx){x.moveTo(Math.round(sx(X))+.5,0);x.lineTo(Math.round(sx(X))+.5,H)}
+    for(let Y=Math.ceil(v.y0/dy)*dy;Y<=v.y1;Y+=dy){x.moveTo(0,Math.round(sy(Y))+.5);x.lineTo(W,Math.round(sy(Y))+.5)}x.stroke();
+    x.strokeStyle=col("--axis");x.beginPath();const ax=Math.min(Math.max(sy(0),0),H),ay=Math.min(Math.max(sx(0),0),W);x.moveTo(0,Math.round(ax)+.5);x.lineTo(W,Math.round(ax)+.5);x.moveTo(Math.round(ay)+.5,0);x.lineTo(Math.round(ay)+.5,H);x.stroke();
+    x.fillStyle=col("--muted");x.font="11px -apple-system,system-ui,sans-serif";
+    const fmt=n=>{const r=+n.toPrecision(6);return Math.abs(r)<1e-12?"0":String(r)};
+    x.textAlign="center";x.textBaseline="top";for(let X=Math.ceil(v.x0/dx)*dx;X<=v.x1;X+=dx){if(Math.abs(X)<dx/2)continue;x.fillText(fmt(X),sx(X),Math.min(H-14,ax+3))}
+    x.textAlign="left";x.textBaseline="middle";for(let Y=Math.ceil(v.y0/dy)*dy;Y<=v.y1;Y+=dy){if(Math.abs(Y)<dy/2)continue;x.fillText(fmt(Y),Math.min(W-30,ay+4),sy(Y))}
+    compiled.forEach((f,i)=>{if(!f)return;x.strokeStyle=GCOL[i%GCOL.length];x.lineWidth=2.2;x.beginPath();let pen=false,lastY=null;
+      for(let px=0;px<=W;px+=1){const X=v.x0+(v.x1-v.x0)*px/W;let Y;try{Y=f(X)}catch{Y=NaN}
+        if(!isFinite(Y)){pen=false;continue}const py=sy(Y);
+        if(pen&&lastY!=null&&Math.abs(py-lastY)>H*2){pen=false}
+        if(!pen){x.moveTo(px,py);pen=true}else x.lineTo(px,Math.max(-H,Math.min(2*H,py)));lastY=py}
+      x.stroke()});
+    pts.forEach(p=>{x.fillStyle=col("--panel");x.strokeStyle=col("--fg");x.lineWidth=2;x.beginPath();x.arc(sx(p[0]),sy(p[1]),4.5,0,7);x.fill();x.stroke();x.fillStyle=col("--fg");x.textAlign="left";x.textBaseline="bottom";x.fillText(`(${fmt(p[0])}, ${fmt(p[1])})`,sx(p[0])+7,sy(p[1])-4)});
+    if(g.hover!=null&&compiled[0]){const X=g.hover;let Y;try{Y=compiled[0](X)}catch{}if(isFinite(Y)){x.fillStyle=GCOL[0];x.beginPath();x.arc(sx(X),sy(Y),4,0,7);x.fill();$("ginfo").textContent=`x = ${fmt(X)}, y = ${fmt(Y)}`}}
+  }
+  let drag=null;
+  cv.onpointerdown=e=>{drag={x:e.clientX,y:e.clientY,vp:{...g.vp}};cv.classList.add("drag")};
+  cv.onpointermove=e=>{const r=cv.getBoundingClientRect();if(!g.vp)return;
+    if(drag&&e.buttons){const v=drag.vp;const ddx=(e.clientX-drag.x)/r.width*(v.x1-v.x0),ddy=(e.clientY-drag.y)/r.height*(v.y1-v.y0);g.vp={x0:v.x0-ddx,x1:v.x1-ddx,y0:v.y0+ddy,y1:v.y1+ddy};}
+    g.hover=g.vp.x0+(g.vp.x1-g.vp.x0)*(e.clientX-r.left)/r.width;draw()};
+  const end=()=>{drag=null;cv.classList.remove("drag")};
+  cv.onpointerup=end;cv.onpointerleave=()=>{end();g.hover=null;$("ginfo").textContent="";draw()};
+  cv.onwheel=e=>{if(!g.vp)return;e.preventDefault();const r=cv.getBoundingClientRect();const v=g.vp;const cx=v.x0+(v.x1-v.x0)*(e.clientX-r.left)/r.width,cy=v.y1-(v.y1-v.y0)*(e.clientY-r.top)/r.height;zoom(e.deltaY>0?1.12:1/1.12,cx,cy)};
+  new ResizeObserver(()=>draw()).observe(cv);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",draw);
+}
+
+/* ---------- practice ---------- */
+function practiceHtml(h){
+  const busy=running.get(h.id+":p");
+  if(!h.practice?.length&&!busy&&!h.practiceErr)return "";
+  let s=`<div class="card" id="practice"><h3>Practice<span class="sp"></span>${h.practice?.length&&!busy?`<button class="btn ghost" id="pracMore">More problems</button>`:""}</h3>`;
+  if(h.practiceErr)s+=`<div class="err">${esc(h.practiceErr)}</div>`;
+  s+=(h.practice||[]).map((p,i)=>`<div class="pq" data-pi="${i}"><div class="ph">${esc(T("Problem","题目"))} ${i+1}${p.result?` · <span class="res ${p.result==="right"?"ok":"bad"}">${p.result==="right"?esc(T("Correct","正确")):esc(T("Not quite","不太对"))}</span>`:""}</div>${mdEl(p.problem)}
+    <div class="row"><input data-pin="${i}" placeholder="Your answer" aria-label="Your answer" value="${esc(p.mine||"")}"><button class="btn" data-pcheck="${i}">Check</button>${p.shown?"":`<button class="btn ghost" data-pshow="${i}">Show answer</button>`}</div>
+    ${p.shown?`<div class="reveal"><b>${esc(T("Answer: ","答案："))}</b><span class="md" style="display:inline">${md(p.answer).replace(/^<p>|<\/p>\s*$/g,"")}</span>${p.solOpen?mdEl(p.solution):""}<div class="row">${p.solution?`<button class="btn ghost" data-psol="${i}">${p.solOpen?"Hide solution":"Show solution"}</button>`:""}${p.result==="right"?"":`<button class="btn ghost" data-pright="${i}">I got it right</button>`}<button class="btn ghost" data-pwrong="${i}">${p.saved?"✓ Saved to notebook":"I got it wrong · Save"}</button></div></div>`:""}</div>`).join("");
+  if(busy)s+=`<div class="skel"><span class="spin"></span>${esc(T("Writing practice problems and checking their answers…","正在出练习题并核对答案…"))}<span style="flex:1"></span><button class="btn" id="pracStop">Stop</button></div>`;
+  return s+"</div>";
+}
+async function practice(h){
+  if(!sample||!h.result){toast(T("Practice needs Claude.","练习需要 Claude。"));return}
+  if(running.get(h.id+":p")){document.getElementById("practice")?.scrollIntoView({behavior:"smooth",block:"start"});return}
+  const ctl=new AbortController();running.set(h.id+":p",{ctl,kind:"practice"});h.practiceErr=null;rerender(h);
+  document.getElementById("practice")?.scrollIntoView({behavior:"smooth",block:"start"});
+  const prev=(h.practice||[]).map(p=>p.problem).join("\n---\n");
+  try{
+    let r=await sample.json(`Write 3 new practice problems that train the same skill as this solved problem, from slightly easier to slightly harder, with different numbers and contexts. Solve each one carefully yourself and check the answer by substitution or a second method before writing it.
+Original problem:\n${h.result.problem.slice(0,3000)}\nIts answer: ${h.result.answer}\n${prev?`Do not repeat these earlier practice problems:\n${prev.slice(0,3000)}\n`:""}${LANG()}
+${JSONTEX} Reply with only JSON: {"problems":[{"problem":"Markdown+LaTeX","answer":"final answer, Markdown+LaTeX","answer_values":[numbers or []],"solution":"short worked solution, Markdown+LaTeX"}]}`,{signal:ctl.signal,cache:false,modelTier:"default"});
+    r=fixTex(r);const ps=(Array.isArray(r?.problems)?r.problems:[]).filter(p=>p&&p.problem).map(p=>({problem:String(p.problem),answer:String(p.answer||""),values:(Array.isArray(p.answer_values)?p.answer_values:[]).map(Number).filter(isFinite),solution:String(p.solution||"")}));
+    if(!ps.length)throw {code:"invalid_json"};
+    h.practice=(h.practice||[]).concat(ps);
+  }catch(e){if(e?.code!=="cancelled")h.practiceErr=errText(e)}
+  running.delete(h.id+":p");saveHistory();rerender(h);
+}
+async function checkPractice(h,i){
+  const p=h.practice[i];const inp=document.querySelector(`[data-pin="${i}"]`);p.mine=inp?.value.trim()||"";
+  if(!p.mine){inp?.focus();toast(T("Type your answer first, or press Show answer.","先输入你的答案，或点“显示答案”。"));return}
+  let res=null;
+  if(p.values.length){const m=await ensureMath();if(m){try{const parts=p.mine.replace(/^[a-zA-Z]\s*=\s*/,"").split(/\s*(?:,|;|\bor\b|或)\s*(?:[a-zA-Z]\s*=\s*)?/).filter(Boolean);
+    const mine=parts.map(x=>evalNum(x.replace(/[a-zA-Z/]+\s*$/,"").trim()||x)).sort((a,b)=>a-b);const want=[...p.values].sort((a,b)=>a-b);
+    res=mine.length===want.length&&mine.every((v,k)=>close(v,want[k],.006))?"right":"wrong"}catch{res=null}}}
+  p.shown=true;
+  if(res){p.result=res;if(res==="wrong")toast(T("Not quite. Compare with the answer below.","不太对，和下面的答案对比一下。"))}
+  else toast(T("Compare your answer with the one below and mark it.","把你的答案和下面的对比，然后标记对错。"));
+  saveHistory();rerender(h);
+}
+function wirePractice(V,h){
+  const on=(id,f)=>{const el=$(id);if(el)el.onclick=f};
+  on("pracMore",()=>practice(h));on("pracStop",()=>running.get(h.id+":p")?.ctl.abort());
+  V.querySelectorAll("[data-pin]").forEach(inp=>{inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();checkPractice(h,+inp.dataset.pin)}};inp.oninput=()=>{h.practice[+inp.dataset.pin].mine=inp.value}});
+  V.querySelectorAll("[data-pcheck]").forEach(b=>b.onclick=()=>checkPractice(h,+b.dataset.pcheck));
+  V.querySelectorAll("[data-pshow]").forEach(b=>b.onclick=()=>{h.practice[+b.dataset.pshow].shown=true;saveHistory();rerender(h)});
+  V.querySelectorAll("[data-psol]").forEach(b=>b.onclick=()=>{const p=h.practice[+b.dataset.psol];p.solOpen=!p.solOpen;rerender(h)});
+  V.querySelectorAll("[data-pright]").forEach(b=>b.onclick=()=>{h.practice[+b.dataset.pright].result="right";saveHistory();rerender(h)});
+  V.querySelectorAll("[data-pwrong]").forEach(b=>b.onclick=()=>{const p=h.practice[+b.dataset.pwrong];p.result="wrong";
+    if(!p.saved){const id=addMistake({subject:h.subject,topic:h.topic,problem:p.problem,answer:p.answer,solution:p.solution,myAnswer:p.mine||"",source:h.id});p.saved=id;toast(T("Saved to your mistake notebook","已存入错题本"),()=>{removeMistake(id);p.saved=null;saveHistory();rerender(h)})}
+    saveHistory();rerender(h)});
+}
+
+/* ---------- follow-up chat ---------- */
+function chatHtml(h){
+  const busy=running.get(h.id+":c");
+  return `<div class="card" id="chat"><h3>Ask a follow-up</h3>${(h.chat||[]).map(m=>`<div class="msg ${m.role==="user"?"me":"ai"}">${m.role==="user"?`<div class="b uc">${esc(m.content)}</div>`:`<div class="b">${mdEl(m.content)}</div>`}</div>`).join("")}
+  ${busy?`<div class="msg ai"><div class="b" id="chatLive">${h.chatLive?mdEl(h.chatLive):`<div class="skel"><span class="spin"></span>${esc(T("Thinking…","思考中…"))}</div>`}</div></div>`:""}
+  ${h.chatErr?`<div class="err">${esc(h.chatErr)}</div>`:""}
+  ${!(h.chat||[]).length&&!busy?`<div class="sugg">${[T("Why does step 2 work?","第 2 步为什么成立？"),T("Explain it more simply","讲得更简单一点"),T("Is there a faster method?","有没有更快的方法？"),T("What mistake do students usually make here?","这里同学们常犯什么错？")].map(s=>`<button class="chip" data-sugg="${esc(s)}">${esc(s)}</button>`).join("")}</div>`:""}
+  <div class="ask"><textarea id="fq" rows="1" placeholder="Ask about any step… (↩ to send, ⇧↩ for a new line)" aria-label="Follow-up question"></textarea>${busy?`<button class="btn" id="fStop">Stop</button>`:`<button class="btn pri" id="fSend">Send</button>`}</div></div>`;
+}
+function wireChat(V,h){
+  const fq=$("fq");if(!fq)return;
+  fq.value=h.chatDraft||"";
+  fq.oninput=()=>{h.chatDraft=fq.value;fq.style.height="auto";fq.style.height=Math.min(160,fq.scrollHeight)+"px"};
+  fq.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();sendFollow(h)}};
+  const s=$("fSend");if(s)s.onclick=()=>sendFollow(h);
+  const st=$("fStop");if(st)st.onclick=()=>running.get(h.id+":c")?.ctl.abort();
+  V.querySelectorAll("[data-sugg]").forEach(b=>b.onclick=()=>{fq.value=b.dataset.sugg;sendFollow(h)});
+}
+function solutionContext(h){const R=h.result;return `Problem:\n${R.problem}\n\nSolution shown to the student:\n${R.steps.map((s,i)=>`Step ${i+1}: ${s.title}\n${s.work}`).join("\n")}\nFinal answer: ${R.answer}`}
+async function sendFollow(h){
+  const fq=$("fq");const q=fq?.value.trim();if(!q){fq?.focus();return}
+  if(!sample){toast(T("Follow-ups need Claude.","追问需要 Claude。"));return}
+  if(running.get(h.id+":c"))return;
+  h.chat=h.chat||[];h.chat.push({role:"user",content:q});h.chatDraft="";h.chatErr=null;h.chatLive="";
+  const ctl=new AbortController();running.set(h.id+":c",{ctl,kind:"chat"});rerender(h);
+  const rules=`You are a patient tutor answering a student's follow-up questions about a problem you solved for them. Be clear and concise, show math in LaTeX ($...$ / $$...$$), and if you notice the original solution has an error, say so plainly and correct it. ${LANG()}\n\n${solutionContext(h).slice(0,30000)}`;
+  const turns=[{role:"user",content:rules},...h.chat.slice(-12)];
+  try{
+    const r=await sample(turns,{signal:ctl.signal,cache:false,onText:({text})=>{h.chatLive=text;const el=$("chatLive");if(el&&view.id===h.id)el.innerHTML=mdEl(text)}});
+    h.chat.push({role:"assistant",content:r.text});
+  }catch(e){if(e?.text)h.chat.push({role:"assistant",content:e.text});if(e?.code!=="cancelled")h.chatErr=errText(e);if(!e?.text&&e?.code==="cancelled"){}}
+  running.delete(h.id+":c");h.chatLive="";h.updated=Date.now();saveHistory();rerender(h);
+  setTimeout(()=>$("fq")?.focus(),0);
+}
+
+/* ---------- hint-only mode ---------- */
+async function startHints(h){
+  const ctl=new AbortController();running.set(h.id+":h",{ctl,kind:"hint"});h.hintErr=null;rerender(h);
+  try{
+    let r=await sample.json(`${hintRules("(see below)",h.subjectSet==="auto"?"infer it":h.subjectSet,h.level==="auto"?"infer it":h.level)}
+${h.images?.length?"The problem is in the attached photo(s); read it carefully."+(h.text?" The typed text is the student's correction where it differs.":""):""}
+${h.text?`Problem:\n${h.text}`:""}
+This is the start of the session. ${JSONTEX} Reply with only JSON: {"problem": "the full problem as you read it, Markdown+LaTeX", "subject": "math"|"physics"|"chemistry"|"other", "topic": "short topic", "hint": "your first hint or guiding question (no answer)"}`,{signal:ctl.signal,images:imgs(h),cache:false,modelTier:"default"});
+    r=fixTex(r);h.hproblem=String(r?.problem||h.text||"");h.topic=String(r?.topic||"").slice(0,60);
+    if(["math","physics","chemistry","other"].includes(r?.subject))h.subject=r.subject;
+    if(!h.text)h.title=titleFrom(h.hproblem)||h.title;
+    h.hint=[{role:"assistant",content:String(r?.hint||"")}];
+  }catch(e){if(e?.code!=="cancelled")h.hintErr=errText(e);else h.hintErr=T("Stopped.","已停止。")}
+  running.delete(h.id+":h");h.updated=Date.now();saveHistory();rerender(h);setTimeout(()=>$("hq")?.focus(),0);
+}
+async function hintTurn(h,msg){
+  if(!sample||running.get(h.id+":h"))return;
+  h.hint=h.hint||[];h.hint.push({role:"user",content:msg});h.hintErr=null;h.hintLive="";
+  const ctl=new AbortController();running.set(h.id+":h",{ctl,kind:"hint"});rerender(h);
+  const rules=hintRules(h.hproblem||h.text,h.subject,h.level==="auto"?"infer it":h.level);
+  const turns=[{role:"user",content:rules+"\n\nThe session so far follows. Your first hint was the first assistant turn."}];
+  for(const m of h.hint.slice(-16))turns.push({role:m.role,content:m.content});
+  try{const r=await sample(turns,{signal:ctl.signal,cache:false,onText:({text})=>{h.hintLive=text;const el=$("hintLive");if(el&&view.id===h.id)el.innerHTML=mdEl(text)}});h.hint.push({role:"assistant",content:r.text})}
+  catch(e){if(e?.text)h.hint.push({role:"assistant",content:e.text});if(e?.code!=="cancelled")h.hintErr=errText(e)}
+  running.delete(h.id+":h");h.hintLive="";h.updated=Date.now();saveHistory();rerender(h);setTimeout(()=>$("hq")?.focus(),0);
+}
+function renderHint(V,h){
+  const busy=running.get(h.id+":h");
+  const imgsHtml=h.images?.length?`<div class="qimgs">${h.images.map((u,i)=>`<img src="${u}" data-zoom="${i}" alt="Problem photo">`).join("")}</div>`:"";
+  let s=`<div class="card"><h3>Problem<span class="sp"></span><span class="tag">${esc(T("Hint only","仅提示"))}</span>${h.topic?`<span class="tag uc">${esc(h.topic)}</span>`:""}</h3>${h.hproblem?mdEl(h.hproblem):`<div class="md uc">${inputHtml(h.text||"")}</div>`}${imgsHtml}</div>`;
+  s+=`<div class="card"><h3>Hints<span class="sp"></span></h3>`;
+  s+=(h.hint||[]).map((m,i)=>`<div class="msg ${m.role==="user"?"me":"ai"}">${m.role==="user"?`<div class="b uc">${esc(m.content)}</div>`:`<div class="b">${mdEl(m.content)}</div>`}</div>`).join("");
+  if(busy)s+=`<div class="msg ai"><div class="b" id="hintLive">${h.hintLive?mdEl(h.hintLive):`<div class="skel"><span class="spin"></span>${esc(T("Thinking of a hint…","正在想提示…"))}</div>`}</div></div>`;
+  if(h.hintErr)s+=`<div class="err"><span>${esc(h.hintErr)}</span><span class="sp"></span>${!(h.hint||[]).length?`<button class="btn" id="hRetry">Try again</button>`:""}</div>`;
+  s+=`<div class="ask"><textarea id="hq" rows="2" placeholder="Write your next step or your answer… (↩ to send)" aria-label="Your work"></textarea>${busy?`<button class="btn" id="hStop">Stop</button>`:`<button class="btn pri" id="hSend">Send</button>`}</div>
+    <div class="acts" style="margin:10px 0 0"><button class="btn" id="hMore" title="Another hint (⌘H)">Another hint</button><button class="btn" id="hCheck">Am I on track?</button><span style="flex:1"></span><button class="btn warn" id="hReveal">Show full solution</button></div></div>`;
+  V.innerHTML=s;
+  const hq=$("hq");hq.value=h.hintDraft||"";hq.oninput=()=>h.hintDraft=hq.value;
+  const send=()=>{const v=hq.value.trim();if(!v){hq.focus();return}h.hintDraft="";hintTurn(h,v)};
+  hq.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}};
+  const on=(id,f)=>{const el=$(id);if(el)el.onclick=f};
+  on("hSend",send);on("hStop",()=>running.get(h.id+":h")?.ctl.abort());on("hRetry",()=>startHints(h));
+  on("hMore",()=>hintTurn(h,T("I'm stuck. Give me another, slightly bigger hint (still not the answer).","我卡住了。再给一个稍微多一点的提示（仍然不要给答案）。")));
+  on("hCheck",()=>{const v=hq.value.trim();h.hintDraft="";hintTurn(h,v?T("Here is my work so far. Am I on track?\n","这是我目前的过程，我做得对吗？\n")+v:T("Am I on track? Summarize what I've done right so far and what to do next, without the answer.","我做得对吗？总结一下我目前做对了什么、下一步做什么，但不要给答案。"))});
+  on("hReveal",()=>{h.mode="solve";if(h.hproblem&&!h.images?.length)h.text=h.hproblem;saveHistory();solve(h)});
+  V.querySelectorAll("[data-zoom]").forEach(im=>im.onclick=()=>dialog(`<img class="zoomimg" src="${im.src}" alt="Problem photo"><div class="row"><button class="btn" data-close>Close</button></div>`,d=>{d.style.width="auto";d.style.maxWidth="96vw";d.querySelector("[data-close]").onclick=closeDlg}));
+}
+
+/* ---------- mistake notebook ---------- */
+const BOX=[1,3,7,14,30];
+function addMistake(o){
+  const m=Object.assign({id:uid(),created:Date.now(),subject:"math",topic:"",problem:"",image:null,answer:"",solution:"",myAnswer:"",note:"",reasons:[],box:0,due:Date.now(),reviews:[],mastered:false},o);
+  S.notebook.unshift(m);saveNotebook();renderSide();return m.id;
+}
+function removeMistake(id){const i=S.notebook.findIndex(m=>m.id===id);if(i>=0){S.notebook.splice(i,1);saveNotebook();renderSide();if(view.name==="notebook")render()}}
+const REASONS=[["Calculation slip","计算失误"],["Sign error","符号错误"],["Didn't know the concept","概念不会"],["Misread the question","审题不清"],["Units","单位问题"],["Forgot a step","漏了步骤"],["Ran out of time","时间不够"]];
+function solutionMdOf(h){const R=h.result;return R?R.steps.map((s,i)=>`**${i+1}. ${s.title}**\n\n${s.work}${s.why?`\n\n*${s.why}*`:""}`).join("\n\n"):""}
+function saveMistakeDlg(h){
+  if(!h.result)return;
+  if(h.savedMistake&&S.notebook.some(m=>m.id===h.savedMistake)){go({name:"notebook"});setTimeout(()=>{const el=document.querySelector(`[data-mid="${h.savedMistake}"]`);el?.scrollIntoView({block:"center"})},50);return}
+  const reasons=new Set();
+  const d=dialog(`<h2>Save to mistake notebook</h2><p class="sub">${esc(T("You'll get it back for review in 1, 3, 7, 14 and 30 days until it sticks.","之后会在第 1、3、7、14、30 天提醒你复习，直到真正掌握。"))}</p>
+   <label for="mMine">Your answer (optional)</label><input id="mMine" placeholder="What you wrote">
+   <label>What went wrong?</label><div class="chips" id="mReasons">${REASONS.map(([e])=>`<button class="chip" data-r="${esc(e)}">${esc(e)}</button>`).join("")}</div>
+   <label for="mNote">Note to self (optional)</label><textarea id="mNote" placeholder="e.g. Remember to flip the inequality when dividing by a negative"></textarea>
+   <div class="row"><button class="btn" id="mCancel">Cancel</button><button class="btn pri" id="mSave">Save <kbd>⌘↩</kbd></button></div>`);
+  d.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{const r=b.dataset.r;reasons.has(r)?reasons.delete(r):reasons.add(r);b.classList.toggle("on",reasons.has(r))});
+  const doSave=()=>{const id=addMistake({subject:h.subject,topic:h.topic,problem:h.result.problem||h.text,image:h.images?.[0]||null,answer:h.result.answer,solution:solutionMdOf(h),myAnswer:$("mMine").value.trim(),note:$("mNote").value.trim(),reasons:[...reasons],source:h.id});
+    h.savedMistake=id;saveHistory();closeDlg();rerender(h);toast(T("Saved to your mistake notebook","已存入错题本"),()=>{removeMistake(id);h.savedMistake=null;saveHistory();rerender(h)})};
+  $("mCancel").onclick=closeDlg;$("mSave").onclick=doSave;
+  d.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();doSave()}});
+  $("mMine").focus();
+}
+let nbFilter={tab:"all",subj:"all",q:""};
+function dueText(m){if(m.mastered)return [T("Mastered","已掌握"),"done"];const d=m.due-Date.now();if(d<=0)return [T("Due now","待复习"),"now"];const n=Math.ceil(d/DAY);return [T(n===1?"Review tomorrow":`Review in ${n} days`,n===1?"明天复习":`${n} 天后复习`),""]}
+function renderNotebook(V){
+  const all=S.notebook,now=Date.now();
+  const due=all.filter(m=>!m.mastered&&m.due<=now),mast=all.filter(m=>m.mastered);
+  const q=nbFilter.q.toLowerCase();
+  const list=all.filter(m=>(nbFilter.tab==="all"||(nbFilter.tab==="due"?(!m.mastered&&m.due<=now):nbFilter.tab==="mastered"?m.mastered:!m.mastered))&&(nbFilter.subj==="all"||m.subject===nbFilter.subj)&&(!q||(m.problem+" "+m.topic+" "+m.note+" "+m.answer).toLowerCase().includes(q)));
+  let s=`<div class="nbhead"><div><h2>${esc(T("Mistake notebook","错题本"))}</h2><div style="color:var(--muted);font-size:13px">${esc(T("Problems you got wrong, back for review until they stick.","做错的题会定期回来复习，直到真正掌握。"))}</div></div><span class="sp"></span>
+    <button class="btn pri" id="revBtn" ${due.length?"":"disabled"}>${due.length?`Review ${due.length} due`:"Nothing due"}</button><button class="btn" id="addMan">Add a mistake</button><button class="btn" id="expBtn">Export…</button></div>
+   <div class="stats"><div class="stat"><b>${all.length}</b><span>Saved</span></div><div class="stat"><b style="color:${due.length?"var(--warn)":"inherit"}">${due.length}</b><span>Due now</span></div><div class="stat"><b style="color:var(--ok)">${mast.length}</b><span>Mastered</span></div></div>`;
+  if(!all.length){
+    s+=`<div class="empty"><div class="art">📒</div><h3>${esc(T("No mistakes saved yet","还没有错题"))}</h3><p>${esc(T("After a solution, press “I got this wrong · Save”, or add one from a worksheet here. Saved problems come back for review on a schedule.","看完解答后点“我做错了 · 收录”，或在这里手动添加作业里的题。收录的题会按计划回来复习。"))}</p><button class="btn pri" id="addMan2">Add a mistake</button> <button class="btn" id="impBtn2">Import backup</button></div>`;
+  }else{
+    s+=`<div class="nbf"><div class="seg">${[["all","All"],["learning","Learning"],["due","Due"],["mastered","Mastered"]].map(([k,l])=>`<button data-tab="${k}" class="${nbFilter.tab===k?"on":""}">${l}</button>`).join("")}</div>
+      <select class="sel" id="nbSubj" aria-label="Subject"><option value="all">${esc(T("All subjects","全部科目"))}</option>${["math","physics","chemistry","other"].map(k=>`<option value="${k}"${nbFilter.subj===k?" selected":""}>${esc(subjName(k))}</option>`).join("")}</select>
+      <input id="nbQ" placeholder="Search notebook" aria-label="Search notebook" value="${esc(nbFilter.q)}"></div>`;
+    if(!list.length)s+=`<div class="empty"><p>${esc(T("Nothing here with these filters.","这个筛选下没有题目。"))}</p></div>`;
+    s+=list.map(m=>{const [dt,dc]=dueText(m);const open=m._open;return `<div class="mi" data-mid="${m.id}"><div class="mh"><span class="tag">${esc(subjName(m.subject))}</span>${m.topic?`<span class="tag uc">${esc(m.topic)}</span>`:""}${(m.reasons||[]).map(r=>`<span class="tag">${esc(r)}</span>`).join("")}<span class="sp"></span><span class="due ${dc}">${esc(dt)}</span></div>
+      <div class="${open?"":"clamp"}">${mdEl(m.problem)}${m.image?`<div class="qimgs"><img src="${m.image}" data-zoomm="${m.id}" alt="Problem photo"></div>`:""}</div>
+      ${open?`<div class="more">${m.myAnswer?`<div class="lab">${esc(T("Your answer","你的答案"))}</div><div class="md uc" style="color:var(--bad)">${md(m.myAnswer)}</div>`:""}<div class="lab">${esc(T("Correct answer","正确答案"))}</div>${mdEl(m.answer)}${m.solution?`<div class="lab">${esc(T("Solution","解答"))}</div>${mdEl(m.solution)}`:""}
+        <div class="lab">${esc(T("Note to self","给自己的提醒"))}</div><textarea data-note="${m.id}" placeholder="What to remember next time">${esc(m.note||"")}</textarea>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">${esc(T(`Saved ${new Date(m.created).toLocaleDateString()} · reviewed ${m.reviews?.length||0} times`,`收录于 ${new Date(m.created).toLocaleDateString("zh-CN")} · 已复习 ${m.reviews?.length||0} 次`))}</div></div>`:""}
+      <div class="bar"><button class="btn" data-open="${m.id}">${open?"Hide answer":"Show answer"}</button><button class="btn" data-rev1="${m.id}">Review now</button>${m.source&&S.history.some(h=>h.id===m.source)?`<button class="btn ghost" data-src="${m.source}">Open solution</button>`:""}${m.mastered?`<button class="btn ghost" data-unm="${m.id}">Mark as learning</button>`:`<button class="btn ghost" data-mast="${m.id}">Mark mastered</button>`}<span style="flex:1"></span><button class="btn ghost bad" data-delm="${m.id}">Delete</button></div></div>`}).join("");
+  }
+  V.innerHTML=s;
+  const on=(id,f)=>{const el=$(id);if(el)el.onclick=f};
+  on("revBtn",()=>startReview(due.map(m=>m.id)));on("addMan",addManualDlg);on("addMan2",addManualDlg);on("impBtn2",()=>$("jsonPick").click());
+  on("expBtn",()=>menu($("expBtn"),[{label:T("Export as PDF","导出为 PDF"),run:exportPdf},{label:T("Export as Markdown","导出为 Markdown"),run:exportMd},{label:T("Copy as Markdown","复制为 Markdown"),run:()=>copyText(notebookMd(filtered()))},"-",{label:T("Back up everything (.json)","备份全部数据 (.json)"),run:exportJson},{label:T("Import backup (.json)","导入备份 (.json)"),run:()=>$("jsonPick").click()}]));
+  V.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{nbFilter.tab=b.dataset.tab;render()});
+  const sj=$("nbSubj");if(sj)sj.onchange=()=>{nbFilter.subj=sj.value;render()};
+  const nq=$("nbQ");if(nq){nq.oninput=()=>{nbFilter.q=nq.value;const p=nq.selectionStart;render();const n=$("nbQ");n.focus();n.setSelectionRange(p,p)}}
+  V.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{const m=S.notebook.find(x=>x.id===b.dataset.open);m._open=!m._open;render()});
+  V.querySelectorAll("[data-rev1]").forEach(b=>b.onclick=()=>startReview([b.dataset.rev1]));
+  V.querySelectorAll("[data-src]").forEach(b=>b.onclick=()=>openProblem(b.dataset.src));
+  V.querySelectorAll("[data-mast]").forEach(b=>b.onclick=()=>{const m=S.notebook.find(x=>x.id===b.dataset.mast);const old={...m};m.mastered=true;saveNotebook();render();toast(T("Marked as mastered","已标记为掌握"),()=>{Object.assign(m,old);saveNotebook();render()})});
+  V.querySelectorAll("[data-unm]").forEach(b=>b.onclick=()=>{const m=S.notebook.find(x=>x.id===b.dataset.unm);m.mastered=false;m.box=0;m.due=Date.now();saveNotebook();render()});
+  V.querySelectorAll("[data-delm]").forEach(b=>b.onclick=()=>{const i=S.notebook.findIndex(x=>x.id===b.dataset.delm);if(i<0)return;const [m]=S.notebook.splice(i,1);saveNotebook();render();
+    S.history.forEach(h=>{if(h.savedMistake===m.id)h.savedMistake=null});
+    toast(T("Deleted from notebook","已从错题本删除"),()=>{S.notebook.splice(i,0,m);saveNotebook();render()})});
+  V.querySelectorAll("[data-note]").forEach(t=>t.oninput=()=>{const m=S.notebook.find(x=>x.id===t.dataset.note);m.note=t.value;saveNotebook()});
+  V.querySelectorAll("[data-zoomm]").forEach(im=>im.onclick=()=>dialog(`<img class="zoomimg" src="${im.src}" alt="Problem photo"><div class="row"><button class="btn" data-close>Close</button></div>`,d=>{d.style.width="auto";d.style.maxWidth="96vw";d.querySelector("[data-close]").onclick=closeDlg}));
+}
+function filtered(){const now=Date.now(),q=nbFilter.q.toLowerCase();return S.notebook.filter(m=>(nbFilter.tab==="all"||(nbFilter.tab==="due"?(!m.mastered&&m.due<=now):nbFilter.tab==="mastered"?m.mastered:!m.mastered))&&(nbFilter.subj==="all"||m.subject===nbFilter.subj)&&(!q||(m.problem+" "+m.topic+" "+m.note+" "+m.answer).toLowerCase().includes(q)))}
+function addManualDlg(){
+  let image=null;
+  const d=dialog(`<h2>Add a mistake</h2><p class="sub">${esc(T("Copy a problem from a worksheet or test. LaTeX works, e.g. $\\frac{1}{2}$.","从作业或试卷里抄一道题。支持 LaTeX，例如 $\\frac{1}{2}$。"))}</p>
+    <label for="aProb">Problem</label><textarea id="aProb" placeholder="Type the problem, or paste a photo of it"></textarea>
+    <div class="thumbs" id="aThumb" style="padding:6px 0 0" hidden></div><button class="btn ghost" id="aPhoto" style="margin-top:4px">Add photo</button>
+    <label for="aAns">Correct answer</label><input id="aAns" placeholder="e.g. x = 3">
+    <label for="aMine">Your answer (optional)</label><input id="aMine" placeholder="What you wrote">
+    <label for="aSubj">Subject</label><select id="aSubj">${["math","physics","chemistry","other"].map(k=>`<option value="${k}">${esc(subjName(k))}</option>`).join("")}</select>
+    <label for="aNote">Note to self (optional)</label><textarea id="aNote" placeholder="What to remember next time"></textarea>
+    <div class="row"><button class="btn" id="aCancel">Cancel</button><button class="btn pri" id="aSave">Add <kbd>⌘↩</kbd></button></div>`);
+  const setImg=u=>{image=u;const t=$("aThumb");t.hidden=!u;t.innerHTML=u?`<div class="thumb"><img src="${u}" alt="Problem photo"><button id="aRm" title="Remove photo" aria-label="Remove photo">×</button></div>`:"";if(u)$("aRm").onclick=()=>setImg(null)};
+  imgTarget=urls=>{if(urls[0])setImg(urls[0])};
+  const done=()=>{imgTarget=null;closeDlg()};
+  $("aPhoto").onclick=()=>$("filePick").click();
+  $("aCancel").onclick=done;
+  const save=()=>{const p=$("aProb").value.trim();if(!p&&!image){$("aProb").focus();return}
+    addMistake({problem:p||T("(see photo)","（见照片）"),image,answer:$("aAns").value.trim(),myAnswer:$("aMine").value.trim(),subject:$("aSubj").value,note:$("aNote").value.trim()});done();if(view.name==="notebook")render();toast(T("Added to your mistake notebook","已加入错题本"))};
+  $("aSave").onclick=save;
+  d.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();save()}});
+  const obs=new MutationObserver(()=>{if(!d.isConnected){imgTarget=null;obs.disconnect()}});obs.observe(document.body,{childList:true});
+  $("aProb").focus();
+}
+function startReview(ids){reviewQ={ids:ids.slice(),i:0,shown:false,right:0,wrong:0};go({name:"review"})}
+function renderReview(V){
+  const q=reviewQ;if(!q||!q.ids.length){go({name:"notebook"});return}
+  if(q.i>=q.ids.length){V.innerHTML=`<div class="rv"><div class="empty"><div class="art">🎉</div><h3>${esc(T("Review done","复习完成"))}</h3><p>${esc(T(`${q.right} right, ${q.wrong} to try again. Missed ones come back tomorrow.`,`答对 ${q.right} 道，${q.wrong} 道需要再练。没做对的明天会再出现。`))}</p><button class="btn pri" id="rvBack">Back to notebook</button></div></div>`;$("rvBack").onclick=()=>go({name:"notebook"});$("rvBack").focus();return}
+  const m=S.notebook.find(x=>x.id===q.ids[q.i]);if(!m){q.ids.splice(q.i,1);return renderReview(V)}
+  V.innerHTML=`<div class="rv"><div class="prog"><span>${esc(T(`${q.i+1} of ${q.ids.length}`,`第 ${q.i+1} / ${q.ids.length} 题`))}</span><span class="bar"><i style="width:${q.i/q.ids.length*100}%"></i></span><button class="btn ghost" id="rvExit">End review</button></div>
+   <div class="card"><h3>Problem<span class="sp"></span><span class="tag">${esc(subjName(m.subject))}</span></h3>${mdEl(m.problem)}${m.image?`<div class="qimgs"><img src="${m.image}" alt="Problem photo"></div>`:""}</div>
+   ${q.shown?`<div class="card"><h3>Answer</h3>${mdEl(m.answer)}${m.solution?`<details class="checks"><summary>${esc(T("Solution","解答"))}</summary>${mdEl(m.solution)}</details>`:""}${m.note?`<div class="alert warn" style="margin-top:10px"><b>${esc(T("Your note: ","你的提醒："))}</b><span class="uc">${esc(m.note)}</span></div>`:""}</div>
+     <div class="row"><button class="btn big" id="rvWrong">Still wrong <kbd>1</kbd></button><button class="btn pri big" id="rvRight">Got it right <kbd>2</kbd></button></div>`
+   :`<textarea id="rvWork" placeholder="Work it out here (optional), then reveal the answer."></textarea><div class="row"><button class="btn pri big" id="rvShow">Reveal answer <kbd>Space</kbd></button></div>`}</div>`;
+  const on=(id,f)=>{const el=$(id);if(el)el.onclick=f};
+  on("rvExit",()=>{reviewQ=null;go({name:"notebook"})});
+  on("rvShow",()=>{q.shown=true;renderReview(V);$("rvRight")?.focus()});
+  on("rvRight",()=>grade(m,true));on("rvWrong",()=>grade(m,false));
+  if($("rvShow"))$("rvShow").focus();
+}
+function grade(m,ok){
+  const q=reviewQ;m.reviews=m.reviews||[];m.reviews.push({t:Date.now(),ok});
+  if(ok){m.box=(m.box||0)+1;if(m.box>=BOX.length)m.mastered=true;else m.due=Date.now()+BOX[m.box]*DAY;q.right++}
+  else{m.box=0;m.due=Date.now()+DAY;q.wrong++}
+  saveNotebook();q.i++;q.shown=false;renderReview($("view"));renderSide();
+}
+
+/* ---------- export / import ---------- */
+function fileName(t){return (String(t||"problem").replace(/[\\/:*?"<>|$\n]+/g," ").replace(/\s+/g," ").trim().slice(0,50)||"problem")}
+function problemMd(h){const R=h.result;if(!R)return h.text||"";const v=verdict(h);
+  return `# ${h.title}\n\n## ${T("Problem","题目")}\n\n${R.problem}\n\n## ${T("Answer","答案")}\n\n${R.answer}\n\n${v?`> ${v.label}\n\n`:""}## ${T("Steps","步骤")}\n\n${R.steps.map((s,i)=>`${i+1}. **${s.title}**\n\n${s.work}\n\n${s.why?`   *${T("Why","为什么")}:* ${s.why}\n`:""}`).join("\n")}\n${R.self?`\n## ${T("Check","核对")} (${R.self.method})\n\n${R.self.work}\n`:""}`}
+function notebookMd(list){
+  return `# ${T("Mistake notebook","错题本")}\n\n${T("Exported","导出于")} ${new Date().toLocaleDateString(ZH?"zh-CN":undefined)} · ${list.length} ${T("problems","道题")}\n\n`+list.map((m,i)=>`## ${i+1}. ${m.topic||subjName(m.subject)}\n\n*${subjName(m.subject)} · ${new Date(m.created).toLocaleDateString(ZH?"zh-CN":undefined)}${m.reasons?.length?" · "+m.reasons.join(", "):""}${m.mastered?" · "+T("Mastered","已掌握"):""}*\n\n**${T("Problem","题目")}**\n\n${m.problem}\n\n${m.image?`![](${m.image})\n\n`:""}${m.myAnswer?`**${T("My answer","我的答案")}:** ${m.myAnswer}\n\n`:""}**${T("Correct answer","正确答案")}:** ${m.answer}\n\n${m.solution?`**${T("Solution","解答")}**\n\n${m.solution}\n\n`:""}${m.note?`> ${T("Note","提醒")}: ${m.note}\n\n`:""}---\n`).join("\n");
+}
+async function saveFile(name,data,type){
+  if(!downloads){if(typeof data==="string"){await copyText(data,true);toast(T("Saving files needs the Claude app, so it was copied to the clipboard instead.","保存文件需要 Claude 应用，已改为复制到剪贴板。"))}else toast(T("Saving files needs the Claude app.","保存文件需要 Claude 应用。"));return false}
+  try{await downloads.save({filename:name,data:typeof data==="string"?new Blob([data],{type}):data});toast(T("Saved ","已保存 ")+name);return true}
+  catch(e){if(e?.code==="declined")toast(T("Not saved.","未保存。"));else toast(T("Couldn't save the file. Try again.","文件没能保存，请重试。"));return false}
+}
+function exportMd(){const l=filtered();if(!l.length){toast(T("Nothing to export.","没有可导出的内容。"));return}saveFile(T("Mistake notebook","错题本")+".md",notebookMd(l),"text/markdown")}
+function exportJson(){saveFile("homework-helper-backup.json",JSON.stringify({app:"homework-helper",version:1,exported:Date.now(),notebook:S.notebook,history:S.history.map(h=>{const c={...h};delete c._g;return c})},null,1),"application/json")}
+$("jsonPick").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+  try{const d=JSON.parse(await f.text());if(!d||(!Array.isArray(d.notebook)&&!Array.isArray(d.history)))throw 0;
+    let n=0,k=0;const ids=new Set(S.notebook.map(m=>m.id));for(const m of d.notebook||[])if(m&&m.id&&!ids.has(m.id)&&typeof m.problem==="string"){S.notebook.push(m);n++}
+    const hid=new Set(S.history.map(h=>h.id));for(const h of d.history||[])if(h&&h.id&&!hid.has(h.id)){S.history.push(h);k++}
+    S.notebook.sort((a,b)=>b.created-a.created);S.history.sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));
+    saveNotebook();saveHistory();render();toast(T(`Imported ${n} mistakes and ${k} problems`,`已导入 ${n} 道错题和 ${k} 道题目`));
+  }catch{toast(T("That file isn't a Homework Helper backup.","这个文件不是作业助手的备份。"))}};
+let pdfLibP=null;
+function ensurePdfLibs(){return pdfLibP??=Promise.all([window.htmlToImage||loadScript("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"),window.jspdf||loadScript("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js")]).then(()=>!!(window.htmlToImage&&window.jspdf)).catch(()=>{pdfLibP=null;return false})}
+async function exportPdf(){
+  const l=filtered();if(!l.length){toast(T("Nothing to export.","没有可导出的内容。"));return}
+  toast(T("Making the PDF…","正在生成 PDF…"));
+  if(!await ensurePdfLibs()){toast(T("The PDF tools didn't load. Export as Markdown instead.","PDF 工具没有加载，请改用 Markdown 导出。"));return}
+  const host=document.createElement("div");host.setAttribute("data-theme","light");
+  host.style.cssText="position:fixed;left:-10000px;top:0;width:760px;background:#fff;color:#16181d;font:14px/1.55 -apple-system,BlinkMacSystemFont,'PingFang SC','Segoe UI',sans-serif";
+  const css=`.pc{padding:18px 22px;border-bottom:1px solid #e2e5eb;background:#fff}.pc h4{margin:0 0 6px;font-size:15px}.pc .meta{font-size:11.5px;color:#6a7080;margin-bottom:8px}.pc .lab{font-size:11px;font-weight:700;color:#6a7080;text-transform:uppercase;letter-spacing:.04em;margin:10px 0 2px}.pc .md p{margin:.3em 0}.pc img{max-width:100%;max-height:260px;border-radius:6px}.pc .mine{color:#cf3b3b}.pc .note{background:#fff6e5;border-radius:6px;padding:6px 10px;margin-top:8px;font-size:13px}.pc math{font-family:"STIX Two Math","Cambria Math",math,serif;font-size:1.08em}.pc .mdisp{margin:.3em 0}.ph1{padding:22px 22px 8px;background:#fff}.ph1 h1{margin:0;font-size:22px}.ph1 div{color:#6a7080;font-size:12px}`;
+  host.innerHTML=`<style>${css}</style><div class="ph1"><h1>${esc(T("Mistake notebook","错题本"))}</h1><div>${esc(new Date().toLocaleDateString(ZH?"zh-CN":undefined))} · ${l.length} ${esc(T("problems","道题"))}</div></div>`+l.map((m,i)=>`<div class="pc"><h4>${i+1}. ${esc(m.topic||subjName(m.subject))}</h4><div class="meta">${esc(subjName(m.subject))} · ${esc(new Date(m.created).toLocaleDateString(ZH?"zh-CN":undefined))}${m.reasons?.length?" · "+esc(m.reasons.join(", ")):""}</div>${mdEl(m.problem)}${m.image?`<img src="${m.image}">`:""}${m.myAnswer?`<div class="lab">${esc(T("My answer","我的答案"))}</div><div class="md mine">${md(m.myAnswer)}</div>`:""}<div class="lab">${esc(T("Correct answer","正确答案"))}</div>${mdEl(m.answer)}${m.solution?`<div class="lab">${esc(T("Solution","解答"))}</div>${mdEl(m.solution)}`:""}${m.note?`<div class="note">${esc(m.note)}</div>`:""}</div>`).join("");
+  document.body.appendChild(host);
+  try{
+    const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:"pt",format:"a4"});const PW=pdf.internal.pageSize.getWidth(),PH=pdf.internal.pageSize.getHeight(),M=36,W=PW-2*M;
+    let y=M;const blocks=[...host.children].filter(e=>e.tagName!=="STYLE");
+    for(const b of blocks){
+      const png=await htmlToImage.toJpeg(b,{pixelRatio:2,quality:.88,backgroundColor:"#ffffff",width:760});
+      const img=await new Promise((r,j)=>{const i=new Image();i.onload=()=>r(i);i.onerror=j;i.src=png});
+      const h=img.naturalHeight/img.naturalWidth*W;
+      if(h<=PH-2*M){if(y+h>PH-M){pdf.addPage();y=M}pdf.addImage(png,"JPEG",M,y,W,h);y+=h}
+      else{ // taller than a page: slice it
+        const sliceH=Math.floor((PH-2*M)/W*img.naturalWidth);for(let sy=0;sy<img.naturalHeight;sy+=sliceH){const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=Math.min(sliceH,img.naturalHeight-sy);c.getContext("2d").drawImage(img,0,-sy);if(y>M){pdf.addPage();y=M}const hh=c.height/c.width*W;pdf.addImage(c.toDataURL("image/jpeg",.88),"JPEG",M,y,W,hh);y+=hh}}
+    }
+    await saveFile(T("Mistake notebook","错题本")+".pdf",pdf.output("blob"),"application/pdf");
+  }catch(e){toast(T("Couldn't make the PDF. Export as Markdown instead.","PDF 没能生成，请改用 Markdown 导出。"))}
+  finally{host.remove()}
+}
+async function copyText(t,quiet){try{await navigator.clipboard.writeText(t);if(!quiet)toast(T("Copied","已复制"));return true}catch{const ta=document.createElement("textarea");ta.value=t;ta.style.cssText="position:fixed;left:-9999px";document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch{}ta.remove();if(!quiet)toast(ok?T("Copied","已复制"):T("Couldn't copy.","没能复制。"));return ok}}
+
+/* ---------- shortcuts ---------- */
+function helpDlg(){
+  const rows=[["New problem","⌘N"],["Solve / send","⌘↩"],["Solve mode","⌘1"],["Hint-only mode","⌘2"],["Math keyboard","⌘E"],["Save to mistake notebook","⌘S"],["Practice similar","⌘J"],["Another hint","⌘H"],["Mistake notebook","⌘B"],["Show or hide sidebar","⌘\\"],["Reveal answer in review","Space"],["Still wrong / Got it right","1 / 2"],["Paste a screenshot","⌘V"]];
+  const d=dialog(`<h2>Keyboard shortcuts</h2><div class="kbdlist" style="margin-top:12px">${rows.map(([a,b])=>`<span>${esc(a)}</span><kbd>${esc(b)}</kbd>`).join("")}</div><div class="row"><button class="btn pri" id="hClose">Done</button></div>`);
+  $("hClose").onclick=closeDlg;$("hClose").focus();
+}
+$("helpBtn").onclick=helpDlg;
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){if(openMenu){closeMenu();e.preventDefault();return}if(openDlg){imgTarget=null;closeDlg();e.preventDefault();return}if(document.body.classList.contains("sideopen")){document.body.classList.remove("sideopen");$("sidescrim").hidden=true;return}
+    const r=view.id&&(running.get(view.id)||running.get(view.id+":h")||running.get(view.id+":c")||running.get(view.id+":p"));if(r){r.ctl.abort();e.preventDefault()}return}
+  if(openDlg)return;
+  const mod=e.metaKey||e.ctrlKey;const k=e.key.toLowerCase();
+  const inField=/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName||"");
+  if(mod&&!e.shiftKey&&!e.altKey){
+    if(k==="n"){e.preventDefault();go({name:"compose"});return}
+    if(k==="b"){e.preventDefault();go({name:"notebook"});return}
+    if(k==="\\"){e.preventDefault();toggleSide();return}
+    if(k==="1"||k==="2"){e.preventDefault();if(view.name!=="compose")go({name:"compose"});setMode(k==="1"?"solve":"hint");return}
+    if(k==="e"&&view.name==="compose"){e.preventDefault();toggleKb();return}
+    if(k==="s"){e.preventDefault();const h=cur();if(view.name==="problem"&&h?.result)saveMistakeDlg(h);return}
+    if(k==="j"&&view.name==="problem"){e.preventDefault();const h=cur();if(h?.result)practice(h);return}
+    if(k==="h"&&view.name==="problem"){const h=cur();if(h?.mode==="hint"){e.preventDefault();$("hMore")?.click()}return}
+    if(k==="enter"&&view.name==="compose"){e.preventDefault();submit();return}
+  }
+  if(!mod&&e.key==="?"&&!inField){e.preventDefault();helpDlg();return}
+  if(view.name==="review"&&!mod&&!inField){
+    if(e.key===" "&&$("rvShow")){e.preventDefault();$("rvShow").click()}
+    else if(e.key==="1"&&$("rvWrong")){e.preventDefault();$("rvWrong").click()}
+    else if(e.key==="2"&&$("rvRight")){e.preventDefault();$("rvRight").click()}
+  }
+});
+
+/* ---------- desktop / startup ---------- */
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"homework-helper-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#3FA9F5\"/><stop offset=\"1\" stop-color=\"#0B5CAD\"/><\/linearGradient><radialGradient id=\"homework-helper-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"homework-helper-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"homework-helper-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#homework-helper-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#homework-helper-sh)\"/><g filter=\"url(#homework-helper-ds)\" transform=\"rotate(-5 480 500)\"><rect x=\"210\" y=\"200\" width=\"560\" height=\"600\" rx=\"36\" fill=\"#fff\"/><path d=\"M210 330h560M210 430h560M210 530h560M210 630h560M210 730h560\" stroke=\"#CFE3F7\" stroke-width=\"8\"/><path d=\"M300 200v600\" stroke=\"#FFB4B4\" stroke-width=\"8\"/><text x=\"530\" y=\"560\" text-anchor=\"middle\" font-family=\"Georgia,'Times New Roman',serif\" font-style=\"italic\" font-weight=\"700\" font-size=\"300\" fill=\"#16325C\">x<\/text><text x=\"660\" y=\"420\" text-anchor=\"middle\" font-family=\"Georgia,'Times New Roman',serif\" font-weight=\"700\" font-size=\"150\" fill=\"#16325C\">2<\/text><\/g><g filter=\"url(#homework-helper-ds2)\"><path d=\"M560 720l90 90 190-210\" fill=\"none\" stroke=\"#22C55E\" stroke-width=\"64\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
+function dockIcon(){
+  const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,0,256);g.addColorStop(0,"#4f84f2");g.addColorStop(1,"#2347b8");
+  x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
+  x.fillStyle="#fff";x.beginPath();x.roundRect(52,44,152,172,16);x.fill();
+  x.strokeStyle="#dfe7fb";x.lineWidth=3;for(let i=0;i<5;i++){x.beginPath();x.moveTo(68,82+i*28);x.lineTo(188,82+i*28);x.stroke()}
+  x.fillStyle="#2347b8";x.font="bold 60px -apple-system,Helvetica,Arial";x.textAlign="center";x.textBaseline="middle";x.fillText("x²",112,112);
+  x.strokeStyle="#22a565";x.lineWidth=14;x.lineCap="round";x.lineJoin="round";x.beginPath();x.moveTo(126,176);x.lineTo(148,196);x.lineTo(190,146);x.stroke();
+  return c.toDataURL("image/png");
+}
+(async()=>{
+  applySide();
+  if(!storageOK)toast(T("This device won't keep your problems after you close the app.","此设备关闭应用后不会保留你的题目。"));
+  render();
+  const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
+  [sample,downloads,desktop]=await Promise.all([use("sample"),use("downloads"),use("desktop")]);
+  if(sample?.limits){const lim=await sample.limits().catch(()=>null);canImages=!!lim?.images;maxImages=lim?.images?.maxCount||1}
+  if(view.name==="compose"){const nh=$("nohint");if(nh)nh.hidden=!!sample}
+  ensureMath();
+  if(desktop?.tray){
+    document.body.classList.add("app");
+    try{dockIconArt().then(u=>desktop.app.dock.setIcon(u))}catch{}
+    desktop.window?.setOptions?.({titleBarStyle:"hiddenInset",dragHeight:8,width:1180,height:820,minWidth:400,minHeight:480})?.catch?.(()=>{});
+  }else if(desktop?.install){
+    const st=await desktop.install.state().catch(()=>"unavailable");
+    if(st==="available"){const b=document.createElement("button");b.className="btn";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("act").replaceChildren(b)}
+  }
+})();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
+</script>

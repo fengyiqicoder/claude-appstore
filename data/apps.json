@@ -618,6 +618,182 @@
    "artifact": "",
    "lang": "",
    "added": "2026-11-26"
+  },
+  {
+   "id": "job-search",
+   "name": "Job Search Kit",
+   "subtitle": "Resume, tracker, interview coach",
+   "category": "work",
+   "desc": "Build an ATS-friendly resume in six templates with a live preview that exports exactly as shown to PDF and Word. Paste a job post to get a keyword match score, a tailored version you approve edit by edit, and a cover letter. Track every application on a board and rehearse with a mock interviewer that scores each answer.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/job-search",
+   "artifact": "https://claude.ai/artifact/BMyqpJPUWeKnJS8XW4NP63",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude",
+    "Read aloud",
+    "Dictation"
+   ],
+   "ai": true,
+   "replaces": "Teal, Rezi, Kickresume, Final Round AI",
+   "batch": 3
+  },
+  {
+   "id": "flashcards",
+   "name": "Flashcards",
+   "subtitle": "Spaced repetition, quizzes, AI cards",
+   "category": "learn",
+   "desc": "Study decks with the same FSRS scheduler as modern Anki, or practise with Learn, Test and Match like Quizlet. Paste notes or drop a PDF, Word file or photo, and Claude writes cards or a practice quiz for you to review before adding. Import your Quizlet sets and Anki .apkg decks with their review history; everything stays on your computer with one-click backup.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/flashcards",
+   "artifact": "https://claude.ai/artifact/6ej6mpbC87g5H2WUN9WUD7",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude (reads images)"
+   ],
+   "ai": true,
+   "replaces": "Quizlet Plus, Knowt, Anki add-ons",
+   "batch": 3
+  },
+  {
+   "id": "rewriter",
+   "name": "Rewriter",
+   "subtitle": "Sounds like you wrote it",
+   "category": "work",
+   "desc": "Paste any text and rewrite it in 11 modes, from Standard and Natural to Shorten, Academic and your own voice, with every changed word highlighted. Click a word for synonyms or a sentence to rephrase it, and let the AI tells check find stock phrases, em dashes and \"it's not X, it's Y\" in English or Chinese, then fix them in one click. History, version compare and Word export are included, and your samples and history stay on your computer.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/rewriter",
+   "artifact": "https://claude.ai/artifact/SsYNsraS3d5ikeHpeH7UTb",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude",
+    "Shortcut"
+   ],
+   "ai": true,
+   "replaces": "QuillBot Premium, Wordtune",
+   "batch": 3
+  },
+  {
+   "id": "budget",
+   "name": "Budget",
+   "subtitle": "Give every dollar a job",
+   "category": "life",
+   "desc": "A zero-based budget like YNAB: assign the money you have to categories, roll it over month to month, set targets, and see overspending the moment it happens. Import your bank's CSV, OFX, QFX or QIF, or bring your YNAB, Mint, Monarch or Copilot export; Claude sorts the transactions into categories and answers questions about your spending. No bank login and no subscription; your data stays on your computer.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/budget",
+   "artifact": "https://claude.ai/artifact/D1tn28sWWYrh8tBeBLJJPV",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "YNAB, Monarch, Copilot Money",
+   "batch": 3
+  },
+  {
+   "id": "read-aloud",
+   "name": "Read Aloud",
+   "subtitle": "Listen to anything you read",
+   "category": "learn",
+   "desc": "Turn PDFs, EPUBs, Word files and articles into audio with word-by-word highlighting, and pick up where you left off. Skip by sentence or paragraph, change voice and speed, set a sleep timer, and bookmark passages. Claude summarizes chapters, explains hard passages and cleans up messy PDF text.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/read-aloud",
+   "artifact": "https://claude.ai/artifact/F8GPZhXf3uCMYsRKyz94xq",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Read aloud",
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Speechify Premium, NaturalReader",
+   "batch": 3
+  },
+  {
+   "id": "homework-helper",
+   "name": "Homework Helper",
+   "subtitle": "Every answer double-checked",
+   "category": "learn",
+   "desc": "Snap, paste or type any math, physics or chemistry problem and get a step-by-step solution where every step explains why. Each answer is checked by substitution, an independent second solve, and a calculator, and you're warned when they disagree. Hint-only mode, practice problems and a mistake notebook with spaced review help you actually learn it.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/homework-helper",
+   "artifact": "https://claude.ai/artifact/HHV9EHiD8BpdFuSUc9Mz2h",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude (reads images)"
+   ],
+   "ai": true,
+   "replaces": "Photomath Plus, Gauth, Chegg",
+   "batch": 3
+  },
+  {
+   "id": "whiteboard",
+   "name": "Whiteboard",
+   "subtitle": "Sketch, diagram, explain with Claude",
+   "category": "work",
+   "desc": "An infinite canvas with Excalidraw's shortcuts, a hand-drawn or clean look, shapes, connectors that stay attached, sticky notes, frames, pen, align and group. Open .excalidraw files, Mermaid and images, and export PNG, SVG, PDF, Excalidraw or Mermaid. Describe a flowchart, sequence diagram, architecture, org chart or timeline and Claude draws it as shapes you can edit, or explains the board.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/whiteboard",
+   "artifact": "https://claude.ai/artifact/247Vg3t1VFBMQMKgkhbN95",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude (reads images)"
+   ],
+   "ai": true,
+   "replaces": "Lucidchart, Whimsical, Miro",
+   "batch": 3
+  },
+  {
+   "id": "fitness-coach",
+   "name": "Fitness Coach",
+   "subtitle": "Plan, lift, eat, progress",
+   "category": "life",
+   "desc": "Tell Claude your goal, days and equipment and get a calendar of workouts that adds weight when you earn it. Log sets fast from the keyboard with previous-set ghosts, RPE, rest timer and PRs, and track food with macro targets and photo estimates. Imports your Strong, Hevy and MyFitnessPal history.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/fitness-coach",
+   "artifact": "https://claude.ai/artifact/JsK1uH4k8jyLx88CpNzbXr",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude (reads images)",
+    "Notifications"
+   ],
+   "ai": true,
+   "replaces": "Fitbod, Strong Pro, MyFitnessPal Premium",
+   "batch": 3
+  },
+  {
+   "id": "classroom",
+   "name": "Classroom Activities",
+   "subtitle": "AI lessons, games and worksheets",
+   "category": "learn",
+   "desc": "Tell Claude the grade, subject and topic, and it writes vocabulary, quizzes, a reading passage with leveled versions, a lesson plan and a rubric. Turn the same content into a projector quiz show with team scores, matching, word search, crossword, wheel of names and more, or print worksheets with answer keys as PDF and Word.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/classroom",
+   "artifact": "https://claude.ai/artifact/ANvfS8TcGMVMQ7HkMxqAtK",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Wordwall, Twinkl, MagicSchool",
+   "batch": 3
   }
  ],
  "official": [
