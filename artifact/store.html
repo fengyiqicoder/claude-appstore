@@ -122,6 +122,17 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
   .facts div:nth-child(3){border-left:0}
   h1{font-size:26px}
 }
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(20,20,19,.45);padding:16px}
+.modal .box{background:var(--bg);color:var(--fg);border-radius:18px;max-width:420px;width:100%;padding:26px 24px 20px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:12px;text-align:center;align-items:center}
+.modal .box .mic{width:64px;height:64px}.modal .box .mic svg{width:64px;height:64px;display:block}
+.modal h3{font:700 19px/1.25 var(--display);margin:4px 0 0}
+.modal p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.modal ol{margin:0;padding-left:20px;text-align:left;font-size:14px;line-height:1.6;align-self:stretch}
+.modal .acts{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.modal .btn{font:600 15px/1 var(--font);border-radius:999px;padding:12px 18px;border:0;cursor:pointer;text-decoration:none!important;display:block}
+.modal .btn.pri{background:var(--accent);color:var(--on-accent)}
+.modal .btn.sec{background:var(--pill);color:var(--fg)}
+.modal .lnk{font-size:13px;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -271,7 +282,7 @@ function detail(id){
   <section class="sec"><h2>${t("About","简介")}</h2><p class="prose">${esc(L(a,"desc"))}</p><p class="prose"><a href="${esc(a.post)}" target="_blank" rel="noopener">${a.maker?t("View the source on GitHub ›","在 GitHub 上看源码 ›"):t("See the creator's post on X ›","看作者在 X 上的帖子 ›")}</a></p></section>
   ${a.perms?`<section class="sec"><h2>${t("Permissions","权限")}</h2><p class="prose">${ZH?`使用前会先征得你同意：${a.perms.map(p=>esc(PERM_ZH[p]||p)).join("、")}。它只打开你选的文件，从不运行程序。${a.ai?"向 Claude 发的请求计入你自己套餐的用量，和聊天一样。":""}`:`It asks before it uses: ${a.perms.map(esc).join(", ")}. It only opens files you pick and never runs programs.${a.ai?" Requests to Claude count toward your own plan's usage, the same as chatting.":""}`}</p></section>`:""}
   <section class="sec"><h2>${a.artifact?t("How to install","怎么安装"):t("Getting it","怎么获取")}</h2>${a.artifact
-    ?(ZH?`<ol class="steps"><li>点<b>获取</b>。装了 Claude for Mac 或 Windows 会直接在桌面端打开，没装就在 claude.ai 上打开。</li><li>按提示登录。</li><li>在工件标题菜单或<b>分享</b>里选<b>安装为 app</b>，它就有了自己的图标和窗口。</li></ol>`:`<ol class="steps"><li>Click <b>Get</b>. It opens right in Claude for Mac or Windows if you have it, otherwise on claude.ai.</li><li>Sign in if asked.</li><li>Choose <b>Install as app</b> from the artifact's title menu or <b>Share</b>. It gets its own icon and window.</li></ol>`)
+    ?(ZH?`<ol class="steps"><li>点<b>获取</b>，会直接在 Claude for Mac 或 Windows 里打开；还没装 Claude 桌面版的话，会提示你先下载。</li><li>按提示登录。</li><li>在工件标题菜单或<b>分享</b>里选<b>安装为 app</b>，它就有了自己的图标和窗口。</li></ol>`:`<ol class="steps"><li>Click <b>Get</b>. It opens right in Claude for Mac or Windows; if you don\u2019t have Claude for desktop yet, you\u2019ll be asked to download it first.</li><li>Sign in if asked.</li><li>Choose <b>Install as app</b> from the artifact's title menu or <b>Share</b>. It gets its own icon and window.</li></ol>`)
     :`<p class="note">${t("The creator hasn't shared a public link yet. The post shows the app; ask them for the artifact, or ask Claude to build something like it.","作者还没公开链接。帖子里能看到这个 app；可以找作者要工件，或者让 Claude 做一个类似的。")}</p>`}</section>`;
 }
 const PERM_ZH={"Claude":"Claude","Read aloud":"朗读","Floating window":"浮动窗口","Shortcut":"快捷键","Claude (reads images)":"Claude（读取图片）","Voice":"语音","Dictation":"听写","Menu bar":"菜单栏","Notifications":"通知"};
@@ -298,12 +309,34 @@ function render(){
 const DESKTOP_OS=/Macintosh|Windows/.test(navigator.userAgent)&&!/Mobile|iPad|iPhone|Android/.test(navigator.userAgent);
 function openInDesktop(url){
   const m=String(url).match(/^https:\/\/claude\.ai\/artifact\/([A-Za-z0-9_-]+)/);
-  if(!m||!DESKTOP_OS)return false;
-  let left=false;const away=()=>{left=true};
-  window.addEventListener("blur",away,{once:true});document.addEventListener("visibilitychange",away,{once:true});
-  const f=document.createElement("iframe");f.style.display="none";f.src="claude://claude.ai/artifact/"+m[1];document.body.appendChild(f);
-  setTimeout(()=>{f.remove();window.removeEventListener("blur",away);if(!left)window.open(url,"_blank","noopener")},1200);
+  if(!m||!DESKTOP_OS||!SITE)return false; // inside the store artifact we are already in Claude
+  getSheet(url);
+  location.href="claude://claude.ai/artifact/"+m[1];
   return true;
+}
+// One sheet for both cases: "Opening in Claude…" closes itself as soon as Claude takes over (the page
+// loses focus), and turns into install help if nothing happens. Chrome may first ask "Open Claude?",
+// so the sheet keeps listening and still closes when the visitor allows it later.
+function getSheet(url){
+  document.querySelector(".modal")?.remove();
+  const m=document.createElement("div");m.className="modal";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");
+  const win=/Windows/.test(navigator.userAgent), os=win?"Windows":"Mac";
+  const opening=`<div class="box"><div class="mic">${ICON_SVG.store||""}</div><h3>${t("Opening in Claude…","正在用 Claude 打开…")}</h3>
+    <p>${t(`If your browser asks, choose <b>Open Claude</b>.`,`如果浏览器询问，请选<b>打开 Claude</b>。`)}</p></div>`;
+  const help=`<div class="box"><div class="mic">${ICON_SVG.store||""}</div>
+    <h3>${t("Get Claude for desktop first","需要先安装 Claude 桌面版")}</h3>
+    <p>${t(`These apps install into Claude for ${os}. It's free to download and uses the Claude plan you already have.`,`这些 app 装在 Claude for ${os} 里。Claude 桌面版免费下载，用你已有的 Claude 套餐。`)}</p>
+    <ol><li>${t("Download and open Claude, then sign in.","下载并打开 Claude，登录账号。")}</li><li>${t("Come back and click Get again. It opens right in Claude.","回到这里再点一次获取，会直接在 Claude 里打开。")}</li><li>${t("Choose <b>Install as app</b>. Install Claude AppStore the same way to get apps in one click.","选<b>安装为 app</b>。用同样的方法装上 Claude AppStore，以后一键获取。")}</li></ol>
+    <div class="acts"><a class="btn pri" href="https://claude.ai/download" target="_blank" rel="noopener">${t("Download Claude","下载 Claude")}</a>
+    <button class="btn sec" data-retry>${t("I have it, try again","已经装了，再试一次")}</button></div>
+    <button class="lnk" data-web>${t("Open in the browser instead","先在浏览器里打开")}</button></div>`;
+  m.innerHTML=opening;
+  const timer=setTimeout(()=>{m.innerHTML=help;m.querySelector(".btn.pri")?.focus()},1500);
+  const close=()=>{clearTimeout(timer);m.remove();document.removeEventListener("keydown",onKey);window.removeEventListener("blur",away);document.removeEventListener("visibilitychange",onVis)};
+  const away=()=>close(), onVis=()=>{if(document.hidden)close()}, onKey=e=>{if(e.key==="Escape")close()};
+  window.addEventListener("blur",away);document.addEventListener("visibilitychange",onVis);document.addEventListener("keydown",onKey);
+  m.addEventListener("click",e=>{if(e.target===m)close();else if(e.target.closest("[data-retry]")){close();openInDesktop(url)}else if(e.target.closest("[data-web]")){close();window.open(url,"_blank","noopener")}});
+  document.body.appendChild(m);
 }
 document.addEventListener("click",e=>{const d=e.target.closest("a[data-desk]");if(d&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&openInDesktop(d.href)){e.preventDefault();return;}});
 document.addEventListener("click",e=>{const j=e.target.closest("[data-jump]");if(j){e.preventDefault();document.getElementById(j.dataset.jump)?.scrollIntoView({behavior:"smooth",block:"start"});return;}const t=e.target.closest("[data-open]");if(t&&!e.target.closest("a")){qi.value="";location.hash="app-"+t.dataset.open;}});
