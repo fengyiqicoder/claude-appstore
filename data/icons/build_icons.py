@@ -215,15 +215,16 @@ I["party-game"] = tile("pg", "#FFD445", "#FF8A1F", '''
  <path d="M560 160l18 40 44 6-32 30 8 44-38-22-38 22 8-44-32-30 44-6z" fill="#fff"/>
 </g>''')
 
-# Store: grid of app tiles, one is a Claude-coral spark
-I["store"] = tile("store", "#3B8CFF", "#0A4FC4", '''
-<g filter="url(#ds)">
- <rect x="232" y="232" width="250" height="250" rx="64" fill="#fff"/>
- <rect x="542" y="232" width="250" height="250" rx="64" fill="#fff" opacity=".75"/>
- <rect x="232" y="542" width="250" height="250" rx="64" fill="#fff" opacity=".75"/>
- <rect x="542" y="542" width="250" height="250" rx="64" fill="#D97757"/>
- <path d="M667 590l22 52 54 10-40 38 10 56-46-28-46 28 10-56-40-38 54-10z" fill="#fff" transform="rotate(8 667 667)"/>
-</g>''')
+# Store: an App Store-style "A" built from three rounded bars, in Claude's colors, with the Claude spark
+I["store"] = tile("store", "#E58B68", "#B9532F", '''
+<g filter="url(#ds)" stroke-linecap="round" fill="none">
+ <path d="M512 262L318 706" stroke="url(#stA)" stroke-width="92"/>
+ <path d="M512 262L706 706" stroke="url(#stB)" stroke-width="92"/>
+ <path d="M300 572H724" stroke="#FAF9F5" stroke-width="80"/>
+</g>
+<g filter="url(#ds2)" transform="translate(770 250)">
+ <rect x="-11" y="-96" width="22" height="78" rx="11" fill="#FAF9F5" transform="rotate(0)"/><rect x="-11" y="-78" width="22" height="60" rx="11" fill="#FAF9F5" transform="rotate(37)"/><rect x="-11" y="-92" width="22" height="74" rx="11" fill="#FAF9F5" transform="rotate(60)"/><rect x="-11" y="-74" width="22" height="56" rx="11" fill="#FAF9F5" transform="rotate(97)"/><rect x="-11" y="-96" width="22" height="78" rx="11" fill="#FAF9F5" transform="rotate(120)"/><rect x="-11" y="-80" width="22" height="62" rx="11" fill="#FAF9F5" transform="rotate(157)"/><rect x="-11" y="-90" width="22" height="72" rx="11" fill="#FAF9F5" transform="rotate(180)"/><rect x="-11" y="-76" width="22" height="58" rx="11" fill="#FAF9F5" transform="rotate(217)"/><rect x="-11" y="-96" width="22" height="78" rx="11" fill="#FAF9F5" transform="rotate(240)"/><rect x="-11" y="-78" width="22" height="60" rx="11" fill="#FAF9F5" transform="rotate(277)"/><rect x="-11" y="-92" width="22" height="74" rx="11" fill="#FAF9F5" transform="rotate(300)"/><rect x="-11" y="-74" width="22" height="56" rx="11" fill="#FAF9F5" transform="rotate(337)"/><circle r="26" fill="#FAF9F5"/>
+</g>''', '<linearGradient id="stA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F3E9DF"/></linearGradient><linearGradient id="stB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EADCCD"/></linearGradient>', sheen=.28)
 
 import re
 def ns(k, v):
