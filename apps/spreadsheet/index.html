@@ -3943,7 +3943,7 @@ async function setupDesktop(){
   if(!desktop.tray){const st=await desktop.install.state().catch(()=>"unavailable");if(st==="available"){const b=document.createElement("button");b.className="btn";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("act").replaceChildren(b)}return}
   document.body.classList.add("app","inset");
   dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
-  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:44,width:1280,height:820,minWidth:420,minHeight:420}).catch(()=>{});
+  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:8,width:1280,height:820,minWidth:420,minHeight:420}).catch(()=>{});
   const textFocused=()=>isTextTarget(document.activeElement)||EDIT;
   const trM=m=>m.map(x=>({...x,...(x.label?{label:TR(x.label)}:{}),...(x.submenu?{submenu:trM(x.submenu)}:{})}));
   desktop.Menu?.setApplicationMenu(trM([

@@ -187,7 +187,7 @@ function applyWindow(){
   document.body.classList.toggle("inset",!float);
   const opts=float
     ?{frame:false,alwaysOnTop:true,dragHeight:0,width:300,height:340,minWidth:220,minHeight:200,roundedCorners:true,hasShadow:true}
-    :{titleBarStyle:"hiddenInset",dragHeight:34,width:320,height:380,minWidth:240,minHeight:220};
+    :{titleBarStyle:"hiddenInset",dragHeight:8,width:320,height:380,minWidth:240,minHeight:220};
   desktop.window.setOptions(opts).catch(()=>{});
   $("hide").hidden=!float;
 }

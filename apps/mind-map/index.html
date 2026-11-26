@@ -1838,7 +1838,7 @@ function dockIcon(){const c=document.createElement("canvas");c.width=c.height=25
 async function initDesktop(){if(!desktop)return;
   if(!desktop.tray){const st=await desktop.install.state().catch(()=>"unavailable");if(st==="available"){const b=document.createElement("button");b.className="btn pri";b.style.width="100%";b.style.justifyContent="center";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("inst").replaceChildren(b)}return}
   document.body.classList.add("app");dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
-  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:46,width:1240,height:820,minWidth:420,minHeight:420}).catch(()=>{});}
+  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:8,width:1240,height:820,minWidth:420,minHeight:420}).catch(()=>{});}
 
 /* ---------- welcome map ---------- */
 function welcomeMap(){const t=(s,kids=[],extra={})=>Object.assign(N(s,kids),extra);

@@ -1931,7 +1931,7 @@ function applyWindow(){
   document.body.classList.toggle("inset",!float);
   desktop.window.setOptions(float
     ?{frame:false,alwaysOnTop:true,dragHeight:0,width:460,height:640,minWidth:360,minHeight:420,roundedCorners:true,hasShadow:true}
-    :{titleBarStyle:"hiddenInset",dragHeight:48,width:1180,height:800,minWidth:380,minHeight:460}).catch(()=>{});
+    :{titleBarStyle:"hiddenInset",dragHeight:8,width:1180,height:800,minWidth:380,minHeight:460}).catch(()=>{});
 }
 let regKey=null, trayOn=false;
 async function setupDesk(){

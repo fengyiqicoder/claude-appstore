@@ -2806,7 +2806,7 @@ function dockIcon(){const c=document.createElement("canvas");c.width=c.height=25
   if(!desktop.tray){const st=await desktop.install.state().catch(()=>"unavailable");if(st==="available"){const b=document.createElement("button");b.className="btn";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("installSlot").replaceChildren(b);}return;}
   document.body.classList.add("app","inset");
   dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
-  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:44,width:1240,height:840,minWidth:400,minHeight:480}).catch(()=>{});
+  desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:8,width:1240,height:840,minWidth:400,minHeight:480}).catch(()=>{});
 })();
 
 /* ============ boot ============ */

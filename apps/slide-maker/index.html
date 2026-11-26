@@ -3686,7 +3686,7 @@ function dockIcon(){
     return}
   document.body.classList.add("app","inset");
   dockIconArt().then(u=>desktop.app?.dock?.setIcon(u)).catch(()=>{});
-  desktop.window?.setOptions({titleBarStyle:"hiddenInset",dragHeight:48,width:1280,height:820,minWidth:400,minHeight:520}).catch(()=>{});
+  desktop.window?.setOptions({titleBarStyle:"hiddenInset",dragHeight:8,width:1280,height:820,minWidth:400,minHeight:520}).catch(()=>{});
 })();
 </script>
 <script>
