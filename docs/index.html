@@ -16,18 +16,19 @@
 <style>
 /* Layout: Mac store window. Fixed sidebar (nav + search) on the left, scrolling content on the right; on phones the sidebar becomes a top tab strip. */
 :root{
-  --bg:#ffffff; --side:#f3f3f6; --fg:#1d1d1f; --muted:#6e6e73; --line:#e3e3e8;
-  --accent:#0a6cdf; --pill:#ececf1; --hover:#e6e6ec; --card:#f7f7fa;
+  --bg:#FAF9F5; --side:#F0EEE6; --fg:#141413; --muted:#6B6A64; --line:#E3DFD3;
+  --accent:#B9532F; --on-accent:#fff; --pill:#EDE6DA; --hover:#E8E3D7; --card:#F4F1EA;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
   --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#1e1e20; --side:#262629; --fg:#f5f5f7; --muted:#9a9aa1; --line:#36363b;
-  --accent:#3d8bff; --pill:#36363c; --hover:#323237; --card:#28282c; color-scheme:dark}}
+  --bg:#262624; --side:#1F1E1D; --fg:#FAF9F5; --muted:#A6A39A; --line:#3A3935;
+  --accent:#E08A6A; --on-accent:#1F1E1D; --pill:#3A3632; --hover:#34322F; --card:#2E2D2A; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#1e1e20; --side:#262629; --fg:#f5f5f7; --muted:#9a9aa1; --line:#36363b;
-  --accent:#3d8bff; --pill:#36363c; --hover:#323237; --card:#28282c; color-scheme:dark}
+  --bg:#262624; --side:#1F1E1D; --fg:#FAF9F5; --muted:#A6A39A; --line:#3A3935;
+  --accent:#E08A6A; --on-accent:#1F1E1D; --pill:#3A3632; --hover:#34322F; --card:#2E2D2A; color-scheme:dark}
 *{box-sizing:border-box}
+::selection{background:color-mix(in srgb,var(--accent) 28%,transparent)}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font:14px/1.45 var(--font);margin:0}
 a{color:var(--accent);text-decoration:none}
@@ -61,7 +62,7 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
 .hero p{font-size:clamp(15px,1.8vw,18px);color:var(--muted);margin:0;max-width:56ch}
 .hero .ctas{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .hero .cta{font:600 15px/1 var(--font);border-radius:999px;padding:13px 20px;text-decoration:none!important;display:inline-block}
-.hero .cta.pri{background:var(--accent);color:#fff}
+.hero .cta.pri{background:var(--accent);color:var(--on-accent)}
 .hero .cta.sec{background:var(--pill);color:var(--fg)}
 .item .meta span.ai{display:inline-block;color:var(--accent);font-size:10.5px;margin-left:4px}
 .swaps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -218,7 +219,7 @@ function iconHTML(a,size){
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function getBtn(a,cls=""){
   return a.artifact
-    ? `<a class="get ${cls}" href="${esc(a.artifact)}" target="_blank" rel="noopener" aria-label="${t("Get","获取")} ${esc(L(a,"name"))}">${t("Get","获取")}</a>`
+    ? `<a class="get ${cls}" href="${esc(a.artifact)}" target="_blank" rel="noopener" data-desk aria-label="${t("Get","获取")} ${esc(L(a,"name"))}">${t("Get","获取")}</a>`
     : `<a class="get view ${cls}" href="${esc(a.post)}" target="_blank" rel="noopener" aria-label="${t("View","查看")} ${esc(L(a,"name"))}">${t("View","查看")}</a>`;
 }
 function row(a){
@@ -282,7 +283,7 @@ function detail(id){
   <section class="sec"><h2>${t("About","简介")}</h2><p class="prose">${esc(L(a,"desc"))}</p><p class="prose"><a href="${esc(a.post)}" target="_blank" rel="noopener">${a.maker?t("View the source on GitHub ›","在 GitHub 上看源码 ›"):t("See the creator's post on X ›","看作者在 X 上的帖子 ›")}</a></p></section>
   ${a.perms?`<section class="sec"><h2>${t("Permissions","权限")}</h2><p class="prose">${ZH?`使用前会先征得你同意：${a.perms.map(p=>esc(PERM_ZH[p]||p)).join("、")}。它只打开你选的文件，从不运行程序。${a.ai?"向 Claude 发的请求计入你自己套餐的用量，和聊天一样。":""}`:`It asks before it uses: ${a.perms.map(esc).join(", ")}. It only opens files you pick and never runs programs.${a.ai?" Requests to Claude count toward your own plan's usage, the same as chatting.":""}`}</p></section>`:""}
   <section class="sec"><h2>${a.artifact?t("How to install","怎么安装"):t("Getting it","怎么获取")}</h2>${a.artifact
-    ?(ZH?`<ol class="steps"><li>点<b>获取</b>，工件会在 claude.ai 上打开。</li><li>在 Claude for Mac 或 Windows 里打开它，按提示登录。</li><li>在工件标题菜单或<b>分享</b>里选<b>安装为 app</b>，它就有了自己的图标和窗口。</li></ol>`:`<ol class="steps"><li>Click <b>Get</b>. The artifact opens on claude.ai.</li><li>Open it in Claude for Mac or Windows, sign in if asked.</li><li>Choose <b>Install as app</b> from the artifact's title menu or <b>Share</b>. It gets its own icon and window.</li></ol>`)
+    ?(ZH?`<ol class="steps"><li>点<b>获取</b>。装了 Claude for Mac 或 Windows 会直接在桌面端打开，没装就在 claude.ai 上打开。</li><li>按提示登录。</li><li>在工件标题菜单或<b>分享</b>里选<b>安装为 app</b>，它就有了自己的图标和窗口。</li></ol>`:`<ol class="steps"><li>Click <b>Get</b>. It opens right in Claude for Mac or Windows if you have it, otherwise on claude.ai.</li><li>Sign in if asked.</li><li>Choose <b>Install as app</b> from the artifact's title menu or <b>Share</b>. It gets its own icon and window.</li></ol>`)
     :`<p class="note">${t("The creator hasn't shared a public link yet. The post shows the app; ask them for the artifact, or ask Claude to build something like it.","作者还没公开链接。帖子里能看到这个 app；可以找作者要工件，或者让 Claude 做一个类似的。")}</p>`}</section>`;
 }
 const PERM_ZH={"Claude":"Claude","Read aloud":"朗读","Floating window":"浮动窗口","Shortcut":"快捷键","Claude (reads images)":"Claude（读取图片）","Voice":"语音","Dictation":"听写","Menu bar":"菜单栏","Notifications":"通知"};
@@ -304,6 +305,19 @@ function render(){
   view.innerHTML=html;
   document.getElementById("nav").innerHTML=NAV.map(([k,n,ic])=>`<a href="#${k}" class="${k===active?"on":""}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">${ic}</svg>${n}</a>`).join("");
 }
+// "Get" opens the artifact straight in Claude for Mac/Windows (the same claude:// link claude.ai uses for
+// "Open in desktop app"); if the app doesn't take it within a moment, the artifact opens in the browser.
+const DESKTOP_OS=/Macintosh|Windows/.test(navigator.userAgent)&&!/Mobile|iPad|iPhone|Android/.test(navigator.userAgent);
+function openInDesktop(url){
+  const m=String(url).match(/^https:\/\/claude\.ai\/artifact\/([A-Za-z0-9_-]+)/);
+  if(!m||!DESKTOP_OS)return false;
+  let left=false;const away=()=>{left=true};
+  window.addEventListener("blur",away,{once:true});document.addEventListener("visibilitychange",away,{once:true});
+  const f=document.createElement("iframe");f.style.display="none";f.src="claude://claude.ai/artifact/"+m[1];document.body.appendChild(f);
+  setTimeout(()=>{f.remove();window.removeEventListener("blur",away);if(!left)window.open(url,"_blank","noopener")},1200);
+  return true;
+}
+document.addEventListener("click",e=>{const d=e.target.closest("a[data-desk]");if(d&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&openInDesktop(d.href)){e.preventDefault();return;}});
 document.addEventListener("click",e=>{const j=e.target.closest("[data-jump]");if(j){e.preventDefault();document.getElementById(j.dataset.jump)?.scrollIntoView({behavior:"smooth",block:"start"});return;}const t=e.target.closest("[data-open]");if(t&&!e.target.closest("a")){qi.value="";location.hash="app-"+t.dataset.open;}});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"){const t=e.target.closest("[data-open]");if(t){qi.value="";location.hash="app-"+t.dataset.open;}}});
 window.addEventListener("hashchange",()=>{qi.value="";render();main.scrollTop=0;});
