@@ -57,6 +57,57 @@ textarea::placeholder{color:var(--muted)}
 <div class="foot"><span id="info"></span><span id="act"></span></div>
 
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"Sticky Notes": "便签", "Ask Claude to rework this note": "让 Claude 改写这张便签", "Turn into a checklist": "转成清单", "Clean up the writing": "润色文字", "Summarize": "总结", "Suggest next steps": "建议下一步", "Translate": "翻译", "Copy": "复制", "Copied": "已复制", "Selected": "已选中", "Copy this note": "复制这张便签", "Hide": "隐藏", "Hide (Option+Shift+J brings it back)": "隐藏（按 Option+Shift+J 唤回）", "Jot something down…": "随手记点什么…", "Note": "便签", "Saved on this computer": "已保存在本机", "Write something first.": "先写点内容。", "Thinking…": "思考中…", "Done": "完成", "Undo": "撤销", "Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined this note.": "Claude 拒绝处理这张便签。", "Sign in to Claude again.": "请重新登录 Claude。", "Something went wrong. Try again.": "出了点问题，请重试。", "Float on top": "置顶悬浮", "Normal window": "普通窗口", "Keep the note above other windows and summon it with Option+Shift+J": "让便签浮在其他窗口之上，并可用 Option+Shift+J 唤出", "Install from Claude Desktop to float it": "从 Claude 桌面版安装后可置顶悬浮", "Install as app": "安装为应用", "Installed": "已安装"};
+  const PATTERNS=([["(\\d+) words?", "$1 个词"], ["Note (\\d+)", "便签 $1"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+("");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 const $=id=>document.getElementById(id);
 const COLORS=["y","p","g","b"];
 const store={get(k,d){try{const v=localStorage.getItem("jot."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("jot."+k,JSON.stringify(v))}catch{}}};
@@ -74,7 +125,7 @@ $("dots").addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!
 $("copy").onclick=async()=>{try{await navigator.clipboard.writeText(notes[cur]);$("copy").textContent="Copied";}catch{$("t").select();$("copy").textContent="Selected";}setTimeout(()=>$("copy").textContent="Copy",1200);};
 // AI
 let sample=null, ctl=null, undo=null;
-const LANG=(navigator.language||"en").startsWith("zh")?"Chinese":"English";
+const LANG=window.__ZH?"Chinese (Simplified)":(navigator.language||"en").startsWith("zh")?"Chinese":"English";
 const PROMPTS={
   list:"Rewrite this note as a clean checklist. One item per line starting with \"- [ ] \". Keep every task, merge duplicates, keep the note's language. Output only the checklist.",
   clean:"Fix spelling, grammar and flow in this note. Keep its meaning, language, tone and line breaks. Output only the revised note.",
@@ -110,6 +161,10 @@ document.addEventListener("click",e=>{if(!e.target.closest("#ai"))$("menu").hidd
 window.addEventListener("beforeunload",()=>store.set("notes",notes));
 paint();
 
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"sticky-notes-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#34343C\"/><stop offset=\"1\" stop-color=\"#16161A\"/><\/linearGradient><radialGradient id=\"sticky-notes-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"sticky-notes-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"sticky-notes-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#sticky-notes-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#sticky-notes-sh)\"/><rect x=\"300\" y=\"200\" width=\"460\" height=\"460\" rx=\"28\" fill=\"#7FE3C4\" transform=\"rotate(12 530 430)\" filter=\"url(#sticky-notes-ds2)\"/><rect x=\"270\" y=\"240\" width=\"460\" height=\"460\" rx=\"28\" fill=\"#FF8FB1\" transform=\"rotate(-8 500 470)\" filter=\"url(#sticky-notes-ds2)\"/><g filter=\"url(#sticky-notes-ds)\" transform=\"rotate(3 512 560)\"><path d=\"M262 330h500v360l-110 110H262z\" fill=\"#FFD84D\"/><path d=\"M762 690H682a30 30 0 0 0-30 30v80z\" fill=\"#E8B92A\"/><rect x=\"316\" y=\"410\" width=\"52\" height=\"52\" rx=\"12\" fill=\"none\" stroke=\"#8A6A00\" stroke-width=\"12\"/><path d=\"M326 436l16 16 30-36\" fill=\"none\" stroke=\"#8A6A00\" stroke-width=\"12\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"398\" y=\"424\" width=\"250\" height=\"24\" rx=\"12\" fill=\"#B58D00\" opacity=\".55\"/><rect x=\"316\" y=\"510\" width=\"52\" height=\"52\" rx=\"12\" fill=\"none\" stroke=\"#8A6A00\" stroke-width=\"12\"/><rect x=\"398\" y=\"524\" width=\"210\" height=\"24\" rx=\"12\" fill=\"#8A6A00\"/><rect x=\"316\" y=\"610\" width=\"52\" height=\"52\" rx=\"12\" fill=\"none\" stroke=\"#8A6A00\" stroke-width=\"12\"/><rect x=\"398\" y=\"624\" width=\"170\" height=\"24\" rx=\"12\" fill=\"#8A6A00\"/><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){
   const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
   x.fillStyle="#ffe46b";x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
@@ -158,8 +213,55 @@ $("hide").onclick=()=>desktop?.window.hide().catch(()=>{});
     return;
   }
   document.body.classList.add("app");
-  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
   try{perms=await desktop.permissions.state();}catch{}
   applyWindow();setup();
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>

@@ -1,0 +1,960 @@
+{
+ "dict": {
+  "Grammar Checker": "语法检查",
+  "Open Grammar Checker": "打开语法检查",
+  "Documents (⌘⇧D)": "文档 (⌘⇧D)",
+  "Documents": "文档",
+  "Untitled document": "未命名文档",
+  "Document title": "文档标题",
+  "Set goals": "设定目标",
+  "Goals": "目标",
+  "Performance: score, readability, word count": "表现：得分、可读性、字数",
+  "Overall score": "总分",
+  "Open, export, settings": "打开、导出、设置",
+  "File menu": "文件菜单",
+  "New document": "新建文档",
+  "Open file…": "打开文件…",
+  "Try sample text": "试试示例文本",
+  "Quick fix panel": "快速修正面板",
+  "Use in any app…": "在任意应用中使用…",
+  "Download": "下载",
+  "Word document (.docx)": "Word 文档 (.docx)",
+  "Markdown (.md)": "Markdown (.md)",
+  "Plain text (.txt)": "纯文本 (.txt)",
+  "Performance report (.pdf)": "表现报告 (.pdf)",
+  "Copy all text": "复制全部文字",
+  "Goals…": "目标…",
+  "Settings, dictionary, style guide…": "设置、词典、风格指南…",
+  "Keyboard shortcuts": "快捷键",
+  "Suggestions": "建议",
+  "Document text": "文档内容",
+  "Type or paste (⌘V) your text here, or open a .docx, .txt or .md file.": "在此输入或粘贴 (⌘V) 文字，或打开 .docx、.txt、.md 文件。",
+  "Open file": "打开文件",
+  "Ready": "就绪",
+  "Language and dialect": "语言和方言",
+  "Dictate (⌘⇧E)": "听写 (⌘⇧E)",
+  "Dictate": "听写",
+  "Read aloud from the cursor, or the selection (⌘⇧U)": "从光标处或朗读所选内容 (⌘⇧U)",
+  "Read aloud": "朗读",
+  "Stop reading": "停止朗读",
+  "Check now (⌘↵)": "立即检查 (⌘↵)",
+  "Check now": "立即检查",
+  "Click to change the counter": "点击切换计数方式",
+  "Close": "关闭",
+  "Review": "审阅",
+  "Rewrite": "改写",
+  "Write": "写作",
+  "Cite": "引用",
+  "New": "新建",
+  "Search documents": "搜索文档",
+  "No documents match.": "没有匹配的文档。",
+  "No documents yet.": "还没有文档。",
+  "Delete document": "删除文档",
+  "Drop a .docx, .txt, .md, .odt, .rtf or .html file to open it": "拖入 .docx、.txt、.md、.odt、.rtf 或 .html 文件即可打开",
+  "Quick fix": "快速修正",
+  "How to use it in any app": "如何在任意应用中使用",
+  "Use in any app": "在任意应用中使用",
+  "Open this text in the full editor": "在完整编辑器中打开这段文字",
+  "Open in editor": "在编辑器中打开",
+  "Close (Esc)": "关闭 (Esc)",
+  "Paste text here (⌘V). It is fixed right away.": "在此粘贴文字 (⌘V)，马上就会修正。",
+  "Copy text in any app, paste it here, then copy the fix back.": "在任意应用中复制文字，粘贴到这里，再把修正结果复制回去。",
+  "Fix": "修正",
+  "Copy result": "复制结果",
+  "Copy & hide": "复制并隐藏",
+  "Undo": "撤销",
+  "Stop": "停止",
+  "Finishing…": "正在结束…",
+  "Listening… speak now. Press Stop when you're done.": "正在听… 请说话。说完按“停止”。",
+  "Correctness": "正确性",
+  "Nothing in Correctness": "“正确性”中没有建议",
+  "Clarity": "清晰度",
+  "Nothing in Clarity": "“清晰度”中没有建议",
+  "Engagement": "吸引力",
+  "Nothing in Engagement": "“吸引力”中没有建议",
+  "Delivery": "表达",
+  "Nothing in Delivery": "“表达”中没有建议",
+  "Style guide": "风格指南",
+  "Nothing in Style guide": "“风格指南”中没有建议",
+  "Domain": "领域",
+  "Intent": "意图",
+  "Audience": "读者",
+  "Formality": "正式程度",
+  "Language": "语言",
+  "Academic": "学术",
+  "Business": "商务",
+  "General": "通用",
+  "Email": "邮件",
+  "Casual": "随意",
+  "Creative": "创意",
+  "Technical": "技术",
+  "Inform": "告知",
+  "Describe": "描述",
+  "Convince": "说服",
+  "Tell a story": "讲故事",
+  "Knowledgeable": "有一定了解",
+  "Expert": "专家",
+  "Informal": "非正式",
+  "Neutral": "中性",
+  "Formal": "正式",
+  "American": "美式",
+  "British": "英式",
+  "Canadian": "加拿大",
+  "Australian": "澳大利亚",
+  "Indian": "印度",
+  "Any language": "任意语言",
+  "US": "美国",
+  "UK": "英国",
+  "Canada": "加拿大",
+  "Australia": "澳大利亚",
+  "India": "印度",
+  "Strict: formal register, precise wording, no contractions or slang.": "严格：正式语体，措辞精确，不用缩写和俚语。",
+  "Clear, professional and to the point.": "清楚、专业、直击要点。",
+  "Applies most rules and conventions with medium strictness.": "以中等严格度套用大多数规则和惯例。",
+  "Friendly and clear; flags stiffness and buried requests.": "友好清楚；指出生硬之处和被埋没的请求。",
+  "Loose: allows slang, contractions and informal style.": "宽松：允许俚语、缩写和非正式风格。",
+  "Lenient: keeps stylistic choices, flags only real errors.": "宽容：保留风格选择，只指出真正的错误。",
+  "Precise terminology, consistent wording, short sentences.": "术语精确、用词一致、句子简短。",
+  "Optional. What are you trying to do?": "可选。你想达到什么目的？",
+  "Explain facts clearly.": "把事实讲清楚。",
+  "Paint a vivid picture.": "描绘生动的画面。",
+  "Persuade the reader to act or agree.": "说服读者行动或认同。",
+  "Keep the reader engaged with narrative.": "用叙事吸引读者读下去。",
+  "Easy for anyone to read.": "谁都能轻松读懂。",
+  "Requires focus to read and understand.": "需要专注才能读懂。",
+  "Specialist terms are fine; skip basics.": "可以用专业术语，不必解释基础。",
+  "Contractions and casual words are fine.": "可以用缩写和口语词。",
+  "Restricts slang but allows standard casual expressions.": "限制俚语，但允许常见的口语表达。",
+  "No slang, no contractions, polite and precise.": "不用俚语和缩写，礼貌而精确。",
+  "American English spelling and usage.": "美式英语的拼写和用法。",
+  "British English spelling and usage.": "英式英语的拼写和用法。",
+  "Canadian English: -our, -re, -ize.": "加拿大英语：-our、-re、-ize。",
+  "Australian English spelling and usage.": "澳大利亚英语的拼写和用法。",
+  "Indian English spelling and usage.": "印度英语的拼写和用法。",
+  "New Zealand English spelling and usage.": "新西兰英语的拼写和用法。",
+  "South African English spelling and usage.": "南非英语的拼写和用法。",
+  "Detects the language of each paragraph and checks it in that language.": "识别每个段落的语言，并按该语言检查。",
+  "Get suggestions tailored to your audience and purpose. Goals apply to this document.": "根据你的读者和目的获得针对性建议。目标只作用于本文档。",
+  "Other language or dialect…": "其他语言或方言…",
+  "Voice": "文风",
+  "e.g. warm, direct, short sentences, no jargon": "例如：亲切、直接、短句、不用行话",
+  "Used for rewrites and generated text.": "用于改写和生成的文字。",
+  "Use for new documents": "用于新文档",
+  "Reset to defaults": "恢复默认",
+  "Done": "完成",
+  "English (US)": "英语（美国）",
+  "English (UK)": "英语（英国）",
+  "English (Canada)": "英语（加拿大）",
+  "English (Australia)": "英语（澳大利亚）",
+  "English (India)": "英语（印度）",
+  "English (New Zealand)": "英语（新西兰）",
+  "English (South Africa)": "英语（南非）",
+  "German (Germany)": "德语（德国）",
+  "German (Austria)": "德语（奥地利）",
+  "German (Switzerland)": "德语（瑞士）",
+  "French (France)": "法语（法国）",
+  "French (Canada)": "法语（加拿大）",
+  "Spanish (Spain)": "西班牙语（西班牙）",
+  "Spanish (Latin America)": "西班牙语（拉丁美洲）",
+  "Portuguese (Brazil)": "葡萄牙语（巴西）",
+  "Portuguese (Portugal)": "葡萄牙语（葡萄牙）",
+  "Italian": "意大利语",
+  "Dutch": "荷兰语",
+  "Catalan": "加泰罗尼亚语",
+  "Polish": "波兰语",
+  "Czech": "捷克语",
+  "Slovak": "斯洛伐克语",
+  "Romanian": "罗马尼亚语",
+  "Hungarian": "匈牙利语",
+  "Swedish": "瑞典语",
+  "Danish": "丹麦语",
+  "Norwegian (Bokmål)": "挪威语（书面挪威语）",
+  "Finnish": "芬兰语",
+  "Greek": "希腊语",
+  "Russian": "俄语",
+  "Ukrainian": "乌克兰语",
+  "Turkish": "土耳其语",
+  "Arabic": "阿拉伯语",
+  "Hebrew": "希伯来语",
+  "Persian": "波斯语",
+  "Hindi": "印地语",
+  "Indonesian": "印尼语",
+  "Vietnamese": "越南语",
+  "Thai": "泰语",
+  "Chinese (Simplified)": "中文（简体）",
+  "Chinese (Traditional)": "中文（繁体）",
+  "Japanese": "日语",
+  "Korean": "韩语",
+  "Irish": "爱尔兰语",
+  "Esperanto": "世界语",
+  "Detect language": "自动识别语言",
+  "Use US spelling": "使用美式拼写",
+  "Use UK spelling": "使用英式拼写",
+  "Use Canada spelling": "使用加拿大拼写",
+  "Use Australia spelling": "使用澳大利亚拼写",
+  "Use India spelling": "使用印度拼写",
+  "Use New Zealand spelling": "使用新西兰拼写",
+  "Use South Africa spelling": "使用南非拼写",
+  "New Zealand": "新西兰",
+  "South Africa": "南非",
+  "Remove the repeated word": "删除重复的词",
+  "Remove the extra space": "删除多余的空格",
+  "There is more than one space between these words.": "这两个词之间有不止一个空格。",
+  "Remove the space before punctuation": "删除标点前的空格",
+  "Punctuation attaches to the word before it.": "标点应紧跟在前一个词后面。",
+  "Add a space after the comma": "在逗号后加空格",
+  "A comma is followed by a space.": "逗号后面要有空格。",
+  "Capitalize the first word": "句首字母大写",
+  "Sentences start with a capital letter.": "句子以大写字母开头。",
+  "Capitalize “I”": "“I”要大写",
+  "The pronoun “I” is always capitalized.": "代词“I”始终大写。",
+  "Use “an”": "改用“an”",
+  "Use “a”": "改用“a”",
+  "Remove wordiness": "精简冗词",
+  "Remove the phrase": "删除这个短语",
+  "This phrase adds length without meaning.": "这个短语只增加长度，没有意义。",
+  "Choose a stronger word": "换一个更有力的词",
+  "Sound more confident": "显得更自信",
+  "Hedging language can make you sound unsure.": "含糊的措辞会让你显得没把握。",
+  "Use American spelling": "使用美式拼写",
+  "Your style guide prefers this.": "你的风格指南建议这样写。",
+  "All suggestions": "全部建议",
+  "All": "全部",
+  "Show": "显示",
+  "Tone detected": "检测到的语气",
+  "Adjust tone": "调整语气",
+  "Start writing to see suggestions": "开始写作即可看到建议",
+  "Type, paste or open a document. Suggestions appear here as underlines are found.": "输入、粘贴或打开文档。发现问题时，建议会显示在这里并在文中加下划线。",
+  "Checking your writing…": "正在检查你的文字…",
+  "No suggestions": "没有建议",
+  "Your text looks good against your goals.": "按你的目标来看，文字没有问题。",
+  "Built-in checks found nothing. Open in the Claude app for the full check.": "内置检查没有发现问题。在 Claude 应用中打开可进行完整检查。",
+  "Accept": "接受",
+  "Remove": "删除",
+  "Dismiss": "忽略",
+  "Add to dictionary": "加入词典",
+  "Ignore all": "全部忽略",
+  "Ignore this text everywhere in this document": "在本文档中所有地方忽略这段文字",
+  "Built-in checks only. Open in the Claude app for full grammar, clarity and tone checks.": "仅内置检查。在 Claude 应用中打开可进行完整的语法、清晰度和语气检查。",
+  "Built-in checks only.": "仅内置检查。",
+  "Waiting for you to pause…": "等你停顿后检查…",
+  "All text checked": "已检查全部文字",
+  "Suggestion dismissed.": "已忽略建议。",
+  "Finding words that fit this sentence…": "正在寻找适合这句话的词…",
+  "No good synonyms for this word here.": "这里没有合适的同义词。",
+  "Couldn't find synonyms. Try again.": "没有找到同义词，请重试。",
+  "Couldn't check some paragraphs. Press Check now to try again.": "有些段落没能检查。按“立即检查”重试。",
+  "Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限。请稍后再试。",
+  "Claude isn't allowed for this app, so only the built-in checks run.": "此应用未获准使用 Claude，因此只运行内置检查。",
+  "Claude isn't available on this account, so only the built-in checks run.": "此账户无法使用 Claude，因此只运行内置检查。",
+  "Claude declined to check part of this text.": "Claude 拒绝检查这段文字的一部分。",
+  "Sign in to Claude again, then press Check now.": "请重新登录 Claude，然后按“立即检查”。",
+  "That part is too long to send. Split it into smaller paragraphs.": "这部分太长，无法发送。请拆成较短的段落。",
+  "Claude's answer was garbled. Press Check now to try again.": "Claude 的回答出现乱码。按“立即检查”重试。",
+  "Claude had a hiccup. Press Check now to try again.": "Claude 出了点小问题。按“立即检查”重试。",
+  "Shorter": "更简短",
+  "Clearer": "更清晰",
+  "More formal": "更正式",
+  "Friendlier": "更友好",
+  "More confident": "更自信",
+  "More persuasive": "更有说服力",
+  "Simpler": "更简单",
+  "Expand": "扩写",
+  "Fix grammar only": "只修正语法",
+  "Standard": "标准",
+  "Paraphrase: Standard": "换种说法：标准",
+  "Fluency": "流畅",
+  "Paraphrase: Fluency": "换种说法：流畅",
+  "Paraphrase: Formal": "换种说法：正式",
+  "Paraphrase: Academic": "换种说法：学术",
+  "Simple": "简单",
+  "Paraphrase: Simple": "换种说法：简单",
+  "Paraphrase: Creative": "换种说法：创意",
+  "Shorten": "缩写",
+  "Paraphrase: Shorten": "换种说法：缩写",
+  "Paraphrase: Expand": "换种说法：扩写",
+  "Humanize": "更像人写的",
+  "Paraphrase: Humanize": "换种说法：更像人写的",
+  "Selection": "所选内容",
+  "Paragraph": "段落",
+  "Whole document": "整篇文档",
+  "Put the cursor in a paragraph or select some text.": "把光标放在某个段落里，或选中一些文字。",
+  "One-click rewrites": "一键改写",
+  "Paraphrase": "换种说法",
+  "Paraphrase · 3 versions": "换种说法 · 3 个版本",
+  "Your own instruction": "自定义指令",
+  "e.g. make it sound like a tweet": "例如：改得像一条推文",
+  "Results": "结果",
+  "(cut short)": "（被截断）",
+  "Try again": "重试",
+  "Replaced. Press ⌘Z in the editor to undo.": "已替换。在编辑器中按 ⌘Z 撤销。",
+  "The original text changed, so this can't be applied.": "原文已改动，无法应用。",
+  "Copy": "复制",
+  "Replace": "替换",
+  "Discard": "放弃",
+  "Couldn't rewrite this. Try again.": "没能改写，请重试。",
+  "Put the cursor in a paragraph or select text first.": "请先把光标放在段落里或选中文字。",
+  "Replaced.": "已替换。",
+  "Rewrites need the Claude app.": "改写需要 Claude 应用。",
+  "Improve it": "改进全文",
+  "Identify any gaps": "找出不足",
+  "Write an intro": "写开头",
+  "Write a conclusion": "写结尾",
+  "Summarize": "总结",
+  "Make an outline": "列提纲",
+  "Write a reply": "写回复",
+  "Continue writing": "接着写",
+  "Suggest titles": "推荐标题",
+  "Reader reactions": "读者反应",
+  "Grade it": "打分",
+  "Find claims to cite": "找出需要引用的说法",
+  "Expert review": "专家审阅",
+  "What do you want to do?": "你想做什么？",
+  "Key points": "要点",
+  "One sentence": "一句话",
+  "Short": "简短",
+  "Medium": "适中",
+  "Long": "详细",
+  "Translate": "翻译",
+  "Translates your selection.": "翻译所选内容。",
+  "Translates the whole document.": "翻译整篇文档。",
+  "Insert or replace the result below.": "可在下方插入或替换结果。",
+  "Translates your selection. Insert or replace the result below.": "翻译所选内容，可在下方插入或替换结果。",
+  "Translates the whole document. Insert or replace the result below.": "翻译整篇文档，可在下方插入或替换结果。",
+  "AI writing check": "AI 写作检测",
+  "Estimates which parts read as AI-generated. A rough signal, not proof.": "估计哪些部分读起来像 AI 生成。只是粗略参考，不是证据。",
+  "Check": "检测",
+  "Tell Claude to…": "让 Claude…",
+  "e.g. Draft a polite email asking for a deadline extension. Uses your goals and voice.": "例如：起草一封礼貌的邮件，申请延期。会参考你的目标和文风。",
+  "Uses your selected text.": "使用所选文字。",
+  "Uses the whole document as context.": "以整篇文档为上下文。",
+  "Generate": "生成",
+  "Insert at cursor": "插入到光标处",
+  "Replace selection": "替换所选内容",
+  "Clear": "清除",
+  "No voice set. Describe how you like to sound in Goals, e.g. “warm, direct, short sentences”.": "还没有设定文风。在“目标”里描述你想要的感觉，例如“亲切、直接、短句”。",
+  "Edit in Goals": "在目标中编辑",
+  "Snippets": "片段",
+  "Type a trigger and press Tab in the editor to expand it.": "在编辑器中输入触发词并按 Tab 展开。",
+  "The answer was cut short.": "回答被截断了。",
+  "Couldn't generate that. Try again.": "没能生成，请重试。",
+  "Inserted.": "已插入。",
+  "Writing help needs the Claude app.": "写作帮助需要 Claude 应用。",
+  "Citation style": "引用格式",
+  "Add a source": "添加来源",
+  "Paste a URL, DOI, ISBN or title": "粘贴网址、DOI、ISBN 或标题",
+  "Enter details manually": "手动填写信息",
+  "Source type": "来源类型",
+  "Web page": "网页",
+  "Journal article": "期刊文章",
+  "News or magazine": "新闻或杂志",
+  "Book": "图书",
+  "Video": "视频",
+  "Report": "报告",
+  "Authors (one per line: Last, First, or an organization)": "作者（每行一位：姓, 名；或机构名）",
+  "Title": "标题",
+  "Website name": "网站名称",
+  "Journal": "期刊",
+  "Publication": "刊物",
+  "Platform (e.g. YouTube)": "平台（如 YouTube）",
+  "Publisher": "出版方",
+  "Place of publication (Chicago, Harvard)": "出版地（Chicago、Harvard 格式）",
+  "Year": "年份",
+  "Volume": "卷",
+  "Issue": "期",
+  "Pages": "页码",
+  "Date accessed": "访问日期",
+  "Edition": "版次",
+  "Date published": "发布日期",
+  "Month": "月",
+  "Day": "日",
+  "Filled in by Claude from what it knows. It can't open web pages, so check each field against the source, especially the highlighted ones.": "由 Claude 根据已知信息填写。它无法打开网页，请对照来源逐项核对，尤其是高亮的字段。",
+  "Add to list": "加入列表",
+  "Save": "保存",
+  "Cancel": "取消",
+  "No sources yet. Paste a link, DOI, ISBN or title above. Your list is saved with this document.": "还没有来源。在上方粘贴链接、DOI、ISBN 或标题。列表会随本文档保存。",
+  "Edit": "编辑",
+  "Delete": "删除",
+  "Copy all": "全部复制",
+  "Download .txt": "下载 .txt",
+  "Copied with formatting.": "已带格式复制。",
+  "Add at least a title.": "至少要填写标题。",
+  "Added to your sources.": "已加入来源。",
+  "Saved.": "已保存。",
+  "Citation inserted.": "已插入引用。",
+  "Source deleted.": "已删除来源。",
+  "Fill in the details. Claude isn't available to look them up.": "请手动填写信息。Claude 不可用，无法查询。",
+  "Couldn't look that up. Enter the details manually.": "没能查到，请手动填写信息。",
+  "authors": "作者",
+  "title": "标题",
+  "date": "日期",
+  "year": "年份",
+  "container": "来源名称",
+  "publisher": "出版方",
+  "place": "出版地",
+  "volume": "卷",
+  "issue": "期",
+  "pages": "页码",
+  "doi": "DOI",
+  "url": "网址",
+  "URL": "网址",
+  "DOI": "DOI",
+  "Smith, Jane World Health Organization": "Smith, Jane\n世界卫生组织",
+  "edition": "版次",
+  "accessed": "访问日期",
+  "January": "1 月",
+  "February": "2 月",
+  "March": "3 月",
+  "April": "4 月",
+  "May": "5 月",
+  "June": "6 月",
+  "July": "7 月",
+  "August": "8 月",
+  "September": "9 月",
+  "October": "10 月",
+  "November": "11 月",
+  "December": "12 月",
+  "Insert References at end": "在末尾插入参考文献",
+  "Insert Works Cited at end": "在末尾插入引用文献",
+  "Insert Reference list at end": "在末尾插入参考文献列表",
+  "In text:": "文内引用：",
+  "Performance": "表现",
+  "Write a few sentences to get a score.": "写几句话就能看到得分。",
+  "Your text scores": "你的文字得分",
+  ". The score reflects the open suggestions for this document weighed against its length.": "。得分依据本文档未处理的建议数量，并按篇幅加权计算。",
+  "Word count": "字数统计",
+  "Characters": "字符",
+  "Reading time": "阅读时间",
+  "Words": "词数",
+  "Speaking time": "朗读时间",
+  "Sentences": "句子",
+  "Paragraphs": "段落",
+  "Readability": "可读性",
+  "Word length": "平均词长",
+  "Sentence length": "平均句长",
+  "Readability score": "可读性得分",
+  "Grade level": "年级水平",
+  "Long sentences (30+ words) to consider splitting:": "可以考虑拆分的长句（30 词以上）：",
+  "Vocabulary": "词汇",
+  "Unique words": "不重复词",
+  "Rare or long words": "生僻词或长词",
+  "Unique words measures variety; long words (9+ letters) hint at how specialized the vocabulary is.": "不重复词反映用词多样性；长词（9 个字母以上）反映词汇的专业程度。",
+  "Most used words": "最常用的词",
+  "Common filler words are left out. Repeating a word many times can feel monotonous.": "已排除常见虚词。同一个词重复太多会显得单调。",
+  "Open suggestions": "未处理的建议",
+  "Tone": "语气",
+  "Download PDF report": "下载 PDF 报告",
+  "Settings": "设置",
+  "Dictionary": "词典",
+  "Shortcuts": "快捷键",
+  "Checking": "正在检查",
+  "Check as I type": "边输入边检查",
+  "Only when I press Check now": "只在按“立即检查”时",
+  "Only paragraphs you change are rechecked.": "只重新检查你改动过的段落。",
+  "Depth": "深度",
+  "Fast": "快速",
+  "Thorough": "深入",
+  "Thorough catches subtler issues and writes better rewrites, but is slower and uses more of your Claude usage.": "“深入”能发现更细微的问题、改写质量更好，但速度较慢，也会消耗更多 Claude 用量。",
+  "Underlines": "下划线",
+  "Hide (panel only)": "隐藏（只在面板显示）",
+  "Editor font": "编辑器字体",
+  "Sans": "无衬线",
+  "Serif": "衬线",
+  "Appearance": "外观",
+  "System": "跟随系统",
+  "Light": "浅色",
+  "Dark": "深色",
+  "Add a word": "添加单词",
+  "Add": "添加",
+  "No words yet. Use “Add to dictionary” on a spelling card, or import a list.": "还没有单词。可在拼写建议卡片上点“加入词典”，或导入列表。",
+  "Import word list (.txt)": "导入词表 (.txt)",
+  "Export (.txt)": "导出 (.txt)",
+  "Remove all": "全部删除",
+  "Import a plain list with one word per line, such as a dictionary exported from Grammarly, Word or macOS.": "导入每行一个词的纯文本列表，例如从 Grammarly、Word 或 macOS 导出的词典。",
+  "House rules flagged in every document, and followed by rewrites and generated text.": "自定义规则会在每篇文档中标出，改写和生成文字时也会遵守。",
+  "Instead of… (e.g. e-mail)": "不要写…（如 e-mail）",
+  "Write… (blank = avoid)": "改成…（留空=避免）",
+  "Why (optional)": "原因（可选）",
+  "Add rule": "添加规则",
+  "No rules yet. Example: “e-mail” → “email”, “utilize” → “use”.": "还没有规则。例如：“e-mail” → “email”，“utilize” → “use”。",
+  "Type a trigger in the editor and press Tab to expand it.": "在编辑器中输入触发词并按 Tab 展开。",
+  "Trigger, e.g. \\sig": "触发词，如 \\sig",
+  "Text to insert": "要插入的文字",
+  "No snippets yet.": "还没有片段。",
+  "Dictionary cleared.": "已清空词典。",
+  "Accept the open suggestion": "接受当前建议",
+  "Next / previous suggestion": "下一条 / 上一条建议",
+  "Dismiss the open suggestion": "忽略当前建议",
+  "Rewrite selection or paragraph": "改写所选内容或段落",
+  "Write with AI": "AI 写作",
+  "Expand a snippet": "展开片段",
+  "Undo / redo": "撤销 / 重做",
+  "Download as Word": "下载为 Word",
+  "Synonyms for a word": "查同义词",
+  "Double-click it": "双击该词",
+  "Quick fix from any app (installed app)": "在任意应用中快速修正（已安装的应用）",
+  "Copy fix and hide (Quick fix)": "复制修正并隐藏（快速修正）",
+  "Fix grammar": "修正语法",
+  "Friendly": "友好",
+  "Translate into": "翻译成",
+  "Rewriting and translating need Claude. Open this app in the Claude app.": "改写和翻译需要 Claude。请在 Claude 应用中打开此应用。",
+  "The built-in checks found nothing. Full grammar checks need the Claude app.": "内置检查没有发现问题。完整的语法检查需要 Claude 应用。",
+  "Working": "正在处理",
+  "Stopped.": "已停止。",
+  "Couldn't fix this. Try again.": "没能修正，请重试。",
+  "Fix text from your email, chat, browser or any other app without switching documents.": "不用切换文档，就能修正邮件、聊天、浏览器或其他任何应用里的文字。",
+  "Select text in any app and press": "在任意应用中选中文字，按",
+  "Press": "按",
+  "or pick Quick fix from the menu bar icon. The Quick fix window opens.": "或从菜单栏图标中选择“快速修正”，打开快速修正窗口。",
+  "(installed app). The Quick fix window opens.": "（已安装的应用），打开快速修正窗口。",
+  ". Your text is fixed right away. Pick Clearer, Shorter, Formal, Paraphrase or Translate if you want more.": "，文字马上就会修正。还可以选“更清晰”“更简短”“正式”“换种说法”或“翻译”。",
+  "to copy the result and hide the window, then": "复制结果并隐藏窗口，然后在你的应用中按",
+  "to copy the result, then": "复制结果，然后在你的应用中按",
+  "in your app.": "粘贴。",
+  "Permissions": "权限",
+  "Global shortcut": "全局快捷键",
+  "Opens Quick fix from any app.": "在任意应用中打开快速修正。",
+  "Menu bar icon": "菜单栏图标",
+  "Quick fix and your documents one click away.": "一键打开快速修正和你的文档。",
+  "Float on top (optional)": "置顶浮动（可选）",
+  "Keeps the window above other apps. The window reloads once when you switch.": "让窗口保持在其他应用之上。切换时窗口会重新载入一次。",
+  "Shortcut": "快捷键",
+  "If a shortcut does nothing, another app may already use it. Pick another.": "如果快捷键没反应，可能已被其他应用占用，请换一个。",
+  "This needs the installed app: it can listen for a shortcut and sit in your menu bar. Install it, then open this dialog again from the app.": "这需要安装为应用：它才能监听快捷键并常驻菜单栏。安装后，请从应用里再次打开此对话框。",
+  "The shortcut and menu bar icon work in the installed app. Open this page in the Claude desktop app and choose Install as app. Here you can still use the Quick fix panel: paste, fix, copy.": "快捷键和菜单栏图标只在安装后的应用中可用。请在 Claude 桌面应用中打开此页面，选择“安装为应用”。在这里仍可使用快速修正面板：粘贴、修正、复制。",
+  "Open permissions": "打开权限设置",
+  "Stop floating": "取消浮动",
+  "Float on top": "置顶浮动",
+  "Turn on": "开启",
+  "Try Quick fix": "试试快速修正",
+  "Open Quick fix panel": "打开快速修正面板",
+  "Install as app": "安装为应用",
+  "Fix text in any app": "在任意应用中修正文字",
+  "Normal window": "普通窗口",
+  "Copy all and hide": "全部复制并隐藏",
+  "On": "已开启",
+  "Not set up yet": "尚未设置",
+  "Turned off": "已关闭",
+  "Not available": "不可用",
+  "Couldn't install the app here.": "无法在这里安装应用。",
+  "Click Turn on again while the window is in front.": "请在窗口位于最前面时再点一次“开启”。",
+  "Floating needs the overlay permission.": "浮动需要悬浮窗权限。",
+  "Storage is full. Download this document and delete old ones to keep saving.": "存储空间已满。请下载本文档并删除旧文档，才能继续保存。",
+  "Downloads aren't available here. Use Copy all text instead.": "这里无法下载。请改用“复制全部文字”。",
+  "Saving files isn't available in this view.": "此视图中无法保存文件。",
+  "Couldn't save the file. Try again.": "没能保存文件，请重试。",
+  "The Word exporter didn't load. Check your connection and reopen the app.": "Word 导出组件没有加载。请检查网络后重新打开应用。",
+  "The PDF maker didn't load. Check your connection and reopen the app.": "PDF 生成组件没有加载。请检查网络后重新打开应用。",
+  "The file reader didn't load. Check your connection and reopen the app.": "文件读取组件没有加载。请检查网络后重新打开应用。",
+  "Copied.": "已复制。",
+  "Couldn't copy. Select the text and press ⌘C.": "没能复制。请选中文字后按 ⌘C。",
+  "Goals updated. Rechecking with your new goals.": "目标已更新，正在按新目标重新检查。",
+  "Microphone use was declined. You can turn dictation on in this app's Permissions menu.": "麦克风权限被拒绝。可以在此应用的“权限”菜单中开启听写。",
+  "Dictation isn't available here.": "这里无法使用听写。",
+  "Dictation is busy. Try again in a moment.": "听写正忙，请稍后再试。",
+  "The microphone or speech service failed. Try again.": "麦克风或语音服务出错，请重试。",
+  "Dictation stopped after 60 minutes. Press Dictate to continue.": "听写已在 60 分钟后停止。按“听写”继续。",
+  "Dictation stopped: the microphone or speech service failed.": "听写已停止：麦克风或语音服务出错。",
+  "There's no text to read. Put the cursor where reading should start.": "没有可朗读的文字。请把光标放在要开始朗读的位置。",
+  "Reading aloud isn't available here.": "这里无法使用朗读。",
+  "You've used reading aloud a lot just now. Try again later.": "刚才朗读用得太多了，请稍后再试。",
+  "The microphone is in use. Stop dictation first.": "麦克风正在使用中，请先停止听写。",
+  "Press Read aloud again to start.": "再按一次“朗读”开始。",
+  "Deleted “document”.": "已删除文档。"
+ },
+ "patterns": [
+  [
+   "“(.+)” is the English \\(US\\) spelling\\.",
+   "“$1”是美式英语的拼写。"
+  ],
+  [
+   "“(.+)” is the English \\(UK\\) spelling\\.",
+   "“$1”是英式英语的拼写。"
+  ],
+  [
+   "“(.+)” is the English \\(Canada\\) spelling\\.",
+   "“$1”是加拿大英语的拼写。"
+  ],
+  [
+   "“(.+)” is the English \\(Australia\\) spelling\\.",
+   "“$1”是澳大利亚英语的拼写。"
+  ],
+  [
+   "“(.+)” is the English \\(India\\) spelling\\.",
+   "“$1”是印度英语的拼写。"
+  ],
+  [
+   "“(.+)” is the English \\(New Zealand\\) spelling\\.",
+   "“$1”是新西兰英语的拼写。"
+  ],
+  [
+   "“(.+)” is the English \\(South Africa\\) spelling\\.",
+   "“$1”是南非英语的拼写。"
+  ],
+  [
+   "(.+) spelling and usage\\.",
+   "$1的拼写和用法。"
+  ],
+  [
+   "Checks spelling, grammar and punctuation in (.+)\\. The built-in offline rules cover English only\\.",
+   "按$1检查拼写、语法和标点。内置离线规则只支持英语。"
+  ],
+  [
+   "Checking in (.+)\\.",
+   "改为按$1检查。"
+  ],
+  [
+   "\"(.+)\" appears twice in a row\\.",
+   "“$1”连续出现了两次。"
+  ],
+  [
+   "Use “an” before a vowel sound \\(“(.+)”\\)\\.",
+   "元音开头的词（“$1”）前用“an”。"
+  ],
+  [
+   "Use “a” before a consonant sound \\(“(.+)”\\)\\.",
+   "辅音开头的词（“$1”）前用“a”。"
+  ],
+  [
+   "“(.*)” says the same thing in fewer words\\.",
+   "“$1”用更少的词表达同样的意思。"
+  ],
+  [
+   "“(.+)” is more vivid than “(.+)”\\.",
+   "“$1”比“$2”更生动。"
+  ],
+  [
+   "American English uses “(.+)”\\.",
+   "美式英语写作“$1”。"
+  ],
+  [
+   "Use “(.+)”",
+   "改用“$1”"
+  ],
+  [
+   "Avoid “(.+)”",
+   "避免使用“$1”"
+  ],
+  [
+   "(\\d+) suggestions?",
+   "$1 条建议"
+  ],
+  [
+   "(\\d+) correctness suggestions?",
+   "$1 条正确性建议"
+  ],
+  [
+   "(\\d+) clarity suggestions?",
+   "$1 条清晰度建议"
+  ],
+  [
+   "(\\d+) engagement suggestions?",
+   "$1 条吸引力建议"
+  ],
+  [
+   "(\\d+) delivery suggestions?",
+   "$1 条表达建议"
+  ],
+  [
+   "(\\d+) style guide suggestions?",
+   "$1 条风格指南建议"
+  ],
+  [
+   "Accept all (\\d+)",
+   "全部接受（$1）"
+  ],
+  [
+   "(\\d+) style guide issues?",
+   "$1 个风格指南问题"
+  ],
+  [
+   "(\\d+) paragraphs? left",
+   "还剩 $1 段"
+  ],
+  [
+   "Checking (\\d+) paragraphs?…",
+   "正在检查 $1 段…"
+  ],
+  [
+   "(\\d+) paragraphs? not checked yet",
+   "$1 段尚未检查"
+  ],
+  [
+   "Remove “(.*)”",
+   "删除“$1”"
+  ],
+  [
+   "Add “(.+)” to your personal dictionary",
+   "把“$1”加入个人词典"
+  ],
+  [
+   "Synonyms for “(.+)”",
+   "“$1”的同义词"
+  ],
+  [
+   "Ignoring “(.*)” in this document\\.",
+   "将在本文档中忽略“$1”。"
+  ],
+  [
+   "Added “(.+)” to your dictionary\\.",
+   "已把“$1”加入词典。"
+  ],
+  [
+   "Accepted (\\d+) suggestions?\\.",
+   "已接受 $1 条建议。"
+  ],
+  [
+   "Replaced “(.+)” with “(.+)”\\.",
+   "已把“$1”替换为“$2”。"
+  ],
+  [
+   "Listening: (.+)",
+   "正在听：$1"
+  ],
+  [
+   "(\\d+) words",
+   "$1 个词"
+  ],
+  [
+   "(\\d+) of (\\d+) words",
+   "$1 / $2 个词"
+  ],
+  [
+   "(\\d+) characters",
+   "$1 个字符"
+  ],
+  [
+   "(\\d+) characters without spaces",
+   "$1 个字符（不含空格）"
+  ],
+  [
+   "(\\d+) sentences",
+   "$1 个句子"
+  ],
+  [
+   "(\\d+) paragraphs",
+   "$1 个段落"
+  ],
+  [
+   "(\\d+) sec reading time",
+   "阅读时间 $1 秒"
+  ],
+  [
+   "(\\d+) min (\\d+) sec reading time",
+   "阅读时间 $1 分 $2 秒"
+  ],
+  [
+   "(\\d+) sec speaking time",
+   "朗读时间 $1 秒"
+  ],
+  [
+   "(\\d+) min (\\d+) sec speaking time",
+   "朗读时间 $1 分 $2 秒"
+  ],
+  [
+   "(\\d+) sec",
+   "$1 秒"
+  ],
+  [
+   "(\\d+) min (\\d+) sec",
+   "$1 分 $2 秒"
+  ],
+  [
+   "Replace all (\\d+)",
+   "全部替换（$1）"
+  ],
+  [
+   "· part (\\d+) of (\\d+)",
+   "· 第 $1/$2 部分"
+  ],
+  [
+   "Replaced (\\d+) parts?\\.",
+   "已替换 $1 处。"
+  ],
+  [
+   "Sources in this document · (\\d+)",
+   "本文档的来源 · $1"
+  ],
+  [
+   "Check: (.+)",
+   "请核对：$1"
+  ],
+  [
+   "Insert (.+) at the cursor",
+   "在光标处插入 $1"
+  ],
+  [
+   "Insert (.+)",
+   "插入 $1"
+  ],
+  [
+   "Added (.+) at the end\\.",
+   "已在末尾添加 $1。"
+  ],
+  [
+   "Updated the (.+) section\\.",
+   "已更新 $1 部分。"
+  ],
+  [
+   "(\\d+) out of 100",
+   "$1 / 100 分"
+  ],
+  [
+   "Flesch reading ease (\\d+): easy to read for most people \\(around 6th grade\\)\\. Aim for 60 or higher for a general audience\\.",
+   "Flesch 易读度 $1：大多数人都容易读懂（约小学六年级水平）。面向大众读者时，建议 60 分以上。"
+  ],
+  [
+   "Flesch reading ease (\\d+): plain English, understood by most readers around age 13–15\\. Aim for 60 or higher for a general audience\\.",
+   "Flesch 易读度 $1：浅显英语，13–15 岁左右的读者大多能读懂。面向大众读者时，建议 60 分以上。"
+  ],
+  [
+   "Flesch reading ease (\\d+): fairly difficult: likely understood by readers with at least a high-school education\\. Aim for 60 or higher for a general audience\\.",
+   "Flesch 易读度 $1：较难：至少需要高中文化水平。面向大众读者时，建议 60 分以上。"
+  ],
+  [
+   "Flesch reading ease (\\d+): difficult: best suited to college-level readers\\. Aim for 60 or higher for a general audience\\.",
+   "Flesch 易读度 $1：难：适合大学水平的读者。面向大众读者时，建议 60 分以上。"
+  ],
+  [
+   "Words here are never flagged as misspelled\\. (\\d+) words?\\.",
+   "这里的单词永远不会被标为拼写错误。共 $1 个。"
+  ],
+  [
+   "Imported (\\d+) new words?\\.",
+   "已导入 $1 个新词。"
+  ],
+  [
+   "Press Fix \\((\\S+)\\) to check this text\\.",
+   "按“修正”($1) 检查这段文字。"
+  ],
+  [
+   "(\\d+) fix(?:es)? from the built-in checks\\. Full grammar checks need the Claude app\\.",
+   "内置检查修正了 $1 处。完整的语法检查需要 Claude 应用。"
+  ],
+  [
+   "Translated\\. Press (\\S+) to copy and hide\\.",
+   "已翻译。按 $1 复制并隐藏。"
+  ],
+  [
+   "Translated\\. Press (\\S+) to copy and hide\\. The answer was cut short\\.",
+   "已翻译。按 $1 复制并隐藏。回答被截断了。"
+  ],
+  [
+   "Translated\\. Press (\\S+) to copy\\.",
+   "已翻译。按 $1 复制。"
+  ],
+  [
+   "Translated\\. Press (\\S+) to copy\\. The answer was cut short\\.",
+   "已翻译。按 $1 复制。回答被截断了。"
+  ],
+  [
+   "Looks good\\. No changes needed\\. Press (\\S+) to copy and hide\\.",
+   "没有问题，无需修改。按 $1 复制并隐藏。"
+  ],
+  [
+   "Looks good\\. No changes needed\\. Press (\\S+) to copy and hide\\. The answer was cut short\\.",
+   "没有问题，无需修改。按 $1 复制并隐藏。回答被截断了。"
+  ],
+  [
+   "Looks good\\. No changes needed\\. Press (\\S+) to copy\\.",
+   "没有问题，无需修改。按 $1 复制。"
+  ],
+  [
+   "Looks good\\. No changes needed\\. Press (\\S+) to copy\\. The answer was cut short\\.",
+   "没有问题，无需修改。按 $1 复制。回答被截断了。"
+  ],
+  [
+   "(\\d+) changes?\\. Press (\\S+) to copy and hide\\.",
+   "$1 处修改。按 $2 复制并隐藏。"
+  ],
+  [
+   "(\\d+) changes?\\. Press (\\S+) to copy and hide\\. The answer was cut short\\.",
+   "$1 处修改。按 $2 复制并隐藏。回答被截断了。"
+  ],
+  [
+   "(\\d+) changes?\\. Press (\\S+) to copy\\.",
+   "$1 处修改。按 $2 复制。"
+  ],
+  [
+   "(\\d+) changes?\\. Press (\\S+) to copy\\. The answer was cut short\\.",
+   "$1 处修改。按 $2 复制。回答被截断了。"
+  ],
+  [
+   "Copied\\. Paste it with (\\S+)\\.",
+   "已复制。用 $1 粘贴。"
+  ],
+  [
+   "Copied\\. Paste it back with (\\S+)\\.",
+   "已复制。用 $1 粘贴回去。"
+  ],
+  [
+   "Copy the result and hide this window \\((\\S+)\\)",
+   "复制结果并隐藏此窗口 ($1)"
+  ],
+  [
+   "Copy the result \\((\\S+)\\)",
+   "复制结果 ($1)"
+  ],
+  [
+   "Quick fix… (.+)",
+   "快速修正… $1"
+  ],
+  [
+   "Quick fix: (.+)",
+   "快速修正：$1"
+  ],
+  [
+   "Quick fix is now (.+)\\.",
+   "快速修正的快捷键已改为 $1。"
+  ],
+  [
+   "Ready\\. Press (.+) in any app\\.",
+   "已就绪。在任意应用中按 $1。"
+  ],
+  [
+   "(.+) is already used by another app\\. Pick another shortcut in Use in any app\\.",
+   "$1 已被其他应用占用。请在“在任意应用中使用”里换一个快捷键。"
+  ],
+  [
+   "(.+) shows it",
+   "$1 显示"
+  ],
+  [
+   "Dictation isn't available in (.+)\\. Press Dictate again to use your default language\\.",
+   "无法用$1听写。再按一次“听写”将使用默认语言。"
+  ],
+  [
+   "Opened “(.+)”\\.",
+   "已打开“$1”。"
+  ],
+  [
+   "Deleted “(.+)”\\.",
+   "已删除“$1”。"
+  ],
+  [
+   "Saved (.+)\\.",
+   "已保存 $1。"
+  ],
+  [
+   "\\.(\\w+) files can't be opened here\\. Save it as \\.docx or \\.txt first\\.",
+   ".$1 文件无法在这里打开。请先另存为 .docx 或 .txt。"
+  ],
+  [
+   "Couldn't read “(.+)”\\. Is it a valid \\.(\\w*) file\\?",
+   "无法读取“$1”。它是有效的 .$2 文件吗？"
+  ],
+  [
+   "(.+) · (\\d+) words",
+   "$1 · $2 个词"
+  ],
+  [
+   "Summarize \\((.+)\\)",
+   "总结（$1）"
+  ],
+  [
+   "Translate into (.+)",
+   "翻译成$1"
+  ]
+ ],
+ "skip": "#mirror, .diff, #qOut, #genOut, .pv del, .pv b, .syns, .doclist .m b, .ref, .list .li>span:not(.note)"
+}

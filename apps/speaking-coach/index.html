@@ -56,7 +56,7 @@ textarea{font:16px/1.5 var(--read);width:100%;min-height:70px;resize:vertical;bo
   <div class="opts">
     <select id="lang" aria-label="Language to practice"></select>
     <select id="level" aria-label="Level"><option value="A2">Beginner (A2)</option><option value="B1">Intermediate (B1)</option><option value="B2">Upper intermediate (B2)</option><option value="C1">Advanced (C1)</option></select>
-    <select id="topic" aria-label="Topic"><option>Daily life</option><option>Travel</option><option>Work and meetings</option><option>Job interview</option><option>Food and cooking</option><option>Tech news</option><option>Small talk</option><option>Surprise me</option></select>
+    <select id="topic" aria-label="Topic"><option value="Daily life">Daily life</option><option value="Travel">Travel</option><option value="Work and meetings">Work and meetings</option><option value="Job interview">Job interview</option><option value="Food and cooking">Food and cooking</option><option value="Tech news">Tech news</option><option value="Small talk">Small talk</option><option value="Surprise me">Surprise me</option></select>
     <button class="btn pri" id="new">✦ New lesson</button>
   </div>
   <div id="lesson"></div>
@@ -64,10 +64,61 @@ textarea{font:16px/1.5 var(--read);width:100%;min-height:70px;resize:vertical;bo
 </div>
 
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"Speaking Coach": "口语教练", "Language to practice": "练习语言", "Level": "水平", "Topic": "话题", "English": "英语", "Spanish": "西班牙语", "French": "法语", "German": "德语", "Japanese": "日语", "Korean": "韩语", "Chinese (Mandarin)": "中文（普通话）", "Italian": "意大利语", "Portuguese": "葡萄牙语", "Beginner (A2)": "初级 (A2)", "Intermediate (B1)": "中级 (B1)", "Upper intermediate (B2)": "中高级 (B2)", "Advanced (C1)": "高级 (C1)", "Daily life": "日常生活", "Travel": "旅行", "Work and meetings": "工作与会议", "Job interview": "求职面试", "Food and cooking": "美食与烹饪", "Tech news": "科技新闻", "Small talk": "闲聊", "Surprise me": "随便来一个", "✦ New lesson": "✦ 新课程", "A short lesson, read aloud, then your turn to speak.": "一节短课：先听朗读，再轮到你开口。", "Claude writes a passage at your level, reads it to you, and checks how you repeat it or answer its question.": "Claude 按你的水平写一段短文读给你听，再检查你的跟读或回答。", "Open Speaking Coach in the Claude app to start.": "在 Claude 应用中打开口语教练即可开始。", "Show translation": "显示译文", "▶ Listen": "▶ 听", "Slow": "慢速", "Listening needs the Claude app.": "听力功能需要 Claude 应用。", "Your turn": "轮到你了", "What to say": "要说什么", "Repeat the passage": "跟读这段短文", "Speaking needs dictation in the Claude app or Chrome. You can type what you would say instead.": "口语输入需要 Claude 应用或 Chrome 的听写功能。你也可以把想说的话打出来。", "● Speak": "● 说话", "■ Stop": "■ 停止", "✦ Check": "✦ 检查", "Clear": "清除", "Microphone use was declined. You can type instead.": "麦克风权限被拒绝了，你可以改为打字。", "Dictation isn't available here.": "这里无法使用听写。", "Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined that one. Try another topic.": "Claude 拒绝了这次请求，换个话题试试。", "Sign in to Claude again.": "请重新登录 Claude。", "Writing your lesson…": "正在写课程…", "Couldn't write a lesson. Try again.": "没能生成课程，请重试。", "Press Speak and say something first.": "先按“说话”说点什么。", "Type what you would say first.": "先打出你想说的话。", "Checking…": "检查中…", "A more natural answer": "更自然的回答", "Couldn't check that. Try again.": "没能检查，请重试。", "Open Speaking Coach in the Claude app to practice with Claude.": "在 Claude 应用中打开口语教练，即可和 Claude 一起练习。", "Install as app": "安装为应用"};
+  const PATTERNS=([["(\\d+)-day streak", "连续 $1 天"], ["Answer: (.*)", "回答：$1"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.passage, .trans, .card h2, .phr, #said, .fix, #fb > p:not(.st)");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 const $=id=>document.getElementById(id);
 const LANGS=[["English","en"],["Spanish","es"],["French","fr"],["German","de"],["Japanese","ja"],["Korean","ko"],["Chinese (Mandarin)","zh"],["Italian","it"],["Portuguese","pt"]];
 const store={get(k,d){try{const v=localStorage.getItem("talkback."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("talkback."+k,JSON.stringify(v))}catch{}}};
-const NATIVE=(()=>{const n=(navigator.language||"en").toLowerCase();return n.startsWith("zh")?"Chinese":({ja:"Japanese",ko:"Korean",es:"Spanish",fr:"French",de:"German",pt:"Portuguese",it:"Italian"}[n.slice(0,2)]||"English")})();
+const NATIVE=(()=>{const n=(navigator.language||"en").toLowerCase();return window.__ZH?"Chinese (Simplified)":n.startsWith("zh")?"Chinese":({ja:"Japanese",ko:"Korean",es:"Spanish",fr:"French",de:"German",pt:"Portuguese",it:"Italian"}[n.slice(0,2)]||"English")})();
 $("lang").innerHTML=LANGS.map(([n,c])=>`<option value="${c}">${n}</option>`).join("");
 $("lang").value=store.get("lang",NATIVE==="English"?"es":"en");
 $("level").value=store.get("level","B1");$("topic").value=store.get("topic","Daily life");
@@ -83,6 +134,7 @@ function streak(){
   return {s,t,y};
 }
 function bump(){const {s,t,y}=streak();if(s.last===t)return;store.set("streak",{n:s.last===y?s.n+1:1,last:t});streak();}
+const tx=t=>window.__tr?window.__tr(t):t;
 function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
 function render(){
@@ -91,7 +143,7 @@ function render(){
     return;
   }
   $("lesson").innerHTML=`<div class="card">
-    <div class="eyebrow">${esc(L.langName)} · ${esc(L.level)} · ${esc(L.topic)}</div>
+    <div class="eyebrow">${esc(tx(L.langName))} · ${esc(L.level)} · ${esc(tx(L.topic))}</div>
     <h2>${esc(L.title)}</h2>
     <p class="passage">${esc(L.passage)}</p>
     <details><summary class="st" style="cursor:pointer">Show translation</summary><p class="trans">${esc(L.translation)}</p></details>
@@ -101,7 +153,7 @@ function render(){
   <div class="card">
     <div class="eyebrow">Your turn</div>
     <div class="row"><select id="task" aria-label="What to say"><option value="shadow">Repeat the passage</option><option value="answer">Answer: ${esc(L.question)}</option></select></div>
-    ${dict?`<div class="said" id="said" data-empty="Press Speak and talk. Your words appear here."></div>`:`<textarea id="typed" placeholder="Speaking needs dictation in the Claude app or Chrome. You can type what you would say instead."></textarea>`}
+    ${dict?`<div class="said" id="said" data-empty="${window.__t("Press Speak and talk. Your words appear here.","按“说话”后开口，你说的话会显示在这里。")}"></div>`:`<textarea id="typed" placeholder="Speaking needs dictation in the Claude app or Chrome. You can type what you would say instead."></textarea>`}
     <div class="row">${dict?`<button class="btn mic" id="mic">● Speak</button>`:""}<button class="btn pri" id="check">✦ Check</button><button class="btn" id="redo" hidden>Clear</button></div>
     <div id="fb"></div>
   </div>`;
@@ -163,6 +215,10 @@ async function check(){
   finally{$("check").disabled=false;}
 }
 
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"speaking-coach-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#FF6BAA\"/><stop offset=\"1\" stop-color=\"#C2185B\"/><\/linearGradient><radialGradient id=\"speaking-coach-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"speaking-coach-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"speaking-coach-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><linearGradient id=\"speaking-coach-mic\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#fff\"/><stop offset=\"1\" stop-color=\"#E4E7EE\"/><\/linearGradient><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#speaking-coach-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#speaking-coach-sh)\"/><g fill=\"none\" stroke=\"#fff\" stroke-linecap=\"round\"><path d=\"M240 400q-50 110 0 220\" stroke-width=\"30\" stroke-opacity=\".55\"/><path d=\"M784 400q50 110 0 220\" stroke-width=\"30\" stroke-opacity=\".55\"/><path d=\"M310 440q-30 70 0 140\" stroke-width=\"30\"/><path d=\"M714 440q30 70 0 140\" stroke-width=\"30\"/><\/g><g filter=\"url(#speaking-coach-ds)\"><rect x=\"402\" y=\"180\" width=\"220\" height=\"400\" rx=\"110\" fill=\"url(#speaking-coach-mic)\"/><path d=\"M440 300h144M440 360h144M440 420h144\" stroke=\"#C9CDD6\" stroke-width=\"14\" stroke-linecap=\"round\"/><path d=\"M352 500a160 160 0 0 0 320 0\" fill=\"none\" stroke=\"#fff\" stroke-width=\"34\" stroke-linecap=\"round\"/><rect x=\"495\" y=\"660\" width=\"34\" height=\"120\" rx=\"17\" fill=\"#fff\"/><rect x=\"400\" y=\"770\" width=\"224\" height=\"40\" rx=\"20\" fill=\"#fff\"/><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){
   const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
   const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#7a63ff");g.addColorStop(1,"#4330c4");
@@ -180,7 +236,54 @@ streak();render();
   [sample,tts,dict,desktop]=await Promise.all([use("sample"),use("tts"),use("dictation"),use("desktop")]);
   $("new").disabled=!sample;onDict();render();
   if(!sample) $("st").textContent="Open Speaking Coach in the Claude app to practice with Claude.";
-  if(desktop?.tray){desktop.app.dock.setIcon(dockIcon()).catch(()=>{});desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:32,width:620,height:760,minWidth:380,minHeight:520}).catch(()=>{});}
+  if(desktop?.tray){dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:32,width:620,height:760,minWidth:380,minHeight:520}).catch(()=>{});}
   else if(desktop&&await desktop.install.state().catch(()=>"")==="available"){const b=document.createElement("button");b.className="btn";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});document.querySelector("header").append(b);}
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>

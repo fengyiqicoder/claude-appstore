@@ -1,0 +1,29 @@
+{"dict":{
+"Pomodoro Timer":"番茄钟",
+"Focus":"专注","Short break":"短休息","Long break":"长休息",
+"Ready to focus":"准备专注","Focusing":"专注中","On a break":"休息中","Paused":"已暂停","Time for a break":"该休息了",
+"Reset":"重置","Start":"开始","Pause":"暂停","Resume":"继续","Skip":"跳过","Skip to next":"跳到下一段",
+"Sessions today":"今日完成数",
+"What do you want to get done today? Dump it all here, messy is fine.":"今天想完成什么？都写在这里，乱一点也没关系。",
+"What to get done":"要完成的事",
+"Claude turns it into focus sessions.":"Claude 会把它拆成一个个专注时段。",
+"✦ Plan my sessions":"✦ 帮我排时段","New plan":"新计划","Done":"已完成",
+"All done. Nice work.":"全部完成，干得漂亮。",
+"Write what you want to get done first.":"先写下你想完成的事。",
+"Thinking…":"思考中…",
+"Claude is busy or you hit your usage limit. Try later.":"Claude 正忙，或你已达到用量上限，请稍后再试。",
+"Claude isn't allowed for this app.":"此应用未获准使用 Claude。",
+"Claude declined this one. Try rewording.":"Claude 拒绝了这次请求，换个说法试试。",
+"Couldn't make a plan. Try again.":"没能生成计划，请重试。",
+"Settings":"设置","Focus (minutes)":"专注（分钟）","Start next session automatically":"自动开始下一段",
+"Press Option+Shift+P anywhere to start or pause. The countdown shows in your menu bar.":"在任何地方按 Option+Shift+P 开始或暂停，倒计时会显示在菜单栏。",
+"Start a session to turn on the menu bar timer and notifications.":"开始一个时段即可开启菜单栏计时和通知。",
+"Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.":"在 Mac 或 Windows 版 Claude 中打开，即可安装为带菜单栏计时的应用。",
+"Install as app":"安装为应用",
+"Installed. Open Pomodoro Timer from your Applications or Start menu.":"已安装。请从“应用程序”或“开始”菜单打开番茄钟。"
+},
+"patterns":[
+["(\\d+) today","今天完成 $1 个"],
+["(\\d+) sessions? left, about ([\\d.]+) h","还剩 $1 个时段，约 $2 小时"]
+],
+"skip":".tasks li span"}

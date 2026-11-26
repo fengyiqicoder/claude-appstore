@@ -83,6 +83,7 @@ body.app.noside #bar{padding-left:80px}
 #svg .obj-hit{cursor:pointer}
 #stage.panning,#stage.panning #svg .n{cursor:grabbing}
 #stage.relmode,#stage.relmode #svg .n{cursor:crosshair}
+#editor.armed{opacity:0!important;pointer-events:none;width:2px!important;height:2px!important;border:0!important;padding:0!important;box-shadow:none!important}
 #editor{position:absolute;z-index:5;border:2px solid var(--accent);border-radius:6px;background:var(--panel);color:var(--fg);resize:none;overflow:hidden;outline:none;padding:2px 4px;line-height:1.3;box-shadow:var(--shadow);white-space:pre-wrap;word-break:break-word}
 .float{position:absolute;z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:2px;padding:3px}
 #zoom{right:max(12px,env(safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px))}
@@ -129,6 +130,7 @@ body.app.noside #bar{padding-left:80px}
 .orow.closed .bul i{box-shadow:0 0 0 4px var(--chip)}
 .orow .ot{flex:1;min-width:0;outline:none;padding:2px 4px;line-height:20px;white-space:pre-wrap;word-break:break-word;font-size:14px}
 .orow .ot:empty::before{content:"Topic";color:var(--muted)}
+html[lang="zh-CN"] .orow .ot:empty::before{content:"主题"}
 .orow.root .ot{font-size:22px;font-weight:700;line-height:30px}
 .orow.root .bul,.orow.root .tw{height:34px}
 .orow .on{color:var(--muted);font-size:12.5px;padding:0 4px 4px;white-space:pre-wrap}
@@ -274,9 +276,61 @@ body.zen #side,body.zen #insp{display:none!important}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"Mind Map": "思维导图", "Maps": "导图", "Import .xmind, .opml, .mm, Markdown or text": "导入 .xmind、.opml、.mm、Markdown 或文本", "New map": "新建导图", "Search maps": "搜索导图", "Saved on this computer. Drop .xmind, .opml, .mm or .md files anywhere to import.": "保存在这台电脑上。把 .xmind、.opml、.mm 或 .md 文件拖到任意位置即可导入。", "Saving back to Xmind": "存回 Xmind", "Show or hide maps (Cmd+\\)": "显示或隐藏导图列表（Cmd+\\）", "Map name": "导图名称", "Undo (Cmd+Z)": "撤销（Cmd+Z）", "Redo (Shift+Cmd+Z)": "重做（Shift+Cmd+Z）", "Add subtopic (Tab)": "添加子主题（Tab）", "Add topic (Enter)": "添加主题（Enter）", "Relationship (Shift+Cmd+L)": "联系（Shift+Cmd+L）", "Find (Cmd+F)": "查找（Cmd+F）", "Map view": "导图视图", "Map": "导图", "Outline view (Shift+Cmd+O)": "大纲视图（Shift+Cmd+O）", "Outline": "大纲", "Present (Shift+Cmd+P)": "演示（Shift+Cmd+P）", "Export": "导出", "More": "更多", "Show or hide inspector (Cmd+Option+I)": "显示或隐藏检查器（Cmd+Option+I）", "Find in map": "在导图中查找", "Previous (Shift+Enter)": "上一个（Shift+Enter）", "Next (Enter)": "下一个（Enter）", "Close (Esc)": "关闭（Esc）", "Cancel": "取消", "Fit map (Cmd+0)": "适应窗口（Cmd+0）", "Zoom out (Cmd+-)": "缩小（Cmd+-）", "Reset to 100% (Cmd+1)": "恢复到 100%（Cmd+1）", "Zoom in (Cmd+=)": "放大（Cmd+=）", "Previous (Left)": "上一页（←）", "Next (Right or Space)": "下一页（→ 或空格）", "Show only main topics, or step into every branch": "只看分支主题，或逐个进入每个分支", "Main topics": "分支主题", "Every branch": "每个分支", "Exit": "退出", "Start a mind map": "开始一张思维导图", "Make a new map, bring your maps from Xmind, MindNode, MindMeister or FreeMind, or let Claude draft one.": "新建一张导图，从 Xmind、MindNode、MindMeister 或 FreeMind 导入，或者让 Claude 起个草稿。", "From template": "从模板新建", "Import files": "导入文件", "Drop to import .xmind, .opml, .mm, .md, .txt or .zip": "松开即可导入 .xmind、.opml、.mm、.md、.txt 或 .zip", "Topic": "主题", "Close": "关闭", "Editing…": "编辑中…", "Saved": "已保存", "Not saved: storage is full": "未保存：存储空间已满", "Not kept after closing": "关闭后不会保留", "This window can't store data. Press Cmd+S to save the map as a file.": "这个窗口无法存储数据。按 Cmd+S 把导图存成文件。", "Nothing to undo": "没有可撤销的操作", "Select one or more floating topics to group them in a zone.": "请选中一个或多个自由主题，再把它们归入区域。", "Zone removed. Its topics stay.": "已移除区域，里面的主题仍保留。", "Undo": "撤销", "The central topic can't be deleted. Rename it instead.": "中心主题不能删除，可以改个名字。", "Now a floating topic. Drag it onto any topic to attach it again.": "已变成自由主题。把它拖到任意主题上即可重新挂接。", "Select topics that share the same parent.": "请选择同一父主题下的主题。", "Select one or more subtopics to wrap in a boundary.": "请选中一个或多个子主题，再加外框。", "Select one or more subtopics to summarize.": "请选中一个或多个子主题，再加概要。", "Select the topic to start the relationship from.": "请先选中联系的起点主题。", "Click the topic to connect to": "点击要连接的主题", "Copied": "已复制", "Select a topic to paste the image into.": "请先选中要粘贴图片的主题。", "That image couldn't be read. Try a PNG or JPEG.": "无法读取这张图片，请换成 PNG 或 JPEG。", "Focused branch. Press Esc to see the whole map": "当前专注的分支。按 Esc 查看整张导图", "Focus here": "专注于此", "Show all": "显示全部", "No match": "没有匹配", "Zen mode. Press Cmd+. to leave": "禅模式。按 Cmd+. 退出", "Zen mode off": "已退出禅模式", "Select a topic first.": "请先选中一个主题。", "Duplicated": "已创建副本", "Files with several sheets are saved as .xmind.": "含多个画布的文件会存为 .xmind。", "Opened the old version as a copy": "已把旧版本作为副本打开", "Saving files works when the app runs in Claude. Use Copy in the More menu instead.": "在 Claude 中运行时才能保存文件。可以改用“更多”菜单里的复制。", "How it works": "怎么回事", "The file couldn't be saved. Try again.": "文件没能保存，请重试。", "The PDF maker didn't load. Export PNG instead.": "PDF 生成器没有加载，请改为导出 PNG。", "Export failed: unknown error": "导出失败：未知错误", "Saving failed: unknown error": "保存失败：未知错误", "That file is too large to save here.": "文件太大，无法在这里保存。", "Another save is waiting for you. Finish that one first.": "还有一个保存在等你确认，请先完成它。", "This app can't save files here. Open it on a computer.": "这个应用无法在这里保存文件，请在电脑上打开。", "Saving files isn't available here.": "这里无法保存文件。", "Saving files isn't allowed for this app.": "这个应用没有保存文件的权限。", "Install as app": "安装为应用", "Keyboard shortcuts": "键盘快捷键", "Add subtopic": "添加子主题", "Add topic after": "在后面添加主题", "Add topic before": "在前面添加主题", "Insert parent topic": "插入父主题", "Floating topic": "自由主题", "double-click canvas": "双击画布", "Callout": "标注", "Insert image": "插入图片", "Copy / Paste style": "复制 / 粘贴样式", "Select with a box": "框选", "Shift+drag canvas": "Shift+拖动画布", "⇧drag canvas": "⇧拖动画布", "Drill down / up": "进入 / 返回分支", "Save to original file": "存回原文件", "Open files": "打开文件", "Edit topic": "编辑主题", "Space or F2": "空格或 F2", "Start typing to replace": "直接输入即可替换", "any letter": "任意字母", "New line while editing": "编辑时换行", "Delete topic": "删除主题", "Delete": "删除", "Move between topics": "在主题间移动", "Arrow keys": "方向键", "Move topic up / down": "上移 / 下移主题", "Fold / unfold branch": "折叠 / 展开分支", "Unfold everything": "全部展开", "Undo / Redo": "撤销 / 重做", "Copy / Cut / Paste topics": "复制 / 剪切 / 粘贴主题", "Duplicate": "创建副本", "Bold / Italic": "粗体 / 斜体", "Note": "备注", "Link": "链接", "Task checkbox": "任务复选框", "Priority 1–6": "优先级 1–6", "Relationship": "联系", "Boundary": "外框", "Summary": "概要", "Focus on branch": "专注于分支", "Find": "查找", "Fit map / 100%": "适应窗口 / 100%", "Zoom in / out": "放大 / 缩小", "Outline view": "大纲视图", "Present": "演示", "Zen mode": "禅模式", "⌘⌥F or ⌘.": "⌘⌥F 或 ⌘.", "Ctrl+Alt+F or Ctrl+.": "Ctrl+Alt+F 或 Ctrl+.", "Maps sidebar": "导图侧栏", "Inspector": "检查器", "Select root": "选中中心主题", "Space": "空格", "Edit": "编辑", "Insert parent": "插入父主题", "Unfold branch": "展开分支", "Fold branch": "折叠分支", "Leave focus": "退出专注", "Focus on this branch": "专注于这个分支", "Note…": "备注…", "Add image…": "添加图片…", "Callout…": "标注…", "Copy style": "复制样式", "Paste style": "粘贴样式", "Detach as floating topic": "拆出为自由主题", "Group into zone": "归入区域", "✦ Expand with ideas": "✦ 用新想法展开", "✦ Summarize branch": "✦ 总结这个分支", "Copy branch as text": "把分支复制为文本", "Focus on selected branch": "专注于所选分支", "Unfold all": "全部展开", "Fold to main topics": "折叠到分支主题", "Fold to level 2": "折叠到第 2 层", "Copy map as outline text": "把导图复制为大纲文本", "Copy as Markdown": "复制为 Markdown", "Version history…": "版本历史…", "Add sheet to this file": "向这个文件添加画布", "New map from template…": "从模板新建导图…", "Saving back to Xmind, MindNode, FreeMind": "存回 Xmind、MindNode、FreeMind", "Expand": "展开", "Collapse": "折叠", "Floating topics": "自由主题", "No map open.": "没有打开的导图。", "Auto": "自动", "None": "无", "Select a topic to add notes, links, labels, markers, images and styles.": "选中主题后，可以添加备注、链接、标签、标记、图片和样式。", "Quick start": "快速上手", "Select a topic and press": "选中主题后按", "for a subtopic or": "添加子主题，按", "for a sibling. Double-click the canvas for a floating topic. Drag a topic onto another to move it, or Shift+drag the canvas to select several.": "添加同级主题。双击画布可添加自由主题。把主题拖到另一个主题上可以移动它，按住 Shift 拖动画布可以框选多个。", "All shortcuts": "全部快捷键", "Central topic": "中心主题", "■ Stop dictating": "■ 停止听写", "🎙 Dictate note": "🎙 听写备注", "Listening…": "正在听…", "Open link": "打开链接", "Open": "打开", "Labels": "标签", "Comma separated, e.g. Q3, Design": "用逗号分隔，例如 Q3, 设计", "Markers": "标记", "Priority": "优先级", "Progress": "进度", "Flags": "旗帜", "Stars": "星星", "Faces": "表情", "Symbols": "符号", "Branch color": "分支颜色", "Fill": "填充", "Shape": "形状", "Box": "方框", "Pill": "胶囊", "Line": "线条", "Text": "文字", "Solid": "实线", "Image": "图片", "Replace": "替换", "Remove": "移除", "Add image": "添加图片", "or paste one": "或直接粘贴", "Number subtopics": "子主题编号", "Emoji and stickers": "表情和贴纸", "Add as icon": "作为图标", "Add as sticker": "作为贴纸", "Add as a large sticker": "添加为大贴纸", "Add as an icon before the text": "添加为文字前的图标", "Side": "所在侧", "Left": "左", "Right": "右", "Structure": "结构", "Focus": "专注", "Detach as floating": "拆出为自由主题", "Floating topic. Drag it onto any topic to attach it.": "自由主题。拖到任意主题上即可挂接。", "Branch structure": "分支结构", "Lays out this topic's subtopics in their own structure, like Xmind.": "让这个主题的子主题使用单独的结构，和 Xmind 一样。", "Matrix column": "矩阵列", "Label": "标签", "Zone": "区域", "Color": "颜色", "Export zone as PNG": "把区域导出为 PNG", "Ungroup": "取消分组", "Describe the connection": "描述这条联系", "Arrows": "箭头", "One way": "单向", "Both ways": "双向", "Dashed": "虚线", "Curve up": "向上弯", "Straight": "直线", "Curve down": "向下弯", "Reverse direction": "反转方向", "Summary text": "概要文字", "Optional label": "可选标签", "Covers": "覆盖范围", "Include previous": "包含前一个", "Include next": "包含后一个", "Shrink": "缩小范围", "Logic": "逻辑图", "Logic left": "逻辑图（向左）", "Brace": "括号图", "Org chart": "组织结构图", "Org chart up": "组织结构图（向上）", "Tree": "树状图", "Tree table": "树形表格", "Matrix": "矩阵图", "Matrix by column": "矩阵图（按列）", "Timeline": "时间轴", "Timeline vertical": "竖向时间轴", "Fishbone": "鱼骨图", "Fishbone left": "鱼骨图（向左）", "Same as map": "跟随导图", "Org up": "组织图（向上）", "Theme": "主题风格", "Classic": "经典", "Paper": "纸张", "Mono": "黑白", "Pastel": "马卡龙", "Midnight": "午夜", "Blueprint": "蓝图", "Branch lines": "分支连线", "Curved": "曲线", "Elbow": "折线", "Rounded": "圆角折线", "Matrix columns": "矩阵列", "e.g. Pros, Cons, Cost": "例如 优点, 缺点, 成本", "Main topics are the rows. Pick a subtopic's column in the Topic tab; it's stored as the topic's first label, as in Xmind.": "分支主题是行。在“主题”标签页里给子主题选择所在列；列名存为主题的第一个标签，和 Xmind 一样。", "Main topics are the columns. Pick a subtopic's column in the Topic tab; it's stored as the topic's first label, as in Xmind.": "分支主题是列。在“主题”标签页里给子主题选择所在列；列名存为主题的第一个标签，和 Xmind 一样。", "Spacing": "间距", "Compact": "紧凑", "Normal": "适中", "Roomy": "宽松", "Options": "选项", "Rainbow branches": "彩虹分支", "Dot grid on canvas": "画布点阵", "Folding": "折叠", "Main topics only": "只显示分支主题", "Two levels": "两层", "This map": "这张导图", "No maps yet.": "还没有导图。", "Map actions": "导图操作", "Rename": "重命名", "Export…": "导出…", "Delete map": "删除导图", "Blank map": "空白导图", "From template…": "从模板新建…", "just now": "刚刚", "New map from a template": "从模板新建导图", "Version history": "版本历史", "Restore": "恢复", "Open as copy": "作为副本打开", "No earlier versions yet. Keep editing and they'll appear here.": "还没有更早的版本。继续编辑，版本就会出现在这里。", "Saving back to Xmind, MindNode and FreeMind": "存回 Xmind、MindNode 和 FreeMind", "Press": "按", "to save the map back to the file it came from, in the same format. Maps from one .xmind file with several sheets are saved together again.": "可以把导图存回它原来的文件，格式不变。来自同一个 .xmind 文件的多个画布会一起存回。", "Claude can only hand out common file types, so a": "Claude 只能交付常见的文件类型，所以", "file arrives inside a zip named": "文件会装在 zip 里送达，文件名是", "Mac:": "Mac：", "double-click the zip in Downloads. Finder puts": "在“下载”里双击这个 zip，访达会把", "next to it, ready to open.": "放在它旁边，直接就能打开。", "Windows:": "Windows：", "open the zip and drag": "打开 zip，把", "out, or right-click › Extract All.": "拖出来，或右键 › 全部解压缩。", "Opening the zip here also works: drop it on this window.": "也可以直接在这里打开 zip：把它拖到这个窗口上。", "No zip at all: Markdown (.md) and PNG, SVG and PDF save directly. Xmind and MindNode both import Markdown (File › Import), and OmniOutliner and Workflowy read it too.": "不用 zip 的格式：Markdown（.md）以及 PNG、SVG、PDF 会直接保存。Xmind 和 MindNode 都能导入 Markdown（文件 › 导入），OmniOutliner 和 Workflowy 也能读取。", "Got it": "知道了", "Save": "保存", "Image (focused branch)": "图片（专注的分支）", "PNG image": "PNG 图片", "SVG vector": "SVG 矢量图", "PDF document": "PDF 文档", "Open in other apps": "在其他应用中打开", "Open in other apps (focused branch)": "在其他应用中打开（专注的分支）", "Plain text outline": "纯文本大纲", "How .xmind, .opml, .mm files arrive": ".xmind、.opml、.mm 文件是怎么送达的", "Backup": "备份", "All maps as one Xmind file": "全部导图存为一个 Xmind 文件", "All maps as JSON backup": "全部导图存为 JSON 备份", "Copy as outline text": "复制为大纲文本", "Open Mind Map in the Claude app to brainstorm with Claude.": "在 Claude 应用中打开思维导图，就能和 Claude 一起头脑风暴。", "New map with Claude": "用 Claude 新建导图", "A topic (“Launch plan for a coffee cart”) or paste notes, a transcript or an article…": "输入一个主题（如“咖啡车的开张计划”），或粘贴笔记、文字稿、文章…", "Light": "简要", "Detailed": "详细", "Generate map": "生成导图", "Selected topic": "所选主题", "Expand ideas": "展开想法", "Brainstorm deeper": "深入头脑风暴", "Summarize branch": "总结分支", "Rewrite labels": "改写主题文字", "Or ask: “add pros and cons”, “translate to Spanish”…": "或者直接说：“加上优缺点”“翻译成英文”…", "Go": "执行", "Select a topic to expand it, brainstorm, summarize or rewrite its labels.": "选中一个主题，就能展开、头脑风暴、总结或改写它的文字。", "Turn this branch into": "把这个分支变成", "Turn the map into": "把导图变成", "Article": "文章", "Action list": "行动清单", "Executive summary": "执行摘要", "Slide outline": "幻灯片大纲", "Outline (instant)": "大纲（即时）", "Stop": "停止", "Apply changes": "应用修改", "Discard": "放弃", "Copy": "复制", "Save .md": "保存 .md", "Add to note": "加到备注", "Add as subtopic": "添加为子主题", "Open as new map": "作为新导图打开", "Thinking…": "思考中…", "Writing…": "写作中…", "Stopped": "已停止", "Something went wrong. Try again.": "出了点问题，请重试。", "The topic was removed before Claude finished.": "Claude 完成之前，这个主题已被删除。", "Cut short. Try a smaller branch.": "内容被截断了，请换一个小一点的分支。", "Cut short. Try a smaller branch (focus on it first).": "内容被截断了，请换一个小一点的分支（先专注于它）。", "Done. Copy it or save it as Markdown.": "完成。可以复制，或存为 Markdown。", "Outline of the map as Markdown.": "导图的 Markdown 大纲。", "Discarded.": "已放弃。", "Claude didn't change any labels.": "Claude 没有修改任何文字。", "Type a topic or paste some text first.": "请先输入一个主题或粘贴一些文字。", "Select a topic to expand.": "请先选中要展开的主题。", "Added to the note": "已加到备注", "Opened as a new map": "已作为新导图打开", "Claude is busy or you've hit your usage limit. Try again in a bit.": "Claude 正忙，或者你已达到用量上限。请稍后再试。", "Claude isn't allowed for this app.": "这个应用不能使用 Claude。", "Claude isn't available on this account.": "这个账号无法使用 Claude。", "Claude declined this request. Try rewording it.": "Claude 拒绝了这个请求，换个说法试试。", "Sign in to Claude again, then retry.": "请重新登录 Claude 后再试。", "That's too much text at once. Try a shorter piece or a smaller branch.": "一次的文字太多了，请换短一点的内容或小一点的分支。", "Claude's answer came back in the wrong shape. Try again.": "Claude 返回的格式不对，请重试。", "Dictation is off for this app. Type the note instead, or allow it in the app's Permissions menu.": "这个应用的听写已关闭。可以直接输入备注，或在应用的权限菜单里允许。", "Dictation isn't available for your account or language here.": "你的账号或语言在这里不支持听写。", "Dictation stopped. Try again in a moment.": "听写已停止，请稍后再试。", "Dictation was not allowed. You can still type the note.": "听写未获允许，仍可直接输入备注。", "Dictation isn't available here. Type the note instead.": "这里不支持听写，请直接输入备注。", "Dictation is busy. Try again shortly.": "听写正忙，请稍后再试。", "Dictation couldn't start. Try again.": "听写没能启动，请重试。", "task start": "未开始", "task quarter": "完成 25%", "task half": "完成 50%", "task 3quar": "完成 75%", "task done": "已完成", "flag red": "红旗", "flag orange": "橙旗", "flag yellow": "黄旗", "flag green": "绿旗", "flag blue": "蓝旗", "flag purple": "紫旗", "star red": "红星", "star orange": "橙星", "star yellow": "黄星", "star green": "绿星", "star blue": "蓝星", "star purple": "紫星", "smile": "微笑", "laugh": "大笑", "cry": "哭泣", "surprise": "惊讶", "angry": "生气", "question": "问号", "exclam": "感叹号", "info": "信息", "wrong": "错误", "right": "正确", "idea": "想法", "pin": "图钉", "heart": "爱心", "money": "钱", "time": "时间", "people": "人物"};
+  const PATTERNS=([["(\\d+) topics selected", "已选择 $1 个主题"], ["Copied (\\d+) topics", "已复制 $1 个主题"], ["Pasted (\\d+) topics", "已粘贴 $1 个主题"], ["(\\d+) found", "找到 $1 个"], ["(\\d+) of (\\d+)", "第 $1 个，共 $2 个"], ["Style copied\\. Select topics and press (.+) to paste it\\.", "样式已复制。选中主题后按 $1 粘贴。"], ["Copy a style first with (.+)\\.", "请先用 $1 复制样式。"], ["Copy didn't work here\\. Select the text and press (.+)\\.", "这里无法复制。请选中文字后按 $1。"], ["Zone with (\\d+) floating topics?\\. Drag its edge or label to move them together\\.", "区域里有 $1 个自由主题。拖动边缘或标签可以整体移动。"], ["Relationship: (.*) → (.*)", "联系：$1 → $2"], ["Boundary around (\\d+) topics? under “(.*)”", "外框：“$2”下的 $1 个主题"], ["Summary around (\\d+) topics? under “(.*)”", "概要：“$2”下的 $1 个主题"], ["(\\d+) subtopics below", "下面有 $1 个子主题"], ["Add details, sources, to-dos… \\((.+)\\)", "添加详情、来源、待办…（$1）"], ["https://… \\((.+)\\)", "https://…（$1）"], ["A short comment shown above the topic \\((.+)\\)", "显示在主题上方的简短批注（$1）"], ["(\\d+) topics · (\\d+) words · (\\d+) notes · (\\d+) relationships", "$1 个主题 · $2 个词 · $3 条备注 · $4 条联系"], ["Created “(.*)” with (\\d+) topics\\.", "已创建“$1”，共 $2 个主题。"], ["Created a map with (\\d+) topics", "已创建导图，共 $1 个主题"], ["Created (\\d.*)", "创建于 $1"], ["(.+ · )?(\\d+) topics · just now", "$1$2 个主题 · 刚刚"], ["(.+ · )?(\\d+) topics · (\\d+)m ago", "$1$2 个主题 · $3 分钟前"], ["(.+ · )?(\\d+) topics · (\\d+)h ago", "$1$2 个主题 · $3 小时前"], ["(.+ · )?(\\d+) topics · (\\d+)d ago", "$1$2 个主题 · $3 天前"], ["(.+ · )?(\\d+) topics · (\\d[^A-Za-z]*)", "$1$2 个主题 · $3"], ["(\\d+) topics", "$1 个主题"], ["(\\d+) sheets", "$1 个画布"], ["Save to (.+)", "保存到 $1"], ["Imported (\\d+) maps", "已导入 $1 张导图"], ["Imported “(.*)” · (\\d+) topics", "已导入“$1” · $2 个主题"], ["Couldn't import (.+?): The zip reader didn't load\\. Check your connection and reopen the app\\.", "无法导入 $1：zip 读取组件没有加载。请检查网络后重新打开应用。"], ["Couldn't import (.+?): This \\.xmind file has no map content\\.", "无法导入 $1：这个 .xmind 文件里没有导图内容。"], ["Couldn't import (.+?): No sheets found in this \\.xmind file\\.", "无法导入 $1：这个 .xmind 文件里没有画布。"], ["Couldn't import (.+?): The file isn't valid XML\\.", "无法导入 $1：文件不是有效的 XML。"], ["Couldn't import (.+?): No outline found in this OPML file\\.", "无法导入 $1：这个 OPML 文件里没有大纲。"], ["Couldn't import (.+?): No mind map found in this \\.mm file\\.", "无法导入 $1：这个 .mm 文件里没有思维导图。"], ["Couldn't import (.+?): This zip has no mind map files inside\\.", "无法导入 $1：这个 zip 里没有导图文件。"], ["Couldn't import (.+?): couldn't be read", "无法导入 $1：无法读取"], ["Couldn't import (.+)", "无法导入 $1"], ["Deleted “(.*)”", "已删除“$1”"], ["New map from “(.*)”", "已用模板“$1”新建导图"], ["Restored the version from (.+)", "已恢复到 $1 的版本"], ["Add sheet to (.+)", "向 $1 添加画布"], ["Saved (.+)\\.zip\\. Double-click it to get (.+)\\.", "已保存 $1.zip。双击它即可得到 $2。"], ["Saved (.+)\\. Remove the \\.(\\w+) ending to open it\\.", "已保存 $1。去掉结尾的 .$2 就能打开。"], ["Saved (.+)", "已保存 $1"], ["Export failed: (.+)", "导出失败：$1"], ["Saving failed: (.+)", "保存失败：$1"], ["Added (\\d+) ideas under “(.*)”\\. Undo with (.+)\\.", "已在“$2”下添加 $1 个想法。按 $3 可撤销。"], ["Added (\\d+) topics", "已添加 $1 个主题"], ["Summary of “(.*)”", "“$1”的概要"], ["(\\d+) labels to review\\. Untick any you want to keep as they are\\.", "有 $1 处文字待确认。想保持原样的请取消勾选。"], ["Changed (\\d+) labels(\\.?)", "已修改 $1 处文字$2"], ["Selected: (.*)", "已选：$1"], ["priority (\\d)", "优先级 $1"], ["Enter adds a topic, Tab and Shift\\+Tab indent, (.+) ticks a task, (.+) moves\\. Changes show on the map\\.", "Enter 添加主题，Tab 和 Shift+Tab 调整缩进，$1 勾选任务，$2 移动。修改会同步到导图。"], ["Same keys as Xmind and MindNode\\. Drag topics onto other topics to move them; drop on the top or bottom edge to reorder; drag one into empty space \\(or hold (.+)\\) to make it a floating topic\\. Drag the canvas to pan, pinch or (.+)\\+scroll to zoom\\.", "快捷键和 Xmind、MindNode 一样。把主题拖到其他主题上可以移动；拖到上边缘或下边缘可以调整顺序；拖到空白处（或按住 $1）会变成自由主题。拖动画布可以平移，双指捏合或 $2+滚动可以缩放。"], ["A version is kept every few minutes while you edit \\(last (\\d+)\\), on this computer only\\. Restoring can be undone with (.+)\\.", "编辑时每隔几分钟保留一个版本（最近 $1 个），只存在这台电脑上。恢复后可以用 $2 撤销。"], ["No maps match “(.*)”\\.", "没有导图匹配“$1”。"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",#vp, #ov, #odoc .ocol, #maplist .mn, #crumbs .crumb:not(.csep), #sheets .st, #fcol, #airev, #aiout, .imgprev");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 "use strict";
 /* ---------- basics ---------- */
 const $=id=>document.getElementById(id);
+const tz=(en,zh)=>window.__ZH?zh:en; // app-provided text in Simplified Chinese for Chinese viewers
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid=()=>Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -304,7 +358,7 @@ document.querySelectorAll("[data-ic]").forEach(e=>e.innerHTML=ic(e.dataset.ic));
 const mod=e=>isMac?e.metaKey:e.ctrlKey;
 
 /* ---------- storage: IndexedDB with localStorage fallback ---------- */
-const DB={db:null,mem:new Map(),
+const DB={db:null,mem:new Map(),canLS:(()=>{try{const k="__mm";localStorage.setItem(k,"1");localStorage.removeItem(k);return true}catch{return false}})(),
   async open(){try{this.db=await new Promise((res,rej)=>{const r=indexedDB.open("mindmap",1);r.onupgradeneeded=()=>r.result.createObjectStore("maps");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);setTimeout(()=>rej("timeout"),4000);});}catch{this.db=null}},
   tx(mode,fn){return new Promise((res,rej)=>{const t=this.db.transaction("maps",mode);const s=t.objectStore("maps");const r=fn(s);t.oncomplete=()=>res(r&&r.result);t.onerror=()=>rej(t.error);});},
   async all(){if(this.db){try{const r=await this.tx("readonly",s=>s.getAll());return r||[]}catch{}}
@@ -317,7 +371,7 @@ const DB={db:null,mem:new Map(),
 
 /* ---------- model ---------- */
 const N=(text,children=[])=>({id:uid(),text:text??"",children});
-function newMap(title="Central Topic",root){const now=Date.now();return {id:uid(),title,created:now,updated:now,root:root||N(title),floats:[],zones:[],rels:[],layout:"map",theme:"auto",line:"curve",rainbow:true,spacing:1,images:{},v:1};}
+function newMap(title=tz("Central Topic","中心主题"),root){const now=Date.now();return {id:uid(),title,created:now,updated:now,root:root||N(title),floats:[],zones:[],rels:[],layout:"map",theme:"auto",line:"curve",rainbow:true,spacing:1,images:{},v:1};}
 let maps=[];            // all maps (full objects; small enough)
 let M=null;             // current map
 const P=new Map(), BY=new Map(), DEPTH=new Map(), FLOAT=new Set(); // parent, byId, depth, floating roots
@@ -657,7 +711,7 @@ function nodeSVG(g,T,exp){
   o+=`<text font-family='${FONT_STACK}' font-size="${f.size}" font-weight="${f.weight}"${f.italic?' font-style="italic"':""} fill="${tc}"${done?' opacity=".55" text-decoration="line-through"':""}>`;
   g.lines.forEach((l,i)=>{o+=`<tspan x="${x}" y="${(ty+i*f.lh+f.lh/2).toFixed(1)}" dominant-baseline="central">${esc(l)||(i===0&&!n.text?"":"")}</tspan>`});
   o+=`</text>`;
-  if(!n.text&&!exp&&!g.pre)o+=`<text x="${x}" y="${ty+f.lh/2}" dominant-baseline="central" font-family='${FONT_STACK}' font-size="${f.size}" fill="${T.muted}" opacity=".7">Topic</text>`;
+  if(!n.text&&!exp&&!g.pre)o+=`<text x="${x}" y="${ty+f.lh/2}" dominant-baseline="central" font-family='${FONT_STACK}' font-size="${f.size}" fill="${T.muted}" opacity=".7">${tz("Topic","主题")}</text>`;
   if(g.trailW){let tx=w-pad[0]-g.trailW+4;const cy=ty+f.lh/2;const mc=g.st==="solid"||g.st==="root"||n.fill?tc:T.muted;
     if(g.tasks){const [a,b]=g.tasks;o+=`<rect x="${tx}" y="${cy-8}" width="26" height="16" rx="8" fill="${a===b?"#2f9e62":mix(mc,fill==="none"?T.bg:fill,.18)}"/><text x="${tx+13}" y="${cy}" font-size="9.5" font-weight="650" text-anchor="middle" dominant-baseline="central" fill="${a===b?"#fff":mc}" font-family='${FONT_STACK}'>${a}/${b}</text>`;tx+=30}
     if(n.note){o+=`<g class="ico-note" transform="translate(${tx},${cy-7})"><path d="M2 1h7l3 3v9H2z M4.5 6.5h5M4.5 9.5h3.5" fill="none" stroke="${mc}" stroke-width="1.3" stroke-linejoin="round"/></g>`;tx+=18}
@@ -697,8 +751,8 @@ function renderSVG(exp=false){
     else if(x.k==="vaxis")e+=`<path d="M${x.x} ${x.y1}V${x.y2}" stroke="${T.muted}" stroke-width="2.5" stroke-linecap="round"/><path d="M${x.x-6} ${x.y2}l6 9 6-9z" fill="${T.muted}"/>`;
     else if(x.k==="seg")e+=`<path d="M${x.x1} ${x.y}H${x.x2}" stroke="${x.c}" stroke-width="1.6" stroke-dasharray="3 3"/>`;
     else if(x.k==="cell")e+=`<rect x="${x.x}" y="${x.y}" width="${x.w}" height="${x.h}" fill="${x.hdr?mix(x.c,T.bg,T.dark?.22:.1):x.d===1?mix(x.c,T.bg,T.dark?.2:.1):T.bg}" stroke="${mix(T.fg,T.bg,.25)}" stroke-width="1"/>`}
-  for(const z of M.zones||[]){const zb=ZONEG.get(z.id);if(!zb)continue;const col=z.color||T.muted;const isS=!exp&&selObj?.t==="zone"&&selObj.id===z.id;mctx.font=`650 12px ${FONT_STACK}`;const lw=mctx.measureText(z.label||"Zone").width+20;
-    b+=`<g class="obj-hit zone" data-obj="zone" data-zid="${z.id}"><rect x="${zb.x}" y="${zb.y}" width="${zb.w}" height="${zb.h}" rx="16" fill="${col}" fill-opacity="${T.dark?.12:.07}" stroke="${isS?(cssv("--accent")||"#4f5bd5"):col}" stroke-width="${isS?2.4:1.4}"/><rect x="${zb.x+12}" y="${zb.y+10}" width="${lw}" height="22" rx="7" fill="${col}"/><text x="${zb.x+22}" y="${zb.y+21}" dominant-baseline="central" font-size="12" font-weight="650" fill="${onColor(col)}" font-family='${FONT_STACK}'>${esc(z.label||"Zone")}</text></g>`}
+  for(const z of M.zones||[]){const zb=ZONEG.get(z.id);if(!zb)continue;const col=z.color||T.muted;const isS=!exp&&selObj?.t==="zone"&&selObj.id===z.id;mctx.font=`650 12px ${FONT_STACK}`;const lw=mctx.measureText(z.label||tz("Zone","区域")).width+20;
+    b+=`<g class="obj-hit zone" data-obj="zone" data-zid="${z.id}"><rect x="${zb.x}" y="${zb.y}" width="${zb.w}" height="${zb.h}" rx="16" fill="${col}" fill-opacity="${T.dark?.12:.07}" stroke="${isS?(cssv("--accent")||"#4f5bd5"):col}" stroke-width="${isS?2.4:1.4}"/><rect x="${zb.x+12}" y="${zb.y+10}" width="${lw}" height="22" rx="7" fill="${col}"/><text x="${zb.x+22}" y="${zb.y+21}" dominant-baseline="central" font-size="12" font-weight="650" fill="${onColor(col)}" font-family='${FONT_STACK}'>${esc(z.label||tz("Zone","区域"))}</text></g>`}
   for(const g of G.values()){const nd=g.n;
     (nd.bounds||[]).forEach((bd,i)=>{if(nd.collapsed)return;const bb=rangeBox(nd,bd.s,bd.e);if(!bb)return;const col=bd.color||(nd===LROOT?G.get(nd.children[bd.s]?.id)?.color:g.color)||g.color;const isS=!exp&&selObj?.t==="bound"&&selObj.pid===nd.id&&selObj.i===i;
       const x=bb.x-9,y=bb.y-9-(bd.label?14:0),w=bb.w+18,h=bb.h+18+(bd.label?14:0);
@@ -743,7 +797,7 @@ function draw(){if(!M){vp.innerHTML="";return}vp.innerHTML=renderSVG(false);appl
 /* ---------- saving ---------- */
 let saveT=0;
 function scheduleSave(){if(!M)return;$("savest").textContent="Editing…";clearTimeout(saveT);const m=M;saveT=setTimeout(()=>saveMap(m),450)}
-async function saveMap(m){m.updated=Date.now();m.title=m.title||m.root.text||"Untitled";const ok=await DB.put(m);if(m===M)$("savest").textContent=ok?"Saved":"Not saved: storage is full";renderList();if(ok)recordHistory(m)}
+async function saveMap(m){m.updated=Date.now();m.title=m.title||m.root.text||tz("Untitled","未命名");const ok=await DB.put(m);if(m===M){const st=$("savest");st.textContent=ok?"Saved":(DB.db||DB.canLS?"Not saved: storage is full":"Not kept after closing");st.title=ok?"":"This window can't store data. Press Cmd+S to save the map as a file."}renderList();if(ok)recordHistory(m)}
 function pruneImages(m){if(!m.images)return;const used=new Set();walkAll(m,n=>{if(n.image?.id)used.add(n.image.id)});for(const k of Object.keys(m.images))if(!used.has(k))delete m.images[k]}
 
 /* ---------- viewport ---------- */
@@ -762,8 +816,8 @@ const toWorld=(cx,cy)=>{const r=stage.getBoundingClientRect();return {x:(cx-r.le
 /* ---------- selection ---------- */
 const primary=()=>selId&&BY.get(selId);
 function addZone(){const fl=topSel().filter(isFloat);if(!fl.length)return toast("Select one or more floating topics to group them in a zone.");
-  const z={id:uid(),label:"Zone",ids:fl.map(f=>f.id)};commit(()=>{for(const f of fl){const g=G.get(f.id);if(typeof f.fx!=="number"&&g){f.fx=g.x;f.fy=g.y+g.h/2}}M.zones=(M.zones||[]).map(x=>({...x,ids:x.ids.filter(i=>!z.ids.includes(i))})).filter(x=>x.ids.length);M.zones.push(z)});selObjSet({t:"zone",id:z.id});setTimeout(()=>{$("objlabel")?.focus();$("objlabel")?.select()},30)}
-function setSel(id,add=false){selObj=null;if(add){if(sel.has(id)){sel.delete(id);if(selId===id)selId=[...sel][0]||null}else{sel.add(id);selId=id}}else{sel=new Set(id?[id]:[]);selId=id||null}draw();renderInsp();if(view==="outline"){}}
+  const z={id:uid(),label:tz("Zone","区域"),ids:fl.map(f=>f.id)};commit(()=>{for(const f of fl){const g=G.get(f.id);if(typeof f.fx!=="number"&&g){f.fx=g.x;f.fy=g.y+g.h/2}}M.zones=(M.zones||[]).map(x=>({...x,ids:x.ids.filter(i=>!z.ids.includes(i))})).filter(x=>x.ids.length);M.zones.push(z)});selObjSet({t:"zone",id:z.id});setTimeout(()=>{$("objlabel")?.focus();$("objlabel")?.select()},30)}
+function setSel(id,add=false){selObj=null;if(add){if(sel.has(id)){sel.delete(id);if(selId===id)selId=[...sel][0]||null}else{sel.add(id);selId=id}}else{sel=new Set(id?[id]:[]);selId=id||null}draw();renderInsp();if(view==="outline"){}else queueMicrotask(arm)}
 function selObjSet(o){sel=new Set();selId=null;selObj=o;draw();renderInsp();if(o&&inspHidden())toggleInsp(true)}
 function topSel(){const ids=[...sel].map(i=>BY.get(i)).filter(Boolean);return ids.filter(n=>!ids.some(o=>o!==n&&isAnc(o,n)))}
 
@@ -806,7 +860,7 @@ function toggleTask(){const ns=[...sel].map(i=>BY.get(i)).filter(Boolean);if(!ns
   commit(()=>ns.forEach(n=>{let a=(n.markers||[]).filter(x=>!x.startsWith("task-"));if(next)a.unshift(next);a.sort((x,y)=>mkOrder(x)-mkOrder(y));if(a.length)n.markers=a;else delete n.markers}))}
 function siblingRange(){const tops=topSel().filter(n=>n!==M.root);if(!tops.length)return null;const p=P.get(tops[0].id);if(!p||tops.some(n=>P.get(n.id)!==p)){toast("Select topics that share the same parent.");return null}const idx=tops.map(n=>p.children.indexOf(n));return {p,s:Math.min(...idx),e:Math.max(...idx)}}
 function addBoundary(){const r=siblingRange();if(!r)return toast("Select one or more subtopics to wrap in a boundary.");const b={id:uid(),s:r.s,e:r.e,label:""};commit(()=>{(r.p.bounds||(r.p.bounds=[])).push(b)});selObjSet({t:"bound",pid:r.p.id,i:r.p.bounds.length-1});setTimeout(()=>$("objlabel")?.focus(),30)}
-function addSummary(){const r=siblingRange();if(!r)return toast("Select one or more subtopics to summarize.");const s={id:uid(),s:r.s,e:r.e,text:"Summary"};commit(()=>{(r.p.sums||(r.p.sums=[])).push(s)});const o={t:"sum",pid:r.p.id,i:r.p.sums.length-1};selObjSet(o);startEditObj(o)}
+function addSummary(){const r=siblingRange();if(!r)return toast("Select one or more subtopics to summarize.");const s={id:uid(),s:r.s,e:r.e,text:tz("Summary","概要")};commit(()=>{(r.p.sums||(r.p.sums=[])).push(s)});const o={t:"sum",pid:r.p.id,i:r.p.sums.length-1};selObjSet(o);startEditObj(o)}
 function startRel(){const n=primary();if(!n)return toast("Select the topic to start the relationship from.");relFrom=n.id;stage.classList.add("relmode");$("modetext").textContent="Click the topic to connect to";$("modehint").hidden=false}
 function endRel(id){const from=relFrom;cancelModes();if(!id||id===from)return;const r={id:uid(),from,to:id,label:""};commit(()=>{(M.rels||(M.rels=[])).push(r)});selObjSet({t:"rel",id:r.id});startEditObj({t:"rel",id:r.id})}
 function cancelModes(){relFrom=null;stage.classList.remove("relmode");$("modehint").hidden=true}
@@ -835,16 +889,23 @@ function placeEditor(){const t=editTarget();if(!t){finishEdit();return}const k=V
   editor.style.font=`${t.italic?"italic ":""}${t.weight} ${fs}px ${FONT_STACK}`;
   mctx.font=editor.style.font;let w=0;for(const l of editor.value.split("\n"))w=Math.max(w,mctx.measureText(l).width);
   const W=Math.max(t.w*k,w+28,90);editor.style.width=W+"px";editor.style.left=(t.x*k+V.x+(t.w*k-W)/2*(editing.obj?1:0)-2)+"px";editor.style.top=(t.y*k+V.y-2)+"px";editor.style.height="auto";editor.style.height=Math.max(t.h*k+4,editor.scrollHeight+2)+"px"}
-function startEdit(id,opt={}){if(!M||!BY.get(id))return;if(view!=="map"){return}finishEdit();const n=BY.get(id);editing={id,isNew:!!opt.isNew,orig:n.text};editor.value=opt.text!=null?opt.text:n.text;editor.hidden=false;placeEditor();editor.focus();if(opt.text!=null){const L=editor.value.length;editor.setSelectionRange(L,L)}else editor.select()}
-function startEditObj(o){finishEdit();let v="";if(o.t==="rel")v=M.rels.find(x=>x.id===o.id)?.label||"";else if(o.t==="sum")v=BY.get(o.pid)?.sums?.[o.i]?.text||"";else return;editing={obj:o,orig:v};editor.value=v;editor.hidden=false;placeEditor();editor.focus();editor.select()}
+function startEdit(id,opt={}){if(!M||!BY.get(id))return;if(view!=="map"){return}finishEdit();const n=BY.get(id);editing={id,isNew:!!opt.isNew,orig:n.text};editor.classList.remove("armed");editor.value=opt.text!=null?opt.text:n.text;editor.hidden=false;placeEditor();editor.focus();if(opt.text!=null){const L=editor.value.length;editor.setSelectionRange(L,L)}else editor.select()}
+function startEditObj(o){finishEdit();editor.classList.remove("armed");let v="";if(o.t==="rel")v=M.rels.find(x=>x.id===o.id)?.label||"";else if(o.t==="sum")v=BY.get(o.pid)?.sums?.[o.i]?.text||"";else return;editing={obj:o,orig:v};editor.value=v;editor.hidden=false;placeEditor();editor.focus();editor.select()}
 function finishEdit(cancel=false){if(!editing)return;const e=editing;editing=null;editor.hidden=true;const v=cancel?e.orig:editor.value.replace(/\s+$/,"");
-  if(e.obj){if(v===e.orig)return;commit(()=>{if(e.obj.t==="rel"){const r=M.rels.find(x=>x.id===e.obj.id);if(r)r.label=v}else{const s=BY.get(e.obj.pid)?.sums?.[e.obj.i];if(s)s.text=v||"Summary"}});return}
+  if(e.obj){if(v===e.orig)return;commit(()=>{if(e.obj.t==="rel"){const r=M.rels.find(x=>x.id===e.obj.id);if(r)r.label=v}else{const s=BY.get(e.obj.pid)?.sums?.[e.obj.i];if(s)s.text=v||tz("Summary","概要")}});return}
   const n=BY.get(e.id);if(!n)return;
-  if(e.isNew&&!v.trim()){const U=undoOf();if(U.u.length){restore(U.u.pop());changed()}const p=P.get(e.id);setSel(selId&&BY.has(selId)?selId:(p?p.id:null));stage.focus();return}
+  if(e.isNew&&!v.trim()){const U=undoOf();if(U.u.length){restore(U.u.pop());changed()}const p=P.get(e.id);setSel(selId&&BY.has(selId)?selId:(p?p.id:null));stage.focus();queueMicrotask(arm);return}
   if(e.isNew){n.text=v;changed()}else if(v!==n.text){commit(()=>{n.text=v})}
-  stage.focus({preventScroll:true})}
-editor.addEventListener("input",placeEditor);
-editor.addEventListener("keydown",e=>{e.stopPropagation();
+  stage.focus({preventScroll:true});queueMicrotask(arm)}
+editor.addEventListener("input",()=>{if(editor.classList.contains("armed")){if(!beginFromArm())editor.value="";else placeEditor();return}placeEditor()});
+editor.addEventListener("compositionstart",()=>{if(editor.classList.contains("armed"))beginFromArm()});
+/* typing on a selected topic: keep the (invisible) editor focused so IME input lands in the topic */
+function arm(){if(editing||!M||view!=="map"||presenting||!selId||!BY.get(selId)||!G.get(selId)){disarm();return}
+  const g=G.get(selId),k=V.k;editor.classList.add("armed");editor.hidden=false;editor.value="";editor.style.left=(g.x*k+V.x)+"px";editor.style.top=(g.y*k+V.y)+"px";
+  const a=document.activeElement;if(a===stage||a===editor||a===document.body||!a)editor.focus({preventScroll:true})}
+function disarm(){if(!editor.classList.contains("armed"))return;const had=document.activeElement===editor;editor.classList.remove("armed");if(!editing){editor.hidden=true;if(had)stage.focus({preventScroll:true})}}
+function beginFromArm(){const n=selId&&BY.get(selId);if(!n||view!=="map"){disarm();return false}editing={id:n.id,isNew:false,orig:n.text};editor.classList.remove("armed");placeEditor();return true}
+editor.addEventListener("keydown",e=>{if(editor.classList.contains("armed")){if(e.isComposing||e.key==="Process"||e.keyCode===229)beginFromArm();return}e.stopPropagation();
   if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();const wasNode=editing&&!editing.obj;finishEdit();if(wasNode&&mod(e))return;}
   else if(e.key==="Tab"&&!e.isComposing){e.preventDefault();const wasNode=editing&&!editing.obj;finishEdit();if(wasNode)e.shiftKey?null:addChild()}
   else if(e.key==="Escape"){e.preventDefault();finishEdit()}});
@@ -892,7 +953,7 @@ function endPtr(e){pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!ptr)retu
   if(p.t==="zone"&&p.moved)changed();
   if(p.t==="node"&&p.moved)dragEnd(e);}
 stage.addEventListener("pointerup",endPtr);stage.addEventListener("pointercancel",e=>{pts.delete(e.pointerId);ptr=null;drag=null;$("ov")&&($("ov").innerHTML="")});
-stage.addEventListener("dblclick",e=>{if(!M||presenting)return;const nd=e.target.closest(".n");if(nd){startEdit(nd.dataset.id);return}
+stage.addEventListener("dblclick",e=>{if(!M||presenting)return;const T=(document.elementFromPoint(e.clientX,e.clientY)||e.target);if(T===editor||T.closest?.(".float"))return;e={clientX:e.clientX,clientY:e.clientY,target:T};const nd=e.target.closest(".n");if(nd){startEdit(nd.dataset.id);return}
   const ob=e.target.closest("[data-obj]");if(ob&&ob.dataset.obj==="zone"){openInsp("topic");setTimeout(()=>$("objlabel")?.focus(),30);return}if(ob){const o=ob.dataset.obj==="rel"?{t:"rel",id:ob.dataset.rid}:{t:ob.dataset.obj,pid:ob.dataset.pid,i:+ob.dataset.i};if(o.t==="bound"){openInsp("topic");setTimeout(()=>$("objlabel")?.focus(),30)}else startEditObj(o);return}
   if(e.target.closest("[data-tog]"))return;
   const w=toWorld(e.clientX,e.clientY);
@@ -924,8 +985,8 @@ function dragMove(e){const w=toWorld(e.clientX,e.clientY);
     else if(g.dir==="d"){const x=tgt.zone==="before"?g.x-8:g.x+g.w+8;o+=`<path d="M${x} ${g.y-4}V${g.y+g.h+4}" stroke="${acc}" stroke-width="3" stroke-linecap="round"/>`}
     else{const y=tgt.zone==="before"?g.y-6:g.y+g.h+6;o+=`<path d="M${g.x} ${y}H${g.x+g.w}" stroke="${acc}" stroke-width="3" stroke-linecap="round"/><circle cx="${g.x}" cy="${y}" r="4" fill="${acc}"/>`}}
   else if(tgt?.side){const rg=G.get(M.root.id);const x=tgt.side==="left"?rg.x-30:rg.x+rg.w+30;o+=`<path d="M${x} ${w.y-14}V${w.y+14}" stroke="${acc}" stroke-width="3" stroke-linecap="round"/>`}
-  else if(tgt?.float){o+=`<rect x="${w.x+6}" y="${w.y+2}" width="150" height="38" rx="9" fill="none" stroke="${acc}" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${w.x+14}" y="${w.y+50}" font-size="11" fill="${acc}" font-family='${FONT_STACK}'>Floating topic</text>`}
-  const n0=drag.nodes[0],g0=G.get(n0.id);mctx.font=`500 13px ${FONT_STACK}`;const label=(n0.text||"Topic").slice(0,40)+(drag.nodes.length>1?` +${drag.nodes.length-1}`:"");const lw=mctx.measureText(label).width+20;
+  else if(tgt?.float){o+=`<rect x="${w.x+6}" y="${w.y+2}" width="150" height="38" rx="9" fill="none" stroke="${acc}" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${w.x+14}" y="${w.y+50}" font-size="11" fill="${acc}" font-family='${FONT_STACK}'>${tz("Floating topic","自由主题")}</text>`}
+  const n0=drag.nodes[0],g0=G.get(n0.id);mctx.font=`500 13px ${FONT_STACK}`;const label=(n0.text||tz("Topic","主题")).slice(0,40)+(drag.nodes.length>1?` +${drag.nodes.length-1}`:"");const lw=mctx.measureText(label).width+20;
   o+=`<g opacity=".85" transform="translate(${w.x+10},${w.y+8})"><rect width="${lw}" height="26" rx="8" fill="${T.bg}" stroke="${acc}" stroke-width="1.5"/><text x="10" y="13" dominant-baseline="central" font-size="13" font-weight="500" fill="${T.fg}" font-family='${FONT_STACK}'>${esc(label)}</text></g>`;
   $("ov").innerHTML=o;
   // auto pan near edges
@@ -954,7 +1015,7 @@ function dragEnd(){const d=drag;drag=null;$("ov")&&($("ov").innerHTML="");if(!d)
 
 /* ---------- keyboard ---------- */
 const kc=(e,c)=>{if(e.code===c)return true;if(e.code)return false;const k=(e.key||"").toLowerCase();const m={Slash:["/","?"],Period:["."," >"],BracketRight:["]","}"]}[c];if(m)return m.includes(k);if(c.startsWith("Key"))return k===c.slice(3).toLowerCase();if(c.startsWith("Digit"))return k===c.slice(5);return false};
-const inField=t=>t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.tagName==="SELECT"||t.isContentEditable);
+const inField=t=>t&&!(t===editor&&editor.classList.contains("armed"))&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.tagName==="SELECT"||t.isContentEditable);
 document.addEventListener("keydown",e=>{
   if(!$("sheet").hidden&&e.key==="Escape"){$("sheet").hidden=true;return}
   if(!$("menu").hidden&&e.key==="Escape"){closeMenu();return}
@@ -1040,7 +1101,7 @@ function openLink(u){try{const url=/^[a-z]+:/i.test(u)?u:"https://"+u;const a=do
 /* ---------- focus mode ---------- */
 function setFocus(id){focusId=id;relayout();renderCrumbs();fit();if(id)setSel(id);renderOutlineIfOpen()}
 function renderCrumbs(){const c=$("crumbs");[...c.querySelectorAll(".crumb,.csep")].forEach(x=>x.remove());if(!focusId||!M)return;const path=pathOf(BY.get(focusId)).slice(1);
-  for(const n of path){const s=document.createElement("span");s.className="csep muted";s.textContent="›";const b=document.createElement("button");b.className="crumb"+(n.id===focusId?" cur":"");b.textContent=n.text||"Topic";b.title=n.id===focusId?"Focused branch. Press Esc to see the whole map":"Focus here";b.onclick=()=>setFocus(n.id===focusId?null:n.id);c.append(s,b)}
+  for(const n of path){const s=document.createElement("span");s.className="csep muted";s.textContent="›";const b=document.createElement("button");b.className="crumb"+(n.id===focusId?" cur":"");b.textContent=n.text||tz("Topic","主题");b.title=n.id===focusId?"Focused branch. Press Esc to see the whole map":"Focus here";b.onclick=()=>setFocus(n.id===focusId?null:n.id);c.append(s,b)}
   const x=document.createElement("button");x.className="crumb csep";x.textContent="Show all";x.onclick=()=>setFocus(null);c.append(x)}
 
 /* ---------- find ---------- */
@@ -1074,7 +1135,7 @@ $("pPrev").onclick=()=>presentGo(-1);$("pNext").onclick=()=>presentGo(1);$("pExi
 /* ---------- toolbar ---------- */
 $("bUndo").onclick=undo;$("bRedo").onclick=redo;$("bChild").onclick=addChild;$("bSib").onclick=()=>addSibling();$("bRel").onclick=startRel;
 $("zIn").onclick=()=>zoomBy(1.2);$("zOut").onclick=()=>zoomBy(1/1.2);$("zFit").onclick=()=>fit();$("zLbl").onclick=()=>{const r=stage.getBoundingClientRect();zoomAt(1,r.width/2,r.height/2)};
-$("mtitle").addEventListener("change",()=>{if(!M)return;const v=$("mtitle").value.trim()||"Untitled";commit(()=>{M.title=v;M.named=true;if(M.src?.group)M.sheet=v});renderList()});
+$("mtitle").addEventListener("change",()=>{if(!M)return;const v=$("mtitle").value.trim()||tz("Untitled","未命名");commit(()=>{M.title=v;M.named=true;if(M.src?.group)M.sheet=v});renderList()});
 $("mtitle").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("mtitle").blur();stage.focus()}});
 document.querySelectorAll("#viewseg button").forEach(b=>b.onclick=()=>setView(b.dataset.v));
 function setView(v){if(!M)return;finishEdit();view=v;document.querySelectorAll("#viewseg button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));$("stage").hidden=v!=="map";$("outline").hidden=v!=="outline";store.set("view",v);
@@ -1185,8 +1246,8 @@ function renderTopicTab(){
   const n=primary();
   if(!n){ibody.innerHTML=`<p class="muted" style="margin-top:4px">Select a topic to add notes, links, labels, markers, images and styles.</p>`+sec("Quick start",`<div class="small muted" style="line-height:1.9">Select a topic and press <kbd>Tab</kbd> for a subtopic or <kbd>Enter</kbd> for a sibling. Double-click the canvas for a floating topic. Drag a topic onto another to move it, or Shift+drag the canvas to select several.</div><div style="margin-top:10px"><button class="btn" id="hk">All shortcuts</button></div>`);$("hk").onclick=showHelp;return}
   const multi=sel.size>1;const d=DEPTH.get(n.id);
-  const path=pathOf(n).slice(0,-1).map(x=>esc((x.text||"Topic").slice(0,24))).join(" › ");const where=isFloat(n)?"Floating topic":d===0?"Central topic":"";
-  let h=`<div class="small muted" style="margin:-2px 0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${multi?`${sel.size} topics selected`:(path||where)}</div>`;
+  const path=pathOf(n).slice(0,-1).map(x=>esc((x.text||tz("Topic","主题")).slice(0,24))).join(" › ");const where=isFloat(n)?"Floating topic":d===0?"Central topic":"";
+  let h=`<div class="small muted" style="margin:-2px 0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"${!multi&&path?" data-no-i18n":""}>${multi?`${sel.size} topics selected`:(path||where)}</div>`;
   if(!multi){
     h+=sec("Note",`<textarea class="fld" id="fnote" placeholder="Add details, sources, to-dos… (${K("Mod+Shift+N")})">${esc(n.note||"")}</textarea>${dictation?`<div style="display:flex;gap:8px;align-items:center;margin-top:6px"><button class="btn" id="fdict">${dict.target===n.id&&dict.on?"■ Stop dictating":"🎙 Dictate note"}</button><span class="small muted" id="fdictp" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${dict.target===n.id&&dict.on?"Listening…":""}</span></div>`:""}`);
     h+=sec("Link",`<div style="display:flex;gap:6px"><input class="fld" id="flink" placeholder="https://… (${K("Mod+K")})" value="${esc(n.link||"")}">${n.link?`<button class="btn" id="flinko" title="Open link">Open</button>`:""}</div>`);
@@ -1197,7 +1258,7 @@ function renderTopicTab(){
   h+=sec("Branch color",swatchRow("fcolor",n.color,COLORS));
   h+=sec("Fill",swatchRow("ffill",n.fill,FILLS,"None"));
   const shp=n.shape||"";
-  h+=sec("Shape",`<div class="seg" id="fshape" style="flex-wrap:wrap">${[["","Auto"],["box","Box"],["pill","Pill"],["outline","Outline"],["line","Line"],["text","Text"],["solid","Solid"]].map(([v,l])=>`<button data-v="${v}" class="${shp===v?"on":""}">${l}</button>`).join("")}</div>`);
+  h+=sec("Shape",`<div class="seg" id="fshape" style="flex-wrap:wrap">${[["","Auto"],["box","Box"],["pill","Pill"],["outline",tz("Outline","描边")],["line",tz("Line","下划线")],["text",tz("Text","纯文字")],["solid",tz("Solid","实心")]].map(([v,l])=>`<button data-v="${v}" class="${shp===v?"on":""}">${l}</button>`).join("")}</div>`);
   const bold=n.bold??(d===0);
   h+=sec("Text",`<div style="display:flex;gap:8px;flex-wrap:wrap"><div class="seg"><button id="fb" class="${bold?"on":""}" style="font-weight:800">B</button><button id="fi" class="${n.italic?"on":""}" style="font-style:italic;font-family:Georgia,serif">I</button></div><div class="seg" id="fsize">${[["s","S"],["","M"],["l","L"],["xl","XL"]].map(([v,l])=>`<button data-v="${v}" class="${(n.size||"")===v?"on":""}">${l}</button>`).join("")}</div></div>`);
   if(!multi){const src=n.image?(M.images?.[n.image.id]||n.image.src):null;
@@ -1243,25 +1304,25 @@ function renderObjTab(){const o=selObj;let h="",obj;
   if(o.t==="zone"){const z=(M.zones||[]).find(x=>x.id===o.id);if(!z){selObj=null;return renderTopicTab()}const n=(M.floats||[]).filter(f=>z.ids.includes(f.id)).length;
     ibody.innerHTML=`<div class="small muted" style="margin-bottom:10px">Zone with ${n} floating topic${n===1?"":"s"}. Drag its edge or label to move them together.</div>`+sec("Label",`<input class="fld" id="objlabel" value="${esc(z.label||"")}" placeholder="Zone">`)+sec("Color",swatchRow("ocolor",z.color,COLORS))+
       `<div class="rowb"><button class="btn" id="zpng">Export zone as PNG</button><button class="btn" id="odel">Ungroup</button></div>`;
-    const L=$("objlabel");L.onchange=()=>commit(()=>{z.label=L.value.trim()||"Zone"});L.onkeydown=e=>{if(e.key==="Enter"){L.blur();stage.focus()}};
+    const L=$("objlabel");L.onchange=()=>commit(()=>{z.label=L.value.trim()||tz("Zone","区域")});L.onkeydown=e=>{if(e.key==="Enter"){L.blur();stage.focus()}};
     bindSw("ocolor",v=>commit(()=>{if(v)z.color=v;else delete z.color}));$("odel").onclick=deleteSel;$("zpng").onclick=()=>exportZone(z.id);return}
   if(o.t==="rel"){obj=M.rels.find(r=>r.id===o.id);if(!obj){selObj=null;return renderTopicTab()}
     const a=BY.get(obj.from),b=BY.get(obj.to);
-    h+=`<div class="small muted" style="margin-bottom:10px">Relationship: ${esc(a?.text||"Topic")} → ${esc(b?.text||"Topic")}</div>`;
+    h+=`<div class="small muted" style="margin-bottom:10px">Relationship: ${esc(a?.text||tz("Topic","主题"))} → ${esc(b?.text||tz("Topic","主题"))}</div>`;
     h+=sec("Label",`<input class="fld" id="objlabel" value="${esc(obj.label||"")}" placeholder="Describe the connection">`);
     h+=sec("Arrows",`<div class="seg" id="oarrow">${[["end","One way"],["both","Both ways"],["none","None"]].map(([v,l])=>`<button data-v="${v}" class="${(obj.arrow||"end")===v?"on":""}">${l}</button>`).join("")}</div>`);
     h+=sec("Line",`<div class="seg" id="odash"><button data-v="1" class="${obj.dash!==false?"on":""}">Dashed</button><button data-v="0" class="${obj.dash===false?"on":""}">Solid</button></div><div style="margin-top:8px" class="seg" id="obend">${[[.28,"Curve up"],[0,"Straight"],[-.28,"Curve down"]].map(([v,l])=>`<button data-v="${v}" class="${(obj.bend??.28)===v?"on":""}">${l}</button>`).join("")}</div>`);
     h+=sec("Color",swatchRow("ocolor",obj.color,COLORS));
     h+=`<div class="rowb"><button class="btn" id="orev">Reverse direction</button><button class="btn" id="odel">${ic("trash")} Delete</button></div>`;
   }else{const p=BY.get(o.pid);const k=o.t==="bound"?"bounds":"sums";obj=p?.[k]?.[o.i];if(!obj){selObj=null;return renderTopicTab()}
-    h+=`<div class="small muted" style="margin-bottom:10px">${o.t==="bound"?"Boundary":"Summary"} around ${obj.e-obj.s+1} topic${obj.e>obj.s?"s":""} under “${esc(p.text||"Topic")}”</div>`;
+    h+=`<div class="small muted" style="margin-bottom:10px">${o.t==="bound"?"Boundary":"Summary"} around ${obj.e-obj.s+1} topic${obj.e>obj.s?"s":""} under “${esc(p.text||tz("Topic","主题"))}”</div>`;
     h+=sec(o.t==="bound"?"Label":"Summary text",`<input class="fld" id="objlabel" value="${esc((o.t==="bound"?obj.label:obj.text)||"")}" placeholder="${o.t==="bound"?"Optional label":"Summary"}">`);
     h+=sec("Covers",`<div class="rowb"><button class="btn" id="ogrow0">Include previous</button><button class="btn" id="ogrow1">Include next</button><button class="btn" id="oshrink">Shrink</button></div>`);
     if(o.t==="bound")h+=sec("Color",swatchRow("ocolor",obj.color,COLORS));
     h+=`<div class="rowb"><button class="btn" id="odel">${ic("trash")} Delete</button></div>`;
   }
   ibody.innerHTML=h;
-  const L=$("objlabel");L.onchange=()=>commit(()=>{if(o.t==="rel")obj.label=L.value.trim();else if(o.t==="bound")obj.label=L.value.trim();else obj.text=L.value.trim()||"Summary"});L.onkeydown=e=>{if(e.key==="Enter"){L.blur();stage.focus()}};
+  const L=$("objlabel");L.onchange=()=>commit(()=>{if(o.t==="rel")obj.label=L.value.trim();else if(o.t==="bound")obj.label=L.value.trim();else obj.text=L.value.trim()||tz("Summary","概要")});L.onkeydown=e=>{if(e.key==="Enter"){L.blur();stage.focus()}};
   $("odel").onclick=deleteSel;bindSw("ocolor",v=>commit(()=>{if(v)obj.color=v;else delete obj.color}));
   if(o.t==="rel"){$("oarrow").querySelectorAll("button").forEach(b=>b.onclick=()=>commit(()=>{obj.arrow=b.dataset.v==="end"?undefined:b.dataset.v}));$("odash").querySelectorAll("button").forEach(b=>b.onclick=()=>commit(()=>{obj.dash=b.dataset.v==="1"?undefined:false}));$("obend").querySelectorAll("button").forEach(b=>b.onclick=()=>commit(()=>{obj.bend=+b.dataset.v}));$("orev").onclick=()=>commit(()=>{[obj.from,obj.to]=[obj.to,obj.from]})}
   else{const p=BY.get(o.pid);$("ogrow0").onclick=()=>commit(()=>{obj.s=Math.max(0,obj.s-1)});$("ogrow1").onclick=()=>commit(()=>{obj.e=Math.min(p.children.length-1,obj.e+1)});$("oshrink").onclick=()=>commit(()=>{if(obj.e>obj.s)obj.e--})}
@@ -1301,7 +1362,7 @@ function renderMapTab(){const T=themeColors();let words=0,notes=0,cnt=0;walkAll(
 function applyCanvasTheme(){const t=THEMES[M?.theme]||THEMES.auto;stage.classList.toggle("grid",store.get("grid",true));if(!M||t===THEMES.auto){stage.style.backgroundColor="";stage.style.removeProperty("--dot");$("outline").style.backgroundColor=""}else{stage.style.backgroundColor=t.bg;stage.style.setProperty("--dot",t.dots||"#e5e5e5")}}
 
 /* ---------- maps sidebar ---------- */
-const mapName=m=>m.named?(m.title||"Untitled"):(m.root.text||m.title||"Untitled map");
+const mapName=m=>m.named?(m.title||tz("Untitled","未命名")):(m.root.text||m.title||tz("Untitled map","未命名导图"));
 function ago(t){const s=(Date.now()-t)/1000;if(s<60)return "just now";if(s<3600)return Math.floor(s/60)+"m ago";if(s<86400)return Math.floor(s/3600)+"h ago";if(s<86400*7)return Math.floor(s/86400)+"d ago";return new Date(t).toLocaleDateString()}
 function renderList(){const q=$("mapq").value.trim().toLowerCase();const list=$("maplist");const arr=maps.filter(m=>!q||mapName(m).toLowerCase().includes(q)||(q.length>2&&JSON.stringify(m.root).toLowerCase().includes(q))).sort((a,b)=>b.updated-a.updated);
   if(!maps.length){list.innerHTML=`<div class="emptylist">No maps yet.</div>`;return}if(!arr.length){list.innerHTML=`<div class="emptylist">No maps match “${esc(q)}”.</div>`;return}
@@ -1313,7 +1374,7 @@ $("mapq").addEventListener("input",renderList);
 $("maplist").addEventListener("click",e=>{const x=e.target.closest("[data-mx]");if(x){e.stopPropagation();mapMenu(x.dataset.mx,x);return}const it=e.target.closest("[data-mid]");if(it){openMap(it.dataset.mid);if(matchMedia("(max-width:820px)").matches)toggleSide(false)}});
 $("maplist").addEventListener("contextmenu",e=>{const it=e.target.closest("[data-mid]");if(!it)return;e.preventDefault();mapMenu(it.dataset.mid,{x:e.clientX,y:e.clientY})});
 function mapMenu(id,at){const m=maps.find(x=>x.id===id);if(!m)return;showMenu(at,[{label:"Open",fn:()=>openMap(id)},{label:"Rename",fn:()=>{openMap(id);setTimeout(()=>{$("mtitle").focus();$("mtitle").select()},30)}},{label:"Duplicate",fn:()=>duplicateMap(m)},{label:"Export…",fn:()=>{openMap(id);setTimeout(()=>exportMenu($("bExport")),30)}},"-",{label:"Delete map",danger:true,fn:()=>deleteMap(m)}])}
-async function duplicateMap(m){const c=JSON.parse(JSON.stringify(m));if(c.src)delete c.src.group;c.id=uid();c.created=c.updated=Date.now();c.title=mapName(m)+" copy";c.named=true;maps.push(c);await DB.put(c);openMap(c.id);toast("Duplicated")}
+async function duplicateMap(m){const c=JSON.parse(JSON.stringify(m));if(c.src)delete c.src.group;c.id=uid();c.created=c.updated=Date.now();c.title=mapName(m)+tz(" copy"," 副本");c.named=true;maps.push(c);await DB.put(c);openMap(c.id);toast("Duplicated")}
 async function deleteMap(m){const i=maps.indexOf(m);if(i<0)return;maps.splice(i,1);await DB.del(m.id);DB.del("hist:"+m.id);if(M===m){M=null;const next=[...maps].sort((a,b)=>b.updated-a.updated)[0];if(next)openMap(next.id);else showEmpty()}renderList();
   toast(`Deleted “${mapName(m)}”`,"Undo",async()=>{maps.push(m);await DB.put(m);openMap(m.id)})}
 function showEmpty(){M=null;sel=new Set();selId=null;selObj=null;vp.innerHTML="";$("empty").hidden=false;$("mtitle").value="";$("savest").textContent="";renderInsp();renderCrumbs();updateUndoBtns()}
@@ -1323,14 +1384,27 @@ function openMap(id){finishEdit();cancelModes();const m=maps.find(x=>x.id===id);
   $("mtitle").value=mapName(M);sizeTitle();$("savest").textContent="Saved";store.set("last",id);
   if(VIEWS[id]){V={...VIEWS[id]};draw()}else{draw();fit(false)}
   renderList();renderInsp();renderCrumbs();updateUndoBtns();if(view==="outline")renderOutline();else stage.focus({preventScroll:true})}
-async function createMap(root,opts={}){const m=newMap(root?.text||"Central Topic",root);Object.assign(m,opts);maps.push(m);await DB.put(m);openMap(m.id);return m}
+async function createMap(root,opts={}){const m=newMap(root?.text||tz("Central Topic","中心主题"),root);Object.assign(m,opts);maps.push(m);await DB.put(m);openMap(m.id);return m}
 async function addMaps(list){let last=null;for(const m of list){maps.push(m);await DB.put(m);last=m}if(last)openMap(last.id);return last}
 async function newBlankMap(){const m=await createMap();if(view!=="map")setView("map");setSel(m.root.id);startEdit(m.root.id)}
 $("bNew").onclick=()=>showMenu($("bNew"),[{label:"Blank map",kbd:K("Mod+N"),fn:newBlankMap},{label:"From template…",fn:showTemplates}]);$("eNew").onclick=newBlankMap;$("eTpl").onclick=()=>showTemplates();
 $("savehelp").onclick=e=>{e.preventDefault();showSaveHelp()};
 
 /* ---------- templates (Xmind / MindMeister / Miro all ship free templates) ---------- */
-const TPL=[
+const TPL=window.__ZH?[
+ ["头脑风暴","一个主题，留出分支慢慢填","map",()=>["核心想法",[["为什么重要",["要解决的问题","谁有这个问题"]],["想法",["想法 1","想法 2","想法 3"]],["问题",["我们还不知道的"]],["下一步",["第一个试验"]]]]],
+ ["项目计划","目标、范围、时间线、人员和风险","right",()=>["项目名称",[["目标",["成果","怎么衡量"]],["范围",["包含","不包含"]],["里程碑",["启动","测试版","上线"]],["团队",["负责人","参与者"]],["风险",["风险与应对"]]]]],
+ ["会议纪要","议程、决定和待办事项","tree",()=>["会议 · 日期",[["参会人",["姓名"]],["议程",["议题 1","议题 2"]],["决定",["决定"]],["待办事项",["[ ] 任务 · 负责人 · 截止"]]]]],
+ ["SWOT 分析","优势、劣势、机会、威胁","map",()=>["SWOT：对象",[["优势",["优势"]],["劣势",["劣势"]],["机会",["机会"]],["威胁",["威胁"]]]]],
+ ["每周计划","一周七天的任务","right",()=>["本周",["周一","周二","周三","周四","周五","周六","周日"].map(d=>[d,["[ ] 任务"]])]],
+ ["读书笔记","概要、核心观点、摘录和行动","map",()=>["书名",[["概要",["一句话总结"]],["核心观点",["观点 1","观点 2","观点 3"]],["摘录",["摘录"]],["我要做的",["行动"]]]]],
+ ["决策","按优缺点比较各个选项","right",()=>["要做的决定",[["方案 A",[["优点",["优点"]],["缺点",["缺点"]]]],["方案 B",[["优点",["优点"]],["缺点",["缺点"]]]],["评判标准",["成本","时间","风险"]]]]],
+ ["根因分析（鱼骨图）","找出问题的原因","fishbone",()=>["问题",[["人员",["原因"]],["流程",["原因"]],["工具",["原因"]],["材料",["原因"]],["环境",["原因"]],["测量",["原因"]]]]],
+ ["路线图时间轴","沿时间轴排列的各个阶段","timeline",()=>["路线图",[["第一季度",["主题","功能"]],["第二季度",["主题","功能"]],["第三季度",["主题","功能"]],["第四季度",["主题","功能"]]]]],
+ ["组织结构图","团队结构","org",()=>["公司",[["产品",["设计","研发"]],["销售",["客户团队"]],["运营",["财务","人事"]]]]],
+ ["学习提纲","把课程拆成一个个知识点","brace",()=>["课程",[["第 1 单元",["概念","例子"]],["第 2 单元",["概念","例子"]],["第 3 单元",["概念","例子"]],["备考",["练习题"]]]]],
+ ["对比表","用树形表格并排比较","treetable",()=>["对比",[["方案 A",["价格","优势","短板"]],["方案 B",["价格","优势","短板"]]]]],
+]:[
  ["Brainstorm","A topic with open branches to fill in","map",()=>["Big idea",[["Why it matters",["Problem","Who has it"]],["Ideas",["Idea 1","Idea 2","Idea 3"]],["Questions",["What we don't know"]],["Next steps",["First experiment"]]]]],
  ["Project plan","Goals, scope, timeline, people and risks","right",()=>["Project name",[["Goals",["Outcome","How we measure it"]],["Scope",["In","Out"]],["Milestones",["Kickoff","Beta","Launch"]],["Team",["Owner","Contributors"]],["Risks",["Risk and mitigation"]]]]],
  ["Meeting notes","Agenda, decisions and action items","tree",()=>["Meeting · date",[["Attendees",["Name"]],["Agenda",["Topic 1","Topic 2"]],["Decisions",["Decision"]],["Action items",["[ ] Task · owner · due"]]]]],
@@ -1369,7 +1443,7 @@ function renderSheets(){const el=$("sheets");const g=M?.src?.group;const list=g?
   el.querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>openMap(b.dataset.sh));$("shadd").onclick=addSheet}
 async function addSheet(){if(!M)return;if(!M.src||M.src.fmt!=="xmind"){const base=M.src?baseName(M.src.name):safeName(mapName(M));if(M.src&&M.src.fmt!=="xmind")toast("Files with several sheets are saved as .xmind.");M.src={name:base+".xmind",fmt:"xmind"}}
   if(!M.src.group){M.src.group=uid();M.src.order=0;M.sheet=M.sheet||mapName(M);scheduleSave()}
-  const list=groupMaps(M.src.group);const k=list.length+1;const m=newMap("Central Topic");m.src={...M.src,order:Math.max(...list.map(x=>x.src.order??0))+1};m.sheet="Sheet "+k;m.title=baseName(M.src.name)+": Sheet "+k;m.named=true;m.layout=M.layout;m.theme=M.theme;maps.push(m);await DB.put(m);openMap(m.id);setSel(m.root.id);startEdit(m.root.id)}
+  const list=groupMaps(M.src.group);const k=list.length+1;const m=newMap(tz("Central Topic","中心主题"));m.src={...M.src,order:Math.max(...list.map(x=>x.src.order??0))+1};m.sheet=tz("Sheet ","画布 ")+k;m.title=baseName(M.src.name)+": "+tz("Sheet ","画布 ")+k;m.named=true;m.layout=M.layout;m.theme=M.theme;maps.push(m);await DB.put(m);openMap(m.id);setSel(m.root.id);startEdit(m.root.id)}
 
 /* ---------- import ---------- */
 const kidsEl=(el,name)=>el?[...el.children].filter(c=>c.localName===name):[];
@@ -1402,12 +1476,12 @@ async function fromXmind(buf,name){
         if(Array.isArray(t["mindmap:emoji"])&&t["mindmap:emoji"].length)n.markers=[...(n.markers||[]),...t["mindmap:emoji"].map(e=>"emoji:"+e)];
         if(t.image?.src){const d=await fileData(t.image.src);if(d){const id=uid();imgs[id]=d;let w=+t.image.width||0,h=+t.image.height||0;if(!w||!h){try{const im=await loadImg(d);w=im.naturalWidth;h=im.naturalHeight}catch{w=160;h=120}}n.image={id,w,h}}}
         if(Array.isArray(t.boundaries)){const b=t.boundaries.map(x=>{const r=parseRange(x.range);return r&&{id:x.id||uid(),...r,label:x.title||""}}).filter(Boolean);if(b.length)n.bounds=b}
-        if(Array.isArray(t.summaries)){const st=ch.summary||[];const s=t.summaries.map(x=>{const r=parseRange(x.range);if(!r)return null;const tp=st.find(y=>y.id===x.topicId);return {id:x.id||uid(),...r,text:tp?.title||"Summary"}}).filter(Boolean);if(s.length)n.sums=s}
+        if(Array.isArray(t.summaries)){const st=ch.summary||[];const s=t.summaries.map(x=>{const r=parseRange(x.range);if(!r)return null;const tp=st.find(y=>y.id===x.topicId);return {id:x.id||uid(),...r,text:tp?.title||tz("Summary","概要")}}).filter(Boolean);if(s.length)n.sums=s}
         const pr=t.style?.properties||{};const fill=okColor(pr["svg:fill"]);if(fill&&!isRoot)n.fill=fill;const lc=okColor(pr["line-color"])||okColor(pr["border-line-color"]);if(lc&&!isRoot)n.color=lc;
         if(/bold|[6-9]00/.test(pr["fo:font-weight"]||""))n.bold=true;if(pr["fo:font-style"]==="italic")n.italic=true;
         return n};
       m.root=await conv(sh.rootTopic,true);m.floats=floats;m.images=imgs;m.layout=LAYOUT_IN(sh.rootTopic.structureClass);
-      if(Array.isArray(sh["mindmap:zones"])){const ids=new Set(floats.map(f=>f.id));m.zones=sh["mindmap:zones"].filter(z=>z&&Array.isArray(z.ids)).map(z=>({id:String(z.id||uid()),label:String(z.label||"Zone"),ids:z.ids.map(String).filter(i=>ids.has(i)),...(okColor(z.color)?{color:okColor(z.color)}:{})})).filter(z=>z.ids.length)}
+      if(Array.isArray(sh["mindmap:zones"])){const ids=new Set(floats.map(f=>f.id));m.zones=sh["mindmap:zones"].filter(z=>z&&Array.isArray(z.ids)).map(z=>({id:String(z.id||uid()),label:String(z.label||tz("Zone","区域")),ids:z.ids.map(String).filter(i=>ids.has(i)),...(okColor(z.color)?{color:okColor(z.color)}:{})})).filter(z=>z.ids.length)}
       m.rels=(sh.relationships||[]).map(r=>({id:r.id||uid(),from:r.end1Id,to:r.end2Id,label:r.title||""})).filter(r=>r.from&&r.to);
       const multi=sheets.length>1;m.title=multi?`${base}: ${sh.title||m.root.text}`:(m.root.text||base);m.named=multi;m.sheet=sh.title||m.root.text;out.push(m)}
     if(out.length)return tagXmind(out,name)}
@@ -1431,10 +1505,10 @@ async function fromXmind(buf,name){
       const img=kidEl(el,"img");if(img){const src=img.getAttribute("xhtml:src")||img.getAttribute("src");const d=await fileData(src);if(d){const id=uid();imgs[id]=d;let w=parseFloat(img.getAttribute("svg:width"))||0,h=parseFloat(img.getAttribute("svg:height"))||0;if(!w||!h){try{const im=await loadImg(d);w=im.naturalWidth;h=im.naturalHeight}catch{w=160;h=120}}n.image={id,w,h}}}
       const bs=kidsEl(kidEl(el,"boundaries"),"boundary").map(b=>{const r=parseRange(b.getAttribute("range"));return r&&{id:b.getAttribute("id")||uid(),...r,label:kidEl(b,"title")?.textContent||""}}).filter(Boolean);if(bs.length)n.bounds=bs;
       const stopics=groups.filter(g=>g.getAttribute("type")==="summary").flatMap(g=>kidsEl(g,"topic"));
-      const ss=kidsEl(kidEl(el,"summaries"),"summary").map(s=>{const r=parseRange(s.getAttribute("range"));if(!r)return null;const tp=stopics.find(t=>t.getAttribute("id")===s.getAttribute("topic-id"));return {id:s.getAttribute("id")||uid(),...r,text:kidEl(tp,"title")?.textContent||"Summary"}}).filter(Boolean);if(ss.length)n.sums=ss;
+      const ss=kidsEl(kidEl(el,"summaries"),"summary").map(s=>{const r=parseRange(s.getAttribute("range"));if(!r)return null;const tp=stopics.find(t=>t.getAttribute("id")===s.getAttribute("topic-id"));return {id:s.getAttribute("id")||uid(),...r,text:kidEl(tp,"title")?.textContent||tz("Summary","概要")}}).filter(Boolean);if(ss.length)n.sums=ss;
       return n};
     m.root=await conv(te,true);m.floats=floats;m.images=imgs;m.layout=LAYOUT_IN(te.getAttribute("structure-class"));
-    {const ze=kidsEl(kidEl(sh,"extensions"),"extension").find(x=>x.getAttribute("provider")==="mindmap.zones");if(ze){try{const ids=new Set(floats.map(f=>f.id));const zs=JSON.parse(kidEl(ze,"content")?.textContent||"[]");m.zones=(Array.isArray(zs)?zs:[]).filter(z=>z&&Array.isArray(z.ids)).map(z=>({id:String(z.id||uid()),label:String(z.label||"Zone"),ids:z.ids.map(String).filter(i=>ids.has(i)),...(okColor(z.color)?{color:okColor(z.color)}:{})})).filter(z=>z.ids.length)}catch{}}}
+    {const ze=kidsEl(kidEl(sh,"extensions"),"extension").find(x=>x.getAttribute("provider")==="mindmap.zones");if(ze){try{const ids=new Set(floats.map(f=>f.id));const zs=JSON.parse(kidEl(ze,"content")?.textContent||"[]");m.zones=(Array.isArray(zs)?zs:[]).filter(z=>z&&Array.isArray(z.ids)).map(z=>({id:String(z.id||uid()),label:String(z.label||tz("Zone","区域")),ids:z.ids.map(String).filter(i=>ids.has(i)),...(okColor(z.color)?{color:okColor(z.color)}:{})})).filter(z=>z.ids.length)}catch{}}}
     m.rels=kidsEl(kidEl(sh,"relationships"),"relationship").map(r=>({id:r.getAttribute("id")||uid(),from:r.getAttribute("end1"),to:r.getAttribute("end2"),label:kidEl(r,"title")?.textContent||""})).filter(r=>r.from&&r.to);
     const st=kidEl(sh,"title")?.textContent;const multi=sheets.length>1;m.title=multi?`${base}: ${st||m.root.text}`:(m.root.text||base);m.named=multi;m.sheet=st||m.root.text;out.push(m)}
   if(!out.length)throw new Error("No sheets found in this .xmind file.");
@@ -1481,10 +1555,10 @@ function parseMarkdown(text,fallbackTitle){const lines=String(text).replace(/\r/
   walk(top,n=>{delete n.lvl;if(n.note)n.note=n.note.trim()});
   if(top.children.length===1&&!top.children[0].note?.length&&true)return {root:top.children[0],synthetic:false};
   if(top.children.length===1)return {root:top.children[0],synthetic:false};
-  top.text=fallbackTitle||"Imported outline";return {root:top,synthetic:true}}
+  top.text=fallbackTitle||tz("Imported outline","导入的大纲");return {root:top,synthetic:true}}
 function parseIndented(text,fallbackTitle){const lines=String(text).replace(/\r/g,"").split("\n").filter(l=>l.trim());const ind=l=>l.match(/^[ \t]*/)[0].replace(/\t/g,"    ").length;
   const sizes=[...new Set(lines.map(ind).filter(Boolean))].sort((a,b)=>a-b);const unit=sizes.length?(sizes.reduce((g,v)=>{const gcd=(a,b)=>b?gcd(b,a%b):a;return gcd(g,v)},sizes[0])||sizes[0]):1;
-  const top={id:uid(),text:fallbackTitle||"Pasted outline",children:[]};const stack=[{n:top,d:-1}];
+  const top={id:uid(),text:fallbackTitle||tz("Pasted outline","粘贴的大纲"),children:[]};const stack=[{n:top,d:-1}];
   for(const l of lines){const d=Math.round(ind(l)/unit);let t=l.trim().replace(/^(?:[-*+•◦▪‣·]|\d+[.)])\s+/,"");let mk=null;const cm=/^\[([ xX])\]\s+/.exec(t);if(cm){mk=cm[1].trim()?"task-done":"task-start";t=t.slice(cm[0].length)}
     const n={id:uid(),text:t,children:[]};if(mk)n.markers=[mk];while(stack.length>1&&stack[stack.length-1].d>=d)stack.pop();stack[stack.length-1].n.children.push(n);stack.push({n,d})}
   if(top.children.length===1)return {root:top.children[0],synthetic:false};return {root:top,synthetic:true}}
@@ -1559,7 +1633,7 @@ async function toXmind(list){if(typeof JSZip==="undefined")throw new Error("zip"
       if(n.link)t.href=n.link;if(n.labels?.length)t.labels=n.labels;if(mk.length)t.markers=mk.map(x=>({markerId:x}));if(em.length)t["mindmap:emoji"]=em;
       if(n.image&&imgs[n.image.id]){const src=imgs[n.image.id];const ext=/^data:image\/(png|jpeg|gif|webp|svg\+xml)/.exec(src)?.[1]?.replace("jpeg","jpg").replace("svg+xml","svg")||"png";const fn=`${n.image.id}.${ext}`;files[fn]=src.split(",")[1];const s=Math.min(1,240/(n.image.w||240));t.image={src:"xap:resources/"+fn,width:Math.round((n.image.w||160)*s),height:Math.round((n.image.h||120)*s)}}
       if(n.bounds?.length)t.boundaries=n.bounds.map(b=>({id:b.id,range:`(${b.s},${b.e})`,...(b.label?{title:b.label}:{})}));
-      if(n.sums?.length){t.summaries=n.sums.map(s=>({id:s.id,range:`(${s.s},${s.e})`,topicId:s.id+"t"}));t.children.summary=n.sums.map(s=>({id:s.id+"t",class:"topic",title:s.text||"Summary"}))}
+      if(n.sums?.length){t.summaries=n.sums.map(s=>({id:s.id,range:`(${s.s},${s.e})`,topicId:s.id+"t"}));t.children.summary=n.sums.map(s=>({id:s.id+"t",class:"topic",title:s.text||tz("Summary","概要")}))}
       const pr={};if(n.fill)pr["svg:fill"]=n.fill;if(n.color){pr["line-color"]=n.color;pr["border-line-color"]=n.color}if(n.bold)pr["fo:font-weight"]="bold";if(n.italic)pr["fo:font-style"]="italic";if(Object.keys(pr).length)t.style={id:uid(),properties:pr};
       return t};
     const sheetId=uid();sheets.push({id:sheetId,class:"sheet",title:sheetName(m),...(root===m.root&&m.zones?.length?{"mindmap:zones":m.zones}:{}),rootTopic:tj(root,true),relationships:(m.rels||[]).map(r=>({id:r.id,class:"relationship",end1Id:r.from,end2Id:r.to,...(r.label?{title:r.label}:{})}))});
@@ -1585,7 +1659,7 @@ async function toXmind(list){if(typeof JSZip==="undefined")throw new Error("zip"
 function exportSVG(crop){const st={f:focusId,d:dimOthers,s:sel,o:selObj,h:hits};dimOthers=null;sel=new Set();selObj=null;hits=new Set();layout();const T=themeColors();const inner=renderSVG(true);const bb=crop?{...crop}:{...BBOX};Object.assign(window,{});dimOthers=st.d;sel=st.s;selObj=st.o;hits=st.h;
   const w=Math.ceil(bb.w),h=Math.ceil(bb.h);const svgStr=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w}" height="${h}" viewBox="${bb.x.toFixed(1)} ${bb.y.toFixed(1)} ${w} ${h}"><rect x="${bb.x}" y="${bb.y}" width="${w}" height="${h}" fill="${T.bg}"/>${inner.replace('<g id="ov"></g>',"")}</svg>`;
   draw();return {svg:svgStr,w,h}}
-async function exportZone(id){const zb=ZONEG.get(id);const z=(M.zones||[]).find(x=>x.id===id);if(!zb||!z)return;try{const {c}=await mapCanvas(2,{x:zb.x-10,y:zb.y-10,w:zb.w+20,h:zb.h+20});const blob=await new Promise(r=>c.toBlob(r,"image/png"));await saveFile(safeName(mapName(M)+" - "+(z.label||"Zone"))+".png",blob)}catch(e){toast("Export failed: "+(e?.message||"unknown error"))}}
+async function exportZone(id){const zb=ZONEG.get(id);const z=(M.zones||[]).find(x=>x.id===id);if(!zb||!z)return;try{const {c}=await mapCanvas(2,{x:zb.x-10,y:zb.y-10,w:zb.w+20,h:zb.h+20});const blob=await new Promise(r=>c.toBlob(r,"image/png"));await saveFile(safeName(mapName(M)+" - "+(z.label||tz("Zone","区域")))+".png",blob)}catch(e){toast("Export failed: "+(e?.message||"unknown error"))}}
 async function mapCanvas(maxScale=2,crop){const s=exportSVG(crop);const img=await loadImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s.svg));let k=maxScale;const lim=14000;k=Math.min(k,lim/s.w,lim/s.h,Math.sqrt(120e6/(s.w*s.h)));const c=document.createElement("canvas");c.width=Math.max(1,Math.round(s.w*k));c.height=Math.max(1,Math.round(s.h*k));const x=c.getContext("2d");x.drawImage(img,0,0,c.width,c.height);return {c,w:s.w,h:s.h}}
 const safeName=s=>String(s||"Mind map").replace(/[\\/:*?"<>|\n\r]+/g," ").trim().slice(0,80)||"Mind map";
 const DLERR={too_large:"That file is too large to save here.",rate_limited:"Another save is waiting for you. Finish that one first.",host_unavailable:"This app can't save files here. Open it on a computer.",unavailable:"Saving files isn't available here.",not_granted:"Saving files isn't allowed for this app."};
@@ -1655,7 +1729,7 @@ async function aiGenerate(){const src=($("aiin")?.value||AI.draft||"").trim();if
   const prompt=`Build a mind map from the input below.
 ${long?"The input is a document or notes: organize ITS content faithfully into a clear hierarchy. Do not invent facts that are not in it. Put key specifics (numbers, names, dates) in short notes.":"The input is a topic or question: brainstorm a useful, well-organized map for someone thinking it through."}
 - ${detail==="light"?"4-6 main branches, 2-4 subtopics each, at most 3 levels deep":"5-8 main branches, 3-5 subtopics each, up to 4 levels deep where it helps"}.
-- Labels are short phrases (1-6 words), parallel in form, no trailing punctuation. Use the same language as the input.
+- Labels are short phrases (1-6 words), parallel in form, no trailing punctuation. ${tz("Use the same language as the input.","Write in Simplified Chinese (for Chinese, labels are about 2-12 characters) unless the input is clearly written in another language; then use the input's language.")}
 - "note" is optional; use it only for a key detail worth keeping.
 Reply with only JSON in this exact shape:
 ${TREE_SHAPE}
@@ -1673,7 +1747,7 @@ ${mapContext(7000)}
 Selected topic (path from the center): ${path}
 ${existing.length?`It already has these subtopics, do not repeat them: ${existing.join("; ")}`:"It has no subtopics yet."}
 ${instr?`What they want: ${instr}`:deep?"Brainstorm broadly: cover different angles (causes, options, risks, people, examples, next steps) that fit this topic.":"Suggest the most useful next-level subtopics."}
-Give ${deep?"4-6 new subtopics, each with 2-4 children":"5-8 new subtopics"}. Labels are short (1-6 words), in the same language as the map.
+Give ${deep?"4-6 new subtopics, each with 2-4 children":"5-8 new subtopics"}. Labels are short (1-6 words), ${tz("in the same language as the map.","in Simplified Chinese (about 2-12 characters each) unless the map is clearly written in another language; then use the map's language.")}
 Reply with only a JSON array like: [{"title":"Idea","children":[{"title":"Detail","children":[]}]}]`;
   try{let arr=await sample.json(prompt,{signal:my.signal,modelTier:deep?"default":"quick",cache:false});if(aiCtl!==my)return;if(arr&&!Array.isArray(arr))arr=arr.children||arr.ideas||[];
     const nodes=(arr||[]).map(x=>jsonToNodes(x)).filter(x=>x&&x.text);if(!nodes.length)throw {code:"invalid_json"};
@@ -1682,11 +1756,11 @@ Reply with only a JSON array like: [{"title":"Idea","children":[{"title":"Detail
     aiDone(my,`Added ${nodes.length} ideas under “${n.text}”. Undo with ${K("Mod+Z")}.`);toast(`Added ${nodes.reduce((a,c)=>a+countNodes(c),0)} topics`,"Undo",undo)}
   catch(e){aiFail(my,e)}}
 async function aiSummarize(){const n=primary()||LROOT;if(!aiOK)return;const my=aiStart("summary");AI.src=n.id;if(insTab!=="ai")openInsp("ai");
-  const prompt=`Summarize this mind-map branch in 2-4 plain sentences that capture its main point and how the parts connect. Same language as the branch. No preamble, no bullet points.
+  const prompt=`Summarize this mind-map branch in 2-4 plain sentences that capture its main point and how the parts connect. ${tz("Same language as the branch.","Write in Simplified Chinese unless the branch is clearly written in another language; then use that language.")} No preamble, no bullet points.
 
 Branch:
 ${branchText(n)}`;
-  try{const {text,truncated}=await sample(prompt,{signal:my.signal,modelTier:"quick",cache:false,onText:stream(my)});AI.out=text;aiDone(my,truncated?"Cut short. Try a smaller branch.":`Summary of “${n.text||"Topic"}”`)}catch(e){aiFail(my,e)}}
+  try{const {text,truncated}=await sample(prompt,{signal:my.signal,modelTier:"quick",cache:false,onText:stream(my)});AI.out=text;aiDone(my,truncated?"Cut short. Try a smaller branch.":`Summary of “${n.text||tz("Topic","主题")}”`)}catch(e){aiFail(my,e)}}
 async function aiRewrite(instr=""){const n=primary()||LROOT;if(!aiOK)return;const nodes=[];walk(n,x=>{if(nodes.length<220&&x.text)nodes.push(x)});if(!nodes.length)return;const my=aiStart("rewrite");if(insTab!=="ai")openInsp("ai");
   const list=nodes.map((x,i)=>`${i}\t${"  ".repeat(DEPTH.get(x.id)-DEPTH.get(n.id))}${x.text.replace(/\s+/g," ")}`).join("\n");
   const prompt=`Rewrite the labels of this mind-map branch. ${instr||"Make each label short (1-6 words), clear and parallel in form with its siblings. Fix spelling. Keep the meaning and the language."}
@@ -1704,7 +1778,7 @@ async function aiConvert(kind,custom=""){if(!aiOK||!M)return;const my=aiStart("c
    slides:"Turn this mind map into a slide-by-slide presentation outline in Markdown. One '## Slide N: title' per slide with 3-5 short bullets and a one-line speaker note.",
    custom:custom}[kind];
   const prompt=`${what}
-Same language as the map.
+${tz("Same language as the map.","Write in Simplified Chinese unless the map is clearly written in another language; then use that language.")}
 
 Mind map (indented outline, notes in brackets):
 ${branchText(root,100000)}`;
@@ -1712,7 +1786,7 @@ ${branchText(root,100000)}`;
 function renderAI(){if(!aiOK){ibody.innerHTML=`<p class="muted">Open Mind Map in the Claude app to brainstorm with Claude.</p>`;return}
   const n=primary();const detail=store.get("aidetail","normal");
   let h=sec("New map with Claude",`<div class="aibox"><textarea id="aiin" placeholder="A topic (“Launch plan for a coffee cart”) or paste notes, a transcript or an article…">${esc(AI.draft)}</textarea><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><div class="seg" id="aidet"><button data-v="light" class="${detail==="light"?"on":""}">Light</button><button data-v="normal" class="${detail!=="light"?"on":""}">Detailed</button></div><span style="flex:1"></span><button class="btn pri" id="aigen" ${AI.busy?"disabled":""}>${ic("sparkle")} Generate map</button></div></div>`);
-  h+=sec(n?`Selected: ${(n.text||"Topic").slice(0,40)}`:"Selected topic",n?`<div class="rowb"><button class="chipb" id="aiexp">Expand ideas</button><button class="chipb" id="aideep">Brainstorm deeper</button><button class="chipb" id="aisum">Summarize branch</button><button class="chipb" id="airw">Rewrite labels</button></div><div style="display:flex;gap:6px;margin-top:8px"><input class="fld" id="aiask" placeholder="Or ask: “add pros and cons”, “translate to Spanish”…"><button class="btn" id="aiaskb">Go</button></div>`:`<p class="small muted" style="margin:0">Select a topic to expand it, brainstorm, summarize or rewrite its labels.</p>`);
+  h+=sec(n?`Selected: ${(n.text||tz("Topic","主题")).slice(0,40)}`:"Selected topic",n?`<div class="rowb"><button class="chipb" id="aiexp">Expand ideas</button><button class="chipb" id="aideep">Brainstorm deeper</button><button class="chipb" id="aisum">Summarize branch</button><button class="chipb" id="airw">Rewrite labels</button></div><div style="display:flex;gap:6px;margin-top:8px"><input class="fld" id="aiask" placeholder="Or ask: “add pros and cons”, “translate to Spanish”…"><button class="btn" id="aiaskb">Go</button></div>`:`<p class="small muted" style="margin:0">Select a topic to expand it, brainstorm, summarize or rewrite its labels.</p>`);
   h+=sec(`Turn ${focusId?"this branch":"the map"} into`,`<div class="rowb"><button class="chipb" data-cv="article">Article</button><button class="chipb" data-cv="actions">Action list</button><button class="chipb" data-cv="brief">Executive summary</button><button class="chipb" data-cv="slides">Slide outline</button><button class="chipb" id="aiol">Outline (instant)</button></div>`);
   h+=`<div id="aist">${esc(AI.status)}</div>`;
   if(AI.busy)h+=`<div style="margin-bottom:8px"><button class="btn" id="aistop">Stop</button></div>`;
@@ -1724,7 +1798,7 @@ function renderAI(){if(!aiOK){ibody.innerHTML=`<p class="muted">Open Mind Map in
   $("aidet").querySelectorAll("button").forEach(b=>b.onclick=()=>{store.set("aidetail",b.dataset.v);renderAI()});
   $("aigen").onclick=aiGenerate;
   if(n){$("aiexp").onclick=()=>aiExpand(false);$("aideep").onclick=()=>aiExpand(true);$("aisum").onclick=aiSummarize;$("airw").onclick=()=>aiRewrite();
-    const ask=$("aiask");const go=()=>{const v=ask.value.trim();if(!v)return;/rewrite|rename|translate|shorten|reword|fix/i.test(v)&&!/add|more|ideas/i.test(v)?aiRewrite(v):aiExpand(false,v)};$("aiaskb").onclick=go;ask.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();go()}}}
+    const ask=$("aiask");const go=()=>{const v=ask.value.trim();if(!v)return;/rewrite|rename|translate|shorten|reword|fix|改写|重写|重命名|翻译|译成|缩短|精简|润色|修正|改成/i.test(v)&&!/add|more|ideas|添加|增加|补充|更多|想法/i.test(v)?aiRewrite(v):aiExpand(false,v)};$("aiaskb").onclick=go;ask.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();go()}}}
   ibody.querySelectorAll("[data-cv]").forEach(b=>b.onclick=()=>aiConvert(b.dataset.cv));
   $("aiol").onclick=()=>{AI.out=toMarkdown(M);AI.kind="convert";AI.status="Outline of the map as Markdown.";AI.review=null;renderAI()};
   if($("aistop"))$("aistop").onclick=()=>aiCtl?.abort();
@@ -1735,7 +1809,7 @@ function renderAI(){if(!aiOK){ibody.innerHTML=`<p class="muted">Open Mind Map in
   if($("aisave"))$("aisave").onclick=()=>saveFile(safeName(mapName(M))+(AI.kind==="summary"?" summary":"")+".md",AI.out);
   if($("ainote"))$("ainote").onclick=()=>{const t=BY.get(AI.src);if(!t)return;commit(()=>{t.note=(t.note?t.note+"\n\n":"")+AI.out.trim()});toast("Added to the note","Undo",undo)};
   if($("aichild"))$("aichild").onclick=()=>{const t=BY.get(AI.src);if(!t)return;const c=N(AI.out.trim());c.w=320;commit(()=>{delete t.collapsed;insertChild(t,c,t.children.length)});setSel(c.id);ensureVisible(c.id)};
-  if($("aimap"))$("aimap").onclick=async()=>{const t=parseTextTree(AI.out,"From Claude");await createMap(t.root);toast("Opened as a new map")};
+  if($("aimap"))$("aimap").onclick=async()=>{const t=parseTextTree(AI.out,tz("From Claude","来自 Claude"));await createMap(t.root);toast("Opened as a new map")};
 }
 function applyAIVisibility(){const b=document.querySelector('.itabs [data-t="ai"]');b.hidden=!aiOK;if(!aiOK&&insTab==="ai"){insTab="topic";renderInsp()}}
 
@@ -1751,6 +1825,10 @@ function toggleDictation(id){if(!dictation)return;if(dict.on){dictation.stop().c
   const b=$("fdict");if(b)b.textContent="■ Stop dictating";const p=$("fdictp");if(p)p.textContent="Listening…"}
 
 /* ---------- desktop / install ---------- */
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"mind-map-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#8B6BFF\"/><stop offset=\"1\" stop-color=\"#3A1EC0\"/><\/linearGradient><radialGradient id=\"mind-map-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"mind-map-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"mind-map-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#mind-map-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#mind-map-sh)\"/><g filter=\"url(#mind-map-ds2)\"><path d=\"M512 512C606.0 512 606.0 290 700 290\" fill=\"none\" stroke=\"#FF6FA8\" stroke-width=\"22\" stroke-linecap=\"round\"/><rect x=\"700\" y=\"256\" width=\"150\" height=\"68\" rx=\"34\" fill=\"#FF6FA8\"/><path d=\"M512 512C616.0 512 616.0 512 720 512\" fill=\"none\" stroke=\"#FFD45C\" stroke-width=\"22\" stroke-linecap=\"round\"/><rect x=\"720\" y=\"478\" width=\"150\" height=\"68\" rx=\"34\" fill=\"#FFD45C\"/><path d=\"M512 512C606.0 512 606.0 734 700 734\" fill=\"none\" stroke=\"#5CE1E6\" stroke-width=\"22\" stroke-linecap=\"round\"/><rect x=\"700\" y=\"700\" width=\"150\" height=\"68\" rx=\"34\" fill=\"#5CE1E6\"/><path d=\"M512 512C418.0 512 418.0 330 324 330\" fill=\"none\" stroke=\"#9CF06B\" stroke-width=\"22\" stroke-linecap=\"round\"/><rect x=\"174\" y=\"296\" width=\"150\" height=\"68\" rx=\"34\" fill=\"#9CF06B\"/><path d=\"M512 512C418.0 512 418.0 694 324 694\" fill=\"none\" stroke=\"#FF9F5A\" stroke-width=\"22\" stroke-linecap=\"round\"/><rect x=\"174\" y=\"660\" width=\"150\" height=\"68\" rx=\"34\" fill=\"#FF9F5A\"/><\/g><g filter=\"url(#mind-map-ds)\"><rect x=\"362\" y=\"420\" width=\"300\" height=\"184\" rx=\"56\" fill=\"#fff\"/><rect x=\"410\" y=\"472\" width=\"204\" height=\"34\" rx=\"17\" fill=\"#4B2FD6\"/><rect x=\"410\" y=\"526\" width=\"140\" height=\"26\" rx=\"13\" fill=\"#C9C2F5\"/><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
   const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#6b74f0");g.addColorStop(1,"#3a41b5");x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,56);x.fill();
   x.strokeStyle="rgba(255,255,255,.9)";x.lineWidth=9;x.lineCap="round";const br=[[60,70],[196,70],[52,170],[204,176],[128,214]];
@@ -1759,20 +1837,20 @@ function dockIcon(){const c=document.createElement("canvas");c.width=c.height=25
   return c.toDataURL("image/png")}
 async function initDesktop(){if(!desktop)return;
   if(!desktop.tray){const st=await desktop.install.state().catch(()=>"unavailable");if(st==="available"){const b=document.createElement("button");b.className="btn pri";b.style.width="100%";b.style.justifyContent="center";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("inst").replaceChildren(b)}return}
-  document.body.classList.add("app");desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  document.body.classList.add("app");dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
   desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:46,width:1240,height:820,minWidth:420,minHeight:420}).catch(()=>{});}
 
 /* ---------- welcome map ---------- */
 function welcomeMap(){const t=(s,kids=[],extra={})=>Object.assign(N(s,kids),extra);
-  const keys=t("Keyboard first",[t("Tab adds a subtopic"),t("Enter adds a sibling"),t("Space or F2 edits"),t("Arrows move around"),t("Drag to reorder or reparent")],{markers:["priority-1"],callout:"Same keys as Xmind",num:"1"});
-  const bring=t("Bring your maps",[t("Xmind (.xmind), saved back with ⌘S"),t("MindNode, OmniOutliner (.opml)"),t("FreeMind, Freeplane (.mm)"),t("Markdown and plain outlines"),t("Paste indented text")],{note:"Drop files anywhere on the window, or use the import button in the sidebar. Export goes back to the same formats."});
-  const looks=t("Make it yours",[t("Map, Logic, Brace, Org chart, Tree"),t("Tree table, Timeline, Fishbone"),t("Templates, emoji and stickers"),t("Themes and branch colors"),t("Notes, links, labels",[],{labels:["Example"],link:"https://en.wikipedia.org/wiki/Mind_map"}),t("Images, markers, tasks",[t("Done",[],{markers:["task-done"]}),t("To do",[],{markers:["task-start"]})])]);
-  const ai=t("Think with Claude",[t("Generate a map from a sentence"),t("Expand any topic"),t("Summarize a branch"),t("Turn the map into an article")],{markers:["symbol-idea"]});
-  const views=t("Other ways to see it",[t("Outline view"),t("Focus on one branch"),t("Present branch by branch"),t("Find in notes and topics")]);
-  const root=t("Mind Map",[keys,bring,looks,ai,views]);const m=newMap("Mind Map",root);m.named=false;
-  m.floats=[Object.assign(t("A floating topic",[t("Double-click the canvas to add one"),t("Drag it onto a topic to attach it")],{markers:["emoji:📌"]}),{fx:-620,fy:330})];
-  bring.bounds=[{id:uid(),s:0,e:2,label:"Zero switching cost"}];ai.sums=[{id:uid(),s:1,e:2,text:"Undo always works"}];
-  m.rels=[{id:uid(),from:ai.id,to:views.id,label:"works with"}];return m}
+  const keys=t(tz("Keyboard first","键盘优先"),[t(tz("Tab adds a subtopic","Tab 添加子主题")),t(tz("Enter adds a sibling","Enter 添加同级主题")),t(tz("Space or F2 edits","空格或 F2 编辑")),t(tz("Arrows move around","方向键切换主题")),t(tz("Drag to reorder or reparent","拖动可调整顺序或层级"))],{markers:["priority-1"],callout:tz("Same keys as Xmind","快捷键和 Xmind 一样"),num:"1"});
+  const bring=t(tz("Bring your maps","带上你的导图"),[t(tz("Xmind (.xmind), saved back with ⌘S","Xmind（.xmind），⌘S 存回原文件")),t(tz("MindNode, OmniOutliner (.opml)","MindNode、OmniOutliner（.opml）")),t(tz("FreeMind, Freeplane (.mm)","FreeMind、Freeplane（.mm）")),t(tz("Markdown and plain outlines","Markdown 和纯文本大纲")),t(tz("Paste indented text","粘贴缩进文本"))],{note:tz("Drop files anywhere on the window, or use the import button in the sidebar. Export goes back to the same formats.","把文件拖到窗口任意位置，或用侧栏的导入按钮。导出也能回到同样的格式。")});
+  const looks=t(tz("Make it yours","随心定制"),[t(tz("Map, Logic, Brace, Org chart, Tree","思维导图、逻辑图、括号图、组织结构图、树状图")),t(tz("Tree table, Timeline, Fishbone","树形表格、时间轴、鱼骨图")),t(tz("Templates, emoji and stickers","模板、表情和贴纸")),t(tz("Themes and branch colors","主题风格和分支颜色")),t(tz("Notes, links, labels","备注、链接、标签"),[],{labels:[tz("Example","示例")],link:tz("https://en.wikipedia.org/wiki/Mind_map","https://zh.wikipedia.org/wiki/%E5%BF%83%E6%99%BA%E5%9C%96")}),t(tz("Images, markers, tasks","图片、标记、任务"),[t(tz("Done","已完成"),[],{markers:["task-done"]}),t(tz("To do","待办"),[],{markers:["task-start"]})])]);
+  const ai=t(tz("Think with Claude","和 Claude 一起想"),[t(tz("Generate a map from a sentence","一句话生成导图")),t(tz("Expand any topic","展开任意主题")),t(tz("Summarize a branch","总结一个分支")),t(tz("Turn the map into an article","把导图写成文章"))],{markers:["symbol-idea"]});
+  const views=t(tz("Other ways to see it","换个方式看"),[t(tz("Outline view","大纲视图")),t(tz("Focus on one branch","专注于一个分支")),t(tz("Present branch by branch","逐个分支演示")),t(tz("Find in notes and topics","在主题和备注中查找"))]);
+  const root=t(tz("Mind Map","思维导图"),[keys,bring,looks,ai,views]);const m=newMap(tz("Mind Map","思维导图"),root);m.named=false;
+  m.floats=[Object.assign(t(tz("A floating topic","这是一个自由主题"),[t(tz("Double-click the canvas to add one","双击画布即可添加")),t(tz("Drag it onto a topic to attach it","拖到某个主题上就能挂上去"))],{markers:["emoji:📌"]}),{fx:-620,fy:330})];
+  bring.bounds=[{id:uid(),s:0,e:2,label:tz("Zero switching cost","零迁移成本")}];ai.sums=[{id:uid(),s:1,e:2,text:tz("Undo always works","随时都能撤销")}];
+  m.rels=[{id:uid(),from:ai.id,to:views.id,label:tz("works with","配合使用")}];return m}
 
 /* ---------- start ---------- */
 (async()=>{
@@ -1788,4 +1866,51 @@ function welcomeMap(){const t=(s,kids=[],extra={})=>Object.assign(N(s,kids),extr
   [sample,downloads,desktop,dictation]=await Promise.all([use("sample"),use("downloads"),use("desktop"),use("dictation")]);initDictation();
   aiOK=!!sample;applyAIVisibility();renderInsp();initDesktop();
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>

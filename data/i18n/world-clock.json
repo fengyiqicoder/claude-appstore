@@ -1,0 +1,22 @@
+{"dict":{
+"World Clock":"世界时钟",
+"Add a city":"添加城市",
+"Ask: best time for a 30-min call with London and Tokyo?":"问问：和伦敦、东京开 30 分钟电话，什么时间最合适？",
+"Ask about times":"询问时间问题","✦ Ask":"✦ 提问",
+"Back to now":"回到现在",
+"Shift time to plan a meeting":"拖动时间来安排会议",
+"Drag to see what time it will be everywhere. Good for picking a meeting slot.":"拖动查看各地届时的时间，方便挑选会议时段。",
+"Remove":"移除",
+"Thinking…":"思考中…","No answer.":"没有答案。",
+"Claude is busy or you hit your usage limit. Try later.":"Claude 正忙，或你已达到用量上限，请稍后再试。",
+"Claude isn't allowed for this app.":"此应用未获准使用 Claude。",
+"Claude declined this one.":"Claude 拒绝了这个问题。",
+"Couldn't answer that. Try again.":"没能回答，请重试。",
+"The dot picks the city shown in your menu bar.":"点一下圆点，选择在菜单栏显示的城市。",
+"Show time in menu bar":"在菜单栏显示时间",
+"Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.":"在 Mac 或 Windows 版 Claude 中打开并安装，即可在菜单栏常驻一个城市的时间。",
+"Install as app":"安装为应用",
+"Installed. Open World Clock from your Applications or Start menu.":"已安装。请从“应用程序”或“开始”菜单打开世界时钟。"
+},
+"patterns":[],
+"skip":".city b, #sugg span"}

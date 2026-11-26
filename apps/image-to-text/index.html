@@ -286,8 +286,60 @@ body.livetext .stage{cursor:default}
 <input type="file" id="file" multiple accept="image/*,.pdf,application/pdf,video/*" hidden>
 
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"Image to Text": "图片转文字", "Choose images or PDFs (⌘O)": "选择图片或 PDF (⌘O)", "Open…": "打开…", "History (⌘Y)": "历史记录 (⌘Y)", "History": "历史记录", "Settings": "设置", "What to get from the image": "要从图片中获取什么", "into": "译成", "in": "语言", "as": "类型", "Language": "语言", "Document type": "文档类型", "Detect type": "自动识别类型", "Receipt": "收据", "Invoice": "发票", "Business card": "名片", "Form or ID": "表单或证件", "Form": "表单", "Document": "文档", "Choose images": "选择图片", "Paste, drop or choose an image": "粘贴、拖入或选择一张图片", "Screenshots, photos, scans, PDFs and video frames. Several at once is fine. Claude reads the text; QR codes, barcodes and quick offline reads happen right here on your computer.": "截图、照片、扫描件、PDF 和视频画面都可以，一次放多张也没问题。文字由 Claude 识别；二维码、条形码和快速离线识别直接在你的电脑上完成。", "paste": "粘贴", "choose files": "选择文件", "copies part of your screen on a Mac": "在 Mac 上把屏幕的一部分截到剪贴板", "Recent": "最近", "All history": "全部历史", "from any app, then": "在任意应用中按下，然后按", "Select text right on the image, like Live Text (T)": "直接在图片上选取文字，就像实况文本 (T)", "Select text": "选取文字", "Done selecting": "完成选取", "Zoom (Z)": "缩放 (Z)", "Actual size": "实际大小", "Fit": "适应窗口", "Image being read": "正在识别的图片", "Text on the image": "图片上的文字", "Read selected area": "识别所选区域", "Cancel": "取消", "Drag over the image to read just one area": "在图片上拖动框选，只识别这一块", "Remove from this list (stays in History)": "从列表中移除（历史记录里仍保留）", "Add images": "添加图片", "Stop all": "全部停止", "All ▾": "全部 ▾", "Copy or export every image's result": "复制或导出所有图片的结果", "Line breaks and spacing": "换行和空格", "Line breaks ▾": "换行 ▾", "Undo the last change Claude or a tidy made": "撤销 Claude 或整理造成的上一次改动", "Undo": "撤销", "Text from the image": "图片中的文字", "Read the image (⌘↩)": "识别图片 (⌘↩)", "Listen": "朗读", "Copy (⌘⇧C)": "复制 (⌘⇧C)", "Copy": "复制", "Save as a file (⌘S)": "存为文件 (⌘S)", "Export ▾": "导出 ▾", "Close history": "关闭历史记录", "Close": "关闭", "Search text and file names": "搜索文字和文件名", "Search history": "搜索历史记录", "Clear history": "清空历史记录", "Drop to read the text": "松手即可识别文字", "Translate": "翻译", "Search": "搜索", "Quick capture": "快速截取", "Press ⌘V to read your screenshot": "按 ⌘V 识别你的截图", "No screenshot yet? Press ⌃⇧⌘4, drag over the text, then ⌘V here. The text is copied for you.": "还没截图？按 ⌃⇧⌘4 框选文字，再回到这里按 ⌘V，文字会自动复制好。", "Press Ctrl+V to read your screenshot": "按 Ctrl+V 识别你的截图", "No screenshot yet? Press Win+Shift+S, drag over the text, then Ctrl+V here. The text is copied for you.": "还没截图？按 Win+Shift+S 框选文字，再回到这里按 Ctrl+V，文字会自动复制好。", "Pick a video frame": "选一帧视频画面", "Pause on the frame with the text.": "暂停在有文字的那一帧。", "Pause on the frame with the text, then read it.": "暂停在有文字的那一帧，然后识别。", "Read this frame": "识别这一帧", "This video can't be played here. Try an MP4, or take a screenshot of the frame.": "这个视频无法在这里播放。试试 MP4，或者截一张那一帧的图。", "The video isn't ready yet.": "视频还没准备好。", "Text": "文字", "Keep layout": "保留排版", "Table": "表格", "Explain": "解读", "Receipt & card": "票据和名片", "QR & barcode": "二维码和条形码", "Text (⌘1)": "文字 (⌘1)", "Keep layout (⌘2)": "保留排版 (⌘2)", "Markdown (⌘3)": "Markdown (⌘3)", "Table (⌘4)": "表格 (⌘4)", "Translate (⌘5)": "翻译 (⌘5)", "Explain (⌘6)": "解读 (⌘6)", "Receipt & card (⌘7)": "票据和名片 (⌘7)", "QR & barcode (⌘8)": "二维码和条形码 (⌘8)", "Read text": "识别文字", "Read layout": "按排版识别", "Read as Markdown": "识别为 Markdown", "Read tables": "识别表格", "Extract fields": "提取字段", "Scan codes": "扫码", "The text in the image appears here, ready to edit and copy.": "图片里的文字会显示在这里，可以直接编辑和复制。", "Text with its columns and spacing kept, in a fixed-width font.": "保留分栏和间距的文字，用等宽字体显示。", "Headings, lists, tables and code, as Markdown.": "标题、列表、表格和代码，输出为 Markdown。", "Tables become editable grids you can copy into a spreadsheet or save as CSV or Excel.": "表格会变成可编辑的网格，可复制到电子表格，或存为 CSV、Excel。", "The text, translated.": "翻译后的文字。", "A short summary: what it is, key points, dates, amounts and to-dos.": "简短总结：这是什么、要点、日期、金额和待办。", "Receipts, invoices, business cards and forms become labeled fields, line items and contacts.": "收据、发票、名片和表单会变成带标签的字段、明细和联系人。", "QR codes and barcodes are decoded on your computer, without Claude.": "二维码和条形码在你的电脑上解码，不经过 Claude。", "Layout": "排版", "Tables": "表格", "Fields": "字段", "Codes": "二维码和条形码", "Stop": "停止", "Read with Claude": "用 Claude 识别", "Scan again": "重新扫描", "Read again": "重新识别", "Try again": "重试", "Reading the table…": "正在识别表格…", "Finding the fields…": "正在查找字段…", "Reading…": "正在识别…", "Waiting for the images before it…": "正在等待前面的图片…", "Reading offline here: printed English text only. Open the app in Claude for any language and handwriting.": "当前为离线识别：只支持印刷体英文。在 Claude 中打开本应用，可识别任何语言和手写。", "This view can't send images to Claude. Open Image to Text in the Claude desktop app or claude.ai.": "当前视图无法把图片发给 Claude。请在 Claude 桌面应用或 claude.ai 中打开「图片转文字」。", "This mode needs Claude: open Image to Text in the Claude app. Text, QR codes and barcodes also work offline here.": "这个模式需要 Claude：请在 Claude 应用中打开「图片转文字」。文字、二维码和条形码在这里也能离线使用。", "This mode needs Claude: open Image to Text in the Claude app. Text, QR codes and barcodes also work offline.": "这个模式需要 Claude：请在 Claude 应用中打开「图片转文字」。文字、二维码和条形码也能离线使用。", "Scanning…": "正在扫描…", "No text found": "没有找到文字", "No table found": "没有找到表格", "No fields found": "没有找到字段", "Restored the earlier version": "已恢复到之前的版本", "Table title": "表格标题", "+ Row": "+ 行", "+ Column": "+ 列", "Copy this table": "复制此表格", "Remove": "移除", "Title": "标题", "Label": "标签", "Value": "值", "Remove field": "移除字段", "+ Field": "+ 字段", "Copy vCard": "复制 vCard", "Save .vcf": "保存 .vcf", "Line items": "明细", "Item": "项目", "Qty": "数量", "Price": "单价", "Amount": "金额", "Scanning for codes…": "正在扫描二维码和条形码…", "Selecting text on the image needs Claude here. Open Image to Text in the Claude app.": "在这里选取图片上的文字需要 Claude。请在 Claude 应用中打开「图片转文字」。", "Finding the text on the image…": "正在查找图片上的文字…", "No text found on this image.": "这张图片上没有找到文字。", "Couldn't find the text on this image. Try again.": "没能找到这张图片上的文字，请重试。", "Drag across the words to select them · ⌘C copies": "拖过文字即可选取 · ⌘C 复制", "Copied": "已复制", "Translating needs Claude: open Image to Text in the Claude app.": "翻译需要 Claude：请在 Claude 应用中打开「图片转文字」。", "Into": "译成", "Copy translation": "复制译文", "Translation copied": "译文已复制", "Translation": "翻译", "Couldn't translate. Try again.": "翻译失败，请重试。", "English": "英语", "Chinese (Simplified)": "简体中文", "Chinese (Traditional)": "繁体中文", "Japanese": "日语", "Korean": "韩语", "Spanish": "西班牙语", "French": "法语", "German": "德语", "Portuguese": "葡萄牙语", "Italian": "意大利语", "Russian": "俄语", "Arabic": "阿拉伯语", "Hindi": "印地语", "Indonesian": "印尼语", "Vietnamese": "越南语", "Thai": "泰语", "Turkish": "土耳其语", "Dutch": "荷兰语", "Polish": "波兰语", "Ukrainian": "乌克兰语", "Swedish": "瑞典语", "Greek": "希腊语", "Hebrew": "希伯来语", "Czech": "捷克语", "Malay": "马来语", "Link": "链接", "Email": "邮箱", "Phone": "电话", "Date": "日期", "Address": "地址", "Open link": "打开链接", "browser": "浏览器", "Copy link": "复制链接", "Link copied": "链接已复制", "Copy address": "复制地址", "Email address copied": "邮箱地址已复制", "Write an email": "写邮件", "mail app": "邮件应用", "Copy number": "复制号码", "Phone number copied": "电话号码已复制", "Call": "拨打", "phone app": "电话应用", "Add to Google Calendar": "添加到 Google 日历", "Save calendar event": "保存日历事件", "Copy date": "复制日期", "Date copied": "日期已复制", "Open in Apple Maps": "在 Apple 地图中打开", "Open in Google Maps": "在 Google 地图中打开", "Address copied": "地址已复制", "Claude is busy or you've reached your usage limit. Try again in a little while.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app. Allow it from the app's menu to read images.": "此应用未获准使用 Claude。请在应用菜单中允许后再识别图片。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined to read this image.": "Claude 拒绝识别这张图片。", "Sign in to Claude again, then try once more.": "请重新登录 Claude，然后再试一次。", "That image is too much to read at once. Select a smaller area and try again.": "这张图片内容太多，无法一次识别。请框选一块小一点的区域再试。", "This view can't send images to Claude. Open the app in the Claude desktop app or claude.ai.": "当前视图无法把图片发给 Claude。请在 Claude 桌面应用或 claude.ai 中打开本应用。", "Claude couldn't open this image. Save it as PNG or JPEG and try again.": "Claude 打不开这张图片。请存为 PNG 或 JPEG 后再试。", "Claude's answer didn't come back in the expected shape. Click Read again.": "Claude 返回的格式不对，请点「重新识别」。", "Lost the connection to Claude. Check your network and try again.": "与 Claude 的连接断开了。请检查网络后重试。", "Reading on this computer isn't available in this window. Open Image to Text in the Claude app to read with Claude.": "此窗口无法在本机识别。请在 Claude 应用中打开「图片转文字」，用 Claude 识别。", "Couldn't prepare this image. Try another file.": "无法处理这张图片，换个文件试试。", "Something went wrong. Try again.": "出了点问题，请重试。", "The answer was cut short. Select a smaller area to read the rest.": "结果被截断了。框选一块小一点的区域来识别剩下的部分。", "Couldn't load the PDF reader. Check your connection, or export the pages as images.": "无法加载 PDF 阅读器。请检查网络，或把页面导出为图片。", "Couldn't load the PDF reader.": "无法加载 PDF 阅读器。", "That file isn't an image or PDF.": "这个文件不是图片或 PDF。", "Can't open that file. Save it as PNG or JPEG and try again.": "打不开这个文件。请存为 PNG 或 JPEG 后再试。", "Line breaks": "换行", "Join lines automatically": "自动合并换行", "✓ Join lines automatically": "✓ 自动合并换行", "for new results": "用于新结果", "New results will have lines joined into paragraphs": "新的结果会把行合并成段落", "New results keep the line breaks from the image": "新的结果会保留图片中的换行", "Join lines into paragraphs": "把行合并成段落", "Remove all line breaks": "去掉所有换行", "Remove extra spaces": "去掉多余空格", "Fix words split by hyphens": "修复被连字符断开的单词", "Nothing to copy yet.": "还没有可复制的内容。", "Couldn't copy. Select the text and press ⌘C.": "复制失败。请选中文字后按 ⌘C。", "Table copied. Paste it into a spreadsheet.": "表格已复制，可粘贴到电子表格中。", "Copied to the clipboard": "已复制到剪贴板", "Done. Press ⌘⇧C to copy.": "完成。按 ⌘⇧C 复制。", "Selection copied": "所选内容已复制", "Clear": "清除", "Clipboard stack cleared": "剪贴板堆栈已清除", "Saving files needs the Claude app. Use Copy instead.": "保存文件需要 Claude 应用，请改用复制。", "Couldn't package the event. Use Google Calendar instead.": "无法打包日历事件，请改用 Google 日历。", "Couldn't package the contact. Use Copy vCard instead.": "无法打包联系人，请改用「复制 vCard」。", "Save cancelled.": "已取消保存。", "This file type can't be saved here. Use Copy instead.": "这里不能保存这种文件类型，请改用复制。", "That file type isn't available here.": "这里不支持这种文件类型。", "Another save is still open. Try again in a moment.": "另一个保存还没完成，请稍后再试。", "That file is too large to save here.": "文件太大，无法在这里保存。", "Couldn't save the file.": "无法保存文件。", "Couldn't load the Excel writer. Save as CSV instead.": "无法加载 Excel 导出组件，请改存为 CSV。", "Nothing to export yet": "还没有可导出的内容", "Nothing to export yet.": "还没有可导出的内容。", "Plain text": "纯文本", "Search the web for this text": "在网上搜索这段文字", "Web page": "网页", "Excel workbook": "Excel 工作簿", "Markdown tables": "Markdown 表格", "Copy as Markdown table": "复制为 Markdown 表格", "Markdown table copied": "Markdown 表格已复制", "Contact card": "联系人名片", "vCard copied": "vCard 已复制", "Copy as JSON": "复制为 JSON", "JSON copied": "JSON 已复制", "No codes found": "没有找到码", "Original image": "原图", "Copy all": "全部复制", "All results copied": "所有结果已复制", "Save all as one text file": "全部存为一个文本文件", "Save all as Markdown": "全部存为 Markdown", "Excel workbook, one sheet per table": "Excel 工作簿，每个表格一张工作表", "Copy all tables": "复制所有表格", "Spreadsheet, one row per image": "电子表格，每张图片一行", "Copy all codes": "复制所有码", "Codes copied": "码已复制", "Save as CSV": "存为 CSV", "Shortcut": "快捷键", "Reading": "识别", "Read as soon as an image is added": "添加图片后立即识别", "Paste, drop or open and the text appears": "粘贴、拖入或打开，文字随即出现", "Copy the result automatically": "自动复制结果", "Like a screen-text grabber: paste, then paste the text anywhere": "像截屏取字工具一样：粘贴图片，再把文字粘贴到任何地方", "Best accuracy in every mode": "所有模式都用最高准确度", "Slower. Text, Layout and Translate use the fast model otherwise": "速度较慢。否则文字、排版和翻译会使用快速模型", "Text language": "文字语言", "Detect": "自动检测", "Keep as in the image": "保持图片原样", "Join into paragraphs": "合并成段落", "Text engine": "识别引擎", "Claude (best)": "Claude（最佳）", "Offline (English)": "离线（仅英文）", "Clipboard & history": "剪贴板和历史记录", "Clipboard stack": "剪贴板堆栈", "Each Copy adds to what you copied before, so you can collect text from several images": "每次复制都会追加到之前复制的内容后面，方便从多张图片收集文字", "Keep history on this computer": "在这台电脑上保留历史记录", "Images and results are saved only in this app's local storage": "图片和结果只保存在本应用的本地存储中", "Hide the window after copying": "复制后隐藏窗口", "So you can paste right back where you were": "方便你直接回到原处粘贴", "paste an image ·": "粘贴图片 ·", "open files ·": "打开文件 ·", "read again ·": "重新识别 ·", "copy ·": "复制 ·", "export ·": "导出 ·", "modes ·": "切换模式 ·", "history ·": "历史记录 ·", "previous / next image ·": "上一张 / 下一张 ·", "stop ·": "停止 ·", "select text on the image": "在图片上选取文字", "select text on the image ·": "在图片上选取文字 ·", "read a copied screenshot from any app": "在任意应用中识别已复制的截图", "Delete from history": "从历史记录中删除", "Delete": "删除", "History cleared": "历史记录已清空", "Nothing matches.": "没有匹配的结果。", "Images you read show up here. They're stored only on this computer.": "识别过的图片会出现在这里，只保存在这台电脑上。", "History isn't available in this window.": "此窗口无法使用历史记录。", "Nothing to read aloud yet.": "还没有可朗读的内容。", "Reading aloud is busy. Try again in a moment.": "朗读功能正忙，请稍后再试。", "That's text, not a screenshot. Press ⌃⇧⌘4 to copy part of your screen, then ⌘V.": "这是文字，不是截图。按 ⌃⇧⌘4 截取屏幕的一部分，再按 ⌘V。", "That's text, not an image. Copy a screenshot or image first.": "这是文字，不是图片。请先复制一张截图或图片。", "No text found in that screenshot.": "那张截图里没有找到文字。", "Read. Press ⌘⇧C to copy the text.": "已识别。按 ⌘⇧C 复制文字。", "Reading on this computer…": "正在本机识别…", "Writing…": "正在输出…", "Float on top": "置顶悬浮", "Keep this window above other apps": "让这个窗口保持在其他应用上方", "Normal window": "普通窗口", "Floating wasn't allowed. You can change this in the app's Permissions.": "未获准置顶悬浮。可以在应用的权限设置中更改。", "Set up quick capture": "设置快速截取", "Turn on the shortcut": "开启快捷键", "The shortcut wasn't allowed. You can still paste screenshots here.": "未获准使用快捷键。你仍然可以在这里粘贴截图。", "Install as app": "安装为应用", "Tip: copy part of your screen with ⌃⇧⌘4, then ⌘V here.": "提示：用 ⌃⇧⌘4 截取屏幕的一部分，再在这里按 ⌘V。", "Tip: on a Mac, ⌃⇧⌘4 copies part of your screen. Then press ⌘V here.": "提示：在 Mac 上按 ⌃⇧⌘4 截取屏幕的一部分，然后在这里按 ⌘V。", "Open Image to Text in the Claude app to read with Claude. Text (printed English), QR codes and barcodes also work offline here.": "在 Claude 应用中打开「图片转文字」即可用 Claude 识别。文字（印刷体英文）、二维码和条形码在这里也能离线使用。", "This view can't send images to Claude. Open it in the Claude desktop app or claude.ai.": "当前视图无法把图片发给 Claude。请在 Claude 桌面应用或 claude.ai 中打开。"};
+  const PATTERNS=([["([\\d,]+) characters · ([\\d,]+) words", "$1 个字符 · $2 个词"], ["(\\d+) tables? · click a cell to edit", "$1 个表格 · 点击单元格可编辑"], ["(\\d+) fields · click to edit", "$1 个字段 · 点击可编辑"], ["(\\d+) found", "找到 $1 个"], ["Reading part (\\d+) of (\\d+)…", "正在识别第 $1 部分，共 $2 部分…"], ["Writing part (\\d+) of (\\d+)…", "正在输出第 $1 部分，共 $2 部分…"], ["Read all (\\d+)", "全部识别 ($1)"], ["Scan all (\\d+)", "全部扫描 ($1)"], ["(\\d+) of (\\d+) done in this mode", "此模式下已完成 $1/$2"], ["(\\d+) of (\\d+) images have results", "$2 张图片中有 $1 张已有结果"], ["All contacts \\((\\d+)\\)", "所有联系人 ($1)"], ["CSV – Table (\\d+)", "CSV – 表格 $1"], ["Delete all (\\d+)\\? Click again", "删除全部 $1 条？再点一次确认"], ["(\\d+) images?", "$1 张图片"], ["Clipboard stack: (\\d+)", "剪贴板堆栈：$1"], ["Added to clipboard stack \\((\\d+)\\)", "已加入剪贴板堆栈 ($1)"], ["Copied ([\\d,]+) characters\\. Paste them anywhere\\.", "已复制 $1 个字符，可以粘贴到任何地方。"], ["Saved (.+)", "已保存 $1"], ["Can't open (.+)\\. Save it as PNG or JPEG and try again\\.", "打不开 $1。请存为 PNG 或 JPEG 后再试。"], ["Can't open (.+)\\. It may be password protected\\.", "打不开 $1，它可能设有密码。"], ["Opened the first 60 of (\\d+) pages\\.", "已打开 $1 页中的前 60 页。"], ["Opening (.+): page (\\d+) of (\\d+)…", "正在打开 $1：第 $2 页，共 $3 页…"], ["(.+) isn't an image or PDF\\.", "$1 不是图片或 PDF。"], ["(.+) is taken by another app\\. Pick another shortcut in Settings\\.", "$1 已被其他应用占用，请在设置中换一个快捷键。"], ["(.+) now reads a copied screenshot", "现在按 $1 即可识别已复制的截图"], ["Ready\\. Copy a screenshot with ⌃⇧⌘4, then press (.+) from any app\\.", "好了。用 ⌃⇧⌘4 截图后，在任意应用中按 $1。"], ["(.+) from any app, then ⌘V a screenshot: the text is copied for you\\.", "在任意应用中按 $1，再按 ⌘V 粘贴截图：文字会自动复制好。"], ["Added the frame at (\\d+:\\d\\d)\\. Pick another, or Close\\.", "已添加 $1 处的画面。可以再选一帧，或关闭。"], ["A shortcut \\((.+)\\) and a menu bar item that read a copied screenshot and put the text on your clipboard", "一个快捷键（$1）和一个菜单栏图标：识别已复制的截图，并把文字放到剪贴板"], ["Link · (.+)", "链接 · $1"], ["Email · (.+)", "邮箱 · $1"], ["Phone · (.+)", "电话 · $1"], ["Date · (.+)", "日期 · $1"], ["Address · (.+)", "地址 · $1"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",#live, #imgInfo b, .code, .chip span, .hrow .m, .rcard span, .menu .tr");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 "use strict";
 const $=id=>document.getElementById(id);
+const zt=(en,zh)=>window.__ZH?zh:en,ztr=s=>window.__tr?window.__tr(String(s)):s; // Chinese UI (data/i18n)
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store={get(k,d){try{const v=localStorage.getItem("i2t."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("i2t."+k,JSON.stringify(v))}catch{}}};
 const LANGS=["English","Chinese (Simplified)","Chinese (Traditional)","Japanese","Korean","Spanish","French","German","Portuguese","Italian","Russian","Arabic","Hindi","Indonesian","Vietnamese","Thai","Turkish","Dutch","Polish","Ukrainian","Swedish","Greek","Hebrew","Czech","Malay"];
@@ -304,7 +356,7 @@ const MODES=[
   {id:"codes",label:"QR & barcode",run:"Scan codes",empty:"QR codes and barcodes are decoded on your computer, without Claude."}
 ];
 const MODE=Object.fromEntries(MODES.map(m=>[m.id,m]));
-const S={mode:store.get("mode","text"),lang:store.get("lang",guess==="English"?"English":guess),ftype:store.get("ftype","auto"),hint:store.get("hint","Auto"),breaks:store.get("breaks","keep"),auto:store.get("auto",true),autocopy:store.get("autocopy",false),best:store.get("best",false),stack:store.get("stack",false),keep:store.get("keep",true),engine:store.get("engine","claude"),hotkey:store.get("hotkey","Alt+Shift+O"),hideAfter:store.get("hideAfter",true)};
+const S={mode:store.get("mode","text"),lang:store.get("lang",window.__ZH&&!guess.startsWith("Chinese")?"Chinese (Simplified)":guess==="English"?"English":guess),ftype:store.get("ftype","auto"),hint:store.get("hint","Auto"),breaks:store.get("breaks","keep"),auto:store.get("auto",true),autocopy:store.get("autocopy",false),best:store.get("best",false),stack:store.get("stack",false),keep:store.get("keep",true),engine:store.get("engine","claude"),hotkey:store.get("hotkey","Alt+Shift+O"),hideAfter:store.get("hideAfter",true)};
 if(!MODE[S.mode]) S.mode="text";
 const setS=(k,v)=>{S[k]=v;store.set(k,v);};
 
@@ -319,7 +371,7 @@ function toast(msg){const t=$("toast");t.textContent=msg;t.hidden=false;clearTim
 const scripts={};
 function loadScript(src){return scripts[src]??=new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>{delete scripts[src];rej(new Error("load"))};document.head.appendChild(s);});}
 const LIB={zxing:"https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js",jsqr:"https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js",xlsx:"https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",pdf:"https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js",pdfw:"https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js",ocrad:"https://cdn.jsdelivr.net/npm/ocrad.js@0.0.1/ocrad.js",jszip:"https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"};
-const baseName=n=>(String(n||"image").replace(/\.[a-z0-9]{2,5}$/i,"").replace(/[\\/:*?"<>|]+/g,"-").trim().slice(0,60))||"image";
+const baseName=n=>(String(n||"image").replace(/\.(?=[a-z0-9]*[a-z])[a-z0-9]{2,5}$/i,"").replace(/[\\/:*?"<>|]+/g,"-").trim().slice(0,60))||"image";
 const stamp=()=>{const d=new Date(),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}.${p(d.getMinutes())}`;};
 function canvasOf(w,h){const c=document.createElement("canvas");c.width=Math.max(1,Math.round(w));c.height=Math.max(1,Math.round(h));return c;}
 const toBlob=(c,type="image/png",q)=>new Promise(r=>c.toBlob(r,type,q));
@@ -362,7 +414,7 @@ async function makeItem(blob,name){
   }
   const ts=Math.min(1,200/Math.max(W,H));const tc=canvasOf(W*ts,H*ts);const tx=tc.getContext("2d");tx.fillStyle="#fff";tx.fillRect(0,0,tc.width,tc.height);tx.drawImage(bmp,0,0,tc.width,tc.height);
   bmp.close?.();
-  return{id:uid(),name:name||"Pasted image",created:Date.now(),blob:out,w:W,h:H,thumb:tc.toDataURL("image/jpeg",.72),codes:null,results:{},err:{},url:null};
+  return{id:uid(),name:name||zt("Pasted image","粘贴的图片"),created:Date.now(),blob:out,w:W,h:H,thumb:tc.toDataURL("image/jpeg",.72),codes:null,results:{},err:{},url:null};
 }
 async function pdfItems(file){
   try{await loadScript(LIB.pdf);await loadScript(LIB.pdfw);}catch{toast("Couldn't load the PDF reader. Check your connection, or export the pages as images.");return[];}
@@ -388,7 +440,7 @@ async function addFiles(files,{auto=true,capture=false}={}){
     if(f.type==="application/pdf"||/\.pdf$/i.test(f.name||"")){added.push(...await pdfItems(f));continue;}
     if(f.type?.startsWith("video/")||/\.(mp4|m4v|mov|webm|ogv)$/i.test(f.name||"")){openVideo(f);continue;}
     if(f.type&&!f.type.startsWith("image/")){toast(`${f.name||"That file"} isn't an image or PDF.`);continue;}
-    const it=await makeItem(f,f.name&&f.name!=="image.png"?f.name:`Pasted ${stamp()}`);if(it)added.push(it);
+    const it=await makeItem(f,f.name&&f.name!=="image.png"?f.name:`${zt("Pasted","粘贴")} ${stamp()}`);if(it)added.push(it);
   }
   if(!added.length)return;
   items.push(...added);
@@ -491,8 +543,8 @@ function renderResult(){
   $("runBtn").disabled=m!=="codes"&&!busy&&!canRead(m);
   $("listenBtn").hidden=!tts||m==="codes";
   out.classList.toggle("mono",m==="layout");
-  const name={text:"Text",layout:"Layout",md:"Markdown",table:"Tables",translate:`Translation into ${S.lang}`,explain:`Explanation in ${S.lang}`,fields:"Fields",codes:"Codes"}[m];
-  $("rInfo").innerHTML=`<b>${esc(name)}</b>`+(r?.at?` · ${esc(fmtDate(r.at))}${r.engine==="local"?" · read offline":""}${r.edited?" · edited":""}`:"");
+  const name={text:"Text",layout:"Layout",md:"Markdown",table:"Tables",translate:zt(`Translation into ${S.lang}`,`译成${ztr(S.lang)}`),explain:zt(`Explanation in ${S.lang}`,`${ztr(S.lang)}解读`),fields:"Fields",codes:"Codes"}[m];
+  $("rInfo").innerHTML=`<b>${esc(name)}</b>`+(r?.at?` · ${esc(fmtDate(r.at))}${r.engine==="local"?zt(" · read offline"," · 离线识别"):""}${r.edited?zt(" · edited"," · 已编辑"):""}`:"");
   ph.hidden=true;
   if(TEXTY(m)){
     rich.hidden=true;out.hidden=false;
@@ -515,7 +567,7 @@ function showPh(kind){
   if(kind==="wait"){ph.innerHTML=`<div>Waiting for the images before it…</div>`;return;}
   const err=cur.err[rkey()];
   const local=engineFor(S.mode)==="local";
-  const d=document.createElement("div");d.textContent=err||(canRead(S.mode)?MODE[S.mode].empty+(local&&!claudeOK()?" Reading offline here: printed English text only. Open the app in Claude for any language and handwriting.":""):sample?"This view can't send images to Claude. Open Image to Text in the Claude desktop app or claude.ai.":"This mode needs Claude: open Image to Text in the Claude app. Text, QR codes and barcodes also work offline here.");
+  const d=document.createElement("div");d.textContent=err||(canRead(S.mode)?ztr(MODE[S.mode].empty)+(local&&!claudeOK()?ztr(" Reading offline here: printed English text only. Open the app in Claude for any language and handwriting."):""):sample?"This view can't send images to Claude. Open Image to Text in the Claude desktop app or claude.ai.":"This mode needs Claude: open Image to Text in the Claude app. Text, QR codes and barcodes also work offline here.");
   if(err)d.style.color="var(--bad)";
   ph.append(d);
   if(canRead(S.mode)){const b=document.createElement("button");b.className="btn pri";b.textContent=err?"Try again":MODE[S.mode].run;b.onclick=()=>enqueue([cur],!!err);ph.append(b);}
@@ -543,10 +595,10 @@ $("undoBtn").onclick=()=>{const r=curResult();if(!r?.prev?.length)return;const p
 /* tables */
 function renderTables(r){
   const rich=$("rich");
-  if(!r.tables?.length){rich.innerHTML=`<div class="empty-note">No table found in this image. Try <b>Keep layout</b> or <b>Text</b>.</div>`;return;}
+  if(!r.tables?.length){rich.innerHTML=zt(`<div class="empty-note">No table found in this image. Try <b>Keep layout</b> or <b>Text</b>.</div>`,`<div class="empty-note">这张图里没有找到表格。试试<b>保留排版</b>或<b>文字</b>。</div>`);return;}
   r.tables.forEach((t,ti)=>{
     const box=document.createElement("div");box.className="tbl";
-    const title=document.createElement("input");title.className="tt";title.value=t.title||`Table ${ti+1}`;title.setAttribute("aria-label","Table title");
+    const title=document.createElement("input");title.className="tt";title.value=t.title||zt(`Table ${ti+1}`,`表格 ${ti+1}`);title.setAttribute("aria-label","Table title");
     title.oninput=()=>{t.title=title.value;r.edited=true;persist(cur);};
     const sc=document.createElement("div");sc.className="tscroll";
     const tb=document.createElement("table");tb.className="grid";
@@ -565,7 +617,7 @@ function renderTables(r){
 const TYPEN={receipt:"Receipt",invoice:"Invoice",business_card:"Business card",form:"Form",other:"Document"};
 function renderFields(r){
   const rich=$("rich"),d=r.data;
-  if(!d||(!d.fields?.length&&!d.items?.length)){rich.innerHTML=`<div class="empty-note">No fields found. Try <b>Text</b> or pick the document type above.</div>`;return;}
+  if(!d||(!d.fields?.length&&!d.items?.length)){rich.innerHTML=zt(`<div class="empty-note">No fields found. Try <b>Text</b> or pick the document type above.</div>`,`<div class="empty-note">没有找到字段。试试<b>文字</b>，或在上方选择文档类型。</div>`);return;}
   const head=document.createElement("div");head.className="fhead";
   head.innerHTML=`<span class="badge">${esc(TYPEN[d.type]||"Document")}</span>`;
   const ti=document.createElement("input");ti.value=d.title||"";ti.placeholder="Title";ti.oninput=()=>{d.title=ti.value;r.edited=true;persist(cur);};head.append(ti);rich.append(head);
@@ -595,10 +647,10 @@ function codeRow(c){
   const f=document.createElement("span");f.className="f";f.textContent=prettyFmt(c.format);
   const v=document.createElement("span");v.className="v";v.title=c.text;
   const wifi=/^WIFI:/i.test(c.text)?Object.fromEntries([...c.text.slice(5).matchAll(/([STPH]):((?:\\.|[^;])*)/g)].map(m=>[m[1],m[2].replace(/\\(.)/g,"$1")])):null;
-  v.textContent=wifi?`Wi-Fi “${wifi.S||""}”${wifi.P?` · password ${wifi.P}`:""}`:c.text;
+  v.textContent=wifi?`Wi-Fi “${wifi.S||""}”${wifi.P?`${zt(" · password "," · 密码 ")}${wifi.P}`:""}`:c.text;
   row.append(f,v);
-  if(/^https:\/\//i.test(c.text)){const a=document.createElement("a");a.href=c.text;a.target="_blank";a.rel="noopener noreferrer";a.textContent="Open";row.append(a);}
-  const cp=document.createElement("button");cp.className="btn ghost";cp.textContent=wifi?.P?"Copy password":"Copy";cp.onclick=()=>copyText(wifi?.P||c.text,"Copied");row.append(cp);
+  if(/^https:\/\//i.test(c.text)){const a=document.createElement("a");a.href=c.text;a.target="_blank";a.rel="noopener noreferrer";a.textContent=zt("Open","打开");row.append(a);}
+  const cp=document.createElement("button");cp.className="btn ghost";cp.textContent=wifi?.P?zt("Copy password","复制密码"):zt("Copy","复制");cp.onclick=()=>copyText(wifi?.P||c.text,"Copied");row.append(cp);
   return row;
 }
 function renderCodes(){
@@ -610,7 +662,7 @@ function renderCodes(){
 function renderCodesPane(){
   const rich=$("rich");rich.replaceChildren();
   if(cur.codes==null){showPh("busy");$("ph").lastChild.textContent="Scanning for codes…";return;}
-  if(!cur.codes.length){rich.innerHTML=`<div class="empty-note">No QR code or barcode found in this image.<br>Tip: drag over the code in the image to zoom in on it, then pick <b>Read selected area</b>.</div>`;return;}
+  if(!cur.codes.length){rich.innerHTML=zt(`<div class="empty-note">No QR code or barcode found in this image.<br>Tip: drag over the code in the image to zoom in on it, then pick <b>Read selected area</b>.</div>`,`<div class="empty-note">这张图里没有找到二维码或条形码。<br>提示：在图片上框选码所在的区域放大，再点<b>识别所选区域</b>。</div>`);return;}
   const wrap=document.createElement("div");wrap.className="codes";wrap.style.padding="0";cur.codes.forEach(c=>wrap.append(codeRow(c)));rich.append(wrap);
 }
 
@@ -662,7 +714,7 @@ $("readSel").onclick=async()=>{
   const sx=src.w/r.bw,sy=src.h/r.bh;const bmp=await createImageBitmap(src.blob);
   const w=Math.round(r.w*sx),h=Math.round(r.h*sy);const up=Math.max(1,Math.min(3,700/Math.max(w,h)));
   const c=canvasOf(w*up,h*up);const x=c.getContext("2d");x.imageSmoothingQuality="high";x.drawImage(bmp,r.x*sx,r.y*sy,w,h,0,0,c.width,c.height);bmp.close?.();
-  const it=await makeItem(await toBlob(c),`${baseName(src.name)} (area)`);if(!it)return;
+  const it=await makeItem(await toBlob(c),`${baseName(src.name)}${zt(" (area)","（选区）")}`);if(!it)return;
   items.splice(items.indexOf(src)+1,0,it);select(it);persist(it,true);scanQueue(it);
   if(S.mode==="codes")return;
   if(canRead(S.mode))enqueue([it],false);
@@ -825,14 +877,14 @@ let trCtl=null;
 async function translateSnippet(text,anchor){
   if(!text)return;if(!sample){toast("Translating needs Claude: open Image to Text in the Claude app.");return;}
   trCtl?.abort();const ctl=new AbortController();trCtl=ctl;
-  const out=document.createElement("div");out.className="tr";out.textContent="Translating…";
-  const pick=document.createElement("div");pick.className="row";const lb=document.createElement("span");lb.textContent="Into";const sl=document.createElement("select");sl.innerHTML=LANGS.map(l=>`<option>${esc(l)}</option>`).join("");sl.value=S.lang;pick.append(lb,sl);
+  const out=document.createElement("div");out.className="tr";out.textContent=zt("Translating…","正在翻译…");
+  const pick=document.createElement("div");pick.className="row";const lb=document.createElement("span");lb.textContent="Into";const sl=document.createElement("select");sl.innerHTML=LANGS.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("");sl.value=S.lang;pick.append(lb,sl);
   const tools=document.createElement("div");tools.className="row";const cp=document.createElement("button");cp.className="btn";cp.textContent="Copy translation";cp.style.width="auto";tools.append(cp);
   let done="";cp.onclick=()=>{if(done)copyText(done,"Translation copied");};
   const run=async()=>{
-    done="";out.textContent="Translating…";
-    try{const r=await sample(`Translate the following text into ${sl.value}. Keep line breaks, names, numbers and URLs. If it is already in ${sl.value}, return it unchanged. Output only the translation.\n"""\n${text.slice(0,20000)}\n"""`,{modelTier:"quick",signal:ctl.signal,onText:({text})=>{out.textContent=text;}});done=cleanText(r.text);out.textContent=done||"Nothing to translate.";}
-    catch(e){if(e?.code!=="cancelled")out.textContent=ERR[e?.code]||"Couldn't translate. Try again.";}
+    done="";out.textContent=zt("Translating…","正在翻译…");
+    try{const r=await sample(`Translate the following text into ${sl.value}. Keep line breaks, names, numbers and URLs. If it is already in ${sl.value}, return it unchanged. Output only the translation.\n"""\n${text.slice(0,20000)}\n"""`,{modelTier:"quick",signal:ctl.signal,onText:({text})=>{out.textContent=text;}});done=cleanText(r.text);out.textContent=done||zt("Nothing to translate.","没有可翻译的内容。");}
+    catch(e){if(e?.code!=="cancelled")out.textContent=ztr(ERR[e?.code]||"Couldn't translate. Try again.");}
   };
   sl.onchange=()=>{setS("lang",sl.value);$("lang").value=sl.value;run();};
   openMenu(anchor,[{h:"Translation"},{node:pick},{node:out},{node:tools}]);
@@ -883,7 +935,7 @@ function detect(t){
 const DTYPE={link:"Link",email:"Email",phone:"Phone",date:"Date",address:"Address"};
 const pad2=n=>String(n).padStart(2,"0");
 const icsDate=(d,day)=>`${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}`+(day?"":`T${pad2(d.getHours())}${pad2(d.getMinutes())}00`);
-function eventTitle(){const t=(plainOf(cur)||"").split("\n").map(s=>s.trim()).find(s=>s.length>2)||cur?.name||"Event";return t.slice(0,80);}
+function eventTitle(){const t=(plainOf(cur)||"").split("\n").map(s=>s.trim()).find(s=>s.length>2)||cur?.name||zt("Event","活动");return t.slice(0,80);}
 function icsOf(d,title){
   const end=new Date(d.date);if(d.allDay)end.setDate(end.getDate()+1);else end.setHours(end.getHours()+1);
   const e=s=>String(s).replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/([,;])/g,"\\$1");
@@ -952,11 +1004,11 @@ function promptFor(q,n,part,parts,tail){
     case"layout":return pre+`Transcribe all text and reproduce its visual layout as monospace plain text: use spaces to keep columns and table cells aligned and blank lines for vertical gaps, so it looks like the image when shown in a fixed-width font. Keep the text exactly as written, including handwriting. No Markdown, no code fences. Output only the text.`+none;
     case"md":return pre+`Convert the content of the image into clean Markdown that keeps its structure: # headings for visible headings, - or 1. lists (nested where indented), **bold** and *italic* only where the text is visibly styled, > for quotes, GitHub-style tables for tables, - [ ] / - [x] for checkboxes, fenced code blocks with a language tag for code, and [text](url) only when a full URL is visible. Keep the wording exactly; do not add, translate or summarize. Output only the Markdown, not wrapped in a code fence.`+none;
     case"translate":return pre+`Read all the text in the image and translate it into ${q.lang}. Keep the structure: line breaks, lists, headings and table rows. Keep names, numbers, codes and URLs unchanged. If some text is already in ${q.lang}, keep it as it is. Output only the translation, with no notes.`+none;
-    case"explain":return pre+`Help me understand this image. Write in ${q.lang}, in plain text with "- " bullets and no # headings or bold markers. Start with one or two sentences on what this is. Then a line "Key points:" with up to 6 bullets. Then, only if present, a line "Dates, amounts and contacts:" listing them exactly as written, and a line "To do:" with anything it asks the reader to do. If it shows a chart, diagram, error message or code, explain what it shows or means and what to do about it.`;
+    case"explain":return pre+`Help me understand this image. Write in ${q.lang}, in plain text with "- " bullets and no # headings or bold markers. Start with one or two sentences on what this is. Then a line "Key points:" with up to 6 bullets. Then, only if present, a line "Dates, amounts and contacts:" listing them exactly as written, and a line "To do:" with anything it asks the reader to do. If it shows a chart, diagram, error message or code, explain what it shows or means and what to do about it.`+(window.__ZH?` Write those heading lines in ${q.lang} too.`:"");
     case"table":return pre+`Find every table or grid of data in the image (spreadsheets, price lists, schedules, statements, screenshots of tables) and extract it cell by cell. Reply with only JSON of this shape: {"tables":[{"title":"short title, or empty","rows":[["Header 1","Header 2"],["cell","cell"]]}]}. Include the header row first when there is one. Every row must have the same number of cells; use "" for empty cells and repeat nothing for merged cells. Keep cell text exactly as shown, including currency symbols, units, signs and thousands separators. If text is laid out in rows and columns without borders, treat it as a table. If there is no tabular data, reply {"tables":[]}.`;
     case"fields":{
       const t={auto:"First decide what kind of document this is: receipt, invoice, business_card, form (including IDs, labels and filled-in forms) or other.",receipt:"This is a receipt.",invoice:"This is an invoice or bill.",business_card:"This is a business card.",form:"This is a form, ID, label or similar document with labeled values."}[q.ftype]||"";
-      return pre+`${t} Extract its data. Reply with only JSON of this shape: {"type":"receipt|invoice|business_card|form|other","title":"merchant, company or person name","fields":[{"label":"Date","value":"12/03/2025"}],"items":[{"description":"","quantity":"","unit_price":"","amount":""}],"contact":{"name":"","organization":"","title":"","phones":[""],"emails":[""],"websites":[""],"address":""}}. Rules: fields lists every useful labeled value in the order it appears; for receipts and invoices include merchant or vendor, address, date, time, receipt or invoice number, subtotal, each tax, tip, discount, total, currency and payment method when present; for business cards include name, title, company, each phone, email, website and address; for forms every label with its filled value. Use clear English labels. Keep values exactly as written (dates, amounts and numbers too). items holds line items for receipts and invoices only, otherwise []. contact is filled only for business cards, otherwise null.`;}
+      return pre+`${t} Extract its data. Reply with only JSON of this shape: {"type":"receipt|invoice|business_card|form|other","title":"merchant, company or person name","fields":[{"label":"Date","value":"12/03/2025"}],"items":[{"description":"","quantity":"","unit_price":"","amount":""}],"contact":{"name":"","organization":"","title":"","phones":[""],"emails":[""],"websites":[""],"address":""}}. Rules: fields lists every useful labeled value in the order it appears; for receipts and invoices include merchant or vendor, address, date, time, receipt or invoice number, subtotal, each tax, tip, discount, total, currency and payment method when present; for business cards include name, title, company, each phone, email, website and address; for forms every label with its filled value. Use clear ${window.__ZH?"Simplified Chinese":"English"} labels. Keep values exactly as written (dates, amounts and numbers too). items holds line items for receipts and invoices only, otherwise []. contact is filled only for business cards, otherwise null.`;}
   }
 }
 function cleanText(t){
@@ -1010,7 +1062,7 @@ async function runOne(q){
     else{
       if(e?.text&&TEXTY(q.mode)&&code!=="refused"&&!it.results[q.key])setResult(it,q.key,{text:cleanText(e.text),partial:true});
       it.err[q.key]=ERR[code]||(e instanceof Error?"Couldn't prepare this image. Try another file.":"Something went wrong. Try again.");
-      if(code==="not_granted"||code==="rate_limited"||code==="sampling_disabled"||code==="session_expired"){if(queue.length)toast(it.err[q.key]+" The rest of the batch was stopped.");queue=[];q.stopAll=true;}
+      if(code==="not_granted"||code==="rate_limited"||code==="sampling_disabled"||code==="session_expired"){if(queue.length)toast(ztr(it.err[q.key])+zt(" The rest of the batch was stopped."," 其余图片已停止。"));queue=[];q.stopAll=true;}
       if(code==="images_unavailable"){limits={...limits,images:null};queue=[];q.stopAll=true;}
     }
   }finally{
@@ -1151,7 +1203,7 @@ function exportMenu(){
 function allMenu(){
   const m=S.mode,key=rkey(),done=items.filter(it=>m==="codes"?it.codes?.length:it.results[key]);
   const L=[{h:`${done.length} of ${items.length} images have results`}];if(!done.length)return L;
-  const name=`Image to Text ${stamp()}`;
+  const name=`${zt("Image to Text","图片转文字")} ${stamp()}`;
   if(TEXTY(m)){
     L.push({label:"Copy all",fn:()=>copyText(done.map(it=>plainOf(it)).join("\n\n"),"All results copied")},
       {label:"Save all as one text file",hint:".txt",fn:()=>save(name+".txt",done.map(it=>plainOf(it)).join("\n\n")+"\n")},
@@ -1234,14 +1286,14 @@ function snippet(r){for(const k of["text","md","layout","translate","explain"]){
 function openRecord(r){let it=items.find(x=>x.id===r.id);if(!it){it=fromRecord(r);items.push(it);}select(it);}
 async function renderHist(){
   const list=$("hlist");await loadHist();const q=$("hq").value.trim().toLowerCase();
-  if(!histOK){list.innerHTML=`<div class="empty-note">History isn't available in this window.</div>`;$("hcount").textContent="";return;}
+  if(!histOK){list.innerHTML=`<div class="empty-note">History isn't available in this window.</div>`;$("hcount").textContent="";$("clearHist").hidden=true;return;}
   const rows=histCache.filter(r=>!q||(r.name+" "+JSON.stringify(Object.values(r.results||{}).map(x=>x.text||x.tables||x.data))+" "+(r.codes||[]).map(c=>c.text).join(" ")).toLowerCase().includes(q));
   list.replaceChildren();
   if(!rows.length)list.innerHTML=`<div class="empty-note">${q?"Nothing matches.":"Images you read show up here. They're stored only on this computer."}</div>`;
   for(const r of rows.slice(0,300)){
     const d=document.createElement("div");d.className="hrow";d.tabIndex=0;d.role="button";
     d.innerHTML=`<img alt="" src="${esc(r.thumb)}"><div class="m"><div class="n"></div><div class="s"></div></div><button class="del" title="Delete from history" aria-label="Delete from history">Delete</button>`;
-    d.querySelector(".n").textContent=`${r.name} · ${fmtDate(r.updated)}`;d.querySelector(".s").textContent=snippet(r)||"Not read yet";
+    d.querySelector(".n").textContent=`${r.name} · ${fmtDate(r.updated)}`;d.querySelector(".s").textContent=snippet(r)||zt("Not read yet","尚未识别");
     d.onclick=e=>{if(e.target.closest(".del"))return;openRecord(r);closeHist();};
     d.onkeydown=e=>{if(e.key==="Enter")d.click();};
     d.querySelector(".del").onclick=async()=>{await DB.del(r.id).catch(()=>{});renderHist();};
@@ -1320,11 +1372,15 @@ document.addEventListener("keydown",e=>{
   if(!editing&&!mod&&!e.altKey&&k==="t"&&cur){setLive(!liveOn);return;}
   if(!editing&&mod&&!e.shiftKey&&k==="a"&&liveOn){e.preventDefault();selectAllLive();return;}
 });
-$("lang").innerHTML=LANGS.map(l=>`<option>${esc(l)}</option>`).join("");$("lang").value=S.lang;
+$("lang").innerHTML=LANGS.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("");$("lang").value=S.lang;
 $("lang").onchange=()=>{setS("lang",$("lang").value);setMode(S.mode,true);};
 $("ftype").value=S.ftype;$("ftype").onchange=()=>{setS("ftype",$("ftype").value);setMode(S.mode,true);};
 
 /* ---------- desktop app ---------- */
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"image-to-text-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#39CBFF\"/><stop offset=\"1\" stop-color=\"#0A6FD0\"/><\/linearGradient><radialGradient id=\"image-to-text-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"image-to-text-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"image-to-text-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#image-to-text-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#image-to-text-sh)\"/><g filter=\"url(#image-to-text-ds)\" transform=\"rotate(-6 420 450)\"><rect x=\"200\" y=\"230\" width=\"440\" height=\"380\" rx=\"34\" fill=\"#fff\"/><rect x=\"226\" y=\"256\" width=\"388\" height=\"328\" rx=\"20\" fill=\"#BFE9FF\"/><circle cx=\"530\" cy=\"330\" r=\"38\" fill=\"#FFC94A\"/><path d=\"M226 584l120-170 90 110 60-70 118 130z\" fill=\"#1E9E6A\"/><path d=\"M226 584l120-170 70 86-50 84z\" fill=\"#167A52\"/><\/g><g fill=\"none\" stroke=\"#fff\" stroke-width=\"30\" stroke-linecap=\"round\"><path d=\"M150 300v-90a50 50 0 0 1 50-50h90\"/><path d=\"M734 160h90a50 50 0 0 1 50 50v90\"/><path d=\"M874 724v90a50 50 0 0 1-50 50h-90\"/><path d=\"M290 864h-90a50 50 0 0 1-50-50v-90\"/><\/g><g filter=\"url(#image-to-text-ds)\"><rect x=\"470\" y=\"540\" width=\"350\" height=\"250\" rx=\"30\" fill=\"#fff\"/><rect x=\"510\" y=\"590\" width=\"200\" height=\"28\" rx=\"14\" fill=\"#0A6FD0\"/><rect x=\"510\" y=\"646\" width=\"270\" height=\"22\" rx=\"11\" fill=\"#C8D6E6\"/><rect x=\"510\" y=\"692\" width=\"230\" height=\"22\" rx=\"11\" fill=\"#C8D6E6\"/><rect x=\"510\" y=\"738\" width=\"160\" height=\"22\" rx=\"11\" fill=\"#C8D6E6\"/><\/g><rect x=\"120\" y=\"496\" width=\"784\" height=\"16\" rx=\"8\" fill=\"#FF4D6D\" opacity=\".9\"/><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){
   const c=canvasOf(256,256),x=c.getContext("2d");
   const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#5a8dff");g.addColorStop(1,"#2244c4");
@@ -1355,7 +1411,7 @@ async function tryClipboardImage(){
     const list=await Promise.race([navigator.clipboard.read(),new Promise((_,rej)=>setTimeout(()=>rej(0),800))]);
     for(const ci of list){const t=ci.types.find(x=>x.startsWith("image/"));if(!t)continue;
       const b=await ci.getType(t);const sig=b.size+":"+t;if(sig===lastClip||!capture)return;lastClip=sig;
-      disarm();addFiles([new File([b],`Screenshot ${stamp()}.png`,{type:t})],{capture:true});return;}
+      disarm();addFiles([new File([b],`${zt("Screenshot","截图")} ${stamp()}.png`,{type:t})],{capture:true});return;}
   }catch{}
 }
 async function summon(){
@@ -1371,7 +1427,7 @@ async function deliverCapture(it,q){
   toast(msg);if(cur===it)status(msg);
   if(ok&&S.hideAfter&&desktop?.window&&!(store.get("float",false)&&perms.overlay==="granted")){
     setTimeout(()=>desktop.window.hide().catch(()=>{}),1100);
-    if(perms.notifications==="granted")desktop.notification.show({body:`Copied: ${t.replace(/\s+/g," ").slice(0,200)}`}).catch(()=>{});
+    if(perms.notifications==="granted")desktop.notification.show({body:`${zt("Copied: ","已复制：")}${t.replace(/\s+/g," ").slice(0,200)}`}).catch(()=>{});
   }
 }
 async function registerHotkey(){
@@ -1390,18 +1446,18 @@ function trayIcon(){
 }
 function setTray(){
   if(perms["menu-bar"]!=="granted"||!desktop?.tray)return;
-  desktop.tray.set({icon:trayIcon(),toolTip:"Read the text in a copied screenshot",menu:[
-    {label:"Read copied screenshot"+(scKey?"   "+hkLabel(scKey):""),click:summon},
-    {label:"Open Image to Text",click:()=>{desktop.window.show().catch(()=>{});}},
+  desktop.tray.set({icon:trayIcon(),toolTip:zt("Read the text in a copied screenshot","识别已复制截图里的文字"),menu:[
+    {label:zt("Read copied screenshot","识别已复制的截图")+(scKey?"   "+hkLabel(scKey):""),click:summon},
+    {label:zt("Open Image to Text","打开「图片转文字」"),click:()=>{desktop.window.show().catch(()=>{});}},
     {type:"separator"},
-    {label:"History",click:async()=>{await desktop.window.show().catch(()=>{});openHist();}}
+    {label:zt("History","历史记录"),click:async()=>{await desktop.window.show().catch(()=>{});openHist();}}
   ]}).catch(()=>{});
 }
 
 /* ---------- video frames ---------- */
 let vidURL=null,vidName="";
 function openVideo(f){
-  closeVideo();vidURL=URL.createObjectURL(f);vidName=baseName(f.name||"Video");
+  closeVideo();vidURL=URL.createObjectURL(f);vidName=baseName(f.name||zt("Video","视频"));
   const v=$("vidEl");$("vidInfo").textContent="Pause on the frame with the text, then read it.";$("vidInfo").classList.remove("err");
   v.onerror=()=>{$("vidInfo").textContent="This video can't be played here. Try an MP4, or take a screenshot of the frame.";$("vidInfo").classList.add("err");};
   v.src=vidURL;$("vid").hidden=false;$("vidGrab").focus();
@@ -1415,7 +1471,7 @@ $("vidGrab").onclick=async()=>{
   const v=$("vidEl");if(!v.videoWidth){toast("The video isn't ready yet.");return;}
   v.pause();const c=canvasOf(v.videoWidth,v.videoHeight);c.getContext("2d").drawImage(v,0,0,c.width,c.height);
   const t=v.currentTime,lab=`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,"0")}`;
-  const it=await makeItem(await toBlob(c),`${vidName} at ${lab}`);if(!it)return;
+  const it=await makeItem(await toBlob(c),zt(`${vidName} at ${lab}`,`${vidName} ${lab}`));if(!it)return;
   items.push(it);select(it);persist(it,true);scanQueue(it);
   if(S.auto&&canRead(S.mode))enqueue([it],false);
   $("vidInfo").textContent=`Added the frame at ${lab}. Pick another, or Close.`;
@@ -1462,8 +1518,55 @@ renderModes();select(null);
   }
   if(!desktop?.tray)return;
   document.body.classList.add("app");
-  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
   try{perms=await desktop.permissions.state();}catch{}
   applyWindow();setupDesktop();
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>

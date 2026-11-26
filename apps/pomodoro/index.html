@@ -94,8 +94,60 @@ summary::-webkit-details-marker{display:none}
 </div>
 
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"Pomodoro Timer": "番茄钟", "Focus": "专注", "Short break": "短休息", "Long break": "长休息", "Ready to focus": "准备专注", "Focusing": "专注中", "On a break": "休息中", "Paused": "已暂停", "Time for a break": "该休息了", "Reset": "重置", "Start": "开始", "Pause": "暂停", "Resume": "继续", "Skip": "跳过", "Skip to next": "跳到下一段", "Sessions today": "今日完成数", "What do you want to get done today? Dump it all here, messy is fine.": "今天想完成什么？都写在这里，乱一点也没关系。", "What to get done": "要完成的事", "Claude turns it into focus sessions.": "Claude 会把它拆成一个个专注时段。", "✦ Plan my sessions": "✦ 帮我排时段", "New plan": "新计划", "Done": "已完成", "All done. Nice work.": "全部完成，干得漂亮。", "Write what you want to get done first.": "先写下你想完成的事。", "Thinking…": "思考中…", "Claude is busy or you hit your usage limit. Try later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude declined this one. Try rewording.": "Claude 拒绝了这次请求，换个说法试试。", "Couldn't make a plan. Try again.": "没能生成计划，请重试。", "Settings": "设置", "Focus (minutes)": "专注（分钟）", "Start next session automatically": "自动开始下一段", "Press Option+Shift+P anywhere to start or pause. The countdown shows in your menu bar.": "在任何地方按 Option+Shift+P 开始或暂停，倒计时会显示在菜单栏。", "Start a session to turn on the menu bar timer and notifications.": "开始一个时段即可开启菜单栏计时和通知。", "Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.": "在 Mac 或 Windows 版 Claude 中打开，即可安装为带菜单栏计时的应用。", "Install as app": "安装为应用", "Installed. Open Pomodoro Timer from your Applications or Start menu.": "已安装。请从“应用程序”或“开始”菜单打开番茄钟。"};
+  const PATTERNS=([["(\\d+) today", "今天完成 $1 个"], ["(\\d+) sessions? left, about ([\\d.]+) h", "还剩 $1 个时段，约 $2 小时"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.tasks li span");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 const $=id=>document.getElementById(id);
-const NAMES={focus:"Focus",short:"Short break",long:"Long break"};
+const T=window.__t;
+const NAMES={focus:T("Focus","专注"),short:T("Short break","短休息"),long:T("Long break","长休息")};
 const store={get(k,d){try{const v=localStorage.getItem("focus."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("focus."+k,JSON.stringify(v))}catch{}}};
 const today=()=>new Date().toISOString().slice(0,10);
 let S={
@@ -115,12 +167,13 @@ function paint(){
   $("t").textContent=fmt(r);
   $("bar").style.strokeDashoffset=(276.46*(1-Math.max(0,r)/total)).toFixed(2);
   const ct=curTask();
+  $("lbl").toggleAttribute("data-no-i18n",!!(S.mode==="focus"&&ct));
   $("lbl").textContent=S.mode==="focus"&&ct?ct.task:(S.running?(S.mode==="focus"?"Focusing":"On a break"):(r<total?"Paused":S.mode==="focus"?"Ready to focus":"Time for a break"));
   $("go").textContent=S.running?"Pause":(r<total?"Resume":"Start");
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.mode===S.mode));
   const n=Math.max(4,S.done);
   $("dots").innerHTML=Array.from({length:Math.min(n,12)},(_,i)=>`<i class="${i<S.done?"on":""}"></i>`).join("")+`<span>${S.done} today</span>`;
-  document.title=S.running?`${fmt(r)} · Pomodoro Timer`:"Pomodoro Timer";
+  document.title=S.running?`${fmt(r)} · ${T("Pomodoro Timer","番茄钟")}`:T("Pomodoro Timer","番茄钟");
   syncDesktop(r);
 }
 function syncDesktop(r){
@@ -136,13 +189,13 @@ function setTray(){
   const r=remaining(), total=S.dur[S.mode]*60;
   desktop.tray.set({
     icon:trayIcon(), title:S.running?fmt(r):"",
-    toolTip:(S.running?`${NAMES[S.mode]}: ${fmt(r)} left`:`${S.done} sessions today`)+(curTask()?` · ${curTask().task}`:""),
+    toolTip:(S.running?T(`${NAMES[S.mode]}: ${fmt(r)} left`,`${NAMES[S.mode]}：剩余 ${fmt(r)}`):T(`${S.done} sessions today`,`今天已完成 ${S.done} 个`))+(curTask()?` · ${curTask().task}`:""),
     menu:[
-      {label:S.running?"Pause":(r<total?"Resume":"Start "+NAMES[S.mode]),click:toggle},
-      {label:"Reset",click:reset,enabled:r<total},
-      {label:"Skip to next",click:skip},
+      {label:S.running?T("Pause","暂停"):(r<total?T("Resume","继续"):T("Start ","开始")+NAMES[S.mode]),click:toggle},
+      {label:T("Reset","重置"),click:reset,enabled:r<total},
+      {label:T("Skip to next","跳到下一段"),click:skip},
       {type:"separator"},
-      {label:"Show Pomodoro Timer",click:()=>desktop.window.show().catch(()=>{})}
+      {label:T("Show Pomodoro Timer","显示番茄钟"),click:()=>desktop.window.show().catch(()=>{})}
     ]
   }).catch(()=>{});
 }
@@ -162,13 +215,13 @@ function finish(){
   if(was==="focus"){S.done++;save();if(finishedTask){finishedTask.spent=(finishedTask.spent||0)+1;if(finishedTask.spent>=finishedTask.sessions)finishedTask.done=true;saveTasks();renderTasks();}}
   chime();
   const next=nextMode();
-  const msg=was==="focus"?`Focus session done${finishedTask?` on "${finishedTask.task.slice(0,80)}"`:""}. ${S.done} today. Time for a ${next==="long"?"long":"short"} break.`:"Break's over. Ready for the next focus session?";
+  const msg=was==="focus"?T(`Focus session done${finishedTask?` on "${finishedTask.task.slice(0,80)}"`:""}. ${S.done} today. Time for a ${next==="long"?"long":"short"} break.`,`${finishedTask?`“${finishedTask.task.slice(0,80)}”的`:""}专注时段完成。今天已完成 ${S.done} 个，该${next==="long"?"长":"短"}休息了。`):T("Break's over. Ready for the next focus session?","休息结束。准备好开始下一个专注时段了吗？");
   notify(msg);
   setMode(next,S.auto);
 }
 function notify(body){
   if(desktop?.notification&&perms.notifications==="granted") desktop.notification.show({body}).catch(()=>{});
-  else if("Notification" in window&&Notification.permission==="granted"){try{new Notification("Pomodoro Timer",{body})}catch{}}
+  else if("Notification" in window&&Notification.permission==="granted"){try{new Notification(T("Pomodoro Timer","番茄钟"),{body})}catch{}}
 }
 let ac=null;
 function chime(){
@@ -196,7 +249,7 @@ $("mk").onclick=async()=>{
   if(!dump){$("pst").textContent="Write what you want to get done first.";return;}
   $("mk").disabled=true;$("pst").textContent="Thinking…";
   try{
-    const out=await sample.json(`You plan pomodoro work. A focus session is ${S.dur.focus} minutes. Turn the person's notes into an ordered list of concrete tasks, most important or most blocking first, each with how many focus sessions it needs (1 to 4). Split vague items into doable steps, drop duplicates, keep the person's language, keep each task under 60 characters. Reply with only a JSON array like [{"task":"Draft the intro","sessions":2}].\n\nNotes:\n${dump.slice(0,8000)}`,{modelTier:"default",cache:false});
+    const out=await sample.json(`You plan pomodoro work. A focus session is ${S.dur.focus} minutes. Turn the person's notes into an ordered list of concrete tasks, most important or most blocking first, each with how many focus sessions it needs (1 to 4). Split vague items into doable steps, drop duplicates, keep the person's language${window.__ZH?" (Simplified Chinese if unclear)":""}, keep each task under 60 characters. Reply with only a JSON array like [{"task":"${window.__ZH?"写报告开头":"Draft the intro"}","sessions":2}].\n\nNotes:\n${dump.slice(0,8000)}`,{modelTier:"default",cache:false});
     const list=(Array.isArray(out)?out:[]).filter(t=>t&&t.task).slice(0,12).map(t=>({task:String(t.task).slice(0,80),sessions:Math.min(4,Math.max(1,Math.round(+t.sessions||1))),spent:0,done:false}));
     if(!list.length) throw {code:"empty_completion"};
     tasks=list;saveTasks();renderTasks();paint();$("pst").textContent="Claude turns it into focus sessions.";
@@ -209,6 +262,10 @@ renderTasks();
 (async()=>{sample=window.claude?.use?await window.claude.use("sample").catch(()=>null):null;$("plan").hidden=!sample&&!tasks.length;if(!sample)$("dump").hidden=true;})();
 
 // icons
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"pomodoro-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#FFF3E6\"/><stop offset=\"1\" stop-color=\"#FFD3B8\"/><\/linearGradient><radialGradient id=\"pomodoro-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.5\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"pomodoro-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"pomodoro-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><radialGradient id=\"pomodoro-tom\" cx=\".38\" cy=\".3\" r=\".8\"><stop offset=\"0\" stop-color=\"#FF7A5C\"/><stop offset=\"1\" stop-color=\"#D9271C\"/><\/radialGradient><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#pomodoro-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#pomodoro-sh)\"/><g filter=\"url(#pomodoro-ds)\"><ellipse cx=\"512\" cy=\"580\" rx=\"310\" ry=\"275\" fill=\"url(#pomodoro-tom)\"/><ellipse cx=\"400\" cy=\"450\" rx=\"90\" ry=\"44\" fill=\"#fff\" opacity=\".35\" transform=\"rotate(-28 400 450)\"/><path d=\"M512 318c-40-40-110-40-150-10 50 0 80 20 96 40-60 0-110 30-130 70 60-26 110-30 150-18 10 40 60 50 64 50s54-10 64-50c40-12 90-8 150 18-20-40-70-70-130-70 16-20 46-40 96-40-40-30-110-30-150 10z\" fill=\"#2FA84F\"/><path d=\"M512 330c0-50 10-90 40-120\" fill=\"none\" stroke=\"#1F7A38\" stroke-width=\"24\" stroke-linecap=\"round\"/><text x=\"512\" y=\"700\" text-anchor=\"middle\" font-family=\"-apple-system,'SF Pro Rounded',Helvetica,Arial\" font-weight=\"800\" font-size=\"210\" fill=\"#fff\" letter-spacing=\"-6\">25<\/text><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){
   const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
   const g=x.createLinearGradient(0,0,0,256);g.addColorStop(0,"#ff7a5c");g.addColorStop(1,"#d63a2a");
@@ -261,9 +318,56 @@ paint();
     else $("hint").textContent=st==="installed"?"Installed. Open Pomodoro Timer from your Applications or Start menu.":"Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.";
     return;
   }
-  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
   desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:30,width:380,height:560,minWidth:320,minHeight:500}).catch(()=>{});
   try{perms=await desktop.permissions.state();}catch{}
   setupDesktopFeatures();paint();
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>

@@ -1,0 +1,967 @@
+{
+"dict": {
+"PDF Chat": "PDF 对话",
+"Show or hide pages (⌘\\)": "显示或隐藏页面栏 (⌘\\)",
+"Sidebar": "侧边栏",
+"Open PDF (⌘O)": "打开 PDF (⌘O)",
+"Open": "打开",
+"Previous page": "上一页",
+"Page number": "页码",
+"Next page": "下一页",
+"Zoom out (⌘−)": "缩小 (⌘−)",
+"Zoom out": "缩小",
+"Zoom options": "缩放选项",
+"Zoom in (⌘+)": "放大 (⌘+)",
+"Zoom in": "放大",
+"Find (⌘F)": "查找 (⌘F)",
+"Find": "查找",
+"View: page layout, rotate, dark pages, read aloud": "视图：页面布局、旋转、深色页面、朗读",
+"View options": "视图选项",
+"Assistant": "助手",
+"Save PDF with your comments, drawings and filled fields (⌘S)": "保存带有批注、绘图和已填字段的 PDF (⌘S)",
+"Save": "保存",
+"Document: organize pages, combine, properties": "文档：整理页面、合并、属性",
+"Document menu": "文档菜单",
+"Export chat and notes": "导出对话和笔记",
+"Export": "导出",
+"Install as app": "安装为应用",
+"Documents": "文档",
+"Add another PDF": "再添加一个 PDF",
+"Add PDF": "添加 PDF",
+"Pages": "页面",
+"Bookmarks": "书签",
+"Comment and sign tools": "批注和签名工具",
+"Select text and comments (V)": "选择文字和批注 (V)",
+"Hand: drag to scroll (H, or hold Space)": "抓手：拖动滚动（H，或按住空格）",
+"Highlight text (select text with this tool on)": "高亮文字（开启此工具后选择文字）",
+"Underline text": "给文字加下划线",
+"Strikethrough text": "给文字加删除线",
+"Sticky note (N)": "便笺 (N)",
+"Add text (T)": "添加文本 (T)",
+"Draw freehand (D)": "手绘 (D)",
+"Shapes: rectangle, oval, line, arrow": "形状：矩形、椭圆、直线、箭头",
+"Fill & Sign: signature, initials, date, check marks": "填写和签名：签名、姓名首字母、日期、勾选标记",
+"Fill & Sign": "填写和签名",
+"Redact: drag over an area or select text, then Apply redactions": "涂黑：拖选一个区域或选中文字，然后应用涂黑",
+"Stamps: Approved, Draft, Confidential…": "图章：已批准、草稿、机密…",
+"Undo (⌘Z)": "撤销 (⌘Z)",
+"Undo": "撤销",
+"Redo (⇧⌘Z)": "重做 (⇧⌘Z)",
+"Redo": "重做",
+"Organize pages: reorder, rotate, delete, insert, combine": "整理页面：排序、旋转、删除、插入、合并",
+"Organize": "整理",
+"Find in document": "在文档中查找",
+"Previous (⇧⌘G)": "上一个 (⇧⌘G)",
+"Previous match": "上一个匹配",
+"Next (⌘G)": "下一个 (⌘G)",
+"Next match": "下一个匹配",
+"Ask Claude about this": "就此询问 Claude",
+"Ask": "提问",
+"Close (Esc)": "关闭 (Esc)",
+"Close find": "关闭查找",
+"Organize pages": "整理页面",
+"Rotate left": "向左旋转",
+"Left": "向左",
+"Rotate right": "向右旋转",
+"Right": "向右",
+"Delete selected pages (⌫)": "删除所选页面 (⌫)",
+"Delete": "删除",
+"Insert a blank page after the selection": "在所选页面后插入空白页",
+"Blank page": "空白页",
+"Insert pages from another PDF after the selection": "在所选页面后插入另一个 PDF 的页面",
+"Insert PDF…": "插入 PDF…",
+"Save the selected pages as a new PDF": "把所选页面存为新的 PDF",
+"Extract…": "提取…",
+"Crop pages: drag the area to keep": "裁剪页面：拖出要保留的区域",
+"Crop…": "裁剪…",
+"Done": "完成",
+"Chat with your PDFs": "和你的 PDF 对话",
+"Drop one or several PDFs here, paste them, or open them from your computer. Word, PowerPoint and text files work too. Everything stays on this device.": "把一个或多个 PDF 拖到这里、粘贴进来，或从电脑中打开。也支持 Word、PowerPoint 和文本文件。所有内容都只保存在这台设备上。",
+"Open PDF…": "打开 PDF…",
+"⌘O to open · ⌘F to find · select text to ask about it": "⌘O 打开 · ⌘F 查找 · 选中文字即可提问",
+"Recent": "最近打开",
+"Answers with page citations": "回答附带页码引用",
+"Click a citation to jump to the page and see the exact words highlighted.": "点击引用即可跳到对应页面，原文会高亮显示。",
+"Several PDFs at once": "同时处理多个 PDF",
+"Ask across contracts, papers or reports, or compare them side by side.": "跨合同、论文或报告提问，或把它们放在一起对比。",
+"Summaries, outlines, tables": "摘要、大纲、表格",
+"One click for a summary, an outline, study notes or a table you can save as Excel.": "一键生成摘要、大纲、学习笔记，或可存为 Excel 的表格。",
+"Chat": "对话",
+"Notes": "笔记",
+"Comments": "批注",
+"Summaries, tables, translation and more": "摘要、表格、翻译等",
+"Tools": "工具",
+"Start a new chat about these documents": "就这些文档开始新对话",
+"New chat": "新对话",
+"Remove quoted text": "移除引用的文字",
+"Ask about this PDF…": "询问这个 PDF…",
+"Ask a question": "提问",
+"Send (↩)": "发送 (↩)",
+"Send": "发送",
+"Stop": "停止",
+"↩ to send · ⇧↩ new line": "↩ 发送 · ⇧↩ 换行",
+"Ask across these PDFs…": "跨这些 PDF 提问…",
+"Open PDF Chat in the Claude app to ask questions": "请在 Claude 应用中打开 PDF 对话来提问",
+"The PDF reader, search and notes work without Claude.": "没有 Claude 时，阅读、查找和笔记照样能用。",
+"No documents selected": "未选择文档",
+"Highlight": "高亮",
+"Underline": "下划线",
+"Strikethrough": "删除线",
+"Highlight and add a comment": "高亮并添加批注",
+"Comment": "批注",
+"Mark for redaction": "标记为涂黑",
+"Redact": "涂黑",
+"Ask Claude": "问 Claude",
+"Explain": "解释",
+"Summarize": "总结",
+"Translate": "翻译",
+"Add to notes": "加入笔记",
+"Copy": "复制",
+"Pause": "暂停",
+"Resume": "继续",
+"Drop PDFs to open them": "松开即可打开 PDF",
+"OK": "好",
+"Cancel": "取消",
+"just now": "刚刚",
+"That file type isn't supported. Open a PDF, Word, PowerPoint or text file.": "不支持这种文件类型。请打开 PDF、Word、PowerPoint 或文本文件。",
+"The PDF engine didn't load. Check your connection and reload.": "PDF 引擎没有加载成功。请检查网络后重新加载。",
+"This PDF is password-protected": "此 PDF 受密码保护",
+"That password didn't work. Try again.": "密码不对，请重试。",
+"Password": "密码",
+"Opening…": "正在打开…",
+"Loading…": "正在加载…",
+"Each page is one slide.": "每页是一张幻灯片。",
+"This file has no bookmarks.": "此文件没有书签。",
+"Each page is one slide. Ask the assistant for an outline instead.": "每页是一张幻灯片。可以让助手生成大纲。",
+"This file has no bookmarks. Ask the assistant for an outline instead.": "此文件没有书签。可以让助手生成大纲。",
+"This PDF has no bookmarks. Ask the assistant for an outline instead.": "此 PDF 没有书签。可以让助手生成大纲。",
+"(untitled)": "（无标题）",
+"Fit": "适合宽度",
+"Page": "整页",
+"Fit width": "适合宽度",
+"Fit page": "适合页面",
+"That document isn't open any more.": "这个文档已经关闭。",
+"reading…": "正在读取…",
+"No matches": "无匹配",
+"No PDFs open.": "没有打开的 PDF。",
+"Include in chat": "加入对话",
+"Close document": "关闭文档",
+"Remove from Recent": "从最近打开中移除",
+"Claude is busy or you've reached your usage limit. Try again in a little while.": "Claude 正忙，或你已达到用量上限。请稍后再试。",
+"Claude isn't allowed for this app. Allow it when asked to use the assistant.": "此应用未获准使用 Claude。出现提示时请允许，才能使用助手。",
+"Claude isn't available on this account.": "此账号无法使用 Claude。",
+"Claude declined to answer this. Try rephrasing.": "Claude 拒绝回答这个问题。换个说法试试。",
+"Your Claude session expired. Sign in again, then retry.": "Claude 会话已过期。请重新登录后重试。",
+"That was too much text at once. Ask about a smaller part of the document.": "一次的文字太多了。请针对文档中更小的部分提问。",
+"Claude returned an empty answer. Try again.": "Claude 返回了空回答。请重试。",
+"Claude's reply couldn't be read. Try again.": "无法读取 Claude 的回复。请重试。",
+"Claude can't look at page images in this view.": "在此视图中 Claude 无法查看页面图像。",
+"A page image couldn't be sent.": "有一张页面图像发送失败。",
+"Claude had a problem answering. Try again.": "Claude 回答时出了问题。请重试。",
+"Too many requests at once. Wait a moment and try again.": "同时请求太多。请稍等后再试。",
+"Something went wrong. Try again.": "出了点问题。请重试。",
+"Wait for the current answer, or press Stop.": "请等当前回答完成，或按停止。",
+"Open PDF Chat in the Claude app to ask questions.": "请在 Claude 应用中打开 PDF 对话来提问。",
+"Open a PDF first.": "请先打开一个 PDF。",
+"Tick at least one document in the sidebar to include it in the chat.": "请在侧边栏勾选至少一个文档，把它加入对话。",
+"Still reading the PDF. Try again in a moment.": "还在读取 PDF，请稍后再试。",
+"Thinking…": "思考中…",
+"The answer was cut short. Ask for a narrower part.": "回答被截断了。请缩小提问范围。",
+"Stopped.": "已停止。",
+"Open PDF Chat in the Claude app to use the assistant.": "请在 Claude 应用中打开 PDF 对话来使用助手。",
+"Tick a document in the sidebar to include it.": "请在侧边栏勾选一个文档。",
+"Reading the document…": "正在阅读文档…",
+"Writing…": "正在撰写…",
+"This PDF is scanned images with no text. Use “Read scanned pages” first.": "此 PDF 是扫描图像，没有文字。请先使用“读取扫描页面”。",
+"Open PDF Chat in the Claude app to read scanned pages.": "请在 Claude 应用中打开 PDF 对话来读取扫描页面。",
+"Claude can't look at page images in this view, so scanned pages can't be read here.": "在此视图中 Claude 无法查看页面图像，所以这里读不了扫描页面。",
+"Every page already has text.": "每一页都已经有文字了。",
+"Extract tables": "提取表格",
+"e.g. 3 or 3-5": "例如 3 或 3-5",
+"Extract": "提取",
+"Type a page number like 3 or a range like 3-5.": "请输入页码（如 3）或范围（如 3-5）。",
+"Pick up to 40 pages at a time.": "一次最多选 40 页。",
+"Reading the tables…": "正在读取表格…",
+"Translate pages": "翻译页面",
+"This page has no text. If it's scanned, use “Read scanned pages” first.": "此页没有文字。如果是扫描件，请先使用“读取扫描页面”。",
+"Translating…": "正在翻译…",
+"Copied": "已复制",
+"Added to Notes": "已加入笔记",
+"Translate selection": "翻译所选内容",
+"Translate into:": "翻译为：",
+"Save CSV": "存为 CSV",
+"Save Excel": "存为 Excel",
+"Copy table": "复制表格",
+"Ask your PDFs anything": "向你的 PDF 提任何问题",
+"Open a PDF to start. Answers cite the pages they come from, and clicking a citation shows the exact words in the document.": "打开一个 PDF 就能开始。回答会注明出处页码，点击引用可看到文档中的原文。",
+"Read scanned pages": "读取扫描页面",
+"Getting an overview…": "正在生成概览…",
+"Reading the text…": "正在读取文字…",
+"Key takeaways": "要点",
+"Suggest questions": "推荐问题",
+"Show in document": "在文档中显示",
+"Copy answer": "复制回答",
+"Save to Notes": "存到笔记",
+"Save to notes": "存到笔记",
+"Read aloud": "朗读",
+"Listen": "朗读",
+"Ask again": "重新提问",
+"Retry": "重试",
+"Try again": "重试",
+"The Excel library didn't load. Save as CSV instead.": "Excel 组件没有加载成功。请改存为 CSV。",
+"Table copied. Paste it into Excel or Numbers.": "表格已复制，可粘贴到 Excel 或 Numbers。",
+"Answer copied": "回答已复制",
+"Saved to Notes": "已存到笔记",
+"Run it again from Tools.": "请从“工具”中重新运行。",
+"This chat is already empty.": "这个对话已经是空的。",
+"Started a new chat.": "已开始新对话。",
+"Outline": "大纲",
+"Study notes & flashcards": "学习笔记和抽认卡",
+"Key numbers & dates": "关键数字和日期",
+"Compare documents": "对比文档",
+"Draft an email": "起草邮件",
+"Open and tick at least two PDFs to compare them.": "请打开并勾选至少两个 PDF 再对比。",
+"Whole document": "整个文档",
+"Key takeaways & action items": "要点和待办事项",
+"Draft an email about it": "就此起草一封邮件",
+"Compare documents (open 2+)": "对比文档（需打开 2 个以上）",
+"This page": "本页",
+"Extract tables…": "提取表格…",
+"Translate this page…": "翻译本页…",
+"✓ Overview when a PDF opens": "✓ 打开 PDF 时生成概览",
+"Overview when a PDF opens": "打开 PDF 时生成概览",
+"New PDFs get a short overview and suggested questions.": "新打开的 PDF 会得到简短概览和推荐问题。",
+"Overviews are off.": "已关闭概览。",
+"New note": "新建笔记",
+"Export notes": "导出笔记",
+"Note text": "笔记内容",
+"Ask about this note": "就这条笔记提问",
+"Edit": "编辑",
+"Note deleted.": "笔记已删除。",
+"Saving files isn't available here, so it was copied to the clipboard instead.": "这里无法保存文件，已改为复制到剪贴板。",
+"Saving files isn't available here. Open PDF Chat in the Claude app.": "这里无法保存文件。请在 Claude 应用中打开 PDF 对话。",
+"Another save is waiting for your answer.": "另一个保存操作正在等你确认。",
+"This app can't save files here. Open it in a browser or on a computer.": "此应用在这里无法保存文件。请在浏览器或电脑上打开。",
+"Couldn't save the file.": "无法保存文件。",
+"The Word export library didn't load. Export as Markdown instead.": "Word 导出组件没有加载成功。请改为导出 Markdown。",
+"Copied as Markdown": "已复制为 Markdown",
+"Word document (.docx)": "Word 文档 (.docx)",
+"Markdown (.md)": "Markdown (.md)",
+"Plain text (.txt)": "纯文本 (.txt)",
+"Copy as Markdown": "复制为 Markdown",
+"Nothing to export yet. Ask a question or save a note first.": "还没有可导出的内容。请先提问或存一条笔记。",
+"Recent document sets": "最近的文档组合",
+"Close all documents": "关闭所有文档",
+"Highlight color": "高亮颜色",
+"Highlight deleted · ⌘Z to undo": "高亮已删除 · ⌘Z 撤销",
+"Underline color": "下划线颜色",
+"Underline deleted · ⌘Z to undo": "下划线已删除 · ⌘Z 撤销",
+"Strikethrough color": "删除线颜色",
+"Strikethrough deleted · ⌘Z to undo": "删除线已删除 · ⌘Z 撤销",
+"Sticky note": "便笺",
+"Sticky note color": "便笺颜色",
+"Sticky note deleted · ⌘Z to undo": "便笺已删除 · ⌘Z 撤销",
+"Drawing": "绘图",
+"Drawing color": "绘图颜色",
+"Drawing deleted · ⌘Z to undo": "绘图已删除 · ⌘Z 撤销",
+"Rectangle": "矩形",
+"Rectangle color": "矩形颜色",
+"Rectangle deleted · ⌘Z to undo": "矩形已删除 · ⌘Z 撤销",
+"Oval": "椭圆",
+"Oval color": "椭圆颜色",
+"Oval deleted · ⌘Z to undo": "椭圆已删除 · ⌘Z 撤销",
+"Line": "直线",
+"Line color": "直线颜色",
+"Line deleted · ⌘Z to undo": "直线已删除 · ⌘Z 撤销",
+"Arrow": "箭头",
+"Arrow color": "箭头颜色",
+"Arrow deleted · ⌘Z to undo": "箭头已删除 · ⌘Z 撤销",
+"Text": "文本",
+"Text color": "文本颜色",
+"Text deleted · ⌘Z to undo": "文本已删除 · ⌘Z 撤销",
+"Signature": "签名",
+"Signature color": "签名颜色",
+"Signature deleted · ⌘Z to undo": "签名已删除 · ⌘Z 撤销",
+"Stamp": "图章",
+"Stamp color": "图章颜色",
+"Stamp deleted · ⌘Z to undo": "图章已删除 · ⌘Z 撤销",
+"Redaction (not applied)": "涂黑（未应用）",
+"Redaction (not applied) color": "涂黑（未应用）颜色",
+"Redaction (not applied) deleted · ⌘Z to undo": "涂黑（未应用）已删除 · ⌘Z 撤销",
+"Reply": "回复",
+"Reply color": "回复颜色",
+"Reply deleted · ⌘Z to undo": "回复已删除 · ⌘Z 撤销",
+"Tool": "工具",
+"Tool color": "工具颜色",
+"Tool deleted · ⌘Z to undo": "工具已删除 · ⌘Z 撤销",
+"Approved": "已批准（APPROVED）",
+"Not approved": "未批准（NOT APPROVED）",
+"Draft": "草稿（DRAFT）",
+"Final": "最终版（FINAL）",
+"Confidential": "机密（CONFIDENTIAL）",
+"For comment": "征求意见（FOR COMMENT）",
+"Received": "已收到（RECEIVED）",
+"Completed": "已完成（COMPLETED）",
+"Void": "作废（VOID）",
+"Nothing to redo.": "没有可重做的操作。",
+"Nothing to undo.": "没有可撤销的操作。",
+"Edited: press Save to download the PDF with your changes": "已编辑：按“保存”下载包含修改的 PDF",
+"Go to destination": "跳转到目标位置",
+"Sign here": "在此签名",
+"Click to sign in this field": "点击在此字段签名",
+"Width": "粗细",
+"Line width": "线条粗细",
+"Opacity": "不透明度",
+"Fill with color": "填充颜色",
+"Size": "字号",
+"Text size": "文字大小",
+"White box": "白色底框",
+"Border": "边框",
+"Marked only. The content is removed when you apply.": "目前仅做了标记，应用后才会删除内容。",
+"Apply redactions": "应用涂黑",
+"Type your note…": "输入便笺内容…",
+"Add a comment…": "添加批注…",
+"Close": "关闭",
+"You": "我",
+"Edit text": "编辑文本",
+"Copy text": "复制文字",
+"Your name on comments": "批注上显示的名字",
+"New comments will show your name.": "新批注会显示你的名字。",
+"Comments work on PDF files. This file was opened as text.": "批注只适用于 PDF 文件，此文件是以文本方式打开的。",
+"Open a PDF to see its comments.": "打开 PDF 即可查看其中的批注。",
+"1 area is marked for redaction but not removed yet.": "有 1 处标记了涂黑，但尚未删除。",
+"Initials": "姓名首字母",
+"Check mark": "勾选标记",
+"Cross": "叉号",
+"Dot": "圆点",
+"Preparing for editing…": "正在准备编辑…",
+"This comment is from the file and will be editable in a moment.": "这条批注来自文件本身，稍后即可编辑。",
+"There are no comments to export.": "没有可导出的批注。",
+"Add all to Notes": "全部加入笔记",
+"Comments copied": "批注已复制",
+"Comments added to Notes": "批注已加入笔记",
+"The PDF editing library didn't load. Check your connection and reload.": "PDF 编辑组件没有加载成功。请检查网络后重新加载。",
+"This PDF is protected with a password or permissions lock, so its pages can't be changed here.": "此 PDF 受密码或权限锁保护，无法在这里修改页面。",
+"Still preparing this PDF. Try again in a moment.": "还在准备此 PDF，请稍后再试。",
+"A PDF needs at least one page.": "PDF 至少要保留一页。",
+"Updating pages…": "正在更新页面…",
+"Couldn't change the pages of this PDF. It may use features the editor can't handle.": "无法修改此 PDF 的页面，它可能用了编辑器不支持的功能。",
+"Inserted a blank page": "已插入空白页",
+"Inserted a blank page · ⌘Z to undo": "已插入空白页 · ⌘Z 撤销",
+"Preparing pages…": "正在准备页面…",
+"This PDF is protected, so pages can't be extracted.": "此 PDF 受保护，无法提取页面。",
+"Couldn't extract those pages.": "无法提取这些页面。",
+"Move up": "上移",
+"Move down": "下移",
+"Insert blank page after": "在后面插入空白页",
+"Insert pages from PDF after…": "在后面插入 PDF 页面…",
+"Extract this page…": "提取本页…",
+"Delete page": "删除页面",
+"Organize all pages…": "整理全部页面…",
+"Crop removed": "已移除裁剪",
+"Crop removed · ⌘Z to undo": "已移除裁剪 · ⌘Z 撤销",
+"This file was opened as text. Export the chat or notes instead.": "此文件以文本方式打开。请改为导出对话或笔记。",
+"Save PDF": "保存 PDF",
+"Downloads a PDF with your comments, drawings, signatures and filled fields. They stay editable in Acrobat, Preview and here.": "下载包含批注、绘图、签名和已填字段的 PDF。在 Acrobat、预览和这里都还能继续编辑。",
+"File name": "文件名",
+"Flatten: merge comments, signatures and form fields into the page so they can't be changed or removed": "拼合：把批注、签名和表单字段合并到页面中，使其无法再修改或删除",
+"Preparing PDF…": "正在准备 PDF…",
+"A form field has characters the standard PDF font can't draw, so the form can't be flattened. Save without flattening.": "有表单字段包含标准 PDF 字体无法绘制的字符，所以表单无法拼合。请不拼合直接保存。",
+"Couldn't build the PDF. Try saving without flattening.": "无法生成 PDF。请试试不拼合保存。",
+"Nothing to save yet: this PDF has no changes.": "还没有可保存的内容：此 PDF 没有改动。",
+"Couldn't save the filled form.": "无法保存已填写的表单。",
+"Save a flattened copy?": "保存拼合副本？",
+"This PDF is protected with a password or a permissions lock, so comments can't be added to it as editable annotations. You can save a copy where each page is an image with your comments, signatures and fields drawn in. Text in that copy can't be selected or searched.": "此 PDF 受密码或权限锁保护，批注无法以可编辑的形式加入。你可以保存一个副本：每页都是图像，批注、签名和字段都画在上面。副本中的文字无法选择或搜索。",
+"Save copy": "保存副本",
+"Couldn't make the copy.": "无法生成副本。",
+"Drawing page…": "正在绘制页面…",
+"Couldn't export the page.": "无法导出页面。",
+"Open two or more PDFs to combine them.": "请打开两个或更多 PDF 再合并。",
+"A protected PDF can't be combined. Close it and try again.": "受保护的 PDF 无法合并。请关闭它后重试。",
+"Combining…": "正在合并…",
+"Couldn't combine these PDFs.": "无法合并这些 PDF。",
+"Revert to the original?": "还原为原始文件？",
+"Revert": "还原",
+"Reverted to the original file.": "已还原为原始文件。",
+"This PDF has no form fields to clear.": "此 PDF 没有可清除的表单字段。",
+"Form cleared · ⌘Z to undo": "表单已清除 · ⌘Z 撤销",
+"Document properties": "文档属性",
+"File": "文件",
+"Title": "标题",
+"Author": "作者",
+"Subject": "主题",
+"Keywords": "关键词",
+"Created": "创建时间",
+"Modified": "修改时间",
+"Application": "应用程序",
+"PDF producer": "PDF 生成器",
+"PDF version": "PDF 版本",
+"Page size": "页面大小",
+"File size": "文件大小",
+"Security": "安全性",
+"Protected (password or permissions)": "受保护（密码或权限）",
+"None": "无",
+"Form fields": "表单字段",
+"Yes (XFA form: only partly supported)": "有（XFA 表单：仅部分支持）",
+"Yes": "有",
+"No": "无",
+"Tagged / linearized": "标记 / 线性化",
+"Fast web view": "快速 Web 查看",
+"Add another signature": "再添加一个签名",
+"Create signature…": "创建签名…",
+"Add other initials": "添加其他姓名首字母",
+"Create initials…": "创建姓名首字母…",
+"Autofill from my profile": "用我的资料自动填写",
+"Edit my profile…": "编辑我的资料…",
+"Add text": "添加文本",
+"Add today's date": "添加今天的日期",
+"Delete saved signature": "删除已保存的签名",
+"Delete saved initials": "删除已保存的姓名首字母",
+"signature": "签名",
+"initials": "姓名首字母",
+"Click where you want to place it. Esc to cancel.": "点击要放置的位置。按 Esc 取消。",
+"Click where you want to type.": "点击要输入文字的位置。",
+"Click on the page to place it. Esc when you're done.": "点击页面放置。完成后按 Esc。",
+"Create initials": "创建姓名首字母",
+"Create signature": "创建签名",
+"Type": "键入",
+"Draw": "手写",
+"Image": "图片",
+"Your initials": "你的姓名首字母",
+"Your full name": "你的全名",
+"Name": "名字",
+"Draw your signature": "手写你的签名",
+"Sign with your mouse, trackpad or finger": "用鼠标、触控板或手指签名",
+"Clear": "清除",
+"Choose, drop or paste a photo or scan of your initials (PNG or JPG). A white background is removed.": "选择、拖入或粘贴你的姓名首字母照片或扫描件（PNG 或 JPG），白色背景会被去除。",
+"Choose, drop or paste a photo or scan of your signature (PNG or JPG). A white background is removed.": "选择、拖入或粘贴你的签名照片或扫描件（PNG 或 JPG），白色背景会被去除。",
+"Ink": "墨水",
+"Save on this device to use again": "保存在本设备上，下次还能用",
+"Use initials": "使用姓名首字母",
+"Use signature": "使用签名",
+"Choose a PNG or JPG image.": "请选择 PNG 或 JPG 图片。",
+"Signature image": "签名图片",
+"Type your initials first.": "请先输入姓名首字母。",
+"Type your name first.": "请先输入名字。",
+"Draw your signature first.": "请先手写签名。",
+"Choose an image first.": "请先选择图片。",
+"That came out empty. Try again.": "结果是空的，请重试。",
+"Couldn't save it on this device, but you can use it now.": "无法保存在本设备上，但现在可以先用。",
+"Stamps": "图章",
+"Click on the page to place the stamp.": "点击页面放置图章。",
+"Color and width…": "颜色和粗细…",
+"Select text to highlight. Click the tool again for colors.": "选中文字即可高亮。再点一次工具可选颜色。",
+"Select text to underline. Click the tool again for colors.": "选中文字即可加下划线。再点一次工具可选颜色。",
+"Select text to strike it through. Click the tool again for colors.": "选中文字即可加删除线。再点一次工具可选颜色。",
+"Draw on the page. Click the pen again for color and width.": "在页面上绘制。再点一次画笔可选颜色和粗细。",
+"Drag over what to remove, or select text and choose Redact. Nothing is removed until you apply.": "拖选要删除的内容，或选中文字后选择“涂黑”。应用之前不会删除任何内容。",
+"View rotation reset": "已恢复视图方向",
+"Full screen · Esc to exit": "全屏 · 按 Esc 退出",
+"Page layout": "页面布局",
+"Single page, scrolling": "单页，连续滚动",
+"Two pages": "双页",
+"Two pages with cover page": "双页（含封面）",
+"✓ Single page, scrolling": "✓ 单页，连续滚动",
+"✓ Two pages": "✓ 双页",
+"✓ Two pages with cover page": "✓ 双页（含封面）",
+"Rotate view clockwise": "顺时针旋转视图",
+"Rotate view counterclockwise": "逆时针旋转视图",
+"Dark pages": "深色页面",
+"✓ Dark pages": "✓ 深色页面",
+"Full screen": "全屏",
+"Read this page": "朗读本页",
+"Read from this page to the end": "从本页朗读到结尾",
+"Needs the Claude app or Chrome": "需要 Claude 应用或 Chrome",
+"Show comments": "显示批注",
+"Save PDF…": "保存 PDF…",
+"Save a flattened copy…": "保存拼合副本…",
+"Organize pages…": "整理页面…",
+"Insert pages from PDF…": "插入 PDF 页面…",
+"Combine open PDFs into one": "把打开的 PDF 合并为一个",
+"Combine open PDFs into one (open 2+)": "把打开的 PDF 合并为一个（需打开 2 个以上）",
+"Crop pages…": "裁剪页面…",
+"Remove crop from all pages": "移除所有页面的裁剪",
+"Autofill form from my profile": "用我的资料自动填写表单",
+"Export this page as PNG": "将本页导出为 PNG",
+"Export this page as JPEG": "将本页导出为 JPEG",
+"Clear form fields": "清除表单字段",
+"Revert to original…": "还原为原始文件…",
+"Bookmark this page": "为本页添加书签",
+"Document properties…": "文档属性…",
+"Your bookmarks": "我的书签",
+"Remove bookmark": "移除书签",
+"Attachments": "附件",
+"Reading aloud isn't available in this view.": "在此视图中无法朗读。",
+"This page is a scanned image. Use “Read scanned pages” first.": "此页是扫描图像。请先使用“读取扫描页面”。",
+"There's no text on this page to read.": "此页没有可朗读的文字。",
+"Reading aloud is busy right now. Try again later.": "朗读功能正忙，请稍后再试。",
+"Reading aloud is turned off for this app.": "此应用的朗读功能已关闭。",
+"Click Read again to start.": "请再点一次朗读来开始。",
+"Couldn't read aloud right now.": "现在无法朗读。",
+"Drag a larger area to crop.": "请拖出更大的裁剪区域。",
+"Crop pages": "裁剪页面",
+"Pages to crop": "要裁剪的页面",
+"All pages": "所有页面",
+"Odd pages": "奇数页",
+"Even pages": "偶数页",
+"Crop": "裁剪",
+"This PDF is protected, so its pages can't be cropped here.": "此 PDF 受保护，无法在这里裁剪页面。",
+"Drag over the area you want to keep. Esc to cancel.": "拖出要保留的区域。按 Esc 取消。",
+"Marked for redaction. Choose Apply redactions (Document menu or the mark itself) to remove it permanently.": "已标记涂黑。选择“应用涂黑”（在文档菜单或标记上）即可永久删除。",
+"Nothing is marked. Use the Redact tool, or select text and choose Redact.": "还没有标记。请使用涂黑工具，或选中文字后选择“涂黑”。",
+"This PDF is protected, so redactions can't be applied here.": "此 PDF 受保护，无法在这里应用涂黑。",
+"Applying redactions…": "正在应用涂黑…",
+"Couldn't apply the redactions to this PDF.": "无法对此 PDF 应用涂黑。",
+"Full name": "全名",
+"First name": "名",
+"Last name": "姓",
+"Email": "邮箱",
+"Phone": "电话",
+"Company": "公司",
+"Job title": "职位",
+"Street address": "街道地址",
+"City": "城市",
+"State / province": "州 / 省",
+"ZIP / postal code": "邮政编码",
+"Country": "国家/地区",
+"Date of birth": "出生日期",
+"My profile": "我的资料",
+"Used to fill forms in one click. It stays on this device and is never sent anywhere.": "用于一键填写表单。资料只保存在本设备上，不会发送到任何地方。",
+"Save profile": "保存资料",
+"Profile saved on this device.": "资料已保存在本设备上。",
+"No empty fields matched your profile.": "没有与你的资料匹配的空字段。",
+"This PDF has no fillable text fields. Use Add text to type on it.": "此 PDF 没有可填写的文本字段。请用“添加文本”直接在上面输入。",
+"Delete reply": "删除回复",
+"Reply…": "回复…",
+"👤 Autofill from my profile": "👤 用我的资料自动填写",
+"✎ Edit my profile…": "✎ 编辑我的资料…",
+"Aa Add text": "Aa 添加文本",
+"📅 Add today's date": "📅 添加今天的日期",
+"✓ Check mark": "✓ 勾选标记",
+"✕ Cross": "✕ 叉号",
+"● Dot": "● 圆点",
+"＋ Create signature…": "＋ 创建签名…",
+"＋ Add another signature": "＋ 再添加一个签名",
+"＋ Create initials…": "＋ 创建姓名首字母…",
+"＋ Add other initials": "＋ 添加其他姓名首字母",
+"English": "英语",
+"Translate into English": "翻译成英语",
+"Chinese (Simplified)": "简体中文",
+"Translate into Chinese (Simplified)": "翻译成简体中文",
+"Chinese (Traditional)": "繁体中文",
+"Translate into Chinese (Traditional)": "翻译成繁体中文",
+"Japanese": "日语",
+"Translate into Japanese": "翻译成日语",
+"Korean": "韩语",
+"Translate into Korean": "翻译成韩语",
+"Spanish": "西班牙语",
+"Translate into Spanish": "翻译成西班牙语",
+"French": "法语",
+"Translate into French": "翻译成法语",
+"German": "德语",
+"Translate into German": "翻译成德语",
+"Portuguese": "葡萄牙语",
+"Translate into Portuguese": "翻译成葡萄牙语",
+"Italian": "意大利语",
+"Translate into Italian": "翻译成意大利语",
+"Russian": "俄语",
+"Translate into Russian": "翻译成俄语",
+"Arabic": "阿拉伯语",
+"Translate into Arabic": "翻译成阿拉伯语",
+"Hindi": "印地语",
+"Translate into Hindi": "翻译成印地语",
+"Indonesian": "印尼语",
+"Translate into Indonesian": "翻译成印尼语",
+"Vietnamese": "越南语",
+"Translate into Vietnamese": "翻译成越南语",
+"Thai": "泰语",
+"Translate into Thai": "翻译成泰语",
+"Turkish": "土耳其语",
+"Translate into Turkish": "翻译成土耳其语",
+"Dutch": "荷兰语",
+"Translate into Dutch": "翻译成荷兰语",
+"Polish": "波兰语",
+"Translate into Polish": "翻译成波兰语",
+"Ukrainian": "乌克兰语",
+"Translate into Ukrainian": "翻译成乌克兰语",
+"Swedish": "瑞典语",
+"Translate into Swedish": "翻译成瑞典语",
+"Hebrew": "希伯来语",
+"Translate into Hebrew": "翻译成希伯来语"
+},
+"patterns": [
+[
+"Translate page (\\d+) into English",
+"把第 $1 页翻译成英语"
+],
+[
+"Translate page (\\d+) into Chinese \\(Simplified\\)",
+"把第 $1 页翻译成简体中文"
+],
+[
+"Translate page (\\d+) into Chinese \\(Traditional\\)",
+"把第 $1 页翻译成繁体中文"
+],
+[
+"Translate page (\\d+) into Japanese",
+"把第 $1 页翻译成日语"
+],
+[
+"Translate page (\\d+) into Korean",
+"把第 $1 页翻译成韩语"
+],
+[
+"Translate page (\\d+) into Spanish",
+"把第 $1 页翻译成西班牙语"
+],
+[
+"Translate page (\\d+) into French",
+"把第 $1 页翻译成法语"
+],
+[
+"Translate page (\\d+) into German",
+"把第 $1 页翻译成德语"
+],
+[
+"Translate page (\\d+) into Portuguese",
+"把第 $1 页翻译成葡萄牙语"
+],
+[
+"Translate page (\\d+) into Italian",
+"把第 $1 页翻译成意大利语"
+],
+[
+"Translate page (\\d+) into Russian",
+"把第 $1 页翻译成俄语"
+],
+[
+"Translate page (\\d+) into Arabic",
+"把第 $1 页翻译成阿拉伯语"
+],
+[
+"Translate page (\\d+) into Hindi",
+"把第 $1 页翻译成印地语"
+],
+[
+"Translate page (\\d+) into Indonesian",
+"把第 $1 页翻译成印尼语"
+],
+[
+"Translate page (\\d+) into Vietnamese",
+"把第 $1 页翻译成越南语"
+],
+[
+"Translate page (\\d+) into Thai",
+"把第 $1 页翻译成泰语"
+],
+[
+"Translate page (\\d+) into Turkish",
+"把第 $1 页翻译成土耳其语"
+],
+[
+"Translate page (\\d+) into Dutch",
+"把第 $1 页翻译成荷兰语"
+],
+[
+"Translate page (\\d+) into Polish",
+"把第 $1 页翻译成波兰语"
+],
+[
+"Translate page (\\d+) into Ukrainian",
+"把第 $1 页翻译成乌克兰语"
+],
+[
+"Translate page (\\d+) into Swedish",
+"把第 $1 页翻译成瑞典语"
+],
+[
+"Translate page (\\d+) into Hebrew",
+"把第 $1 页翻译成希伯来语"
+],
+[
+"(\\d+) page",
+"$1 页"
+],
+[
+"(\\d+) pages",
+"$1 页"
+],
+[
+"(\\d+)p",
+"$1 页"
+],
+[
+"(\\d+) pages · Ask a question below, or start with:",
+"$1 页 · 在下方提问，或从这里开始："
+],
+[
+"(\\d+) pages? · (.*)",
+"$1 页 · $2"
+],
+[
+"(\\d+) files",
+"$1 个文件"
+],
+[
+"(\\d+) of (\\d+)(\\+?)",
+"$1 / $2$3"
+],
+[
+"(\\d+) of (\\d+) selected · drag to reorder",
+"已选 $1/$2 页 · 可拖动排序"
+],
+[
+"Page (\\d+)",
+"第 $1 页"
+],
+[
+"p\\. (\\d+)",
+"第 $1 页"
+],
+[
+"(.+) · p\\. (\\d+)",
+"$1 · 第 $2 页"
+],
+[
+"Couldn't open (.+)\\.",
+"无法打开 $1。"
+],
+[
+"Opening (.+)…",
+"正在打开 $1…"
+],
+[
+"Couldn't read (.+)\\. Save it as PDF and try again\\.",
+"无法读取 $1。请另存为 PDF 后重试。"
+],
+[
+"Enter the password to open (.+)\\.",
+"请输入密码以打开 $1。"
+],
+[
+"Couldn't read (.+): the file may be damaged\\.",
+"无法读取 $1：文件可能已损坏。"
+],
+[
+"Couldn't read (.+)\\.",
+"无法读取 $1。"
+],
+[
+"Pick (.+) again to reopen it\\.",
+"请重新选择 $1 来打开它。"
+],
+[
+"Reading (.+) · page (\\d+) of (\\d+)",
+"正在读取 $1 · 第 $2 / $3 页"
+],
+[
+"Page (\\d+) is a scanned image, so the words can't be highlighted\\.",
+"第 $1 页是扫描图像，无法高亮原文。"
+],
+[
+"Showing page (\\d+)\\. The exact words weren't found to highlight\\.",
+"已显示第 $1 页。没有找到可高亮的原文。"
+],
+[
+"What does the document say about \\\"(.+)\\\"\\?",
+"文档中关于“$1”是怎么说的？"
+],
+[
+"Include (.+) in chat",
+"把 $1 加入对话"
+],
+[
+"Close (.+)",
+"关闭 $1"
+],
+[
+"Reading (D\\d+) pages (\\d+)–(\\d+) \\(part (\\d+) of (\\d+)\\)…",
+"正在阅读 $1 第 $2–$3 页（第 $4 / $5 部分）…"
+],
+[
+"Reading (\\d+) scanned pages?…",
+"正在读取 $1 张扫描页面…"
+],
+[
+"Reading scanned pages (\\d+)–(\\d+) \\((\\d+) of (\\d+) done\\)…",
+"正在读取扫描页面 $1–$2（已完成 $3 / $4）…"
+],
+[
+"(\\d+) pages were read before it stopped\\.",
+"停止前已读取 $1 页。"
+],
+[
+"Pages to read from (.+)\\. Use a page, a range like 3-5, or \\\"all\\\" for short documents\\.",
+"要读取 $1 的哪些页？输入页码、范围（如 3-5），短文档可输入“all”。"
+],
+[
+"Extract tables from (.+), page (\\d+)",
+"从 $1 第 $2 页提取表格"
+],
+[
+"Extract tables from (.+), pages (\\d+)–(\\d+)",
+"从 $1 第 $2–$3 页提取表格"
+],
+[
+"Translate page (\\d+) of (.+) into:",
+"把 $2 的第 $1 页翻译为："
+],
+[
+": the page is a scanned image without text\\. Claude can read them so you can search and ask\\.",
+"：该页是扫描图像，没有文字。Claude 可以读取它们，方便你搜索和提问。"
+],
+[
+": all (\\d+) pages are scanned images without text\\. Claude can read them so you can search and ask\\.",
+"：全部 $1 页都是没有文字的扫描图像。Claude 可以读取它们，方便你搜索和提问。"
+],
+[
+": (\\d+) pages are scanned images without text\\. Claude can read them so you can search and ask\\.",
+"：有 $1 页是没有文字的扫描图像。Claude 可以读取它们，方便你搜索和提问。"
+],
+[
+"Asking (\\d+) documents",
+"范围：$1 个文档"
+],
+[
+"Asking (.+)",
+"范围：$1"
+],
+[
+"Read (\\d+) scanned pages? with Claude",
+"用 Claude 读取 $1 张扫描页面"
+],
+[
+"(\\d+) areas are marked for redaction but not removed yet\\.",
+"有 $1 处标记了涂黑，但尚未删除。"
+],
+[
+"Stamp · (.+)",
+"图章 · $1"
+],
+[
+"You · (.+)",
+"我 · $1"
+],
+[
+"Saved (.+)",
+"已保存 $1"
+],
+[
+"Rotated (\\d+) pages? · ⌘Z to undo",
+"已旋转 $1 页 · ⌘Z 撤销"
+],
+[
+"Deleted (\\d+) pages? · ⌘Z to undo",
+"已删除 $1 页 · ⌘Z 撤销"
+],
+[
+"Moved (\\d+) pages · ⌘Z to undo",
+"已移动 $1 页 · ⌘Z 撤销"
+],
+[
+"Moved page (\\d+) · ⌘Z to undo",
+"已移动第 $1 页 · ⌘Z 撤销"
+],
+[
+"Inserted (\\d+) pages? · ⌘Z to undo",
+"已插入 $1 页 · ⌘Z 撤销"
+],
+[
+"Cropped (\\d+) pages? · ⌘Z to undo",
+"已裁剪 $1 页 · ⌘Z 撤销"
+],
+[
+"(.+) is protected, so its pages can't be copied\\.",
+"$1 受保护，无法复制其页面。"
+],
+[
+"Apply redactions \\((\\d+)\\)",
+"应用涂黑（$1）"
+],
+[
+"(\\d+) redaction marks? (?:are|is) not applied yet\\. Apply redactions first, then save\\.",
+"有 $1 处涂黑标记尚未应用。请先应用涂黑，再保存。"
+],
+[
+"Drawing page (\\d+) of (\\d+)…",
+"正在绘制第 $1 / $2 页…"
+],
+[
+"Combined (\\d+) PDFs into Combined\\.pdf\\. Press Save to download it\\.",
+"已把 $1 个 PDF 合并为 Combined.pdf。按“保存”即可下载。"
+],
+[
+"This removes every change you made to (.+) in this app: comments, drawings, signatures, filled fields and page changes\\. Files you already saved aren't affected\\. This can't be undone\\.",
+"这会移除你在本应用中对 $1 做的所有修改：批注、绘图、签名、已填字段和页面改动。已保存的文件不受影响。此操作无法撤销。"
+],
+[
+"(\\d+(?:\\.\\d+)?) × (\\d+(?:\\.\\d+)?) in \\((\\d+) × (\\d+) mm\\)",
+"$1 × $2 英寸（$3 × $4 毫米）"
+],
+[
+"View rotated (\\d+)°\\. Use Organize to rotate pages in the saved file\\.",
+"视图已旋转 $1°。要在保存的文件中旋转页面，请用“整理”。"
+],
+[
+"Removed the bookmark on page (\\d+)",
+"已移除第 $1 页的书签"
+],
+[
+"Bookmarked page (\\d+)",
+"已为第 $1 页添加书签"
+],
+[
+"Save (.+)",
+"保存 $1"
+],
+[
+"Reading page (\\d+)",
+"正在朗读第 $1 页"
+],
+[
+"Pages are cropped to the (\\d+) × (\\d+) pt area you drew \\(([\\d.]+) × ([\\d.]+) in\\)\\. The content outside stays in the file and comes back with “Remove crop”, like in Acrobat and Preview\\.",
+"页面会裁剪到你画出的 $1 × $2 pt 区域（$3 × $4 英寸）。区域外的内容仍保留在文件中，用“移除裁剪”即可恢复，和 Acrobat、预览一样。"
+],
+[
+"This page \\((\\d+)\\)",
+"本页（$1）"
+],
+[
+"Pages selected in Organize \\((\\d+)\\)",
+"在“整理”中选中的页面（$1）"
+],
+[
+"Apply (\\d+) redactions?\\?",
+"应用 $1 处涂黑？"
+],
+[
+"The marked areas are permanently removed\\. To make sure nothing can be recovered, each page with a redaction \\((\\d+) pages?\\) is turned into an image with black boxes, so text on th(?:ose pages|at page) can no longer be selected or searched\\. Links, comments and form fields under the boxes are removed too\\. Other pages are unchanged\\. You can undo until you close the file\\.",
+"标记的区域会被永久删除。为确保无法恢复，含涂黑的页面（$1 页）会转成带黑框的图像，这些页面上的文字将无法再选择或搜索。黑框下的链接、批注和表单字段也会一并删除。其他页面不变。关闭文件前都可以撤销。"
+],
+[
+"Redacting page (\\d+)…",
+"正在涂黑第 $1 页…"
+],
+[
+"Applied (\\d+) redactions?\\. Press Save to download the redacted PDF\\.",
+"已应用 $1 处涂黑。按“保存”下载涂黑后的 PDF。"
+],
+[
+"Filled (\\d+) fields? from your profile · ⌘Z to undo",
+"已用你的资料填写 $1 个字段 · ⌘Z 撤销"
+],
+[
+"Color (#[0-9a-f]{6})",
+"颜色 $1"
+],
+[
+"Ink (#[0-9a-f]{6})",
+"墨水 $1"
+],
+[
+"(\\d+(?:\\.\\d+)?) MB",
+"$1 MB"
+]
+],
+"skip": "#docTitle,#docList .nm,#viewer .textLayer,#viewer .tp,#viewer .annLayer,#viewer .formLayer select,.tthumb,.ol a,#recent .meta > div:first-child,.card h3 span,.card > p:not(.muted),.sugs,.banner b,.msg.user .bub,.msg.user .quote,.md > :not(.tact),.tw,#ctxText,.nq,.cq,.ct,.fonts button,.props span:nth-child(even)"
+}

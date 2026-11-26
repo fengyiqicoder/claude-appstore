@@ -411,7 +411,7 @@ body.master #thumbs .th.mth0{opacity:1}
           <label>Slides <select class="s" id="optN"></select></label>
           <label>Text <select class="s" id="optDensity"><option value="brief">Brief</option><option value="medium" selected>Medium</option><option value="detailed">Detailed</option></select></label>
           <label>Language <select class="s" id="optLang"></select></label>
-          <label>Tone <select class="s" id="optTone"><option>Professional</option><option>Friendly</option><option>Persuasive</option><option>Educational</option><option>Inspiring</option><option>Casual</option></select></label>
+          <label>Tone <select class="s" id="optTone"><option value="Professional">Professional</option><option value="Friendly">Friendly</option><option value="Persuasive">Persuasive</option><option value="Educational">Educational</option><option value="Inspiring">Inspiring</option><option value="Casual">Casual</option></select></label>
           <span class="sp" style="flex:1"></span>
           <button class="btn" id="ownBtn" hidden title="Turn your headings and bullet points into slides without AI">Use my structure</button>
           <button class="btn pri" id="outlineBtn"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>Write outline</button>
@@ -426,7 +426,7 @@ body.master #thumbs .th.mth0{opacity:1}
 
   <section id="outline" hidden>
     <div class="owrap gut">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px"><h2 style="margin:0;font-size:20px">Outline</h2><span class="hint" id="oSub">Edit titles and points, drag cards to reorder. One point per line.</span></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px"><h2 style="margin:0;font-size:20px" data-no-i18n id="oHead">Outline</h2><span class="hint" id="oSub">Edit titles and points, drag cards to reorder. One point per line.</span></div>
       <input id="oTitle" class="s" style="width:100%;font-size:18px;font-weight:650;padding:10px 12px;margin:8px 0 14px" placeholder="Presentation title" aria-label="Presentation title">
       <div id="oList"></div>
       <button class="oadd" id="oAdd">+ Add slide</button>
@@ -499,8 +499,59 @@ body.master #thumbs .th.mth0{opacity:1}
 <input type="file" id="imgIn" hidden accept="image/*">
 
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"AI Slide Maker": "AI 幻灯片", "All presentations": "所有演示文稿", "Presentation title": "演示文稿标题", "Undo (⌘Z)": "撤销 (⌘Z)", "Undo": "撤销", "Redo (⇧⌘Z)": "重做 (⇧⌘Z)", "Redo": "重做", "Insert text box, shape, picture, table, chart, diagram, video…": "插入文本框、形状、图片、表格、图表、图示、视频…", "Insert": "插入", "View": "视图", "Theme": "主题", "AI": "AI", "Export": "导出", "Slide sorter, master, guides, find, versions": "幻灯片浏览、母版、参考线、查找、版本", "Present from this slide (⌘↩)": "从当前幻灯片开始放映 (⌘↩)", "Present": "放映", "More presenting options": "更多放映选项", "Make a presentation": "制作演示文稿", "Start from a topic, your own notes or a file you already have. You review the outline before Claude writes the slides.": "从一个主题、你的笔记或已有文件开始。Claude 写幻灯片之前，你会先审阅大纲。", "Generate": "生成", "Paste text": "粘贴文本", "Import file": "导入文件", "Describe your presentation, e.g. “A 10-minute talk for new managers on giving useful feedback”": "描述你的演示文稿，例如“给新任经理讲如何给出有用反馈的 10 分钟分享”", "Paste notes, an article, a Markdown outline or a document. Use # headings or --- to mark slide breaks if you want to keep your own structure.": "粘贴笔记、文章、Markdown 大纲或文档。想保留自己的结构，可以用 # 标题或 --- 标出分页。", "Drop a file here": "把文件拖到这里", "PowerPoint (.pptx), Word (.docx), PDF, Markdown (.md), text (.txt) or a saved deck (.json)": "PowerPoint (.pptx)、Word (.docx)、PDF、Markdown (.md)、文本 (.txt) 或保存的演示文稿 (.json)", "Choose file…": "选择文件…", "PowerPoint files open straight in the editor with their own design, text, tables, charts, pictures and speaker notes; restyle them with a theme in one click if you like. Word, PDF and Markdown files become an outline you can edit first. Keynote or Google Slides: export as .pptx first.": "PowerPoint 文件会直接在编辑器中打开，保留原有设计、文字、表格、图表、图片和演讲者备注；也可以一键套用主题。Word、PDF 和 Markdown 文件会先变成可编辑的大纲。Keynote 或 Google Slides 请先导出为 .pptx。", "Slides": "页数", "Text": "文本", "Language": "语言", "Tone": "语气", "Brief": "精简", "Medium": "适中", "Detailed": "详细", "Professional": "专业", "Friendly": "友好", "Persuasive": "有说服力", "Educational": "教学", "Inspiring": "鼓舞人心", "Casual": "轻松", "Concise executive": "简洁的高管风格", "Turn your headings and bullet points into slides without AI": "不用 AI，直接把你的标题和要点变成幻灯片", "Use my structure": "按我的结构", "Write outline": "生成大纲", "Outline with AI": "用 AI 生成大纲", "Recent": "最近", "Open sample deck": "打开示例演示文稿", "Blank presentation": "空白演示文稿", "Same as my text": "与我的文字相同", "Quarterly business review for a small coffee chain": "小型连锁咖啡店的季度业务回顾", "Intro to machine learning for high school students": "面向高中生的机器学习入门", "Pitch deck for a dog-walking app": "遛狗 App 的融资路演", "Onboarding plan for new engineers": "新工程师入职计划", "How to give useful feedback, for new managers": "新任经理如何给出有用的反馈", "History of the bicycle in 8 slides": "用 8 页讲自行车的历史", "Paste some text first.": "请先粘贴一些文本。", "Describe what the presentation is about first.": "请先描述演示文稿的内容。", "Couldn't find any slides in that text.": "在这段文本里没找到可做成幻灯片的内容。", "Your presentations appear here. They are saved on this computer only.": "你的演示文稿会显示在这里，只保存在这台电脑上。", "Deck options": "演示文稿选项", "Open": "打开", "Duplicate": "创建副本", "Delete…": "删除…", "Click again to delete for good": "再点一次即永久删除", "That deck is gone.": "这个演示文稿已不存在。", "AI writing needs the Claude app. You can still import, edit, present and export decks here.": "AI 写作需要在 Claude 应用中使用。你仍可在这里导入、编辑、放映和导出演示文稿。", "Install as app": "安装为应用", "Saving…": "正在保存…", "Not saved on this device": "未保存到此设备", "Saved": "已保存", "Storage full": "存储空间已满", "This device is out of storage for decks. Export as .json or .pptx to keep a copy, or delete old decks.": "此设备的存储空间不足。请导出为 .json 或 .pptx 保留副本，或删除旧的演示文稿。", "English": "英语", "Chinese (Simplified)": "简体中文", "Chinese (Traditional)": "繁体中文", "Japanese": "日语", "Korean": "韩语", "Spanish": "西班牙语", "French": "法语", "German": "德语", "Portuguese": "葡萄牙语", "Italian": "意大利语", "Dutch": "荷兰语", "Russian": "俄语", "Arabic": "阿拉伯语", "Hindi": "印地语", "Indonesian": "印尼语", "Vietnamese": "越南语", "Thai": "泰语", "Turkish": "土耳其语", "Polish": "波兰语", "Ukrainian": "乌克兰语", "Swedish": "瑞典语", "Claude is busy or you reached your usage limit. Try again in a little while.": "Claude 正忙，或你已达到用量上限。请稍后再试。", "Claude isn't allowed for this app, so AI features are off.": "此应用未获准使用 Claude，AI 功能已关闭。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined this request. Try rewording it.": "Claude 拒绝了这个请求。请换个说法再试。", "Your Claude session expired. Sign in again, then retry.": "Claude 会话已过期。请重新登录后再试。", "That's too much text for one request. Use a shorter source or fewer slides.": "一次请求的文字太多。请缩短原文或减少幻灯片数量。", "Claude's answer came back in an unexpected shape. Try again.": "Claude 返回的格式不符合预期。请再试一次。", "Claude returned nothing. Try again or ask for less.": "Claude 没有返回内容。请再试一次，或减少要求。", "Claude had a connection problem. Try again.": "Claude 连接出现问题。请再试一次。", "Too many requests at once. Wait a moment and retry.": "同时发出的请求太多。请稍等后重试。", "AI needs the Claude app. Open AI Slide Maker in Claude to use it.": "AI 功能需要 Claude 应用。请在 Claude 中打开 AI 幻灯片使用。", "Claude is still working on the last request. Stop it first.": "Claude 还在处理上一个请求。请先停止它。", "Stopped. Nothing else was changed.": "已停止。其他内容没有改动。", "Claude couldn't finish that. Try again.": "Claude 没能完成。请再试一次。", "Working…": "正在处理…", "Stop": "停止", "Working": "正在处理", "AI editing needs the Claude app. Open AI Slide Maker in Claude.": "AI 编辑需要 Claude 应用。请在 Claude 中打开 AI 幻灯片。", "AI needs the Claude app. Open AI Slide Maker in Claude.": "AI 功能需要 Claude 应用。请在 Claude 中打开 AI 幻灯片。", "Tell AI what to change": "告诉 AI 要改什么", "e.g. Turn this into 3 cards about benefits": "例如：改成 3 张介绍优势的卡片", "Rewrite": "改写", "Shorten": "缩短", "Expand": "扩写", "Make it visual": "改成可视化版式", "Fix spelling & grammar": "修正拼写和语法", "More formal": "更正式", "More casual": "更口语", "Write speaker notes": "撰写演讲者备注", "Translate this slide…": "翻译这张幻灯片…", "Translate into": "翻译为", "Slide updated.": "幻灯片已更新。", "Claude is writing a new slide…": "Claude 正在写新幻灯片…", "Slide added.": "已添加幻灯片。", "Ask AI to edit the whole deck": "让 AI 修改整个演示文稿", "e.g. Make it suitable for investors": "例如：改成适合给投资人看的版本", "Translate deck…": "翻译演示文稿…", "Write speaker notes for all slides": "为所有幻灯片撰写演讲者备注", "Smart layouts for every slide": "为每张幻灯片智能选择版式", "Shorten all text": "缩短全部文字", "Change tone…": "更改语气…", "Summarize deck": "总结演示文稿", "Editing the deck": "正在修改演示文稿", "Writing speaker notes": "正在撰写演讲者备注", "Choosing layouts": "正在选择版式", "Shortening": "正在缩短", "Proofreading": "正在校对", "Done. Review the slides; you can undo everything at once.": "完成。请检查幻灯片，可以一次全部撤销。", "Stopped partway. Finished slides kept.": "中途停止。已完成的幻灯片已保留。", "Summary": "摘要", "Copy": "复制", "Copied": "已复制", "Selected, press ⌘C": "已选中，请按 ⌘C", "Add as slide": "添加为幻灯片", "Summarizing…": "正在总结…", "Claude is writing your outline…": "Claude 正在写大纲…", "Writing outline…": "正在写大纲…", "Claude's outline. Edit anything, drag to reorder, then generate.": "这是 Claude 写的大纲。可以随意修改、拖动排序，然后生成。", "Claude is writing your slides…": "Claude 正在写幻灯片…", "Claude is writing this slide…": "Claude 正在写这张幻灯片…", "Slides ready. Change any layout or theme, or ask AI to edit a slide.": "幻灯片已生成。可以更换版式或主题，也可以让 AI 修改某张幻灯片。", "Undo all": "全部撤销", "Write a slide with AI": "用 AI 写一张幻灯片", "e.g. A timeline of our 2025 milestones": "例如：我们 2025 年里程碑的时间线", "Edit titles and points, drag cards to reorder. One point per line.": "编辑标题和要点，拖动卡片调整顺序。每行一个要点。", "+ Add slide": "+ 添加幻灯片", "Build without AI": "不用 AI 直接生成", "Make slides from the outline as written, without AI": "按大纲原样生成幻灯片，不用 AI", "Generate slides": "生成幻灯片", "Drag to reorder": "拖动排序", "Slide title": "幻灯片标题", "Points, one per line": "要点，每行一个", "Insert slide below": "在下方插入幻灯片", "Delete slide": "删除幻灯片", "Add at least one slide.": "请至少添加一张幻灯片。", "New slide (⌘M)": "新建幻灯片 (⌘M)", "+ New slide": "+ 新建幻灯片", "Editing the slide master. Objects you add here appear on every slide and are saved into the PowerPoint master.": "正在编辑幻灯片母版。在这里添加的对象会出现在每张幻灯片上，并保存到 PowerPoint 母版中。", "Header & footer…": "页眉和页脚…", "Close master": "关闭母版", "Format object": "设置对象格式", "Layout": "版式", "Edit with AI": "AI 编辑", "Image": "图片", "Edit data": "编辑数据", "More slide actions": "更多幻灯片操作", "Zoom out": "缩小", "Zoom": "缩放", "Fit": "适应", "Zoom in (pinch or ⌃-scroll also zooms)": "放大（也可双指捏合或按住 ⌃ 滚动）", "Zoom in": "放大", "Animations": "动画", "Animate": "动画", "Comments": "批注", "Speaker notes": "演讲者备注", "Add speaker notes. You see them in presenter view, and they go into the PowerPoint file.": "添加演讲者备注。它们会显示在演示者视图中，也会写入 PowerPoint 文件。", "Close panel": "关闭面板", "Slide sorter": "幻灯片浏览", "Drag to reorder · double-click to open · ⌫ deletes · ⌘D duplicates": "拖动排序 · 双击打开 · ⌫ 删除 · ⌘D 复制", "Done": "完成", "Text formatting": "文字格式", "Bold (⌘B)": "加粗 (⌘B)", "Italic (⌘I)": "倾斜 (⌘I)", "Underline (⌘U)": "下划线 (⌘U)", "Strikethrough": "删除线", "Text color": "文字颜色", "Highlight": "突出显示", "Smaller text": "减小字号", "Larger text": "增大字号", "Superscript": "上标", "Subscript": "下标", "Font": "字体", "Link (⌘K)": "链接 (⌘K)", "Clear formatting": "清除格式", "Close": "关闭", "Next": "下一张", "Reset timer": "重置计时", "‹ Previous": "‹ 上一张", "Next ›": "下一张 ›", "Audience view": "观众视图", "End show": "结束放映", "Previous slide": "上一张幻灯片", "Next slide": "下一张幻灯片", "Laser pointer (⌘L)": "激光笔 (⌘L)", "Laser": "激光笔", "Pen (⌘P)": "笔 (⌘P)", "Pen": "笔", "Erase ink (E)": "擦除墨迹 (E)", "Erase": "擦除", "Presenter view": "演示者视图", "End of show": "放映结束", "Slide master": "幻灯片母版", "Master": "母版", "Click to collapse, double-click to rename, right-click for more": "单击折叠，双击重命名，右键查看更多", "Has animations": "含动画", "0 slides": "0 张幻灯片", "Present from current slide": "从当前幻灯片开始", "Present from beginning": "从头开始", "Presenter view (notes, next slide, timer)": "演示者视图（备注、下一张、计时）", "Link address": "链接地址", "Title": "标题", "Section": "节标题", "Bullets": "要点", "Two columns": "两栏", "Comparison": "对比", "Timeline": "时间线", "Cards": "卡片", "Quote": "引用", "Big number": "大数字", "Chart": "图表", "Table": "表格", "Image + text": "图片 + 文字", "Closing": "结束页", "Original design": "原始设计", "Paper": "纸白", "Ink": "墨蓝", "Terracotta": "陶土", "Forest": "森林", "Mono": "黑白", "Lavender": "薰衣草", "Gold Leaf": "金箔", "Neon": "霓虹", "Ocean": "海洋", "Sunset": "日落", "Corporate": "商务", "Blush": "腮红", "Add a point": "添加要点", "Subtitle, presenter or date": "副标题、演讲者或日期", "Section title": "节标题文字", "Optional description": "可选说明", "Heading": "小标题", "Option A": "方案 A", "Option B": "方案 B", "Step": "步骤", "Details": "详细说明", "Card title": "卡片标题", "Description": "说明", "Who said it": "出处", "Optional heading": "可选标题", "What the number means": "这个数字代表什么", "Supporting detail": "补充说明", "Key takeaway": "关键结论", "Caption": "图注", "Thank you": "谢谢", "Contact or next step": "联系方式或下一步", "Click to add title": "单击此处添加标题", "Click to add subtitle": "单击此处添加副标题", "Click to add text": "单击此处添加文本", "Theme for the whole deck": "整个演示文稿的主题", "Edit brand colors, fonts and logo…": "编辑品牌颜色、字体和标志…", "Customize colors, fonts and logo…": "自定义颜色、字体和标志…", "Apply my saved brand": "应用我保存的品牌", "Restyle that slide with the theme": "用主题重新设计这张幻灯片", "Brand": "品牌", "Accent": "强调色", "Background": "背景", "Heading font": "标题字体", "Body font": "正文字体", "Logo": "标志", "Replace logo…": "更换标志…", "Add logo…": "添加标志…", "Remove": "移除", "Use for new presentations": "用于新的演示文稿", "Changes apply to every theme-styled slide right away and go into the PowerPoint file. Fonts must be installed on the computer that opens the file.": "更改会立即应用到所有套用主题的幻灯片，并写入 PowerPoint 文件。打开文件的电脑上需要装有这些字体。", "Reset to theme": "重置为主题", "Restyle with a theme": "套用主题", "Restyled with the theme. Layout › Original design brings a slide's own look back.": "已套用主题。在“版式 › 原始设计”中可以恢复幻灯片原来的样子。", "From this presentation's layouts": "来自本演示文稿的版式", "Blank slide": "空白幻灯片", "Import slides from a file…": "从文件导入幻灯片…", "The original PowerPoint file isn't stored on this computer any more.": "原始 PowerPoint 文件已不在这台电脑上。", "Couldn't build a slide from that layout.": "无法用这个版式生成幻灯片。", "A deck needs at least one slide.": "演示文稿至少要有一张幻灯片。", "Slide deleted.": "已删除幻灯片。", "New slide after this": "在此后新建幻灯片", "Duplicate slide": "复制幻灯片", "Show slide": "显示幻灯片", "Hide slide in presentation": "放映时隐藏幻灯片", "Move up": "上移", "Move down": "下移", "Format background…": "设置背景格式…", "Show background graphics": "显示背景图形", "Hide background graphics": "隐藏背景图形", "Rename section…": "重命名节…", "Add section before this slide": "在此幻灯片前添加节", "Add comment": "添加批注", "Animations…": "动画…", "Export this slide as PNG": "将此幻灯片导出为 PNG", "Icon": "图标", "Replace picture…": "更换图片…", "Remove picture": "删除图片", "Replace image…": "更换图片…", "Remove image": "删除图片", "Couldn't read that image.": "无法读取这张图片。", "Image added. The slide uses the Image + text layout.": "已添加图片。这张幻灯片已改用“图片 + 文字”版式。", "Couldn't read that image. Try a PNG or JPEG.": "无法读取这张图片。请试试 PNG 或 JPEG。", "Chart data": "图表数据", "Type": "类型", "Columns": "柱形图", "Bars": "条形图", "Pie": "饼图", "Doughnut": "圆环图", "First row: series names.": "第一行：系列名称。", "Paste from Excel or Sheets works.": "可以直接从 Excel 或表格粘贴。", "Chart data as CSV": "CSV 格式的图表数据", "+ Row": "+ 行", "− Row": "− 行", "+ Column": "+ 列", "− Column": "− 列", "Replace with pasted data…": "用粘贴的数据替换…", "Paste rows from Excel, Sheets or CSV": "粘贴来自 Excel、表格或 CSV 的行", "Use this data": "使用这些数据", "Download": "下载", "PowerPoint (.pptx)": "PowerPoint (.pptx)", "PDF with speaker notes": "带演讲者备注的 PDF", "PDF handouts (3 per page)": "PDF 讲义（每页 3 张）", "PDF handouts (6 per page)": "PDF 讲义（每页 6 张）", "PNG images (.zip)": "PNG 图片 (.zip)", "Current slide as PNG": "当前幻灯片 (PNG)", "Outline (.md)": "大纲 (.md)", "Deck file (.json) to reopen later": "演示文稿文件 (.json)，可稍后重新打开", "Copy outline as text": "复制大纲文本", "Outline copied.": "大纲已复制。", "Couldn't copy. Use Outline (.md) instead.": "无法复制。请改用“大纲 (.md)”。", "PowerPoint files keep real, editable text boxes, charts, tables and speaker notes. They open in Keynote and Google Slides too.": "PowerPoint 文件保留真实可编辑的文本框、图表、表格和演讲者备注，也能在 Keynote 和 Google Slides 中打开。", "Saving files needs the Claude app. Open AI Slide Maker in Claude to export.": "保存文件需要 Claude 应用。请在 Claude 中打开 AI 幻灯片导出。", "Save cancelled.": "已取消保存。", "That file is too big to save here. Try PDF or fewer images.": "文件太大，无法在这里保存。请试试 PDF 或减少图片。", "Another save is still open. Finish it, then try again.": "另一个保存还未完成。完成后再试。", "Couldn't save the file here.": "无法在这里保存文件。", "Building PowerPoint file…": "正在生成 PowerPoint 文件…", "Rendering slide…": "正在渲染幻灯片…", "Keynote files can't be read here. In Keynote choose File > Export To > PowerPoint, then import the .pptx.": "这里无法读取 Keynote 文件。请在 Keynote 中选择“文件 > 导出为 > PowerPoint”，再导入 .pptx。", "Reading PowerPoint file…": "正在读取 PowerPoint 文件…", "No slides found in that file.": "这个文件里没有幻灯片。", "Couldn't keep a copy of the original file; exports will be rebuilt from scratch.": "无法保留原始文件的副本；导出时将重新生成。", "Reading Word document…": "正在读取 Word 文档…", "Reading PDF…": "正在读取 PDF…", "That file type isn't supported. Use .pptx, .docx, .pdf, .md, .txt or .json.": "不支持这种文件类型。请使用 .pptx、.docx、.pdf、.md、.txt 或 .json。", "That file has no slide structure. Paste it on the home screen to outline it with AI.": "这个文件没有幻灯片结构。请在首页粘贴，用 AI 生成大纲。", "Loaded the text. Choose Outline with AI, or Use my structure.": "文本已载入。请选择“用 AI 生成大纲”或“按我的结构”。", "Loaded the text. Choose Use my structure to make slides.": "文本已载入。请选择“按我的结构”生成幻灯片。", "Couldn't find any content in that file.": "这个文件里没有找到内容。", "The original PowerPoint file is no longer stored on this computer, so every slide was rebuilt.": "原始 PowerPoint 文件已不在这台电脑上，所有幻灯片都已重新生成。", "Black pen": "黑色笔", "Red pen": "红色笔", "Blue pen": "蓝色笔", "Highlighter": "荧光笔", "Thin": "细", "Thick": "粗", "Done drawing": "完成绘图", "Text box": "文本框", "Text box: click or drag on the slide": "文本框：在幻灯片上单击或拖动", "Shape": "形状", "Picture": "图片", "Diagram": "图示", "SmartArt-style diagram": "SmartArt 风格图示", "Equation": "公式", "Insert an editable equation": "插入可编辑的公式", "Video": "视频", "Audio": "音频", "Draw": "绘图", "Draw with a pen": "用笔绘图", "Format background": "设置背景格式", "Transition": "切换", "Slide transition": "幻灯片切换", "Drawing": "墨迹绘图", "Object": "对象", "Line": "线条", "Group": "组合", "Picture (from file)": "图片（来自文件）", "Text (from file)": "文本（来自文件）", "Shape (from file)": "形状（来自文件）", "Table (from file)": "表格（来自文件）", "Chart (from file)": "图表（来自文件）", "Object (from file)": "对象（来自文件）", "Fill": "填充", "No fill": "无填充", "Transparency": "透明度", "Shadow": "阴影", "Fill color": "填充颜色", "Outline": "轮廓", "Line color, weight and arrows": "线条颜色、粗细和箭头", "Font, size, color and paragraph": "字体、字号、颜色和段落", "Crop": "裁剪", "Crop (drag the handles)": "裁剪（拖动控制点）", "Shape, transparency, brightness, alt text": "形状、透明度、亮度、替代文字", "Edit equation": "编辑公式", "Color": "颜色", "Equation color": "公式颜色", "Size": "大小", "Icon color": "图标颜色", "Change icon": "更换图标", "Playback": "播放", "In Present": "放映时", "Start automatically": "自动开始", "Loop until stopped": "循环播放，直到停止", "The file is embedded in the PowerPoint file when you export.": "导出时文件会嵌入 PowerPoint 文件中。", "Alt text": "替代文字", "Arrange": "排列", "Add animation": "添加动画", "Copy style": "复制格式", "Copy style (⌥⌘C); Paste style is ⌥⌘V": "复制格式 (⌥⌘C)；粘贴格式为 ⌥⌘V", "Paste style": "粘贴格式", "Paste style (⌥⌘V)": "粘贴格式 (⌥⌘V)", "Delete": "删除", "Delete (⌫)": "删除 (⌫)", "Line color": "线条颜色", "No outline": "无轮廓", "Weight": "粗细", "Dash": "短划线类型", "Solid": "实线", "Dashed": "虚线", "Dotted": "点线", "Dash-dot": "点划线", "Start": "开始", "End": "结束", "Stealth": "燕尾箭头", "Round": "圆形", "None": "无", "Paragraph": "段落", "Left": "左", "Center": "居中", "Right": "右", "Justify": "两端对齐", "Top": "顶端", "Middle": "中部", "Bottom": "底端", "• Bullets": "• 项目符号", "1. Numbering": "1. 编号", "Indent →": "增加缩进 →", "← Outdent": "← 减少缩进", "Line spacing": "行距", "Text effects (WordArt)…": "文字效果（艺术字）…", "Grow box to fit text": "根据文字调整文本框大小", "Crop to shape": "裁剪为形状", "Brightness": "亮度", "Contrast": "对比度", "Alt text (read by screen readers)": "替代文字（供屏幕阅读器朗读）", "Describe the picture": "描述这张图片", "Reset crop and adjustments": "重置裁剪和调整", "Insert row above": "在上方插入行", "Insert row below": "在下方插入行", "Insert column left": "在左侧插入列", "Insert column right": "在右侧插入列", "Delete row": "删除行", "Delete column": "删除列", "Merge cells… (Shift-click a second cell first)": "合并单元格…（先按住 Shift 点击第二个单元格）", "Split merged cell": "拆分合并的单元格", "Header row": "标题行", "Banded rows": "镶边行", "Table color…": "表格颜色…", "Table color": "表格颜色", "Cell shading…": "单元格底纹…", "Cell shading": "单元格底纹", "No shading": "无底纹", "Text size": "文字大小", "Order": "层次", "Bring to front": "置于顶层", "Bring forward": "上移一层", "Send backward": "下移一层", "Send to back": "置于底层", "Align selected objects": "对齐所选对象", "Align to slide": "相对于幻灯片对齐", "Distribute horizontally": "横向分布", "Distribute vertically": "纵向分布", "Ungroup": "取消组合", "Rotate": "旋转", "Flip ↔": "水平翻转 ↔", "Flip ↕": "垂直翻转 ↕", "Size and position (inches)": "大小和位置（英寸）", "Width": "宽度", "Height": "高度", "Rotation °": "旋转角度 °", "Aspect ratio is locked. Shift-drag a corner to stretch.": "纵横比已锁定。按住 Shift 拖动角可以拉伸。", "Shape…": "形状…", "Picture…": "图片…", "Table…": "表格…", "Chart…": "图表…", "Diagram (SmartArt)…": "图示 (SmartArt)…", "Icon…": "图标…", "Equation…": "公式…", "Video from file…": "来自文件的视频…", "Audio from file…": "来自文件的音频…", "Draw with pen": "用笔绘图", "Comment": "批注", "New slide": "新建幻灯片", "Shapes — then drag on the slide": "形状 — 选好后在幻灯片上拖动", "Choose a size": "选择大小", "Icons": "图标", "Picture added. Drag a corner to resize; Crop is in the bar above.": "已添加图片。拖动角可调整大小；裁剪在上方工具栏中。", "Adding video…": "正在添加视频…", "Adding audio…": "正在添加音频…", "Video added. It plays in Present and in PowerPoint.": "已添加视频。放映时和在 PowerPoint 中都能播放。", "Audio added. It plays in Present and in PowerPoint.": "已添加音频。放映时和在 PowerPoint 中都能播放。", "Couldn't store that file on this computer. It may be too large for the space left.": "无法把这个文件存到这台电脑上，它可能超出了剩余空间。", "Process": "流程", "Chevron steps": "V 形步骤", "Cycle": "循环", "Hierarchy": "层次结构", "Pyramid": "棱锥", "Venn": "维恩图", "Matrix 2×2": "2×2 矩阵", "Numbered list": "编号列表", "Items": "项目数", "Diagram added. Double-click a shape to type; Ungroup to change single shapes.": "已添加图示。双击形状输入文字；取消组合后可单独修改形状。", "Rectangle": "矩形", "Rounded rectangle": "圆角矩形", "Oval": "椭圆", "Triangle": "三角形", "Right triangle": "直角三角形", "Diamond": "菱形", "Parallelogram": "平行四边形", "Trapezoid": "梯形", "Pentagon": "五边形", "Hexagon": "六边形", "Octagon": "八边形", "Star": "星形", "Right arrow": "右箭头", "Left arrow": "左箭头", "Up arrow": "上箭头", "Down arrow": "下箭头", "Left-right arrow": "左右箭头", "Chevron": "V 形箭头", "Arrow pentagon": "五边形箭头", "Plus": "加号", "Heart": "心形", "Callout": "标注", "Donut": "圆环", "Double arrow": "双箭头", "Arrow": "箭头", "Rotate (Shift: 15° steps)": "旋转（按住 Shift 每次 15°）", "Click or drag on the slide to place the text box.": "在幻灯片上单击或拖动来放置文本框。", "Drag on the slide to draw. Shift keeps proportions. Esc cancels.": "在幻灯片上拖动绘制。按住 Shift 保持比例，按 Esc 取消。", "Only objects you added can be duplicated here. Use Copy and Paste for slide content.": "这里只能复制你添加的对象。幻灯片内容请用复制和粘贴。", "Cut. Paste with ⌘V on any slide.": "已剪切。可在任意幻灯片上按 ⌘V 粘贴。", "Copied. Paste with ⌘V on any slide.": "已复制。可在任意幻灯片上按 ⌘V 粘贴。", "Only objects you added can change order.": "只有你添加的对象可以调整层次。", "Select three or more objects to distribute.": "请选择三个或更多对象来分布。", "Select two or more objects you added to group them.": "请选择两个或更多你添加的对象来组合。", "Drag the black handles to crop. Click Crop again or press Esc when done.": "拖动黑色控制点裁剪。完成后再点一次“裁剪”或按 Esc。", "Select an object first.": "请先选择一个对象。", "Style copied. Select other objects and choose Paste style (⌥⌘V).": "已复制格式。选择其他对象后选“粘贴格式”(⌥⌘V)。", "Copy a style first (⌥⌘C).": "请先复制格式 (⌥⌘C)。", "Cut": "剪切", "Paste": "粘贴", "Animate…": "动画…", "More colors…": "其他颜色…", "Appear": "出现", "Fade": "淡化", "Fly In": "飞入", "Float In": "浮入", "Wipe": "擦除", "Wheel": "轮子", "Pulse": "脉冲", "Spin": "陀螺旋", "Grow/Shrink": "放大/缩小", "Disappear": "消失", "Fly Out": "飞出", "From bottom": "自底部", "From left": "自左侧", "From right": "自右侧", "From top": "自顶部", "Entrance": "进入", "Emphasis": "强调", "Exit": "退出", "Motion path": "动作路径", "Effect from PowerPoint": "来自 PowerPoint 的效果", "Custom path": "自定义路径", "Subtitle": "副标题", "Quote author": "引用出处", "Number label": "数字说明", "(deleted)": "（已删除）", "Animations and comments belong to slides. Close the master to edit them.": "动画和批注属于幻灯片。请关闭母版后再编辑。", "+ Add animation": "+ 添加动画", "▶ Preview": "▶ 预览", "Select an object, or click into a title or text, then add an animation.": "选择一个对象，或点进标题或文字，然后添加动画。", "No animations on this slide.": "这张幻灯片没有动画。", "On click": "单击时", "With previous": "与上一动画同时", "After previous": "上一动画之后", "Duration": "持续时间", "Delay": "延迟", "By paragraph": "按段落", "In sequence": "按顺序", "Move earlier": "提前", "Move later": "延后", "Effects marked \"from PowerPoint\" play as a fade here. They stay as they are in the file unless you change this slide's animation list.": "标有“来自 PowerPoint”的效果在这里以淡化方式播放。除非修改这张幻灯片的动画列表，它们在文件中保持不变。", "Select an object or click into a text first.": "请先选择一个对象或点进文字。", "Draw custom path": "绘制自定义路径", "Lines: down": "直线：向下", "Lines: up": "直线：向上", "Lines: right": "直线：向右", "Lines: left": "直线：向左", "Arc": "弧形", "Turn": "转弯", "Circle": "圆形", "Zigzag": "锯齿", "Drag from the object along the route it should take. Esc cancels.": "从对象开始，沿着它要走的路线拖动。按 Esc 取消。", "Name shown on your comments": "批注上显示的名字", "Your name on comments": "你在批注上的名字", "Your name": "你的名字", "No comments on this slide.": "这张幻灯片没有批注。", "Resolved": "已解决", "Reply": "回复", "Reopen": "重新打开", "Resolve": "解决", "Delete for good?": "永久删除？", "Reply…": "回复…", "Add a comment… (⌘↩ to post)": "添加批注…（⌘↩ 发布）", "Post": "发布", "Find": "查找", "Text to find": "要查找的文字", "Replace with": "替换为", "Replacement": "替换内容", "Match case": "区分大小写", "Whole words only": "全字匹配", "No matches.": "没有匹配项。", "Find and replace": "查找和替换", "Replace all": "全部替换", "Replace": "替换", "Find next": "查找下一个", "title": "标题", "subtitle": "副标题", "quote": "引用", "by": "出处", "stat": "数字", "statLabel": "数字说明", "bullet": "要点", "heading": "小标题", "item": "项目", "table": "表格", "text": "文本", "notes": "备注", "Versions are saved on this computer every 10 minutes while you edit, and whenever you save one by name.": "编辑时每 10 分钟会在这台电脑上保存一个版本，你也可以随时命名保存。", "Loading…": "正在加载…", "Version history": "版本历史", "Save current version…": "保存当前版本…", "Name this version": "为此版本命名", "e.g. Sent to client": "例如：已发给客户", "No versions yet. Keep editing, or save one now.": "还没有版本。继续编辑，或现在保存一个。", "Restore": "恢复", "Restored that version. Undo brings back what you had.": "已恢复该版本。撤销可回到之前的内容。", "Open copy": "打开副本", "Section name": "节名称", "Collapse": "折叠", "Collapse all": "全部折叠", "Expand all": "全部展开", "Remove section (keep slides)": "删除节（保留幻灯片）", "Remove section and its slides…": "删除节及其幻灯片…", "Click again to delete those slides": "再点一次即删除这些幻灯片", "Section deleted.": "已删除节。", "Slide background": "幻灯片背景", "Gradient…": "渐变…", "Gradient": "渐变", "Apply this background to all slides": "将此背景应用于所有幻灯片", "Background applied to every slide.": "背景已应用到所有幻灯片。", "Slide number": "幻灯片编号", "Date": "日期", "Footer": "页脚", "Footer text": "页脚文字", "Don't show on the title slide": "标题幻灯片中不显示", "Applies to theme-styled slides. Slides opened from PowerPoint keep their own footers. Slide numbers are real PowerPoint slide-number fields.": "适用于套用主题的幻灯片。从 PowerPoint 打开的幻灯片保留自己的页脚。幻灯片编号是真正的 PowerPoint 编号字段。", "Header & footer": "页眉和页脚", "Missing slide title": "缺少幻灯片标题", "Screen readers use titles to move between slides.": "屏幕阅读器依靠标题在幻灯片之间跳转。", "Picture without alt text": "图片缺少替代文字", "Select it and choose Alt text.": "选中它并选择“替代文字”。", "Add a title, even a short one.": "加一个标题，哪怕很短。", "Select it › Picture › Alt text.": "选中它 › 图片 › 替代文字。", "Video without a description": "视频缺少描述", "Add a caption or describe it in the notes.": "添加说明文字，或在备注中描述它。", "Hard-to-read text": "文字难以辨认", "No issues found. Titles, alt text and text contrast look good.": "未发现问题。标题、替代文字和文字对比度都没问题。", "Accessibility check": "辅助功能检查", "Theme colors & fonts of this file…": "此文件的主题颜色和字体…", "Close slide master": "关闭幻灯片母版", "Edit slide master": "编辑幻灯片母版", "Smart guides": "智能参考线", "✓ Smart guides": "✓ 智能参考线", "Gridlines": "网格线", "✓ Gridlines": "✓ 网格线", "Snap to grid": "对齐网格", "✓ Snap to grid": "✓ 对齐网格", "Rulers": "标尺", "✓ Rulers": "✓ 标尺", "Ruler units: centimeters": "标尺单位：厘米", "Ruler units: inches": "标尺单位：英寸", "Find and replace…": "查找和替换…", "Version history…": "版本历史…", "Accessibility check…": "辅助功能检查…", "Fit to window": "适应窗口", "Push": "推入", "Split": "分割", "Cover": "覆盖", "Uncover": "揭开", "Dissolve": "溶解", "Random bars": "随机线条", "Blinds": "百叶窗", "Wedge": "楔形", "Checkerboard": "棋盘", "Comb": "梳理", "Newsflash": "新闻快报", "Random": "随机", "Horizontal out": "水平向外", "Horizontal in": "水平向内", "Vertical out": "垂直向外", "Vertical in": "垂直向内", "In": "放大", "Out": "缩小", "Horizontal": "水平", "Vertical": "垂直", "Across": "横向", "Down": "纵向", "Transition into this slide": "切换到此幻灯片", "Effect options": "效果选项", "Speed": "速度", "Slow (1 s)": "慢速（1 秒）", "Medium (0.75 s)": "中速（0.75 秒）", "Fast (0.5 s)": "快速（0.5 秒）", "Advance slide": "换片方式", "On mouse click": "单击鼠标时", "After (seconds)": "设置自动换片时间（秒）", "off": "关", "Apply to all slides": "应用到全部", "Applied to every slide.": "已应用到所有幻灯片。", "Preview": "预览", "(from PowerPoint)": "（来自 PowerPoint）", "Widescreen 16:9": "宽屏 16:9", "Standard 4:3": "标准 4:3", "A4 paper": "A4 纸张", "B5 paper": "B5 纸张", "35 mm slides": "35 毫米幻灯片", "Square": "正方形", "Portrait 3:4": "纵向 3:4", "inches": "英寸", "cm": "厘米", "Content": "内容", "Ensure fit (shrink to fit)": "确保适合（缩小以适应）", "Maximize (fill, may crop)": "最大化（填满，可能裁切）", "Slide size": "幻灯片大小", "Cancel": "取消", "Apply": "应用", "Enter a width and height.": "请输入宽度和高度。", "Shift-click a second cell to select a range of cells, then choose Merge cells.": "按住 Shift 点击第二个单元格选择区域，再选择“合并单元格”。", "That cell isn't merged.": "这个单元格没有合并。", "Equation engine didn't load": "公式引擎未加载", "Fraction": "分数", "Square root": "平方根", "Power": "幂", "Sum": "求和", "Integral": "积分", "Limit": "极限", "Matrix": "矩阵", "Quadratic": "二次公式", "Greek": "希腊字母", "Relations": "关系符号", "Type LaTeX. It becomes a real, editable PowerPoint equation when you export.": "输入 LaTeX。导出时会变成真正可编辑的 PowerPoint 公式。", "Insert equation": "插入公式", "Update": "更新", "Loading the equation engine…": "正在加载公式引擎…", "The equation engine couldn't load. Check the connection, then try again.": "公式引擎无法加载。请检查网络后再试。", "Glow": "发光", "Bold outline + shadow": "粗轮廓 + 阴影", "Gold": "金色", "Text effects (WordArt)": "文字效果（艺术字）", "Outline…": "轮廓…", "Outline ✓…": "轮廓 ✓…", "Glow…": "发光…", "Glow ✓…": "发光 ✓…", "Gradient fill…": "渐变填充…", "Gradient fill ✓…": "渐变填充 ✓…", "Text outline": "文字轮廓", "No glow": "无发光", "Gradient start": "渐变起点", "No gradient": "无渐变", "Gradient end color…": "渐变终点颜色…", "Gradient end": "渐变终点", "Text / background dark 1": "文字/背景 - 深色 1", "Text / background light 1": "文字/背景 - 浅色 1", "Dark 2": "深色 2", "Light 2": "浅色 2", "Accent 1": "着色 1", "Accent 2": "着色 2", "Accent 3": "着色 3", "Accent 4": "着色 4", "Accent 5": "着色 5", "Accent 6": "着色 6", "Hyperlink": "超链接", "Followed hyperlink": "已访问的超链接", "This presentation has no PowerPoint theme to edit. Use Theme › Customize colors instead.": "这个演示文稿没有可编辑的 PowerPoint 主题。请改用“主题 › 自定义颜色”。", "These are the theme colors and fonts of the PowerPoint file. Shapes and text that use them change everywhere, in this app and in the saved file.": "这些是 PowerPoint 文件的主题颜色和字体。使用它们的形状和文字会在本应用和保存的文件中同步改变。", "Theme colors & fonts": "主题颜色和字体", "Reset to file": "重置为文件原样", "Theme colors and fonts updated.": "主题颜色和字体已更新。", "chart": "图表", "growth": "增长", "target": "目标", "rocket": "火箭", "users": "用户群", "user": "用户", "idea": "创意", "check": "对勾", "star": "星星", "shield": "盾牌", "clock": "时钟", "globe": "地球", "money": "钱", "heart": "爱心", "gear": "齿轮", "lock": "锁", "book": "书", "chat": "对话", "flag": "旗帜", "trophy": "奖杯", "leaf": "树叶", "bolt": "闪电", "search": "搜索", "calendar": "日历", "home": "房子", "cloud": "云", "code": "代码", "phone": "电话", "mail": "邮件", "pin": "图钉", "cart": "购物车", "doc": "文档", "layers": "图层", "spark": "闪光", "puzzle": "拼图", "scale": "天平", "handshake": "握手", "eye": "眼睛", "warning": "警告", "school": "学校", "box": "盒子", "truck": "卡车", "health": "健康", "just now": "刚刚"};
+  const PATTERNS=([["(.+) \\(today\\)", "$1（今天）"], ["(\\d+) min ago", "$1 分钟前"], ["(\\d+) h ago", "$1 小时前"], ["(\\d+) d ago", "$1 天前"], ["(\\d+) rows × (\\d+) columns\\. Click cells on the slide to edit; Tab moves between cells\\.", "$1 行 × $2 列。点击幻灯片上的单元格即可编辑；按 Tab 在单元格间移动。"], ["Color (#[0-9A-Fa-f]{6})", "颜色 $1"], ["(\\d+) slides · just now", "$1 张幻灯片 · 刚刚"], ["(\\d+) slides · (\\d+) min ago", "$1 张幻灯片 · $2 分钟前"], ["(\\d+) slides · (\\d+) h ago", "$1 张幻灯片 · $2 小时前"], ["(\\d+) slides · (\\d+) d ago", "$1 张幻灯片 · $2 天前"], ["(\\d+) slides · (.+)", "$1 张幻灯片 · $2"], ["Slide (\\d+) title", "第 $1 张幻灯片标题"], ["Slide (\\d+) points", "第 $1 张幻灯片要点"], ["(\\d+) slides?", "$1 张幻灯片"], ["Claude is writing your outline… (\\d+) slides so far", "Claude 正在写大纲… 已写 $1 张"], ["Claude is writing slides (\\d+)–(\\d+) of (\\d+)…", "Claude 正在写第 $1–$2 张幻灯片，共 $3 张…"], ["(\\d+) open comments?", "$1 条未解决批注"], ["Slide (\\d+ / \\d+)", "幻灯片 $1"], ["(\\d+) slides? keep their original PowerPoint design and ignore the theme\\.", "$1 张幻灯片保留原始 PowerPoint 设计，不套用主题。"], ["Restyle those (\\d+) slides with the theme", "用主题重新设计这 $1 张幻灯片"], ["(.+): slide (\\d+)…", "$1：第 $2 张幻灯片…"], ["Editing slide (\\d+)…", "正在编辑第 $1 张幻灯片…"], ["(.+): slides (\\d+)–(\\d+) of (\\d+)…", "$1：第 $2–$3 张，共 $4 张…"], ["Couldn't build the PowerPoint file: (.+)", "无法生成 PowerPoint 文件：$1"], ["Rendering slide (\\d+) of (\\d+)…", "正在渲染第 $1 张幻灯片，共 $2 张…"], ["Rendering page (\\d+) of (\\d+)…", "正在渲染第 $1 页，共 $2 页…"], ["Couldn't render the images: (.+)", "无法渲染图片：$1"], ["Couldn't build the PDF: (.+)", "无法生成 PDF：$1"], ["Old \\.(\\w+) files can't be read\\. Save as \\.(\\w+) in Office first\\.", "无法读取旧版 .$1 文件。请先在 Office 中另存为 .$2。"], ["Added (\\d+) slides\\.", "已添加 $1 张幻灯片。"], ["Opened (\\d+) slides with their original design\\.", "已打开 $1 张幻灯片，保留原始设计。"], ["Opened (\\d+) slides in the (.+) theme\\. Pick another under Theme\\.", "已用“$2”主题打开 $1 张幻灯片。可在“主题”中换一个。"], ["Couldn't open (.+): the file looks damaged\\.", "无法打开 $1：文件似乎已损坏。"], ["Couldn't open (.+?): (.+)\\.", "无法打开 $1：$2。"], ["Saved (.+)", "已保存 $1"], ["(\\d+) objects", "$1 个对象"], ["Row (\\d+), column (\\d+)", "第 $1 行，第 $2 列"], ["Merge cells \\((\\d+) × (\\d+)\\)", "合并单元格（$1 × $2）"], ["([\\d.]+) pt", "$1 磅"], ["That file is (\\d+) MB\\. Media up to 150 MB can be embedded; trim or compress it first\\.", "这个文件有 $1 MB。最多只能嵌入 150 MB 的媒体，请先剪辑或压缩。"], ["PowerPoint may not play \\.(\\w+) files\\. MP4 video and MP3 or M4A audio work everywhere\\.", "PowerPoint 可能无法播放 .$1 文件。MP4 视频和 MP3、M4A 音频在各处都能播放。"], ["For: (.+)", "对象：$1"], ["On click of (.+)", "单击 $1 时"], ["Slide (\\d+) · (\\d+) open", "第 $1 张 · $2 条未解决"], ["As (.+) ✎", "署名：$1 ✎"], ["Other slides with open comments: (.+)", "其他有未解决批注的幻灯片：$1"], ["(\\d+) match(?:es)?", "$1 处匹配"], ["Replaced (\\d+) occurrences?\\.", "已替换 $1 处。"], ["(.+) · (\\d+) slides", "$1 · $2 张幻灯片"], ["(\\d+) · hidden( · ✦)?", "$1 · 已隐藏$2"], ["Slide size \\(([\\d.]+) × ([\\d.]+) in\\)…", "幻灯片大小（$1 × $2 英寸）…"], ["(\\d+) issues?\\. Click one to go to the slide\\.", "$1 个问题。点击可跳到对应幻灯片。"], ["Text and its background are too similar \\(contrast ([\\d.]+):1\\)\\.", "文字和背景颜色太接近（对比度 $1:1）。"], ["1 video or audio file is no longer stored on this computer and was left out\\.", "有 1 个视频或音频文件已不在这台电脑上，导出时已略过。"], ["(\\d+) video or audio files are no longer stored on this computer and were left out\\.", "有 $1 个视频或音频文件已不在这台电脑上，导出时已略过。"], ["Transition: (.+)…", "切换：$1…"], ["This slide uses \\\"(.+)\\\" from PowerPoint\\. It stays in the file; here it plays as a fade\\.", "这张幻灯片使用来自 PowerPoint 的“$1”效果。它会保留在文件中，这里以淡化方式播放。"], ["Now ([\\d.]+) × ([\\d.]+) in\\. Theme layouts re-flow to the new shape; your own objects are scaled and centered\\.", "当前 $1 × $2 英寸。主题版式会按新尺寸重新排布；你添加的对象会缩放并居中。"], ["([\\d.]+)×([\\d.]+) in", "$1×$2 英寸"], ["Slide size is now ([\\d.]+) × ([\\d.]+) in\\.", "幻灯片大小已改为 $1 × $2 英寸。"], ["Entrance effect (\\d+) \\(from PowerPoint\\)", "进入效果 $1（来自 PowerPoint）"], ["Emphasis effect (\\d+) \\(from PowerPoint\\)", "强调效果 $1（来自 PowerPoint）"], ["Exit effect (\\d+) \\(from PowerPoint\\)", "退出效果 $1（来自 PowerPoint）"], ["Motion path effect (\\d+) \\(from PowerPoint\\)", "动作路径效果 $1（来自 PowerPoint）"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.sl,.rc .nm,.snm,.sorth,.cmt,.cmh b,#pvNotes");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+
+</script>
+<script>
 "use strict";
 const $=id=>document.getElementById(id);
+const __tr=window.__tr||(s=>s),__t=window.__t||((en,zh)=>en),__ZH=!!window.__ZH;
 let W=1280,H=720,PXI=1/96;
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
@@ -676,7 +727,7 @@ function coerce(s,layout,blank){
   if(layout==="bullets"||layout==="chart"||layout==="image"){if(!s.bullets.length&&!blank)s.bullets=flat().slice(0,8)}
   if(layout==="two-col"||layout==="comparison"){
     if(s.cols.length<2){const src=s.items.length?s.items.map(i=>i.text?`${i.title}: ${i.text}`:i.title):s.bullets;const h=Math.ceil(src.length/2);
-      s.cols=[{heading:s.cols[0]?.heading||(layout==="comparison"?"Before":""),bullets:s.cols[0]?.bullets||src.slice(0,h)},{heading:layout==="comparison"?"After":"",bullets:src.slice(h)}];}
+      s.cols=[{heading:s.cols[0]?.heading||(layout==="comparison"?__t("Before","之前"):""),bullets:s.cols[0]?.bullets||src.slice(0,h)},{heading:layout==="comparison"?__t("After","之后"):"",bullets:src.slice(h)}];}
   }
   if(layout==="timeline"||layout==="cards"){
     if(!s.items.length){const src=s.bullets.length?s.bullets:s.cols.map(c=>`${c.heading}: ${stripTags(c.bullets.join("; "))}`);s.items=src.slice(0,layout==="cards"?4:6).map(b=>{const p=splitPoint(b);return {...p,icon:guessIcon(b)}});}
@@ -685,8 +736,8 @@ function coerce(s,layout,blank){
   if(layout==="quote"&&!s.quote){s.quote=s.bullets[0]||s.subtitle||(blank?"":s.title)}
   if(layout==="big-number"&&!s.stat){const all=[s.title,...s.bullets,s.subtitle].map(stripTags).join(" | ");const m=all.match(/[$€£¥]?\s?\d[\d,.]*\s?(%|x|×|k|K|M|B|bn|million|billion)?/);if(m){s.stat=esc(m[0].trim());if(!s.statLabel)s.statLabel=s.bullets[0]?esc(stripTags(s.bullets[0]).replace(m[0],"").replace(/^[\s:–—-]+/,"").slice(0,80)):""}}
   if(layout==="chart"&&!s.chart){const pairs=[];for(const b of s.bullets){const m=stripTags(b).match(/^(.{1,40}?)[:\s–—-]+\$?([\d,.]+)\s*(%|k|m|bn)?/i);if(m)pairs.push([m[1].trim(),parseFloat(m[2].replace(/,/g,""))])}
-    s.chart=pairs.length>=2?{kind:"column",labels:pairs.map(p=>p[0]),series:[{name:"Value",values:pairs.map(p=>p[1])}]}:{kind:"column",labels:["Q1","Q2","Q3","Q4"],series:[{name:"Series 1",values:[12,19,15,24]}]};}
-  if(layout==="table"&&!s.table){const src=s.bullets;if(src.length&&src.some(b=>/:/.test(stripTags(b))))s.table=[["Item","Detail"],...src.map(b=>{const p=splitPoint(b);return [p.title,p.text]})];else if(s.cols.length)s.table=[[s.cols[0].heading||"A",s.cols[1]?.heading||"B"],...Array.from({length:Math.max(s.cols[0].bullets.length,s.cols[1]?.bullets.length||0)},(_,i)=>[s.cols[0].bullets[i]||"",s.cols[1]?.bullets[i]||""])];else s.table=[["Column 1","Column 2","Column 3"],["","",""],["","",""]];}
+    s.chart=pairs.length>=2?{kind:"column",labels:pairs.map(p=>p[0]),series:[{name:__t("Value","数值"),values:pairs.map(p=>p[1])}]}:{kind:"column",labels:["Q1","Q2","Q3","Q4"],series:[{name:__t("Series 1","系列 1"),values:[12,19,15,24]}]};}
+  if(layout==="table"&&!s.table){const src=s.bullets;if(src.length&&src.some(b=>/:/.test(stripTags(b))))s.table=[[__t("Item","项目"),__t("Detail","说明")],...src.map(b=>{const p=splitPoint(b);return [p.title,p.text]})];else if(s.cols.length)s.table=[[s.cols[0].heading||"A",s.cols[1]?.heading||"B"],...Array.from({length:Math.max(s.cols[0].bullets.length,s.cols[1]?.bullets.length||0)},(_,i)=>[s.cols[0].bullets[i]||"",s.cols[1]?.bullets[i]||""])];else s.table=[[__t("Column 1","第 1 列"),__t("Column 2","第 2 列"),__t("Column 3","第 3 列")],["","",""],["","",""]];}
   return s;
 }
 
@@ -812,7 +863,7 @@ const fmtN=v=>{const a=Math.abs(v);if(a>=1e9)return +(v/1e9).toFixed(1)+"B";if(a
 function chartSvg(c,w,h,th){
   const kind=c.kind||"column",labels=c.labels||[],ser=(c.series||[]).filter(x=>Array.isArray(x.values));
   const ff=fontCss(th.bf).replace(/"/g,"'"),mu="#"+th.muted,fg="#"+th.fg;let g="";
-  if(!labels.length||!ser.length)return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect x="1" y="1" width="${w-2}" height="${h-2}" rx="12" fill="none" stroke="#${th.accent2}" stroke-dasharray="8 6"/><text x="${w/2}" y="${h/2}" text-anchor="middle" font-family="${ff}" font-size="22" fill="${mu}">No chart data yet</text></svg>`;
+  if(!labels.length||!ser.length)return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect x="1" y="1" width="${w-2}" height="${h-2}" rx="12" fill="none" stroke="#${th.accent2}" stroke-dasharray="8 6"/><text x="${w/2}" y="${h/2}" text-anchor="middle" font-family="${ff}" font-size="22" fill="${mu}">${__t("No chart data yet","暂无图表数据")}</text></svg>`;
   if(kind==="pie"||kind==="doughnut"){
     const cols=seriesColors(th,labels.length),vals=labels.map((_,i)=>Math.max(0,+ser[0].values[i]||0)),tot=vals.reduce((a,b)=>a+b,0)||1;
     const r=Math.min(h/2-16,w*.3),cx=r+20,cy=h/2;let a=-Math.PI/2;
@@ -875,12 +926,12 @@ const DB={db:null,mem:new Map(),memF:new Map(),bad:false,
 let deck=null,cur=0,view="home";
 const hist={u:[],r:[]};
 let saveT=null;
-function newDeck(title,theme){const d={id:uid(),title:title||"Untitled presentation",theme:theme||store.get("theme","paper"),slides:[],created:Date.now(),updated:Date.now()};const b=store.get("brand",null);if(b)d.brand=b;return d}
+function newDeck(title,theme){const d={id:uid(),title:title||__t("Untitled presentation","未命名演示文稿"),theme:theme||store.get("theme","paper"),slides:[],created:Date.now(),updated:Date.now()};const b=store.get("brand",null);if(b)d.brand=b;return d}
 function brandTheme(base,b){if(!b)return base;const t={...base,id:base.id};
   if(b.accent)t.accent=b.accent;if(b.bg)t.bg=b.bg;if(b.fg)t.fg=b.fg;if(b.hf)t.hf=b.hf;if(b.bf)t.bf=b.bf;
   if(b.bg||b.fg){t.muted=mix(t.fg,t.bg,.42);t.card=mix(t.fg,t.bg,lum(t.bg)>.5?.95:.9)}if(b.accent||b.bg)t.accent2=mix(t.accent,t.bg,.78);
   if(b.logo){t.logo=b.logo;t.logoAR=b.logoAR||2}return t}
-function deckTheme(d){return {...brandTheme(themeOf(d?.theme),d?.brand),master:d?.master,hf:d?.hf,deckRef:d}}
+function deckTheme(d){return {...brandTheme(themeOf(d?.theme),d?.brand),master:d?.master,hdft:d?.hf,deckRef:d}}
 function th(){return deck?deckTheme(deck):themeOf()}
 function deckMedia(d){const out=[];const w=o=>{if(o.mediaId)out.push(o.mediaId);(o.kids||[]).forEach(w)};for(const s of d?.slides||[])(s.objs||[]).forEach(w);(d?.master?.objs||[]).forEach(w);return out}
 function checkpoint(){if(!deck)return;hist.u.push(JSON.stringify(deck));if(hist.u.length>100)hist.u.shift();hist.r=[];updUndo()}
@@ -955,7 +1006,7 @@ const SPEC=`Each slide is a JSON object. Fields:
 - "notes": speaker notes, 2-4 natural sentences the presenter can say
 Only include the fields the chosen layout uses, plus "notes". Text may wrap a key phrase in <b></b>; no other markup and no Markdown.`;
 const LAYOUT_GUIDE=`Pick the layout that best shows each slide's content and vary layouts: timeline for steps, phases or history; comparison for A vs B or before/after; cards for 2-4 parallel ideas; big-number for one striking figure; chart only for real numbers that are in the material (never invent precise statistics); table for structured facts; quote for a memorable statement; two-col for two groups; section as a short divider in longer decks; image for one concept shown with a big icon; bullets otherwise. Use bullets for at most a third of the slides.`;
-function langLine(lang){return !lang||lang==="auto"?"Write in the same language as the person's text.":`Write everything in ${lang}.`}
+function langLine(lang){return !lang||lang==="auto"?(__ZH?"Write in the same language as the person's text. The person uses a Simplified Chinese interface, so if the text is Chinese, very short, mixed or its language is unclear, write in Simplified Chinese.":"Write in the same language as the person's text."):`Write everything in ${lang}.`}
 const DENS={brief:"Keep text minimal: 2-3 points per slide, at most 8 words each.",medium:"Use 3-4 points per slide, at most 14 words each.",detailed:"Use 4-6 points per slide with specific detail, at most 22 words each."};
 function slideAIView(s,semantic){const t=stripTagsKeepB;
   if(s.layout==="free"){if(semantic){const c=clone(s);syncSemantic(c);c.layout=c.semLayout||"bullets";return slideAIView(coerce(c,c.layout))}const o={layout:"original-design",texts:freeTexts(s).map(t)};if(s.notes)o.notes=s.notes;return o}
@@ -985,7 +1036,7 @@ $("pasteIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ct
 $("outlineBtn").onclick=()=>{const t=(ctab==="paste"?$("pasteIn"):$("topicIn")).value.trim();if(!t){toast(ctab==="paste"?"Paste some text first.":"Describe what the presentation is about first.");return}aiOutline(ctab==="paste"?"source":"topic",t)};
 $("ownBtn").onclick=()=>{const t=$("pasteIn").value.trim();if(!t){toast("Paste some text first.");return}const o=parseOutlineText(t);if(!o.items.length){toast("Couldn't find any slides in that text.");return}openOutline(o)};
 $("pickFile").onclick=()=>{fileMode="home";$("fileIn").value="";$("fileIn").click()};
-$("blankBtn").onclick=()=>{deck=newDeck("Untitled presentation");deck.slides=[blankSlide("title"),blankSlide("bullets")];hist.u=[];hist.r=[];cur=0;openEditor();saveNow()};
+$("blankBtn").onclick=()=>{deck=newDeck();deck.slides=[blankSlide("title"),blankSlide("bullets")];hist.u=[];hist.r=[];cur=0;openEditor();saveNow()};
 $("sampleBtn").onclick=()=>{deck=sampleDeck();hist.u=[];hist.r=[];cur=0;openEditor();saveNow()};
 const dropEl=$("drop");
 dropEl.addEventListener("dragover",e=>{e.preventDefault();dropEl.classList.add("over")});dropEl.addEventListener("dragleave",()=>dropEl.classList.remove("over"));
@@ -998,7 +1049,7 @@ async function renderRecent(){
     const tw=document.createElement("div");tw.className="tw";setDeckSize(d);tw.style.aspectRatio=`${W}/${H}`;if(d.slides?.[0])tw.append(thumb(d.slides[0],deckTheme(d),260));setDeckSize(null);
     c.append(tw);c.insertAdjacentHTML("beforeend",`<div class="nm">${esc(d.title)}</div><div class="dt">${d.slides?.length||0} slides · ${ago(d.updated)}</div>`);
     const m=document.createElement("button");m.className="ib more";m.setAttribute("aria-label","Deck options");m.innerHTML='<svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/></svg>';
-    m.onclick=e=>{e.stopPropagation();openPop(m,p=>{mi(p,"Open",()=>openDeck(d.id),{icon:"file"});mi(p,"Duplicate",async()=>{const x=clone(d);x.id=uid();x.title=d.title+" copy";x.updated=Date.now();x.slides.forEach(s=>s.id=uid());await DB.put(x);renderRecent()},{icon:"dup"});msep(p);
+    m.onclick=e=>{e.stopPropagation();openPop(m,p=>{mi(p,"Open",()=>openDeck(d.id),{icon:"file"});mi(p,"Duplicate",async()=>{const x=clone(d);x.id=uid();x.title=d.title+__t(" copy"," 副本");x.updated=Date.now();x.slides.forEach(s=>s.id=uid());await DB.put(x);renderRecent()},{icon:"dup"});msep(p);
       mi(p,"Delete…",(e,b)=>{if(b.dataset.arm){DB.del(d.id).then(renderRecent);closePop();return}b.dataset.arm=1;b.querySelector("span").textContent="Click again to delete for good"},{icon:"trash",danger:true,stay:true})},{right:true})};
     c.append(m);c.onclick=()=>openDeck(d.id);c.onkeydown=e=>{if(e.key==="Enter")openDeck(d.id)};
     box.append(c);
@@ -1046,8 +1097,8 @@ function parseOutlineText(text){
     for(const b of blocks){const ls=b.split("\n").map(x=>x.trim()).filter(Boolean);if(ls.length===1&&ls[0].length>140){push(ls[0].split(/(?<=[.!?。！？])\s*/)[0].slice(0,80));curr.points=ls[0].split(/(?<=[.!?。！？])\s*/).slice(1).filter(Boolean).slice(0,6);continue}
       push(ls[0].replace(/^([-*+•]|\d+[.)])\s+/,""));curr.points=ls.slice(1).map(x=>x.replace(/^([-*+•]|\d+[.)])\s+/,""))}
   }
-  const out=items.filter(i=>i.title||i.points.length);out.forEach(i=>{if(!i.title)i.title=i.points.shift()||"Slide"});
-  return {title:deckTitle||out[0]?.title||"Untitled presentation",items:out};
+  const out=items.filter(i=>i.title||i.points.length);out.forEach(i=>{if(!i.title)i.title=i.points.shift()||__t("Slide","幻灯片")});
+  return {title:deckTitle||out[0]?.title||__t("Untitled presentation","未命名演示文稿"),items:out};
 }
 function openOutline(o,opts={}){
   outline={theme:store.get("theme","paper"),lang:$("optLang").value,density:$("optDensity").value,tone:$("optTone").value,...o};
@@ -1084,7 +1135,7 @@ function renderOutline(){
   const box=$("oList");box.replaceChildren();
   outline.items.forEach((it,i)=>{
     const d=document.createElement("div");d.className="oitem";d.draggable=false;
-    d.innerHTML=`<div class="onum" title="Drag to reorder">${i+1}<small>⋮⋮</small></div><div class="obody"><input value="${esc(it.title)}" placeholder="Slide title" aria-label="Slide ${i+1} title"><textarea rows="1" placeholder="Points, one per line" aria-label="Slide ${i+1} points">${esc(it.points.join("\n"))}</textarea>${(it.table||it.image||it.chart||it.notes)?`<div class="xtra">${[it.table&&"table",it.chart&&"chart",it.image&&"picture",it.notes&&"speaker notes"].filter(Boolean).join(" · ")} kept</div>`:""}</div><div class="oact"><button class="ib" title="Insert slide below" aria-label="Insert slide below"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button class="ib" title="Delete slide" aria-label="Delete slide"><svg viewBox="0 0 24 24">${SV.trash}</svg></button></div>`;
+    d.innerHTML=`<div class="onum" title="Drag to reorder">${i+1}<small>⋮⋮</small></div><div class="obody"><input value="${esc(it.title)}" placeholder="Slide title" aria-label="Slide ${i+1} title"><textarea rows="1" placeholder="Points, one per line" aria-label="Slide ${i+1} points">${esc(it.points.join("\n"))}</textarea>${(it.table||it.image||it.chart||it.notes)?`<div class="xtra">${__ZH?"已保留："+[it.table&&"表格",it.chart&&"图表",it.image&&"图片",it.notes&&"演讲者备注"].filter(Boolean).join(" · "):[it.table&&"table",it.chart&&"chart",it.image&&"picture",it.notes&&"speaker notes"].filter(Boolean).join(" · ")+" kept"}</div>`:""}</div><div class="oact"><button class="ib" title="Insert slide below" aria-label="Insert slide below"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button class="ib" title="Delete slide" aria-label="Delete slide"><svg viewBox="0 0 24 24">${SV.trash}</svg></button></div>`;
     const [inp,ta]=[d.querySelector("input"),d.querySelector("textarea")];
     inp.oninput=()=>it.title=inp.value;ta.oninput=()=>{it.points=ta.value.split("\n").map(x=>x.trim()).filter(Boolean);autoGrow(ta)};
     inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();ta.focus()}};
@@ -1098,7 +1149,7 @@ function renderOutline(){
 }
 sortable($("oList"),".oitem",".onum",(f,t)=>oMove(f,t),false,$("outline"));
 $("oAdd").onclick=()=>{outline.items.push({id:uid(),title:"",points:[]});renderOutline();$("oList").lastChild?.querySelector("input").focus()};
-const PREVIEW={id:"p",layout:"title",title:"Title",subtitle:"Body & <b>emphasis</b>",bullets:[],cols:[],items:[],quote:"",by:"",stat:"",statLabel:"",icon:"spark",notes:""};
+const PREVIEW={id:"p",layout:"title",title:__t("Title","标题"),subtitle:__t("Body & <b>emphasis</b>","正文与<b>强调</b>"),bullets:[],cols:[],items:[],quote:"",by:"",stat:"",statLabel:"",icon:"spark",notes:""};
 function renderOThemes(){const box=$("oThemes");box.replaceChildren();
   for(const t of THEMES){const b=document.createElement("button");b.className="thc"+(t.id===outline.theme?" on":"");const tw=document.createElement("div");tw.className="tw";tw.append(thumb(PREVIEW,t,180));b.append(tw);b.insertAdjacentHTML("beforeend",`<span>${esc(t.name)}</span>`);
     b.onclick=()=>{outline.theme=t.id;store.set("theme",t.id);box.querySelectorAll(".thc").forEach(x=>x.classList.toggle("on",x===b))};box.append(b)}
@@ -1141,7 +1192,7 @@ function autoSlide(it,i,n){
 $("oPlain").onclick=()=>{if(!outline?.items.length){toast("Add at least one slide.");return}buildDeck(false)};
 $("oGen").onclick=()=>{if(!outline?.items.length){toast("Add at least one slide.");return}buildDeck(true)};
 async function buildDeck(useAI){
-  outline.title=$("oTitle").value.trim()||outline.items[0]?.title||"Untitled presentation";
+  outline.title=$("oTitle").value.trim()||outline.items[0]?.title||__t("Untitled presentation","未命名演示文稿");
   const o=clone(outline);deck=newDeck(o.title,o.theme);const n=o.items.length;
   deck.slides=o.items.map((it,i)=>autoSlide(it,i,n));hist.u=[];hist.r=[];cur=0;
   openEditor();saveNow();if(!useAI)return;
@@ -1246,7 +1297,7 @@ $("slideBox").addEventListener("paste",e=>{
 });
 $("slideBox").addEventListener("keydown",e=>{
   const t=e.target;if(!t.isContentEditable)return;
-  if(e.key==="Escape"){e.preventDefault();t.blur();return}
+  if(e.key==="Escape"){e.preventDefault();t.blur();armType();return}
   if(e.key==="Enter"&&!t.classList.contains("ls")&&!t.classList.contains("fx")){e.preventDefault();if(t.tagName==="TD"){const nx=t.parentElement.nextElementSibling?.children[t.cellIndex];if(nx)nx.focus();else t.blur()}else t.blur();return}
   if(e.key==="Tab"&&t.classList.contains("fx")){e.preventDefault();const sel=getSelection();let n=sel.anchorNode;while(n&&n.parentNode!==t)n=n.parentNode;if(!n||n.nodeType!==1)return;const ee=getPath(curS(),JSON.parse(t.dataset.path));readFreeInto(t,ee);const i=[...t.children].indexOf(n);const p=ee.paras[i];if(!p)return;if(!editDirty&&editSnap){hist.u.push(editSnap);hist.r=[];editDirty=true;updUndo()}p.lvl=clamp((p.lvl||0)+(e.shiftKey?-1:1),0,8);n.style.marginLeft=p.lvl*1.1+"em";changed();refreshThumbSoon();return}
   if(e.key==="Tab"&&t.tagName==="TD"){e.preventDefault();const tb=t.closest("table");const cells=[...tb.querySelectorAll("td")];const k=cells.indexOf(t);
@@ -1311,10 +1362,10 @@ function renderData(){
   const s=curS(),p=$("dataPanel");p.replaceChildren();const tgt=dataObj&&(s.objs||[]).includes(dataObj)?dataObj:null;const host=tgt||s;
   if(tgt||s.layout==="chart"||dataKind==="chart"&&s.chart){const c=host.chart||{kind:"column",labels:[],series:[]};
     const csv=[["Label",...c.series.map(x=>x.name)].join(","),...c.labels.map((l,i)=>[l.includes(",")?`"${l}"`:l,...c.series.map(x=>x.values[i]??"")].join(","))].join("\n");
-    p.innerHTML=`<div class="col"><b style="font-size:13px">Chart data</b><label class="hint">Type <select class="s" id="dKind">${CHART_KINDS.map(k=>`<option ${k===c.kind?"selected":""} value="${k}">${{column:"Columns",bar:"Bars",line:"Line",pie:"Pie",doughnut:"Doughnut"}[k]}</option>`).join("")}</select></label><span class="hint">First row: series names.<br>Paste from Excel or Sheets works.</span><button class="btn sm" id="dClose">Done</button></div><textarea id="dCsv" spellcheck="false" aria-label="Chart data as CSV"></textarea>`;
+    p.innerHTML=`<div class="col"><b style="font-size:13px">Chart data</b><label class="hint">Type <select class="s" id="dKind">${CHART_KINDS.map(k=>`<option ${k===c.kind?"selected":""} value="${k}">${{column:"Columns",bar:"Bars",line:__t("Line","折线图"),pie:"Pie",doughnut:"Doughnut"}[k]}</option>`).join("")}</select></label><span class="hint">First row: series names.<br>Paste from Excel or Sheets works.</span><button class="btn sm" id="dClose">Done</button></div><textarea id="dCsv" spellcheck="false" aria-label="Chart data as CSV"></textarea>`;
     $("dCsv").value=csv;let snap=false;
-    const apply=()=>{if(!snap){checkpoint();snap=true}const rows=parseCSV($("dCsv").value);if(rows.length<2)return;const head=rows[0];const series=head.slice(1).map((n,j)=>({name:n||`Series ${j+1}`,values:rows.slice(1).map(r=>{const v=parseFloat(String(r[j+1]??"").replace(/[^0-9.\-]/g,""));return isFinite(v)?v:0})}));
-      host.chart={kind:$("dKind").value,labels:rows.slice(1).map(r=>r[0]??""),series:series.length?series:[{name:"Series 1",values:rows.slice(1).map(()=>0)}]};changed();
+    const apply=()=>{if(!snap){checkpoint();snap=true}const rows=parseCSV($("dCsv").value);if(rows.length<2)return;const head=rows[0];const series=head.slice(1).map((n,j)=>({name:n||__t(`Series ${j+1}`,`系列 ${j+1}`),values:rows.slice(1).map(r=>{const v=parseFloat(String(r[j+1]??"").replace(/[^0-9.\-]/g,""));return isFinite(v)?v:0})}));
+      host.chart={kind:$("dKind").value,labels:rows.slice(1).map(r=>r[0]??""),series:series.length?series:[{name:__t("Series 1","系列 1"),values:rows.slice(1).map(()=>0)}]};changed();
       if(tgt){const it=itemOf("obj:"+tgt.id);if(it)domUpdate(it)}else{const ch=$("slideBox").querySelector("[data-chart]")||[...$("slideBox").querySelectorAll(".sl > .el")].find(n=>n._e?.k==="chart");if(ch)ch.innerHTML=chartSvg(s.chart,ch._e.w,ch._e.h,th())}refreshThumbSoon()};
     $("dCsv").oninput=apply;$("dKind").onchange=apply;
   }else{const t=s.table||[[""]];
@@ -1374,9 +1425,9 @@ function restyleAll(){checkpoint();deck.slides.forEach(x=>{if(x.layout==="free")
 $("addSlideBtn").onclick=()=>addSlideMenu($("addSlideBtn"));
 function addSlideMenu(anchor){openPop(anchor,p=>{
   if(sample){mlab(p,"Write a slide with AI");const w=document.createElement("div");w.className="pin";w.innerHTML='<input placeholder="e.g. A timeline of our 2025 milestones">';p.append(w);const inp=w.querySelector("input");inp.onkeydown=e=>{if(e.key==="Enter"&&inp.value.trim()){closePop();aiAddSlide(inp.value.trim())}};msep(p)}
-  if(deck.src?.layouts?.length){mlab(p,"From this presentation's layouts");for(const L of deck.src.layouts)mi(p,L.name,()=>newFromLayout(L),{icon:"layout"});msep(p)}
+  if(deck.src?.layouts?.length){mlab(p,"From this presentation's layouts");for(const L of deck.src.layouts)mi(p,L.name,()=>newFromLayout(L),{icon:"layout"}).dataset.noI18n="";msep(p)}
   mlab(p,"Blank slide");const g=document.createElement("div");g.className="lgrid";
-  for(const [id,name] of LAYOUTS){const b=document.createElement("button");const tw=document.createElement("div");tw.className="tw";const bs=blankSlide(id);bs.title=id==="title"?"Title":name;tw.append(thumb(bs,th(),144));b.append(tw);b.insertAdjacentHTML("beforeend",`<span>${name}</span>`);b.onclick=()=>{closePop();insertSlide(blankSlide(id))};g.append(b)}
+  for(const [id,name] of LAYOUTS){const b=document.createElement("button");const tw=document.createElement("div");tw.className="tw";const bs=blankSlide(id);bs.title=__tr(id==="title"?"Title":name);tw.append(thumb(bs,th(),144));b.append(tw);b.insertAdjacentHTML("beforeend",`<span>${name}</span>`);b.onclick=()=>{closePop();insertSlide(blankSlide(id))};g.append(b)}
   p.append(g);msep(p);mi(p,"Import slides from a file…",()=>{fileMode="append";$("fileIn").value="";$("fileIn").click()},{icon:"import"});
   settle(g);
 })}
@@ -1426,15 +1477,15 @@ async function aiSlide(action,custom,keep){
   const i=cur,s=deck.slides[i];const id=s.id;
   const instr=action?action[2]:custom;const keepLayout=action?action[3]:!!keep;
   if(s.layout==="free"&&(keepLayout||!action&&!custom)){
-    const res=await withAI(action?`${action[1]}: slide ${i+1}…`:`Editing slide ${i+1}…`,async signal=>J(`Here is the text of slide ${i+1} of a presentation titled "${stripTags(deck.title)}". It keeps its own design, so each text stays in its own box.
+    const res=await withAI(action?`${__tr(action[1])}: slide ${i+1}…`:`Editing slide ${i+1}…`,async signal=>J(`Here is the text of slide ${i+1} of a presentation titled "${stripTags(deck.title)}". It keeps its own design, so each text stays in its own box.
 ${JSON.stringify(slideAIView(s))}
 Task: ${instr}
 Reply with only JSON {"texts":[...exactly ${freeTexts(s).length} strings, same order...],"notes":"speaker notes"}. Keep each text roughly the length of the original so it still fits its box. Text may wrap key words in <b></b>.`,signal,"default"));
     if(!res||typeof res!=="object")return;const idx=deck.slides.findIndex(x=>x.id===id);if(idx<0)return;checkpoint();const sl=deck.slides[idx];
     if(action?.[0]==="notes"){sl.notes=String(res.notes||sl.notes||"").trim()}else{mergeText(sl,{texts:res.texts});if(typeof res.notes==="string"&&res.notes.trim())sl.notes=res.notes.trim()}
-    cur=idx;changed(true);toast(action?`${action[1]} done.`:"Slide updated.","Undo",undo,7000);return}
+    cur=idx;changed(true);toast(action?__t(`${action[1]} done.`,`${__tr(action[1])}完成。`):"Slide updated.","Undo",undo,7000);return}
   if(s.layout==="free"){syncSemantic(s)}
-  const res=await withAI(action?`${action[1]}: slide ${i+1}…`:`Editing slide ${i+1}…`,async signal=>{
+  const res=await withAI(action?`${__tr(action[1])}: slide ${i+1}…`:`Editing slide ${i+1}…`,async signal=>{
     const p=`Here is slide ${i+1} of ${deck.slides.length} from a presentation titled "${stripTags(deck.title)}", as JSON:
 ${JSON.stringify(slideAIView(s))}
 Other slides in the deck:
@@ -1450,14 +1501,14 @@ Reply with only the updated slide as one JSON object.`;
   const old=deck.slides[idx];
   if(action?.[0]==="notes"){old.notes=String(res.notes||old.notes||"").trim()}
   else{const ns=normSlide(res.layout?res:{...res,layout:old.layout},old);if(!res.notes)ns.notes=old.notes;if(!res.chart&&old.chart&&ns.layout==="chart")ns.chart=old.chart;if(!res.table&&old.table)ns.table=old.table;deck.slides[idx]=ns}
-  cur=idx;changed(true);toast(action?`${action[1]} done.`:"Slide updated.","Undo",undo,7000);
+  cur=idx;changed(true);toast(action?__t(`${action[1]} done.`,`${__tr(action[1])}完成。`):"Slide updated.","Undo",undo,7000);
 }
 async function aiAddSlide(prompt){
   const at=cur+1;
   const res=await withAI("Claude is writing a new slide…",async signal=>J(`Presentation titled "${stripTags(deck.title)}". Its slides:
 ${deckContext(-1)}
 Write one new slide that goes after slide ${cur+1}. Request: ${prompt}
-Match the language of the existing slides unless the request says otherwise.
+Match the language of the existing slides unless the request says otherwise.${__ZH?" If the slides have no text yet, write in Simplified Chinese.":""}
 ${LAYOUT_GUIDE}
 ${SPEC}
 Reply with only one slide JSON object.`,signal));
@@ -1468,16 +1519,16 @@ $("deckAiBtn").onclick=()=>openPop($("deckAiBtn"),p=>{
   if(!sample){const d=document.createElement("div");d.className="hint";d.style.padding="10px";d.textContent="AI needs the Claude app. Open AI Slide Maker in Claude.";p.append(d);return}
   mlab(p,"Ask AI to edit the whole deck");const w=document.createElement("div");w.className="pin";w.innerHTML='<input placeholder="e.g. Make it suitable for investors">';p.append(w);const inp=w.querySelector("input");inp.onkeydown=e=>{if(e.key==="Enter"&&inp.value.trim()){closePop();aiDeck(inp.value.trim(),{full:true,label:"Editing the deck"})}};
   msep(p);
-  mi(p,"Translate deck…",()=>langPick($("deckAiBtn"),l=>aiDeck(`Translate every text value, including speaker notes, chart labels and series names, into ${l}.`,{label:`Translating into ${l}`})),{icon:"globe",stay:true});
+  mi(p,"Translate deck…",()=>langPick($("deckAiBtn"),l=>aiDeck(`Translate every text value, including speaker notes, chart labels and series names, into ${l}.`,{label:__t(`Translating into ${l}`,`正在翻译为${__tr(l)}`)})),{icon:"globe",stay:true});
   mi(p,"Write speaker notes for all slides",()=>aiDeck("Write speaker notes for every slide in its \"notes\" field: 3-5 natural sentences the presenter can say, adding context beyond the slide text. Keep every other value exactly as is.",{label:"Writing speaker notes",notesOnly:true}),{icon:"notes"});
   mi(p,"Smart layouts for every slide",()=>aiDeck(`Redesign each slide: choose the best layout for its content and restructure the fields to match. ${LAYOUT_GUIDE} Keep the facts and language.`,{full:true,label:"Choosing layouts"}),{icon:"layout"});
   mi(p,"Shorten all text",()=>aiDeck("Make all slide text shorter and punchier. Keep the facts. Do not shorten speaker notes.",{label:"Shortening"}),{icon:"short"});
   mi(p,"Fix spelling & grammar",()=>aiDeck("Fix spelling, grammar and punctuation only. Change nothing else.",{label:"Proofreading",tier:"quick"}),{icon:"check"});
-  mi(p,"Change tone…",()=>openPop($("deckAiBtn"),q=>{mlab(q,"Tone");for(const t of["Professional","Friendly","Persuasive","Educational","Inspiring","Casual","Concise executive"])mi(q,t,()=>aiDeck(`Rewrite the text in a ${t.toLowerCase()} tone. Keep the facts.`,{label:`Making it ${t.toLowerCase()}`}))},{force:true}),{icon:"tone",stay:true});
+  mi(p,"Change tone…",()=>openPop($("deckAiBtn"),q=>{mlab(q,"Tone");for(const t of["Professional","Friendly","Persuasive","Educational","Inspiring","Casual","Concise executive"])mi(q,t,()=>aiDeck(`Rewrite the text in a ${t.toLowerCase()} tone. Keep the facts.`,{label:__t(`Making it ${t.toLowerCase()}`,`正在改为${__tr(t)}语气`)}))},{force:true}),{icon:"tone",stay:true});
   msep(p);mi(p,"Summarize deck",aiSummary,{icon:"sum"});
 });
 async function aiDeck(instr,o={}){
-  const ids=deck.slides.map(s=>s.id),n=ids.length,B=o.full?4:6;let changedAny=false,snap=JSON.stringify(deck);
+  const ids=deck.slides.map(s=>s.id),n=ids.length,B=o.full?4:6;let changedAny=false,snap=JSON.stringify(deck);o={...o,label:__tr(o.label||"Working")};
   const ok=await withAI(`${o.label||"Working"}…`,async(signal,msg)=>{
     for(let a=0;a<n;a+=B){const b=Math.min(n,a+B);msg(`${o.label||"Working"}: slides ${a+1}–${b} of ${n}…`);
       const part=ids.slice(a,b).map(id=>deck.slides.find(s=>s.id===id)).filter(Boolean);
@@ -1513,10 +1564,10 @@ function mergeText(s,x){
   if(x.chart&&s.chart){if(Array.isArray(x.chart.labels)&&x.chart.labels.length===s.chart.labels.length)s.chart.labels=x.chart.labels.map(v=>stripTags(String(v)));if(Array.isArray(x.chart.series))x.chart.series.forEach((se,i)=>{if(s.chart.series[i]&&se?.name)s.chart.series[i].name=stripTags(String(se.name))})}
 }
 async function aiSummary(){
-  const body=document.createElement("div");body.textContent="";aiModal=true;
-  modal("Summary",body,[["Copy",async b=>{try{await navigator.clipboard.writeText(body.textContent);b.textContent="Copied"}catch{const r=document.createRange();r.selectNodeContents(body);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected, press ⌘C"}}],["Add as slide",()=>{const lines=body.textContent.split("\n").map(x=>x.replace(/^\s*([-*•]|\d+[.)])\s*/,"").trim()).filter(Boolean);if(!lines.length)return;const s=blankSlide("bullets");s.title="Summary";s.bullets=lines.slice(0,6).map(esc);$("modal").hidden=true;insertSlide(s,deck.slides.length)},true]]);
+  const body=document.createElement("div");body.textContent="";body.dataset.noI18n="";aiModal=true;
+  modal("Summary",body,[["Copy",async b=>{try{await navigator.clipboard.writeText(body.textContent);b.textContent="Copied"}catch{const r=document.createRange();r.selectNodeContents(body);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected, press ⌘C"}}],["Add as slide",()=>{const lines=body.textContent.split("\n").map(x=>x.replace(/^\s*([-*•]|\d+[.)])\s*/,"").trim()).filter(Boolean);if(!lines.length)return;const s=blankSlide("bullets");s.title=__t("Summary","摘要");s.bullets=lines.slice(0,6).map(esc);$("modal").hidden=true;insertSlide(s,deck.slides.length)},true]]);
   const text=deck.slides.map((s,i)=>`Slide ${i+1}: ${JSON.stringify(slideAIView(s))}`).join("\n").slice(0,150000);
-  await withAI("Summarizing…",async signal=>{const r=await sample(`Summarize this presentation for someone who did not see it: 4-7 short bullet points (start each line with "- "), then one line starting "Takeaway:". Plain text, same language as the slides.\n\n${text}`,{signal,modelTier:"default",onText:({text})=>{body.textContent=text}});body.textContent=r.text;return true});
+  await withAI("Summarizing…",async signal=>{const r=await sample(`Summarize this presentation for someone who did not see it: 4-7 short bullet points (start each line with "- "), then one line starting "Takeaway:". Plain text, same language as the slides${__ZH?" (Simplified Chinese if the slides have little text), and write the \"Takeaway:\" label as \"要点：\"":""}.\n\n${text}`,{signal,modelTier:"default",onText:({text})=>{body.textContent=text}});body.textContent=r.text;return true});
   aiModal=false;
 }
 /* ---------- export ---------- */
@@ -1686,7 +1737,7 @@ async function importFile(f,mode){
       try{await DB.putFile(fileId,await f.arrayBuffer());deck.src={fileId,name:f.name,layouts:d.layouts,theme:d.theme,map:d.map,sz:d.sz}}catch{toast("Couldn't keep a copy of the original file; exports will be rebuilt from scratch.")}
       hist.u=[];hist.r=[];cur=0;openEditor();saveNow();
       const nf=d.slides.filter(x=>x.layout==="free").length;
-      if(nf)toast(`Opened ${d.slides.length} slides with their original design.`,"Restyle with a theme",restyleAll,9000);else toast(`Opened ${d.slides.length} slides in the ${th().name} theme. Pick another under Theme.`,null,null,7000);return}
+      if(nf)toast(`Opened ${d.slides.length} slides with their original design.`,"Restyle with a theme",restyleAll,9000);else toast(`Opened ${d.slides.length} slides in the ${__tr(th().name)} theme. Pick another under Theme.`,null,null,7000);return}
     if(ext==="json"){const o=JSON.parse(await f.text());const d=o.deck||o;if(!Array.isArray(d.slides))throw new Error("not a deck");
       if(o.media&&typeof o.media==="object")for(const [id,u] of Object.entries(o.media)){try{await DB.putFile(id,dataUrlBlob(u))}catch{}}
       if(mode==="append"&&deck){checkpoint();deck.slides.splice(cur+1,0,...d.slides.map(s=>normSlide(s,{...s,id:uid()})));changed(true);return}
@@ -1984,7 +2035,7 @@ async function readDocx(file){
     if(tag==="TABLE"){const rows=[...el.querySelectorAll("tr")].map(tr=>[...tr.children].map(td=>stripTags(sanitizeInline(td.innerHTML)).trim()));if(!curr)push("Table");if(curr.table){push(curr.title+" (cont.)")}curr.table=rows.slice(0,20);continue}
     const imgs=el.querySelectorAll("img");if(imgs.length){if(!curr)push("");if(!curr.image)curr.image=await downscale(imgs[0].src).catch(()=>null)}
     if(tag==="UL"||tag==="OL"){if(!curr)push("");for(const li of el.querySelectorAll("li")){const t=stripTags(sanitizeInline(li.innerHTML)).trim();if(t)curr.points.push(t)}continue}
-    const t=stripTags(html).trim();if(!t)continue;if(!curr){push(t.length<90?t:"Introduction");if(t.length<90)continue}
+    const t=stripTags(html).trim();if(!t)continue;if(!curr){push(t.length<90?t:__t("Introduction","引言"));if(t.length<90)continue}
     curr.points.push(t.length>220?t.slice(0,217)+"…":t);
   }
   if(!slideTag&&items.length===1&&items[0].points.length>8){const all=items[0].points;items.length=0;for(let i=0;i<all.length;i+=4){push(all[i].slice(0,80));curr.points=all.slice(i+1,i+4)}}
@@ -2106,7 +2157,7 @@ addEventListener("keydown",e=>{
     if(mod&&e.altKey&&e.code==="KeyC"){e.preventDefault();copyStyle();return}
     if(mod&&e.altKey&&e.code==="KeyV"){e.preventDefault();pasteStyle();return}
     if((k==="Enter"||k==="F2")&&SEL.length===1){const n=$("slideBox").querySelector(`.sl > [data-sel="${SEL[0]}"]`);if(n){e.preventDefault();enterEdit(n)}return}
-    if(k.length===1&&!mod&&!e.altKey&&SEL.length===1){const fx=textTarget();if(fx){fx.focus();const r=document.createRange();r.selectNodeContents(fx);const sl=getSelection();sl.removeAllRanges();sl.addRange(r);return}}
+    if((k.length===1||k==="Process"||e.keyCode===229)&&!mod&&!e.altKey&&SEL.length===1){const fx=textTarget();if(fx){fx.focus();const r=document.createRange();r.selectNodeContents(fx);const sl=getSelection();sl.removeAllRanges();sl.addRange(r);return}}
   }
   if(mod&&(k==="a"||k==="A")){e.preventDefault();setSel(allItems());return}
   if(mod&&(k==="z"||k==="Z")){e.preventDefault();e.shiftKey?redo():undo();return}
@@ -2116,7 +2167,7 @@ addEventListener("keydown",e=>{
   if(k==="ArrowDown"||k==="ArrowRight"||k==="PageDown"){e.preventDefault();go(cur+1);return}
   if(k==="ArrowUp"||k==="ArrowLeft"||k==="PageUp"){e.preventDefault();go(cur-1);return}
   if(k==="Home"){go(0);return}if(k==="End"){go(deck.slides.length-1);return}
-  if((k==="Delete"||k==="Backspace")&&(e.target===$("thumbs")||$("thumbs").contains(e.target)||e.target===document.body)){e.preventDefault();delSlide();return}
+  if((k==="Delete"||k==="Backspace")&&(e.target===$("thumbs")||$("thumbs").contains(e.target))){e.preventDefault();delSlide();return}
 });
 
 /* ======================= objects layer (text boxes, shapes, pictures, tables, charts, diagrams, media, ink) ======================= */
@@ -2180,7 +2231,7 @@ function objNode(o,t,mode,path,ox=0,oy=0){
     const ins=o.ins||[9.6,4.8,9.6,4.8];const tb=document.createElement("div");tb.className="tb otb";
     tb.style.cssText=`position:absolute;left:${ins[0]}px;top:${ins[1]}px;right:${ins[2]}px;bottom:${ins[3]}px;overflow:visible;justify-content:${{top:"flex-start",middle:"center",bottom:"flex-end"}[o.valign||"top"]}`;
     const fx=document.createElement("div");fx.className="fx nofit";fx.innerHTML=freeParasHtml(o.paras||[]);
-    if(edit&&o.k==="text"&&!(o.paras||[]).some(p=>stripTags(p.html).trim())){fx.classList.add("blank");fx.firstElementChild?.setAttribute("data-ph",o.hint||"Click to add text")}
+    if(edit&&o.k==="text"&&!(o.paras||[]).some(p=>stripTags(p.html).trim())){fx.classList.add("blank");fx.firstElementChild?.setAttribute("data-ph",__tr(o.hint||"Click to add text"))}
     if(edit&&path){fx.contentEditable="true";fx.spellcheck=true;fx.dataset.path=JSON.stringify(path)}if(o.wa)fx.style.cssText+=";"+waCss(o.wa);
     tb.append(fx);d.append(tb);
   }else if(o.k==="line"){const x1=o.flipH?o.w:0,y1=o.flipV?o.h:0,x2=o.flipH?0:o.w,y2=o.flipV?0:o.h,lw=o.lw||2,mid=uid(),c=o.line||"000000";
@@ -2211,7 +2262,7 @@ function objTable(o,t,d,path){const rows=o.rows||[[""]],nc=Math.max(1,...rows.ma
     tb.append(tr)});d.append(tb)}
 function objWrap(o,i,t,mode){const n=objNode(o,t,mode,mode==="edit"?["objs",i]:null);n.dataset.sel="obj:"+o.id;n.dataset.t="obj:"+o.id;return n}
 /* footer, date and slide number */
-function hfNodes(s,t){const hf=t.hf;if(!hf||!(hf.num||hf.date||hf.footer))return [];if(s.layout==="free"||(hf.notTitle&&s.layout==="title"))return [];
+function hfNodes(s,t){const hf=t.hdft;if(!hf||!(hf.num||hf.date||hf.footer))return [];if(s.layout==="free"||(hf.notTitle&&s.layout==="title"))return [];
   const idx=s.layout==="master"?"#":(t.deckRef?.slides.indexOf(s)??-1)+1;if(!idx)return [];const out=[];const mk=(txt,x,w,al)=>{const d=document.createElement("div");d.className="el hf";d.style.cssText=`left:${x}px;top:${H-48}px;width:${w}px;height:28px;display:flex;align-items:center;justify-content:${al};font:400 15px/1 ${fontCss(t.bf)};color:#${t.muted}`;d.textContent=txt;out.push(d)};
   if(hf.date)mk(hfDate(hf),40,300,"flex-start");if(hf.footer)mk(hf.footer,340,600,"center");if(hf.num)mk(String(idx),W-140,100,"flex-end");return out}
 function hfDate(hf){return hf.dateText||new Date().toLocaleDateString()}
@@ -2229,7 +2280,7 @@ function newShape(shp,x,y,w,h){const t=th();
   return {id:uid(),k:"shape",shp,x,y,w,h,rot:0,fill:t.accent,line:null,lw:2,dash:"solid",paras:[para0(t,{color:onColor(t.accent),align:"center"})],valign:"middle"}}
 function newTextBox(x,y,w){const t=th();return {id:uid(),k:"text",x,y,w:w||520,h:46,rot:0,fill:null,line:null,lw:2,paras:[para0(t)],valign:"top",hint:"Click to add text"}}
 function newTable(r,c){const t=th();const w=Math.min(1120,c*220);const rows=Array.from({length:r},(_,i)=>Array(c).fill(""));return {id:uid(),k:"table",x:(W-w)/2,y:180,w,h:r*44,rot:0,rows,fs:20,ts:{head:true,band:true}}}
-function newChart(kind){return {id:uid(),k:"chart",x:240,y:150,w:800,h:460,rot:0,chart:{kind,labels:["Q1","Q2","Q3","Q4"],series:kind==="pie"||kind==="doughnut"?[{name:"Share",values:[40,25,20,15]}]:[{name:"Series 1",values:[12,19,15,24]},{name:"Series 2",values:[8,11,14,17]}]}}}
+function newChart(kind){return {id:uid(),k:"chart",x:240,y:150,w:800,h:460,rot:0,chart:{kind,labels:["Q1","Q2","Q3","Q4"],series:kind==="pie"||kind==="doughnut"?[{name:__t("Share","占比"),values:[40,25,20,15]}]:[{name:"Series 1",values:[12,19,15,24]},{name:"Series 2",values:[8,11,14,17]}]}}}
 function objBox(o){return {x:o.x,y:o.y,w:o.w,h:o.h}}
 function unionBox(bs){if(!bs.length)return {x:0,y:0,w:0,h:0};const x=Math.min(...bs.map(b=>b.x)),y=Math.min(...bs.map(b=>b.y)),r=Math.max(...bs.map(b=>b.x+b.w)),b2=Math.max(...bs.map(b=>b.y+b.h));return {x,y,w:r-x,h:b2-y}}
 function rotBounds(o){if(!o.rot)return objBox(o);const a=o.rot*Math.PI/180,c=Math.abs(Math.cos(a)),s=Math.abs(Math.sin(a)),w=o.w*c+o.h*s,h=o.w*s+o.h*c;return {x:o.x+o.w/2-w/2,y:o.y+o.h/2-h/2,w,h}}
@@ -2246,7 +2297,9 @@ function itemOf(k){const s=curS();if(!s)return null;
 function unitBox(s,sid,els){const u=s.free.units?.[sid];return u?{...u.px}:unionBox(els)}
 function selItems(){return SEL.map(itemOf).filter(Boolean)}
 function allItems(){const s=curS();if(!s)return [];const out=(s.objs||[]).map(o=>"obj:"+o.id);if(s.layout==="free"&&s.free){const seen=new Set();for(const e of s.free.els)if(e.sid&&!e.del&&!e.deco&&!seen.has(e.sid)){seen.add(e.sid);out.push("o:"+e.sid)}}return out}
-function setSel(keys){SEL=[...new Set(keys)];if(!SEL.length)cropMode=false;drawSel();renderObar();if(sideTab==="anim"&&!$("side").hidden)renderSide()}
+function setSel(keys){SEL=[...new Set(keys)];if(!SEL.length)cropMode=false;drawSel();renderObar();if(sideTab==="anim"&&!$("side").hidden)renderSide();armType()}
+/* drop the caret a finished edit leaves behind, so typing or an IME never lands in a box edited earlier (the keydown handler opens the selected box) */
+function armType(){const a=document.activeElement;if(a&&a!==document.body&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)))return;getSelection()?.removeAllRanges()}
 function toggleSel(k){setSel(SEL.includes(k)?SEL.filter(x=>x!==k):[...SEL,k])}
 function snapGeom(it){return {box:{...it.box},o:it.o?clone(it.o):null,els:it.els?it.els.map(e=>({x:e.x,y:e.y,w:e.w,h:e.h})):null,unit:it.sid?{...curS().free.units?.[it.sid]?.px}:null}}
 function applyGeom(it,g0,b1){const s=curS();
@@ -2358,7 +2411,7 @@ function startDraw(ev,p0){const m=drawMode;const L=$("selLayer");const k=slideSc
   addEventListener("pointermove",mv);addEventListener("pointerup",up)}
 function simplify(pts,tol){if(pts.length<3)return pts;const out=[pts[0]];let last=pts[0];for(let i=1;i<pts.length-1;i++){if(Math.hypot(pts[i][0]-last[0],pts[i][1]-last[1])>=tol*3){out.push(pts[i]);last=pts[i]}}out.push(pts[pts.length-1]);return out}
 function addObjs(list,edit){checkpoint();const s=curS();s.objs=s.objs||[];s.objs.push(...list);changed(true);setSel(list.map(o=>"obj:"+o.id));
-  if(edit)setTimeout(()=>{const n=$("slideBox").querySelector(`[data-sel="obj:${list[0].id}"]`);if(n)enterEdit(n)},30)}
+  if(edit)setTimeout(()=>{const n=$("slideBox").querySelector(`[data-sel="obj:${list[0].id}"]`);if(n&&!n.contains(document.activeElement))enterEdit(n)},30)}
 function insertCentered(o,edit){o.x=clamp((W-o.w)/2,0,W);o.y=clamp((H-o.h)/2,0,H);const s=curS();let off=0;while((s.objs||[]).some(x=>Math.abs(x.x-o.x-off)<1&&Math.abs(x.y-o.y-off)<1)&&off<200)off+=20;moveObj(o,off,off);addObjs([o],edit)}
 /* ---------- actions on the selection ---------- */
 function delSel(){const items=selItems();if(!items.length)return;checkpoint();const s=curS();for(const it of items){if(it.o)s.objs.splice(s.objs.indexOf(it.o),1);else it.els.forEach(e=>e.del=true);s.anims=(s.anims||[]).filter(a=>a.t!==it.k)}SEL=[];changed(true);drawSel();renderObar()}
@@ -2368,7 +2421,7 @@ function dupSel(){const s=curS();const objs=selItems().filter(i=>i.o).map(i=>clo
 function copySel(cut){const items=selItems();const objs=items.filter(i=>i.o).map(i=>clone(i.o));
   // pieces of imported slides are copied as new objects
   for(const it of items)if(!it.o){const s=curS();for(const e of it.els){const o=elToObj(e,s);if(o)objs.push(o)}}
-  if(!objs.length)return false;objClip={objs,n:0};if(cut)delSel();toast(cut?"Cut. Paste with ⌘V on any slide.":"Copied. Paste with ⌘V on any slide.",null,null,2200);return true}
+  if(!objs.length)return false;objClip={objs,n:0,from:cut?null:curS()};if(cut)delSel();toast(cut?"Cut. Paste with ⌘V on any slide.":"Copied. Paste with ⌘V on any slide.",null,null,2200);return true}
 function pasteObjs(){if(!objClip)return false;objClip.n++;const d=objClip.n*20;const objs=objClip.objs.map(o=>cloneObj(o,curS()===objClip.from?d:0,curS()===objClip.from?d:0));objClip.from=curS();addObjs(objs);return true}
 function elToObj(e,s){if(e.k==="ftext")return {id:uid(),k:"text",x:e.x,y:e.y,w:e.w,h:e.h,rot:0,paras:clone(e.paras),valign:e.valign||"top",ins:[0,0,0,0],fixH:true};
   if(e.k==="pic")return {id:uid(),k:"pic",x:e.x,y:e.y,w:e.w,h:e.h,rot:0,src:e.src,crop:e.crop?{...e.crop}:undefined,alt:e.alt||""};
@@ -2414,7 +2467,7 @@ function wireStage(){
     const hit=e.target.closest("#slideBox .sl > [data-sel]");
     if(hit){const k=hit.dataset.sel;const ae=document.activeElement;
       if(ae&&ae.isContentEditable&&hit.contains(ae))return;
-      e.preventDefault();suppressMouse=true;
+      e.preventDefault();suppressMouse=true;if(ae&&ae.isContentEditable)ae.blur();
       if(e.shiftKey||e.metaKey||e.ctrlKey){toggleSel(k);return}
       const was=SEL.length===1&&SEL[0]===k;if(!SEL.includes(k))setSel([k]);
       startMove(e,p,{clickEdit:was?hit:null});return}
@@ -2554,7 +2607,7 @@ function insertMenu(anchor){openPop(anchor,p=>{mlab(p,"Insert");
   mi(p,"Equation…",()=>eqEditor(null),{icon:"code"});
   mi(p,"Video from file…",()=>pickMedia("video"),{icon:"play"});mi(p,"Audio from file…",()=>pickMedia("audio"),{icon:"play"});
   mi(p,"Draw with pen",()=>setDrawMode({kind:"ink",color:"E5484D",lw:4,alpha:1}),{icon:"wand"});
-  msep(p);mi(p,"Comment",()=>{openSide("cm");setTimeout(()=>$("cmNew")?.focus(),40)},{icon:"tone"});mi(p,"Header & footer…",hfEditor,{icon:"notes"});mi(p,"Section",()=>addSection(cur),{icon:"flag"});
+  msep(p);mi(p,"Comment",()=>{openSide("cm");setTimeout(()=>$("cmNew")?.focus(),40)},{icon:"tone"});mi(p,"Header & footer…",hfEditor,{icon:"notes"});mi(p,__t("Section","节"),()=>addSection(cur),{icon:"flag"});
   msep(p);mi(p,"New slide",()=>addSlideMenu($("addSlideBtn")),{icon:"plus",k:"⌘M",stay:true})},{force:true})}
 SV.chart=ICONS.chart;SV.layers=ICONS.layers;SV.flag=ICONS.flag;SV.spark=ICONS.spark;
 function shapePicker(anchor){openPop(anchor,p=>{mlab(p,"Shapes — then drag on the slide");const g=document.createElement("div");g.className="shgrid";
@@ -2563,7 +2616,7 @@ function shapePicker(anchor){openPop(anchor,p=>{mlab(p,"Shapes — then drag on 
 function tablePicker(anchor){openPop(anchor,p=>{mlab(p,"Table");const lab=document.createElement("div");lab.className="hint";lab.style.padding="0 10px 4px";lab.textContent="Choose a size";const g=document.createElement("div");g.className="tgrid";
   for(let r=1;r<=8;r++)for(let c=1;c<=10;c++){const b=document.createElement("button");b.dataset.r=r;b.dataset.c=c;b.onmouseenter=()=>{lab.textContent=`${c} × ${r}`;g.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.r<=r&&+x.dataset.c<=c))};b.onclick=()=>{closePop();insertCentered(newTable(r,c))};g.append(b)}
   p.append(lab,g)},{force:true})}
-function chartPicker(anchor){openPop(anchor,p=>{mlab(p,"Chart");for(const [k,l] of [["column","Columns"],["bar","Bars"],["line","Line"],["pie","Pie"],["doughnut","Doughnut"]])mi(p,l,()=>{const o=newChart(k);insertCentered(o);setTimeout(()=>openObjData(curS().objs.find(x=>x.id===o.id)),60)},{icon:"chart"})},{force:true})}
+function chartPicker(anchor){openPop(anchor,p=>{mlab(p,"Chart");for(const [k,l] of [["column","Columns"],["bar","Bars"],["line",__t("Line","折线图")],["pie","Pie"],["doughnut","Doughnut"]])mi(p,l,()=>{const o=newChart(k);insertCentered(o);setTimeout(()=>openObjData(curS().objs.find(x=>x.id===o.id)),60)},{icon:"chart"})},{force:true})}
 function iconInsertPicker(anchor,target){openPop(anchor,p=>{mlab(p,target?"Change icon":"Icons");const g=document.createElement("div");g.className="igrid";for(const n of ICON_NAMES){const b=document.createElement("button");b.title=n;b.innerHTML=iconSvg(n,"currentColor",1.8);b.onclick=()=>{closePop();if(target)objEdit(()=>target.icon=n);else insertCentered({id:uid(),k:"icon",icon:n,color:th().accent,x:0,y:0,w:140,h:140,rot:0})};g.append(b)}p.append(g)},{force:true})}
 async function insertPicObj(file,at){try{const d=await downscale(file,2000);const im=new Image();im.src=d;await im.decode();const k=Math.min(1,720/im.naturalWidth,480/im.naturalHeight);const w=im.naturalWidth*k,h=im.naturalHeight*k;
   const o={id:uid(),k:"pic",src:d,x:0,y:0,w,h,rot:0,alt:""};if(at){o.x=clamp(at.x-w/2,0,W-w);o.y=clamp(at.y-h/2,0,H-h);addObjs([o])}else insertCentered(o);toast("Picture added. Drag a corner to resize; Crop is in the bar above.",null,null,3200)}catch{toast("Couldn't read that image. Try a PNG or JPEG.")}}
@@ -2584,14 +2637,14 @@ function diagramPicker(anchor){openPop(anchor,p=>{mlab(p,"Diagram");let n=4;cons
 function diagram(kind,n){const t=th(),cols=seriesColors(t,Math.max(n,4)),kids=[];
   const sh=(shp,x,y,w,h,txt,o={})=>{const s=newShape(shp,x,y,w,h);s.fill=o.fill||cols[kids.length%cols.length];s.paras=[para0(t,{html:esc(txt),align:"center",color:o.tc||onColor(s.fill),size:o.size||22,b:o.b})];if(o.alpha)s.fillA=o.alpha;if(o.line){s.line=o.line;s.lw=2}kids.push(s);return s};
   const ln=(x1,y1,x2,y2,tail)=>{const l=newShape(tail?"arrow":"line",Math.min(x1,x2),Math.min(y1,y2),Math.abs(x2-x1),Math.abs(y2-y1));l.flipH=x2<x1;l.flipV=y2<y1;l.line=t.muted;l.lw=2.5;kids.push(l)};
-  const L=i=>["Plan","Build","Launch","Grow","Review","Repeat"][i]||"Step "+(i+1);
+  const L=i=>(__ZH?["计划","构建","发布","增长","复盘","迭代"]:["Plan","Build","Launch","Grow","Review","Repeat"])[i]||__t("Step ","步骤 ")+(i+1);
   if(kind==="process"){const gap=50,w=Math.min(240,(1080-gap*(n-1))/n),x0=(W-(w*n+gap*(n-1)))/2;for(let i=0;i<n;i++){sh("roundRect",x0+i*(w+gap),290,w,140,L(i));if(i<n-1)sh("rightArrow",x0+i*(w+gap)+w+8,340,gap-16,40,"",{fill:t.muted})}}
   else if(kind==="chevron"){const w=Math.min(260,1100/n+30),x0=(W-(w*n-30*(n-1)))/2;for(let i=0;i<n;i++)sh(i?"chevron":"homePlate",x0+i*(w-30),300,w,120,L(i),{size:20})}
   else if(kind==="cycle"){const R=210,cx=W/2,cy=H/2+10,r=Math.min(80,520/n);for(let i=0;i<n;i++){const a=-Math.PI/2+i*2*Math.PI/n;sh("ellipse",cx+R*Math.cos(a)-r,cy+R*Math.sin(a)-r,r*2,r*2,L(i),{size:18});const a1=a+Math.PI/n*.55,a2=a+2*Math.PI/n-Math.PI/n*.55;ln(cx+R*Math.cos(a1),cy+R*Math.sin(a1),cx+R*Math.cos(a2),cy+R*Math.sin(a2),true)}}
-  else if(kind==="hierarchy"){const m=Math.max(1,n-1),w=Math.min(220,(1060-30*(m-1))/m),x0=(W-(w*m+30*(m-1)))/2;sh("roundRect",W/2-130,150,260,110,"Leader",{b:true});ln(W/2,260,W/2,320);if(m>1)ln(x0+w/2,320,x0+(m-1)*(w+30)+w/2,320);for(let i=0;i<m;i++){const x=x0+i*(w+30);ln(x+w/2,320,x+w/2,380);sh("roundRect",x,380,w,110,["Design","Engineering","Sales","Support","Finance"][i]||"Team "+(i+1),{fill:mix(t.accent,t.bg,.35),size:20})}}
-  else if(kind==="pyramid"){const hh=Math.min(110,440/n),top=(H-hh*n)/2+10;for(let i=0;i<n;i++){const w=260+i*(620/Math.max(1,n-1));sh(i?"trapezoid":"triangle",W/2-w/2,top+i*hh,w,hh,["Vision","Strategy","Goals","Projects","Tasks","Habits"][i]||"Level "+(i+1),{size:20})}}
-  else if(kind==="venn"){const m=Math.min(3,Math.max(2,n)),r=180,pos=m===2?[[W/2-120,H/2],[W/2+120,H/2]]:[[W/2,H/2-90],[W/2-110,H/2+90],[W/2+110,H/2+90]];pos.forEach(([x,y],i)=>sh("ellipse",x-r,y-r,r*2,r*2,["People","Process","Tools"][i],{alpha:.55,tc:t.fg,b:true}))}
-  else if(kind==="matrix"){const w=360,h=200,x0=W/2-w-10,y0=150;["Quick wins","Big bets","Fill-ins","Money pits"].forEach((l,i)=>sh("roundRect",x0+(i%2)*(w+20),y0+Math.floor(i/2)*(h+20),w,h,l,{fill:cols[i]}))}
+  else if(kind==="hierarchy"){const m=Math.max(1,n-1),w=Math.min(220,(1060-30*(m-1))/m),x0=(W-(w*m+30*(m-1)))/2;sh("roundRect",W/2-130,150,260,110,__t("Leader","负责人"),{b:true});ln(W/2,260,W/2,320);if(m>1)ln(x0+w/2,320,x0+(m-1)*(w+30)+w/2,320);for(let i=0;i<m;i++){const x=x0+i*(w+30);ln(x+w/2,320,x+w/2,380);sh("roundRect",x,380,w,110,(__ZH?["设计","研发","销售","支持","财务"]:["Design","Engineering","Sales","Support","Finance"])[i]||__t("Team ","团队 ")+(i+1),{fill:mix(t.accent,t.bg,.35),size:20})}}
+  else if(kind==="pyramid"){const hh=Math.min(110,440/n),top=(H-hh*n)/2+10;for(let i=0;i<n;i++){const w=260+i*(620/Math.max(1,n-1));sh(i?"trapezoid":"triangle",W/2-w/2,top+i*hh,w,hh,(__ZH?["愿景","战略","目标","项目","任务","习惯"]:["Vision","Strategy","Goals","Projects","Tasks","Habits"])[i]||__t("Level ","层级 ")+(i+1),{size:20})}}
+  else if(kind==="venn"){const m=Math.min(3,Math.max(2,n)),r=180,pos=m===2?[[W/2-120,H/2],[W/2+120,H/2]]:[[W/2,H/2-90],[W/2-110,H/2+90],[W/2+110,H/2+90]];pos.forEach(([x,y],i)=>sh("ellipse",x-r,y-r,r*2,r*2,(__ZH?["人员","流程","工具"]:["People","Process","Tools"])[i],{alpha:.55,tc:t.fg,b:true}))}
+  else if(kind==="matrix"){const w=360,h=200,x0=W/2-w-10,y0=150;(__ZH?["速赢","大赌注","填充项","无底洞"]:["Quick wins","Big bets","Fill-ins","Money pits"]).forEach((l,i)=>sh("roundRect",x0+(i%2)*(w+20),y0+Math.floor(i/2)*(h+20),w,h,l,{fill:cols[i]}))}
   else if(kind==="list"){const hh=Math.min(90,480/n),y0=(H-hh*n)/2+20;for(let i=0;i<n;i++){const y=y0+i*hh;sh("ellipse",240,y+6,hh-12,hh-12,String(i+1),{b:true});const b=sh("roundRect",240+hh,y+10,760,hh-20,L(i),{fill:mix(t.accent,t.bg,.82),tc:t.fg});b.paras[0].align="left"}}
   else if(kind==="timeline"){const x0=160,x1=1120,y=H/2+20;ln(x0-40,y,x1+40,y,true);for(let i=0;i<n;i++){const x=x0+(x1-x0)*(n===1?.5:i/(n-1));sh("ellipse",x-16,y-16,32,32,"",{});const tb=newTextBox(x-100,i%2?y+34:y-110,200);tb.paras=[para0(t,{html:esc(["2023","2024","2025","2026","2027","2028"][i]||""),align:"center",b:true,size:24}),para0(t,{html:esc(L(i)),align:"center",size:20})];kids.push(tb)}}
   const g={id:uid(),k:"group",rot:0,kids};reGroup(g);return g}
@@ -2605,9 +2658,9 @@ const FX_DUR={appear:0,fade:.5,fly:.5,float:1,wipe:.5,zoom:.5,wheel:2,pulse:.5,s
 const DIRS=[["b","From bottom"],["l","From left"],["r","From right"],["t","From top"]];
 const CLS_NAME={entr:"Entrance",emph:"Emphasis",exit:"Exit",path:"Motion path"};
 function fxName(a){if(a.fx==="other")return a.name||"Effect from PowerPoint";if(a.cls==="path")return (PATHS.find(q=>q[0]===a.fx)?.[1]||"Custom path");return (FX[a.cls]||[]).find(f=>f[0]===a.fx)?.[1]||a.fx}
-function targetLabel(s,key){if(key.startsWith("obj:")){const o=(s.objs||[]).find(o=>o.id===key.slice(4));if(!o)return "(deleted)";const txt=o.paras?stripTags(o.paras.map(p=>p.html).join(" ")).trim():"";return ({eq:"Equation",shape:"Shape",text:"Text box",line:"Line",pic:"Picture",table:"Table",chart:"Chart",icon:"Icon",ink:"Drawing",video:"Video",audio:"Audio",group:"Group"}[o.k]||"Object")+(txt?": "+txt.slice(0,28):"")}
-  if(key.startsWith("el:")){const p=key.slice(3);const nm={title:"Title",subtitle:"Subtitle",bullets:"Bullets",quote:"Quote",by:"Quote author",stat:"Big number",statLabel:"Number label",image:"Picture",chart:"Chart",table:"Table"}[p];if(nm)return nm;const m=p.match(/^(cols|items)\.(\d+)\.(\w+)/);if(m)return `${m[1]==="cols"?"Column":"Item"} ${+m[2]+1} ${m[3]}`;return p}
-  if(key.startsWith("o:")&&s.free){const els=s.free.els.filter(e=>e.sid===key.slice(2));const tx=els.find(e=>e.k==="ftext");if(tx)return "Text: "+stripTags(tx.paras.map(p=>p.html).join(" ")).trim().slice(0,30);return ({pic:"Picture",shape:"Shape",table:"Table",chart:"Chart"}[els[0]?.k]||"Object")}
+function targetLabel(s,key){if(key.startsWith("obj:")){const o=(s.objs||[]).find(o=>o.id===key.slice(4));if(!o)return "(deleted)";const txt=o.paras?stripTags(o.paras.map(p=>p.html).join(" ")).trim():"";return __tr({eq:"Equation",shape:"Shape",text:"Text box",line:"Line",pic:"Picture",table:"Table",chart:"Chart",icon:"Icon",ink:"Drawing",video:"Video",audio:"Audio",group:"Group"}[o.k]||"Object")+(txt?": "+txt.slice(0,28):"")}
+  if(key.startsWith("el:")){const p=key.slice(3);const nm={title:"Title",subtitle:"Subtitle",bullets:"Bullets",quote:"Quote",by:"Quote author",stat:"Big number",statLabel:"Number label",image:"Picture",chart:"Chart",table:"Table"}[p];if(nm)return __tr(nm);const m=p.match(/^(cols|items)\.(\d+)\.(\w+)/);if(m)return __t(`${m[1]==="cols"?"Column":"Item"} ${+m[2]+1} ${m[3]}`,`${m[1]==="cols"?"栏":"项"} ${+m[2]+1} ${{heading:"标题",bullets:"要点",title:"标题",text:"文字"}[m[3]]||m[3]}`);return p}
+  if(key.startsWith("o:")&&s.free){const els=s.free.els.filter(e=>e.sid===key.slice(2));const tx=els.find(e=>e.k==="ftext");if(tx)return __tr("Text")+": "+stripTags(tx.paras.map(p=>p.html).join(" ")).trim().slice(0,30);return __tr({pic:"Picture",shape:"Shape",table:"Table",chart:"Chart"}[els[0]?.k]||"Object")}
   return key}
 function paraCount(s,key){if(key.startsWith("obj:")){const o=(s.objs||[]).find(o=>o.id===key.slice(4));return o?.paras?o.paras.filter(p=>stripTags(p.html).trim()).length:0}
   if(key.startsWith("el:")){const v=getPath(s,key.slice(3).split(".").map(x=>/^\d+$/.test(x)?+x:x));return Array.isArray(v)?v.length:0}
@@ -2745,13 +2798,13 @@ function nodeKind(n){return n.localName==="sp"?"sp":n.localName==="graphicFrame"
 function cNvPrOf(n){return byTag(n,"cNvPr")[0]}
 
 /* ======================= comments ======================= */
-function cmAuthor(){return store.get("author","")||"Me"}
+function cmAuthor(){return store.get("author","")||__t("Me","我")}
 function renderComments(box){const s=deck.slides[cur];const list=s.comments||[];
   const head=document.createElement("div");head.className="sidetop";head.innerHTML=`<span class="hint">Slide ${cur+1} · ${list.filter(c=>!c.done).length} open</span><span style="flex:1"></span><button class="btn sm ghost" id="cmWho" title="Name shown on your comments">As ${esc(cmAuthor())} ✎</button>`;box.append(head);
   $("cmWho").onclick=e=>openPop(e.currentTarget,p=>{mlab(p,"Your name on comments");const w=document.createElement("div");w.className="pin";w.innerHTML='<input placeholder="Your name">';const i=w.querySelector("input");i.value=store.get("author","");i.onkeydown=ev=>{if(ev.key==="Enter"){store.set("author",i.value.trim());closePop();renderSide()}};p.append(w)},{force:true});
   if(!list.length)box.insertAdjacentHTML("beforeend",'<div class="empty" style="margin:10px 12px">No comments on this slide.</div>');
   for(const c of list){const d=document.createElement("div");d.className="cmc"+(c.done?" done":"");
-    d.innerHTML=`<div class="cmh"><b>${esc(c.by||"Me")}</b><span>${ago(c.t)}</span>${c.done?'<span class="tag">Resolved</span>':""}</div><div class="cmt"></div>${(c.replies||[]).map(r=>`<div class="cmr"><div class="cmh"><b>${esc(r.by||"Me")}</b><span>${ago(r.t)}</span></div><div class="cmt">${esc(r.text)}</div></div>`).join("")}
+    d.innerHTML=`<div class="cmh"><b>${esc(c.by||__t("Me","我"))}</b><span>${ago(c.t)}</span>${c.done?'<span class="tag">Resolved</span>':""}</div><div class="cmt"></div>${(c.replies||[]).map(r=>`<div class="cmr"><div class="cmh"><b>${esc(r.by||__t("Me","我"))}</b><span>${ago(r.t)}</span></div><div class="cmt">${esc(r.text)}</div></div>`).join("")}
       <div class="cma"><button class="btn sm ghost" data-a="re">Reply</button><button class="btn sm ghost" data-a="done">${c.done?"Reopen":"Resolve"}</button><button class="btn sm ghost" data-a="del">Delete</button></div>`;
     d.querySelector(".cmt").textContent=c.text;
     d.querySelector('[data-a="done"]').onclick=()=>cmEdit(()=>c.done=!c.done);
@@ -2790,7 +2843,7 @@ function findReplace(){const box=document.createElement("div");box.style.whiteSp
   box.innerHTML=`<div class="frg"><label>Find</label><input class="s" id="frQ" placeholder="Text to find"><label>Replace with</label><input class="s" id="frR" placeholder="Replacement"></div>
    <div style="display:flex;gap:14px;margin:10px 0;flex-wrap:wrap"><label><input type="checkbox" id="frC"> Match case</label><label><input type="checkbox" id="frW"> Whole words only</label></div><div id="frOut" class="frout"></div>`;
   let hits=[],pos=-1;const opt=()=>({case:$("frC").checked,word:$("frW").checked});
-  const run=()=>{hits=findAll($("frQ").value,opt());pos=-1;const o=$("frOut");o.replaceChildren();if(!$("frQ").value)return;o.insertAdjacentHTML("beforeend",`<div class="hint">${hits.length} match${hits.length===1?"":"es"}</div>`);hits.slice(0,200).forEach((h,i)=>{const b=document.createElement("button");b.className="mi";b.innerHTML=`<span class="k" style="margin:0">${h.si+1}</span><span style="flex:1">${esc(h.snip)}</span><span class="hint">${esc(h.label)}</span>`;b.onclick=()=>{pos=i;show()};o.append(b)})};
+  const run=()=>{hits=findAll($("frQ").value,opt());pos=-1;const o=$("frOut");o.replaceChildren();if(!$("frQ").value)return;o.insertAdjacentHTML("beforeend",`<div class="hint">${hits.length} match${hits.length===1?"":"es"}</div>`);hits.slice(0,200).forEach((h,i)=>{const b=document.createElement("button");b.className="mi";b.innerHTML=`<span class="k" style="margin:0">${h.si+1}</span><span style="flex:1" data-no-i18n>${esc(h.snip)}</span><span class="hint">${esc(h.label)}</span>`;b.onclick=()=>{pos=i;show()};o.append(b)})};
   const show=()=>{const h=hits[pos];if(!h)return;if(masterMode)exitMaster();go(h.si);[...$("frOut").querySelectorAll(".mi")].forEach((b,i)=>b.classList.toggle("act",i===pos))};
   const next=()=>{if(!hits.length)run();if(!hits.length){toast("No matches.");return}pos=(pos+1)%hits.length;show()};
   const repOne=()=>{if(pos<0){next();return}const h=hits[pos];const f=slideFields(deck.slides[h.si])[h.fi];if(!f)return;checkpoint();f.set(replaceInHtml(f.get(),findRe($("frQ").value,opt()),$("frR").value,h.n));changed(true);const keep=pos;run();pos=Math.min(keep,hits.length-1)-1;next()};
@@ -2805,15 +2858,15 @@ async function verAll(deckId){const r=await DB.run("readonly",s=>s.getAll(),"ver
 async function snapVersion(label,force){if(!deck)return;const js=JSON.stringify(deck);const sig=hashStr(js);if(!force&&VER.lastSig.get(deck.id)===sig)return;if(js.length>40e6&&!force)return;
   try{await DB.run("readwrite",s=>s.put({id:uid(),deckId:deck.id,t:Date.now(),label:label||"",auto:!force,n:deck.slides.length,title:deck.title,json:js}),"versions");VER.last.set(deck.id,Date.now());VER.lastSig.set(deck.id,sig);
     const all=await verAll(deck.id);const autos=all.filter(v=>v.auto);for(const v of autos.slice(30))await DB.run("readwrite",s=>s.delete(v.id),"versions")}catch(e){console.warn("version",e)}}
-function maybeSnap(){if(!deck)return;const l=VER.last.get(deck.id);if(l==null){VER.last.set(deck.id,Date.now());snapVersion("Opened");return}if(Date.now()-l>10*60e3)snapVersion("")}
+function maybeSnap(){if(!deck)return;const l=VER.last.get(deck.id);if(l==null){VER.last.set(deck.id,Date.now());snapVersion(__t("Opened","打开时"));return}if(Date.now()-l>10*60e3)snapVersion("")}
 async function versionsModal(){await saveNow();const box=document.createElement("div");box.style.whiteSpace="normal";box.innerHTML='<div class="hint" style="margin-bottom:10px">Versions are saved on this computer every 10 minutes while you edit, and whenever you save one by name.</div><div id="verList">Loading…</div>';
-  modal("Version history",box,[["Save current version…",()=>{openPop($("mFoot").firstChild,p=>{mlab(p,"Name this version");const w=document.createElement("div");w.className="pin";w.innerHTML='<input placeholder="e.g. Sent to client">';const i=w.querySelector("input");i.onkeydown=async e=>{if(e.key==="Enter"){closePop();await snapVersion(i.value.trim()||"Saved version",true);versionsModal()}};p.append(w)},{force:true})}],["Close",()=>$("modal").hidden=true,true]]);
+  modal("Version history",box,[["Save current version…",()=>{openPop($("mFoot").firstChild,p=>{mlab(p,"Name this version");const w=document.createElement("div");w.className="pin";w.innerHTML='<input placeholder="e.g. Sent to client">';const i=w.querySelector("input");i.onkeydown=async e=>{if(e.key==="Enter"){closePop();await snapVersion(i.value.trim()||__t("Saved version","已保存的版本"),true);versionsModal()}};p.append(w)},{force:true})}],["Close",()=>$("modal").hidden=true,true]]);
   const list=await verAll(deck.id);const L=$("verList");L.replaceChildren();if(!list.length){L.innerHTML='<div class="empty">No versions yet. Keep editing, or save one now.</div>';return}
   for(const v of list){const r=document.createElement("div");r.className="verrow";let d=null;try{d=JSON.parse(v.json)}catch{continue}
     const tw=document.createElement("div");tw.className="tw";setDeckSize(d);tw.style.aspectRatio=`${W}/${H}`;if(d.slides?.[0])tw.append(thumb(d.slides[0],deckTheme(d),112));setDeckSize(deck);r.append(tw);
-    r.insertAdjacentHTML("beforeend",`<div style="flex:1;min-width:0"><b>${esc(v.label||(v.auto?"Autosaved":"Version"))}</b><div class="hint">${new Date(v.t).toLocaleString()} · ${v.n} slides</div></div>`);
+    r.insertAdjacentHTML("beforeend",`<div style="flex:1;min-width:0"><b data-no-i18n>${esc(v.label||(v.auto?__t("Autosaved","自动保存"):__t("Version","版本")))}</b><div class="hint">${new Date(v.t).toLocaleString()} · ${v.n} slides</div></div>`);
     const a=document.createElement("button");a.className="btn sm";a.textContent="Restore";a.onclick=()=>{checkpoint();const keep=deck.id;deck={...d,id:keep,updated:Date.now()};setDeckSize(deck);cur=0;$("modal").hidden=true;$("deckTitle").value=deck.title;changed(true);toast("Restored that version. Undo brings back what you had.","Undo",undo,8000)};
-    const c=document.createElement("button");c.className="btn sm";c.textContent="Open copy";c.onclick=async()=>{const x={...d,id:uid(),title:(d.title||"Untitled")+" (version "+new Date(v.t).toLocaleDateString()+")",updated:Date.now()};await DB.put(x);$("modal").hidden=true;openDeck(x.id)};
+    const c=document.createElement("button");c.className="btn sm";c.textContent="Open copy";c.onclick=async()=>{const x={...d,id:uid(),title:(d.title||__t("Untitled","无标题"))+__t(" (version "," （版本 ")+new Date(v.t).toLocaleDateString()+__t(")","）"),updated:Date.now()};await DB.put(x);$("modal").hidden=true;openDeck(x.id)};
     r.append(a,c);L.append(r)}
   settle(L)}
 
@@ -2821,10 +2874,10 @@ async function versionsModal(){await saveNow();const box=document.createElement(
 function sectionAt(i){const id=deck.slides[i]?.id;return (deck.sections||[]).find(x=>x.at===id)}
 function sectionRanges(){const secs=(deck.sections||[]).map(x=>({...x,i:deck.slides.findIndex(s=>s.id===x.at)})).filter(x=>x.i>=0).sort((a,b)=>a.i-b.i);return secs.map((x,k)=>({...x,end:(secs[k+1]?.i??deck.slides.length)}))}
 function addSection(i){checkpoint();deck.sections=deck.sections||[];const id=deck.slides[i].id;if(deck.sections.some(x=>x.at===id)){renameSection(deck.sections.find(x=>x.at===id));return}
-  if(!deck.sections.length&&i>0)deck.sections.push({id:uid(),name:"Default Section",at:deck.slides[0].id});
-  const sec={id:uid(),name:"Untitled Section",at:id};deck.sections.push(sec);changed(true);setTimeout(()=>renameSection(sec),40)}
-function renameSection(sec){const row=$("thumbs").querySelector(`.sech[data-id="${sec.id}"]`);openPop(row||$("thumbs"),p=>{mlab(p,"Section name");const w=document.createElement("div");w.className="pin";w.innerHTML='<input>';const i=w.querySelector("input");i.value=sec.name;i.onkeydown=e=>{if(e.key==="Enter"){checkpoint();sec.name=i.value.trim()||"Untitled Section";closePop();changed(true)}};p.append(w);setTimeout(()=>i.select(),10)},{force:true})}
-function sectionMenu(anchor,sec){openPop(anchor,p=>{mi(p,"Rename section…",()=>renameSection(sec),{stay:true});mi(p,sec.collapsed?"Expand":"Collapse",()=>{sec.collapsed=!sec.collapsed;changed(true)});mi(p,"Collapse all",()=>{deck.sections.forEach(x=>x.collapsed=true);changed(true)});mi(p,"Expand all",()=>{deck.sections.forEach(x=>x.collapsed=false);changed(true)});msep(p);
+  if(!deck.sections.length&&i>0)deck.sections.push({id:uid(),name:__t("Default Section","默认节"),at:deck.slides[0].id});
+  const sec={id:uid(),name:__t("Untitled Section","无标题节"),at:id};deck.sections.push(sec);changed(true);setTimeout(()=>renameSection(sec),40)}
+function renameSection(sec){const row=$("thumbs").querySelector(`.sech[data-id="${sec.id}"]`);openPop(row||$("thumbs"),p=>{mlab(p,"Section name");const w=document.createElement("div");w.className="pin";w.innerHTML='<input>';const i=w.querySelector("input");i.value=sec.name;i.onkeydown=e=>{if(e.key==="Enter"){checkpoint();sec.name=i.value.trim()||__t("Untitled Section","无标题节");closePop();changed(true)}};p.append(w);setTimeout(()=>i.select(),10)},{force:true})}
+function sectionMenu(anchor,sec){openPop(anchor,p=>{mi(p,"Rename section…",()=>renameSection(sec),{stay:true});mi(p,sec.collapsed?__t("Expand","展开"):"Collapse",()=>{sec.collapsed=!sec.collapsed;changed(true)});mi(p,"Collapse all",()=>{deck.sections.forEach(x=>x.collapsed=true);changed(true)});mi(p,"Expand all",()=>{deck.sections.forEach(x=>x.collapsed=false);changed(true)});msep(p);
   mi(p,"Remove section (keep slides)",()=>{checkpoint();deck.sections=deck.sections.filter(x=>x!==sec);changed(true)},{icon:"trash"});
   mi(p,"Remove section and its slides…",(e,b)=>{if(!b.dataset.arm){b.dataset.arm=1;b.querySelector("span").textContent="Click again to delete those slides";return}const r=sectionRanges().find(x=>x.id===sec.id);if(!r)return;if(r.end-r.i>=deck.slides.length){toast("A deck needs at least one slide.");return}checkpoint();deck.slides.splice(r.i,r.end-r.i);deck.sections=deck.sections.filter(x=>x!==sec);cur=clamp(r.i,0,deck.slides.length-1);closePop();changed(true);toast("Section deleted.","Undo",undo)},{icon:"trash",danger:true,stay:true})},{force:true})}
 function sectionsXml(ids){const r=sectionRanges();if(!r.length)return "";const P14="http://schemas.microsoft.com/office/powerpoint/2010/main";const g=()=>"{"+[8,4,4,4,12].map(n=>Array.from({length:n},()=>"0123456789ABCDEF"[Math.random()*16|0]).join("")).join("-")+"}";
@@ -2943,7 +2996,7 @@ function renderSlide(s,th,mode){
       d.style.background=e.grad?gradCss(e.grad):e.fill?"#"+e.fill:"transparent";if(e.alpha!=null)d.style.opacity=e.alpha;
       if(e.ellipse)d.style.borderRadius="50%";else if(e.r)d.style.borderRadius=e.r+"px";
       if(e.line)d.style.border=`${e.lw||1}px solid #${e.line}`;
-      if(e.slot&&edit){d.classList.add("imgslot");d.dataset.img="1";d.innerHTML='<span class="addimg">Click to add an image</span>';d.style.position="absolute"}
+      if(e.slot&&edit){d.classList.add("imgslot");d.dataset.img="1";d.innerHTML=`<span class="addimg">${__t("Click to add an image","点击添加图片")}</span>`;d.style.position="absolute"}
     }else if(e.k==="label"){
       d.style.cssText+=`;display:flex;align-items:${e.text==="“"?"flex-start":"center"};justify-content:${e.align==="center"?"center":"flex-start"};font:${e.bold?"700":"400"} ${e.size}px/1 ${fontCss(e.font)};color:#${e.color}`;d.textContent=e.text;
     }else if(e.k==="text"||e.k==="list"){
@@ -2953,12 +3006,12 @@ function renderSlide(s,th,mode){
       t.style.cssText=`font-family:${fontCss(e.font)};font-size:${e.size}px;line-height:${e.lh};color:#${e.color};text-align:${e.align||"left"};font-weight:${e.bold?700:400};font-style:${e.italic?"italic":"normal"}`;
       t.dataset.fs=e.size;
       if(e.k==="list"){const arr=Array.isArray(v)?v:[];t.innerHTML=arr.map(b=>`<div>${b}</div>`).join("")}else{t.innerHTML=v||"";if(e.prefix)t.dataset.prefix=e.prefix}
-      if(edit){t.contentEditable="true";t.spellcheck=true;t.dataset.path=JSON.stringify(e.path);t.dataset.ph=e.ph||"";}
+      if(edit){t.contentEditable="true";t.spellcheck=true;t.dataset.path=JSON.stringify(e.path);t.dataset.ph=__tr(e.ph||"");}
       d.append(t);
     }else if(e.k==="ftext"){
       d.classList.add("tb");d.style.justifyContent={top:"flex-start",middle:"center",bottom:"flex-end"}[e.valign||"top"];
       const t=document.createElement("div");t.className="fx";
-      t.innerHTML=freeParasHtml(e.paras);if(e.wa)t.style.cssText+=";"+waCss(e.wa);if(edit&&e.hint&&!e.paras.some(p=>stripTags(p.html).trim())){t.classList.add("blank");t.firstElementChild?.setAttribute("data-ph",e.hint)}
+      t.innerHTML=freeParasHtml(e.paras);if(e.wa)t.style.cssText+=";"+waCss(e.wa);if(edit&&e.hint&&!e.paras.some(p=>stripTags(p.html).trim())){t.classList.add("blank");t.firstElementChild?.setAttribute("data-ph",__tr(e.hint))}
       if(edit){t.contentEditable="true";t.spellcheck=true;t.dataset.path=JSON.stringify(e.path)}
       d.append(t);
     }else if(e.k==="logo"){
@@ -3308,11 +3361,11 @@ async function pptxBytes(){
 }
 
 /* ======================= transitions ======================= */
-const TRANS=[["none","None"],["fade","Fade"],["push","Push"],["wipe","Wipe"],["split","Split"],["cover","Cover"],["pull","Uncover"],["cut","Cut"],["zoom","Zoom"],["circle","Circle"],["diamond","Diamond"],["plus","Plus"],["dissolve","Dissolve"],["randomBar","Random bars"],["blinds","Blinds"],["wheel","Wheel"],["wedge","Wedge"],["checker","Checkerboard"],["comb","Comb"],["newsflash","Newsflash"],["random","Random"]];
+const TRANS=[["none","None"],["fade","Fade"],["push","Push"],["wipe","Wipe"],["split","Split"],["cover","Cover"],["pull","Uncover"],["cut",__t("Cut","切入")],["zoom","Zoom"],["circle","Circle"],["diamond","Diamond"],["plus","Plus"],["dissolve","Dissolve"],["randomBar","Random bars"],["blinds","Blinds"],["wheel","Wheel"],["wedge","Wedge"],["checker","Checkerboard"],["comb","Comb"],["newsflash","Newsflash"],["random","Random"]];
 const SIDE_DIRS=[["l","From right"],["r","From left"],["u","From bottom"],["d","From top"]];
 const TRANS_DIRS={push:SIDE_DIRS,wipe:SIDE_DIRS,cover:SIDE_DIRS,pull:SIDE_DIRS,split:[["horz-out","Horizontal out"],["horz-in","Horizontal in"],["vert-out","Vertical out"],["vert-in","Vertical in"]],zoom:[["in","In"],["out","Out"]],randomBar:[["horz","Horizontal"],["vert","Vertical"]],blinds:[["horz","Horizontal"],["vert","Vertical"]],checker:[["horz","Across"],["vert","Down"]],comb:[["horz","Horizontal"],["vert","Vertical"]]};
 const TRANS_IDS=TRANS.map(t=>t[0]);
-function transLabel(t){if(!t||t.type==="none")return "None";if(t.type==="other")return `${t.name} (from PowerPoint)`;return (TRANS.find(x=>x[0]===t.type)?.[1]||t.type)+(t.adv>0?` · after ${t.adv}s`:"")}
+function transLabel(t){if(!t||t.type==="none")return __tr("None");if(t.type==="other")return `${t.name} ${__tr("(from PowerPoint)")}`;return __tr(TRANS.find(x=>x[0]===t.type)?.[1]||t.type)+(t.adv>0?__t(` · after ${t.adv}s`,` · ${t.adv} 秒后`):"")}
 function transXml(t){if(!t||t.type==="none")return "";const spd=["slow","med","fast"].includes(t.spd)?t.spd:"med";const adv=`${t.click===false?' advClick="0"':""}${t.adv>0?` advTm="${Math.round(t.adv*1000)}"`:""}`;
   const ty=TRANS_IDS.includes(t.type)?t.type:"fade";let inner;
   if(["push","cover","pull"].includes(ty))inner=`<p:${ty} dir="${t.dir||"l"}"/>`;else if(ty==="wipe")inner=`<p:wipe dir="${t.dir||"r"}"/>`;
@@ -3365,7 +3418,7 @@ function renderPres(){
     if(P.anim&&s.transition&&s.transition.type!=="none")tdur=runTransition(box,prev,s.transition)||0}
   else{const curEl=$("pv").querySelector(".cur");root=fitBox($("pvCur"),curEl.clientWidth||innerWidth*.6,curEl.clientHeight||innerHeight*.7,s,"present");
     const nx=deck.slides[P.list[P.pos+1]];const nw=Math.max(160,($("pv").clientWidth||innerWidth)*.36);fitBox($("pvNext"),nw,nw*H/W,nx);$("pvNextLab").textContent=nx?"Next":"End of show";
-    $("pvNotes").textContent=s.notes||"No speaker notes for this slide.";$("pvNotes").style.setProperty("--nfs",P.nfs+"px");$("pv").style.setProperty("--nfs",P.nfs+"px");tickPV()}
+    $("pvNotes").textContent=s.notes||__t("No speaker notes for this slide.","这张幻灯片没有演讲者备注。");$("pvNotes").style.setProperty("--nfs",P.nfs+"px");$("pv").style.setProperty("--nfs",P.nfs+"px");tickPV()}
   P.root=root;P.trig=Object.fromEntries(Object.entries(trigLists(s)).map(([k,l])=>[k,{steps:animSteps(s,l),i:0}]));for(const k of Object.keys(P.trig))root?.querySelectorAll(`[data-t="${CSS.escape(k)}"]`).forEach(n=>n.style.cursor="pointer");
   if(P.full){P.steps.forEach(st=>runStep(root,st,true));P.step=P.steps.length}
   else if(P.at!=null){animInit(root,s);for(let i=0;i<P.at;i++)runStep(root,P.steps[i],true);P.step=P.at}
@@ -3574,6 +3627,7 @@ function clipKeys(e,k){if(view!=="editor"||!(e.metaKey||e.ctrlKey)||e.altKey||e.
 wireStage();wireSorter();wirePen();
 /* ---------- sample deck ---------- */
 function sampleDeck(){
+  if(__ZH)return sampleDeckZh();
   const d=newDeck("Launching Brew & Bloom","terracotta");
   const S=o=>normSlide(o);
   d.slides=[
@@ -3589,7 +3643,27 @@ function sampleDeck(){
   ];return d;
 }
 
+function sampleDeckZh(){
+  const d=newDeck("“花与咖啡”开业计划","terracotta");
+  const S=o=>normSlide(o);
+  d.slides=[
+    S({layout:"title",title:"“花与咖啡”开业计划",subtitle:"社区咖啡馆兼花店 · 第三季度计划",notes:"大家好。今天我来讲讲为什么要开“花与咖啡”、它有什么不同，以及第一年的计划。"}),
+    S({layout:"big-number",title:"市场机会",stat:"62%",statLabel:"的居民每周外出买咖啡 3 次以上",subtitle:"而且榆树街步行 15 分钟内没有一家花店。",notes:"数据来自我们今年春天对 400 位居民的调查。"}),
+    S({layout:"cards",title:"我们的不同之处",items:[{title:"两家店，一次到",text:"一站买到拿铁和花束。",icon:"heart"},{title:"本地花农",text:"鲜花来自 80 公里内的三家农场。",icon:"leaf"},{title:"从早到晚",text:"每天 7:00–20:00 营业，全年无休。",icon:"clock"}],notes:"这三点在顾客访谈中被反复提到。"}),
+    S({layout:"timeline",title:"开业路线图",items:[{title:"7 月",text:"签租约，开始装修",icon:"home"},{title:"8 月",text:"招聘 6 名咖啡师和 2 名花艺师",icon:"users"},{title:"9 月",text:"面向邻居试营业",icon:"chat"},{title:"10 月",text:"开业周末",icon:"rocket"}]}),
+    S({layout:"chart",title:"第一年收入计划",chart:{kind:"column",labels:["Q1","Q2","Q3","Q4"],series:[{name:"咖啡",values:[48,62,71,80]},{name:"鲜花",values:[18,30,26,44]}]},bullets:["鲜花在情人节和母亲节前后达到高峰","咖啡收入随着熟客增加稳步增长"]}),
+    S({layout:"comparison",title:"冷库：自建还是租用",cols:[{heading:"自建",bullets:["前期投入 26 万元","完全贴合店面布局","10 周建成"]},{heading:"租用",bullets:["每月 6,500 元","无需施工","2 周可用"]}]}),
+    S({layout:"table",title:"开业预算",table:[["项目","费用","说明"],["装修","60 万元","吧台、座位、灯光"],["设备","30 万元","咖啡机、磨豆机"],["冷库","26 万元","如果自建"],["开业推广","6 万元","社区活动、社交媒体"]]}),
+    S({layout:"quote",quote:"要是能顺便给办公室带一束花，我每天早上都会来。",by:"调查受访者，榆树街"}),
+    S({layout:"closing",title:"谢谢",subtitle:"有问题？hello@brewandbloom.example"}),
+  ];return d;
+}
+
 /* ---------- desktop ---------- */
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"slide-maker-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#FF9A4A\"/><stop offset=\"1\" stop-color=\"#E2471A\"/><\/linearGradient><radialGradient id=\"slide-maker-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"slide-maker-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"slide-maker-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#slide-maker-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#slide-maker-sh)\"/><rect x=\"250\" y=\"250\" width=\"560\" height=\"380\" rx=\"34\" fill=\"#fff\" opacity=\".35\" transform=\"rotate(8 530 440)\"/><rect x=\"230\" y=\"270\" width=\"560\" height=\"380\" rx=\"34\" fill=\"#fff\" opacity=\".6\" transform=\"rotate(4 510 460)\"/><g filter=\"url(#slide-maker-ds)\"><rect x=\"200\" y=\"300\" width=\"624\" height=\"420\" rx=\"36\" fill=\"#fff\"/><rect x=\"256\" y=\"360\" width=\"220\" height=\"36\" rx=\"18\" fill=\"#2A2F3A\"/><rect x=\"256\" y=\"424\" width=\"170\" height=\"22\" rx=\"11\" fill=\"#D5D9E0\"/><rect x=\"256\" y=\"470\" width=\"190\" height=\"22\" rx=\"11\" fill=\"#D5D9E0\"/><rect x=\"256\" y=\"516\" width=\"150\" height=\"22\" rx=\"11\" fill=\"#D5D9E0\"/><circle cx=\"650\" cy=\"510\" r=\"118\" fill=\"none\" stroke=\"#FFD25E\" stroke-width=\"64\"/><path d=\"M650 392a118 118 0 0 1 112 154\" fill=\"none\" stroke=\"#F25A22\" stroke-width=\"64\"/><path d=\"M762 546a118 118 0 0 1-60 70\" fill=\"none\" stroke=\"#2A2F3A\" stroke-width=\"64\"/><\/g><g filter=\"url(#slide-maker-ds2)\"><rect x=\"492\" y=\"720\" width=\"40\" height=\"110\" rx=\"12\" fill=\"#fff\"/><rect x=\"392\" y=\"812\" width=\"240\" height=\"40\" rx=\"20\" fill=\"#fff\"/><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){
   const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
   const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#6d68f0");g.addColorStop(1,"#f0805a");x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
@@ -3601,7 +3675,7 @@ function dockIcon(){
   return c.toDataURL("image/png");
 }
 (async()=>{
-  setTab("topic");renderRecent();
+  setTab("topic");renderRecent();if(__ZH)$("oHead").textContent="大纲";
   const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
   [sample,downloads,desktop]=await Promise.all([use("sample"),use("downloads"),use("desktop")]);
   updAI();
@@ -3611,7 +3685,54 @@ function dockIcon(){
     if(st==="available"){const b=document.createElement("button");b.className="btn sm";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("installSlot").replaceChildren(b)}
     return}
   document.body.classList.add("app","inset");
-  desktop.app?.dock?.setIcon(dockIcon()).catch(()=>{});
+  dockIconArt().then(u=>desktop.app?.dock?.setIcon(u)).catch(()=>{});
   desktop.window?.setOptions({titleBarStyle:"hiddenInset",dragHeight:48,width:1280,height:820,minWidth:400,minHeight:520}).catch(()=>{});
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>

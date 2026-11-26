@@ -61,6 +61,57 @@ textarea{min-height:90px;resize:vertical;font-size:17px}
 </div>
 
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"Party Game": "派对游戏", "PARTY GAME": "派对游戏", "A party game on one screen. Claude writes the prompts and judges the jokes.": "一块屏幕就能玩的派对游戏。Claude 出题，还当评委。", "Players (3 to 8). Type a name and press Enter.": "玩家（3 到 8 人）。输入名字后按回车。", "Name": "名字", "Add": "添加", "No players yet.": "还没有玩家。", "Theme": "主题", "Language": "语言", "Anything goes": "百无禁忌", "Office life": "职场", "Dating": "约会", "Family dinner": "家庭聚餐", "Tech and AI": "科技与 AI", "Travel": "旅行", "School": "校园", "Food": "美食", "English": "英语", "Chinese": "中文", "Japanese": "日语", "Korean": "韩语", "Spanish": "西班牙语", "French": "法语", "German": "德语", "Portuguese": "葡萄牙语", "Pass the computer around. Everyone answers in secret, then everyone votes.": "把电脑传下去。每人偷偷作答，然后大家投票。", "Open Party Game in the Claude app to play.": "在 Claude 应用中打开派对游戏即可开玩。", "Keep it short.": "简短一点。", "Lock it in": "就这么定了", "Stuck? Leave it blank and Claude will answer for you.": "卡住了？留空，Claude 帮你答。", "Claude is bailing you out…": "Claude 正在替你解围…", "Show the answers": "显示答案", "Claude is reading the answers…": "Claude 正在看答案…", "· Claude's pick +200": "· Claude 之选 +200", "Next round": "下一轮", "Final results": "最终结果", "Play again": "再玩一局", "Change players": "更换玩家", "Claude is writing the prompts…": "Claude 正在出题…", "Couldn't start. Try again.": "无法开始，请重试。", "Claude is busy or you hit your usage limit. Try again in a bit.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this game.": "此游戏未获准使用 Claude。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude passed on that one. Try another theme.": "Claude 跳过了这个，换个主题试试。", "Sign in to Claude again.": "请重新登录 Claude。", "Claude lost its cue cards. Votes only this round.": "Claude 把提词卡弄丢了，本轮只算投票。", "Install as app": "安装为应用"};
+  const PATTERNS=([["Start · (\\d+) rounds", "开始 · 共 $1 轮"], ["Remove (.+)", "移除 $1"], ["Round (\\d+) of (\\d+) · (.*)", "第 $1/$2 轮 · $3"], ["Pass to (.+)", "交给 $1"], ["I'm (.+), show me", "我是 $1，给我看"], ["(.+), your funniest answer\\. Nobody's looking\\.", "$1，写下你最好笑的答案。没人在看。"], ["Voting: pass to (.+)", "投票：交给 $1"], ["(.+), tap the funniest\\. You can't vote for your own\\.", "$1，点选最好笑的答案。不能投自己。"], ["(\\d+) votes? · \\+(\\d+)", "$1 票 · +$2"], ["(.+) wins!", "$1 获胜！"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.ans .meta");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 const $=id=>document.getElementById(id);
 function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 const store={get(k,d){try{const v=localStorage.getItem("punchline."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("punchline."+k,JSON.stringify(v))}catch{}}};
@@ -70,6 +121,7 @@ let sample=null;
 let G={phase:"lobby",players:store.get("players",[]),theme:store.get("theme","Anything goes"),lang:store.get("lang",LANG),rounds:3,round:0,prompts:[],answers:[],turn:0,voter:0,votes:[],host:null,scores:{}};
 const ERR={rate_limited:"Claude is busy or you hit your usage limit. Try again in a bit.",not_granted:"Claude isn't allowed for this game.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude passed on that one. Try another theme.",session_expired:"Sign in to Claude again."};
 const say=t=>$("st").textContent=t||"";
+const tx=t=>window.__tr?window.__tr(t):t, U=t=>`<span data-no-i18n>${esc(t)}</span>`;
 
 function view(){
   const s=$("stage");
@@ -77,11 +129,11 @@ function view(){
     s.innerHTML=`<div class="panel">
       <label class="f" for="pn">Players (3 to 8). Type a name and press Enter.</label>
       <div class="row"><input id="pn" type="text" maxlength="16" placeholder="Name" style="flex:1;min-width:0"><button class="btn" id="add">Add</button></div>
-      <div class="chips">${G.players.map((p,i)=>`<span class="chip">${esc(p)}<button data-rm="${i}" aria-label="Remove ${esc(p)}">✕</button></span>`).join("")||`<span class="st" style="text-align:left">No players yet.</span>`}</div>
+      <div class="chips">${G.players.map((p,i)=>`<span class="chip">${U(p)}<button data-rm="${i}" aria-label="Remove ${esc(p)}">✕</button></span>`).join("")||`<span class="st" style="text-align:left">No players yet.</span>`}</div>
       <label class="f">Theme</label>
       <div class="chips">${THEMES.map(t=>`<button class="chip ${t===G.theme?"on":""}" data-theme="${esc(t)}" style="cursor:pointer;padding:6px 12px">${esc(t)}</button>`).join("")}</div>
       <label class="f" for="lg">Language</label>
-      <select id="lg" style="font:inherit;padding:8px;border-radius:10px;background:#120d24;color:var(--fg);border:1px solid var(--line);max-width:220px">${["English","Chinese","Japanese","Korean","Spanish","French","German","Portuguese"].map(l=>`<option ${l===G.lang?"selected":""}>${l}</option>`).join("")}</select>
+      <select id="lg" style="font:inherit;padding:8px;border-radius:10px;background:#120d24;color:var(--fg);border:1px solid var(--line);max-width:220px">${["English","Chinese","Japanese","Korean","Spanish","French","German","Portuguese"].map(l=>`<option value="${l}" ${l===G.lang?"selected":""}>${l}</option>`).join("")}</select>
       <div class="row"><button class="btn go" id="start" ${G.players.length<3||!sample?"disabled":""}>Start · ${G.rounds} rounds</button><span class="st" style="text-align:left">${sample?"Pass the computer around. Everyone answers in secret, then everyone votes.":"Open Party Game in the Claude app to play."}</span></div>
     </div>`;
     const add=()=>{const v=$("pn").value.trim();if(v&&G.players.length<8&&!G.players.includes(v)){G.players.push(v);store.set("players",G.players);}view();$("pn").focus();};
@@ -93,7 +145,7 @@ function view(){
     return;
   }
   const prompt=G.prompts[G.round];
-  const head=`<div class="card"><small>Round ${G.round+1} of ${G.rounds} · ${esc(G.theme)}</small>${esc(prompt)}</div>`;
+  const head=`<div class="card"><small>Round ${G.round+1} of ${G.rounds} · ${esc(tx(G.theme))}</small>${U(prompt)}</div>`;
   if(G.phase==="pass"){
     s.innerHTML=`<div class="panel">${head}<p class="big">Pass to ${esc(G.players[G.turn])}</p><div class="row" style="justify-content:center"><button class="btn go" id="ready">I'm ${esc(G.players[G.turn])}, show me</button></div></div>`;
     $("ready").onclick=()=>{G.phase="write";view();};return;
@@ -115,7 +167,7 @@ function view(){
     $("ready").onclick=()=>{G.phase="vote";view();};return;
   }
   if(G.phase==="vote"){
-    s.innerHTML=`<div class="panel">${head}<p class="st">${esc(G.players[G.voter])}, tap the funniest. You can't vote for your own.</p><div class="answers">${G.order.map(i=>`<button class="ans ${G.answers[i].p===G.voter?"mine":""}" data-i="${i}" ${G.answers[i].p===G.voter?"disabled":""}>${esc(G.answers[i].text)}</button>`).join("")}</div></div>`;
+    s.innerHTML=`<div class="panel">${head}<p class="st">${esc(G.players[G.voter])}, tap the funniest. You can't vote for your own.</p><div class="answers">${G.order.map(i=>`<button class="ans ${G.answers[i].p===G.voter?"mine":""}" data-i="${i}" ${G.answers[i].p===G.voter?"disabled":""}>${U(G.answers[i].text)}</button>`).join("")}</div></div>`;
     s.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{G.votes.push(+b.dataset.i);G.voter++;if(G.voter<G.players.length){G.phase="vote-pass";view();}else judge();});
     return;
   }
@@ -125,8 +177,8 @@ function view(){
   if(G.phase==="reveal"){
     const counts=G.answers.map((_,i)=>G.votes.filter(v=>v===i).length);
     s.innerHTML=`<div class="panel">${head}
-      <div class="host"><i></i><p>${esc(G.host?.line||"")}</p></div>
-      <div class="answers">${G.order.map(i=>`<div class="ans ${G.host?.pick===i?"pick":""}"><span class="who">${esc(G.players[G.answers[i].p])}${G.host?.pick===i?" · Claude's pick +200":""}</span>${esc(G.answers[i].text)}<span class="meta">${esc(G.host?.notes?.[i]||"")}</span><span class="votes">${counts[i]?`${counts[i]} vote${counts[i]>1?"s":""} · +${counts[i]*100}`:""}</span></div>`).join("")}</div>
+      <div class="host"><i></i><p data-no-i18n>${esc(G.host?.line||"")}</p></div>
+      <div class="answers">${G.order.map(i=>`<div class="ans ${G.host?.pick===i?"pick":""}"><span class="who">${U(G.players[G.answers[i].p])}${G.host?.pick===i?" · Claude's pick +200":""}</span>${U(G.answers[i].text)}<span class="meta">${esc(G.host?.notes?.[i]||"")}</span><span class="votes">${counts[i]?`${counts[i]} vote${counts[i]>1?"s":""} · +${counts[i]*100}`:""}</span></div>`).join("")}</div>
       ${board()}
       <div class="row" style="justify-content:center"><button class="btn go" id="next">${G.round+1<G.rounds?"Next round":"Final results"}</button></div></div>`;
     $("next").onclick=()=>{if(G.round+1<G.rounds){G.round++;G.answers=[];G.turn=0;G.phase="pass";view();}else{G.phase="end";view();}};return;
@@ -137,7 +189,7 @@ function view(){
     $("again").onclick=start;$("lobby").onclick=()=>{G.phase="lobby";view();};
   }
 }
-function board(){const rows=G.players.map(p=>[p,G.scores[p]||0]).sort((a,b)=>b[1]-a[1]);return `<div class="board">${rows.map(([p,n])=>`<div><span>${esc(p)}</span><b>${n}</b></div>`).join("")}</div>`}
+function board(){const rows=G.players.map(p=>[p,G.scores[p]||0]).sort((a,b)=>b[1]-a[1]);return `<div class="board">${rows.map(([p,n])=>`<div>${U(p)}<b>${n}</b></div>`).join("")}</div>`}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
 async function start(){
   $("start")&&($("start").disabled=true);say("Claude is writing the prompts…");
@@ -157,10 +209,14 @@ async function judge(){
     const pick=Number.isInteger(r?.pick)&&r.pick>=0&&r.pick<G.answers.length?r.pick:null;
     G.host={pick,notes:Array.isArray(r?.notes)?r.notes.map(String):[],line:String(r?.line||"")};
     if(pick!==null) G.scores[G.players[G.answers[pick].p]]+=200;
-  }catch(e){G.host={pick:null,notes:[],line:ERR[e?.code]||"Claude lost its cue cards. Votes only this round."};}
+  }catch(e){G.host={pick:null,notes:[],line:tx(ERR[e?.code]||"Claude lost its cue cards. Votes only this round.")};}
   G.phase="reveal";view();
 }
 
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"party-game-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#FFD445\"/><stop offset=\"1\" stop-color=\"#FF8A1F\"/><\/linearGradient><radialGradient id=\"party-game-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"party-game-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"party-game-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#party-game-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#party-game-sh)\"/><g transform=\"rotate(-14 512 540)\" filter=\"url(#party-game-ds)\"><rect x=\"300\" y=\"330\" width=\"424\" height=\"424\" rx=\"80\" fill=\"#fff\"/><circle cx=\"410\" cy=\"440\" r=\"42\" fill=\"#FF4D6D\"/><circle cx=\"614\" cy=\"440\" r=\"42\" fill=\"#22263A\"/><circle cx=\"512\" cy=\"542\" r=\"42\" fill=\"#22263A\"/><circle cx=\"410\" cy=\"644\" r=\"42\" fill=\"#22263A\"/><circle cx=\"614\" cy=\"644\" r=\"42\" fill=\"#7B5CFF\"/><\/g><g filter=\"url(#party-game-ds2)\"><rect x=\"200\" y=\"200\" width=\"70\" height=\"30\" rx=\"15\" fill=\"#7B5CFF\" transform=\"rotate(-30 235 215)\"/><rect x=\"760\" y=\"230\" width=\"80\" height=\"30\" rx=\"15\" fill=\"#FF4D6D\" transform=\"rotate(40 800 245)\"/><circle cx=\"820\" cy=\"420\" r=\"26\" fill=\"#22C3E6\"/><circle cx=\"210\" cy=\"620\" r=\"22\" fill=\"#fff\"/><rect x=\"780\" y=\"760\" width=\"74\" height=\"30\" rx=\"15\" fill=\"#22263A\" transform=\"rotate(-20 817 775)\"/><path d=\"M560 160l18 40 44 6-32 30 8 44-38-22-38 22 8-44-32-30 44-6z\" fill=\"#fff\"/><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){
   const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
   const g=x.createLinearGradient(0,0,0,256);g.addColorStop(0,"#4b2fa8");g.addColorStop(1,"#1d1240");
@@ -175,7 +231,54 @@ view();
   const use=window.claude?.use?n=>window.claude.use(n).catch(()=>null):async()=>null;
   let desktop;[sample,desktop]=await Promise.all([use("sample"),use("desktop")]);
   view();
-  if(desktop?.tray){desktop.app.dock.setIcon(dockIcon()).catch(()=>{});desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:30,width:820,height:780,minWidth:420,minHeight:560}).catch(()=>{});}
+  if(desktop?.tray){dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:30,width:820,height:780,minWidth:420,minHeight:560}).catch(()=>{});}
   else if(desktop&&await desktop.install.state().catch(()=>"")==="available"){const b=document.createElement("button");b.className="btn";b.textContent="Install as app";b.style.alignSelf="center";b.onclick=()=>desktop.install.request().catch(()=>{});document.querySelector(".wrap").append(b);}
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>

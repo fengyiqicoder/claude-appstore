@@ -61,15 +61,67 @@ textarea,#out{flex:1;width:100%;border:0;resize:none;background:transparent;colo
 <div class="foot"><span id="hint">Needs Claude: open it in the Claude app.</span><span id="act"></span></div>
 
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"AI Translator": "AI 翻译", "Your language": "你的语言", "Swap languages": "互换语言", "Other language": "另一种语言", "Translate": "翻译", "Polish": "润色", "Explain": "讲解", "Paste or type. Pasting translates right away; ⌘↩ to run.": "粘贴或输入文字。粘贴后立即翻译；⌘↩ 运行。", "Text": "文本", "Natural": "自然", "Casual": "随意", "Formal": "正式", "✦ Run": "✦ 运行", "Stop": "停止", "Listen": "朗读", "Playing…": "播放中…", "Copy": "复制", "Copied": "已复制", "Selected": "已选中", "Thinking…": "思考中…", "Writing…": "输出中…", "Stopped": "已停止", "Cut short. Try a shorter piece.": "内容被截断，换短一点的试试。", "Translated by Claude": "由 Claude 翻译", "Polished by Claude": "由 Claude 润色", "Explained by Claude": "由 Claude 讲解", "Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined this text.": "Claude 拒绝处理这段文字。", "Sign in to Claude again.": "请重新登录 Claude。", "That's too long. Try a shorter piece.": "内容太长，换短一点的试试。", "Something went wrong. Try again.": "出了点问题，请重试。", "Needs Claude: open it in the Claude app.": "需要 Claude：请在 Claude 应用中打开。", "Float on top": "置顶悬浮", "Normal window": "普通窗口", "Option+Shift+T brings AI Translator up anywhere.": "在任何地方按 Option+Shift+T 唤出 AI 翻译。", "Float it on top to get the Option+Shift+T shortcut.": "开启置顶悬浮后可用 Option+Shift+T 快捷键。", "Open AI Translator in the Claude app to translate with Claude.": "在 Claude 应用中打开 AI 翻译，即可用 Claude 翻译。", "Install from the Claude desktop app to float it with a shortcut.": "从 Claude 桌面应用安装后，可置顶悬浮并用快捷键唤出。", "Install as app": "安装为应用", "Install it to float on top with a shortcut.": "安装后可置顶悬浮并用快捷键唤出。", "Installed. Open AI Translator from Applications or Start.": "已安装。请从“应用程序”或“开始”菜单打开 AI 翻译。"};
+  const PATTERNS=([["(\\d+) characters", "$1 个字符"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",#out");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 const $=id=>document.getElementById(id);
 const LANGS=["English","Chinese (Simplified)","Chinese (Traditional)","Japanese","Korean","Spanish","French","German","Portuguese","Italian","Russian","Arabic","Hindi","Indonesian","Vietnamese","Thai","Turkish","Dutch","Polish","Ukrainian"];
 const store={get(k,d){try{const v=localStorage.getItem("lingo."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("lingo."+k,JSON.stringify(v))}catch{}}};
 const nav=(navigator.language||"en").toLowerCase();
 const guess=nav.startsWith("zh")?(nav.includes("tw")||nav.includes("hk")?"Chinese (Traditional)":"Chinese (Simplified)"):({ja:"Japanese",ko:"Korean",es:"Spanish",fr:"French",de:"German",pt:"Portuguese",it:"Italian",ru:"Russian"}[nav.slice(0,2)]||"English");
 let S={a:store.get("a",guess),b:store.get("b",guess==="English"?"Chinese (Simplified)":"English"),mode:store.get("mode","tr"),tone:store.get("tone","natural")};
-for(const id of["a","b"]){$(id).innerHTML=LANGS.map(l=>`<option>${l}</option>`).join("");$(id).value=S[id];$(id).onchange=()=>{S[id]=$(id).value;store.set(id,S[id]);};}
+const ZHL={"English":"英语","Chinese (Simplified)":"简体中文","Chinese (Traditional)":"繁体中文","Japanese":"日语","Korean":"韩语","Spanish":"西班牙语","French":"法语","German":"德语","Portuguese":"葡萄牙语","Italian":"意大利语","Russian":"俄语","Arabic":"阿拉伯语","Hindi":"印地语","Indonesian":"印尼语","Vietnamese":"越南语","Thai":"泰语","Turkish":"土耳其语","Dutch":"荷兰语","Polish":"波兰语","Ukrainian":"乌克兰语"};
+for(const id of["a","b"]){$(id).innerHTML=LANGS.map(l=>`<option value="${l}">${window.__ZH?ZHL[l]:l}</option>`).join("");$(id).value=S[id];$(id).onchange=()=>{S[id]=$(id).value;store.set(id,S[id]);};}
 $("swap").onclick=()=>{[S.a,S.b]=[S.b,S.a];$("a").value=S.a;$("b").value=S.b;store.set("a",S.a);store.set("b",S.b);if($("in").value.trim())run();};
-function setMode(m){S.mode=m;store.set("mode",m);document.querySelectorAll(".seg button").forEach(b=>b.classList.toggle("on",b.dataset.mode===m));$("tones").hidden=m!=="polish";$("out").dataset.empty={tr:"The translation appears here.",polish:"A more natural version appears here.",explain:"Word-by-word notes appear here."}[m];}
+function setMode(m){S.mode=m;store.set("mode",m);document.querySelectorAll(".seg button").forEach(b=>b.classList.toggle("on",b.dataset.mode===m));$("tones").hidden=m!=="polish";$("out").dataset.empty=window.__t({tr:"The translation appears here.",polish:"A more natural version appears here.",explain:"Word-by-word notes appear here."}[m],{tr:"译文会显示在这里。",polish:"更地道的版本会显示在这里。",explain:"逐词讲解会显示在这里。"}[m]);}
 document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{setMode(b.dataset.mode);if($("in").value.trim())run();});
 document.querySelectorAll("#tones button").forEach(b=>b.onclick=()=>{S.tone=b.dataset.tone;store.set("tone",S.tone);document.querySelectorAll("#tones button").forEach(x=>x.classList.toggle("on",x===b));if($("in").value.trim())run();});
 document.querySelectorAll("#tones button").forEach(x=>x.classList.toggle("on",x.dataset.tone===S.tone));
@@ -80,7 +132,7 @@ function prompt(text){
   const pair=`The person's two languages are ${S.a} and ${S.b}.`;
   if(S.mode==="tr") return `${pair} Translate the text below. If it is written in ${S.a}, translate it into ${S.b}; otherwise translate it into ${S.a}. Keep meaning, tone, formatting and line breaks. Output only the translation, nothing else.\n\nText:\n${text}`;
   if(S.mode==="polish") return `${pair} Rewrite the text below so it reads like a fluent native speaker wrote it, in a ${S.tone} tone. If it is in ${S.a}, rewrite it in ${S.b}; if it is in ${S.b}, keep it in ${S.b}; otherwise rewrite it in ${S.b}. Keep the meaning and formatting. Output only the rewritten text.\n\nText:\n${text}`;
-  return `${pair} Explain the text below for a learner whose first language is ${S.a}. Write the explanation in ${S.a}. First a natural translation in one line. Then up to 8 key words or phrases, each on its own line as "phrase - meaning (part of speech) - short note on usage". Then one line on any grammar point or nuance worth knowing. Plain text, no Markdown headings.\n\nText:\n${text}`;
+  return `${pair} Explain the text below for a learner whose first language is ${S.a}. Write the explanation in ${window.__ZH?"Chinese (Simplified)":S.a}. First a natural translation in one line. Then up to 8 key words or phrases, each on its own line as "phrase - meaning (part of speech) - short note on usage". Then one line on any grammar point or nuance worth knowing. Plain text, no Markdown headings.\n\nText:\n${text}`;
 }
 const ERR={rate_limited:"Claude is busy or you hit your usage limit. Try again later.",not_granted:"Claude isn't allowed for this app.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined this text.",session_expired:"Sign in to Claude again.",prompt_too_large:"That's too long. Try a shorter piece."};
 async function run(){
@@ -107,6 +159,10 @@ $("speak").onclick=async()=>{const t=$("out").textContent.trim();if(!t||!tts)ret
 
 // desktop
 let desktop=null, perms={};
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"translator-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4F7BFF\"/><stop offset=\"1\" stop-color=\"#1BB5C9\"/><\/linearGradient><radialGradient id=\"translator-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"translator-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"translator-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#translator-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#translator-sh)\"/><g filter=\"url(#translator-ds2)\"><path d=\"M200 220h360a60 60 0 0 1 60 60v220a60 60 0 0 1-60 60H340l-90 80v-80h-50a60 60 0 0 1-60-60V280a60 60 0 0 1 60-60z\" fill=\"#fff\" opacity=\".92\"/><text x=\"380\" y=\"485\" text-anchor=\"middle\" font-family=\"'PingFang SC','Hiragino Sans GB','Noto Sans CJK SC',sans-serif\" font-weight=\"700\" font-size=\"230\" fill=\"#3554E0\">\u6587<\/text><\/g><g filter=\"url(#translator-ds)\"><path d=\"M470 440h360a60 60 0 0 1 60 60v220a60 60 0 0 1-60 60h-50v80l-90-80H470a60 60 0 0 1-60-60V500a60 60 0 0 1 60-60z\" fill=\"#1A2350\"/><text x=\"650\" y=\"712\" text-anchor=\"middle\" font-family=\"-apple-system,Helvetica,Arial\" font-weight=\"800\" font-size=\"240\" fill=\"#5FF0E0\">A<\/text><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){
   const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
   const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#1fb89c");g.addColorStop(1,"#0b6f61");
@@ -151,8 +207,55 @@ function setup(){
     return;
   }
   document.body.classList.add("app");
-  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
   try{perms=await desktop.permissions.state();}catch{}
   applyWindow();setup();
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>

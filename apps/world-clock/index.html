@@ -75,9 +75,63 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </div>
 
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"World Clock": "世界时钟", "Add a city": "添加城市", "Ask: best time for a 30-min call with London and Tokyo?": "问问：和伦敦、东京开 30 分钟电话，什么时间最合适？", "Ask about times": "询问时间问题", "✦ Ask": "✦ 提问", "Back to now": "回到现在", "Shift time to plan a meeting": "拖动时间来安排会议", "Drag to see what time it will be everywhere. Good for picking a meeting slot.": "拖动查看各地届时的时间，方便挑选会议时段。", "Remove": "移除", "Thinking…": "思考中…", "No answer.": "没有答案。", "Claude is busy or you hit your usage limit. Try later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude declined this one.": "Claude 拒绝了这个问题。", "Couldn't answer that. Try again.": "没能回答，请重试。", "The dot picks the city shown in your menu bar.": "点一下圆点，选择在菜单栏显示的城市。", "Show time in menu bar": "在菜单栏显示时间", "Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.": "在 Mac 或 Windows 版 Claude 中打开并安装，即可在菜单栏常驻一个城市的时间。", "Install as app": "安装为应用", "Installed. Open World Clock from your Applications or Start menu.": "已安装。请从“应用程序”或“开始”菜单打开世界时钟。"};
+  const PATTERNS=([]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.city b, #sugg span");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 const $=id=>document.getElementById(id);
 const CITIES=[["Honolulu","Pacific/Honolulu"],["Anchorage","America/Anchorage"],["San Francisco","America/Los_Angeles"],["Los Angeles","America/Los_Angeles"],["Seattle","America/Los_Angeles"],["Vancouver","America/Vancouver"],["Denver","America/Denver"],["Phoenix","America/Phoenix"],["Chicago","America/Chicago"],["Austin","America/Chicago"],["Mexico City","America/Mexico_City"],["New York","America/New_York"],["Toronto","America/Toronto"],["Miami","America/New_York"],["Bogotá","America/Bogota"],["Lima","America/Lima"],["Santiago","America/Santiago"],["Buenos Aires","America/Argentina/Buenos_Aires"],["São Paulo","America/Sao_Paulo"],["Reykjavík","Atlantic/Reykjavik"],["Lisbon","Europe/Lisbon"],["London","Europe/London"],["Dublin","Europe/Dublin"],["Paris","Europe/Paris"],["Amsterdam","Europe/Amsterdam"],["Berlin","Europe/Berlin"],["Madrid","Europe/Madrid"],["Rome","Europe/Rome"],["Zurich","Europe/Zurich"],["Stockholm","Europe/Stockholm"],["Warsaw","Europe/Warsaw"],["Athens","Europe/Athens"],["Istanbul","Europe/Istanbul"],["Kyiv","Europe/Kyiv"],["Moscow","Europe/Moscow"],["Cairo","Africa/Cairo"],["Lagos","Africa/Lagos"],["Nairobi","Africa/Nairobi"],["Johannesburg","Africa/Johannesburg"],["Tel Aviv","Asia/Jerusalem"],["Dubai","Asia/Dubai"],["Riyadh","Asia/Riyadh"],["Tehran","Asia/Tehran"],["Karachi","Asia/Karachi"],["Mumbai","Asia/Kolkata"],["Bangalore","Asia/Kolkata"],["Kathmandu","Asia/Kathmandu"],["Dhaka","Asia/Dhaka"],["Bangkok","Asia/Bangkok"],["Jakarta","Asia/Jakarta"],["Ho Chi Minh City","Asia/Ho_Chi_Minh"],["Singapore","Asia/Singapore"],["Kuala Lumpur","Asia/Kuala_Lumpur"],["Manila","Asia/Manila"],["Hong Kong","Asia/Hong_Kong"],["Taipei","Asia/Taipei"],["Shanghai","Asia/Shanghai"],["Beijing","Asia/Shanghai"],["Shenzhen","Asia/Shanghai"],["Seoul","Asia/Seoul"],["Tokyo","Asia/Tokyo"],["Perth","Australia/Perth"],["Adelaide","Australia/Adelaide"],["Brisbane","Australia/Brisbane"],["Sydney","Australia/Sydney"],["Melbourne","Australia/Melbourne"],["Auckland","Pacific/Auckland"]];
 const localTz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+const T=window.__t, ZH=window.__ZH;
+const CITY_ZH={"Here":"这里","Honolulu":"檀香山","Anchorage":"安克雷奇","San Francisco":"旧金山","Los Angeles":"洛杉矶","Seattle":"西雅图","Vancouver":"温哥华","Denver":"丹佛","Phoenix":"凤凰城","Chicago":"芝加哥","Austin":"奥斯汀","Mexico City":"墨西哥城","New York":"纽约","Toronto":"多伦多","Miami":"迈阿密","Bogotá":"波哥大","Lima":"利马","Santiago":"圣地亚哥","Buenos Aires":"布宜诺斯艾利斯","São Paulo":"圣保罗","Reykjavík":"雷克雅未克","Lisbon":"里斯本","London":"伦敦","Dublin":"都柏林","Paris":"巴黎","Amsterdam":"阿姆斯特丹","Berlin":"柏林","Madrid":"马德里","Rome":"罗马","Zurich":"苏黎世","Stockholm":"斯德哥尔摩","Warsaw":"华沙","Athens":"雅典","Istanbul":"伊斯坦布尔","Kyiv":"基辅","Moscow":"莫斯科","Cairo":"开罗","Lagos":"拉各斯","Nairobi":"内罗毕","Johannesburg":"约翰内斯堡","Tel Aviv":"特拉维夫","Dubai":"迪拜","Riyadh":"利雅得","Tehran":"德黑兰","Karachi":"卡拉奇","Mumbai":"孟买","Bangalore":"班加罗尔","Kathmandu":"加德满都","Dhaka":"达卡","Bangkok":"曼谷","Jakarta":"雅加达","Ho Chi Minh City":"胡志明市","Singapore":"新加坡","Kuala Lumpur":"吉隆坡","Manila":"马尼拉","Hong Kong":"香港","Taipei":"台北","Shanghai":"上海","Beijing":"北京","Shenzhen":"深圳","Seoul":"首尔","Tokyo":"东京","Perth":"珀斯","Adelaide":"阿德莱德","Brisbane":"布里斯班","Sydney":"悉尼","Melbourne":"墨尔本","Auckland":"奥克兰"};
+const cn=n=>ZH&&CITY_ZH[n]||n;
 const store={get(k,d){try{const v=localStorage.getItem("zones."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("zones."+k,JSON.stringify(v))}catch{}}};
 let list=store.get("list",null)||[{name:"Here",tz:localTz},["New York","America/New_York"],["London","Europe/London"],["Tokyo","Asia/Tokyo"]].map(x=>Array.isArray(x)?{name:x[0],tz:x[1]}:x).filter((c,i,a)=>i===0||c.tz!==localTz);
 let pinned=store.get("pin",list[1]?.tz?list[1].name:list[0].name);
@@ -87,16 +141,17 @@ function parts(tz,d){
   const f=new Intl.DateTimeFormat("en-US",{timeZone:tz,hour:"numeric",minute:"2-digit",hour12:false,weekday:"short",month:"short",day:"numeric",year:"numeric"});
   const o={};for(const p of f.formatToParts(d))o[p.type]=p.value;
   const h=+o.hour%24,m=+o.minute;
-  return {h,m,label:`${String(h).padStart(2,"0")}:${o.minute}`,wd:o.weekday,md:`${o.month} ${o.day}`,ymd:`${o.year}-${o.month}-${o.day}`};
+  const z=ZH?Object.fromEntries(new Intl.DateTimeFormat("zh-CN",{timeZone:tz,weekday:"short",month:"numeric",day:"numeric"}).formatToParts(d).map(p=>[p.type,p.value])):null;
+  return {h,m,label:`${String(h).padStart(2,"0")}:${o.minute}`,wd:z?z.weekday:o.weekday,md:z?`${z.month}月${z.day}日`:`${o.month} ${o.day}`,ymd:`${o.year}-${o.month}-${o.day}`};
 }
 function tzOff(tz,d){const f=new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"});const o={};for(const p of f.formatToParts(d))o[p.type]=+p.value;return (Date.UTC(o.year,o.month-1,o.day,o.hour,o.minute)-Math.floor(d/6e4)*6e4)/6e4}
 function offsetMin(tz,d){return tzOff(tz,d)-tzOff(localTz,d)}
 function rel(tz,d){
-  const off=offsetMin(tz,d);if(tz===localTz) return "Local time";if(off===0) return "Same time as you";
+  const off=offsetMin(tz,d);if(tz===localTz) return T("Local time","本地时间");if(off===0) return T("Same time as you","与你时间相同");
   const h=off/60, s=(h>0?"+":h<0?"−":"")+(Math.abs(h)%1?Math.abs(h).toFixed(1):Math.abs(h))+"h";
   const p=parts(tz,d),l=parts(localTz,d);
   const day=p.md===l.md?"Today":(offsetMin(tz,d)>0?"Tomorrow":"Yesterday");
-  return `${day}, ${s}`;
+  return ZH?`${{Today:"今天",Tomorrow:"明天",Yesterday:"昨天"}[day]}，${s.replace("h"," 小时")}`:`${day}, ${s}`;
 }
 function band(){
   // 24h strip: night, dawn, day, dusk, night (fixed hours, good enough for planning)
@@ -106,10 +161,10 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",
 function render(){
   const d=new Date(Date.now()+shift*6e4);
   $("list").innerHTML=list.map((c,i)=>{const p=parts(c.tz,d);return `<div class="row">
-    <div class="city"><b><button class="pin ${c.name===pinned?"on":""}" data-pin="${i}" title="Show in menu bar" aria-label="Show ${esc(c.name)} in menu bar">${c.name===pinned?"●":"○"}</button>${esc(c.name)}</b><span>${esc(rel(c.tz,d))} · ${esc(p.wd)} ${esc(p.md)}${i?` · <button class="del" data-del="${i}">Remove</button>`:""}</span></div>
+    <div class="city"><b><button class="pin ${c.name===pinned?"on":""}" data-pin="${i}" title="${T("Show in menu bar","在菜单栏显示")}" aria-label="${T(`Show ${esc(c.name)} in menu bar`,`在菜单栏显示${esc(cn(c.name))}`)}">${c.name===pinned?"●":"○"}</button>${esc(cn(c.name))}</b><span>${esc(rel(c.tz,d))} · ${esc(p.wd)} ${esc(p.md)}${i?` · <button class="del" data-del="${i}">Remove</button>`:""}</span></div>
     <div class="clock"><b>${p.label}</b></div>
     <div class="band" style="background:${band()}"><i style="left:calc(${((p.h*60+p.m)/1440*100).toFixed(2)}% - 1px)"></i></div></div>`}).join("");
-  const off=shift;$("planlbl").textContent=off===0?"Now":`${off>0?"In":""} ${Math.floor(Math.abs(off)/60)}h ${Math.abs(off)%60?Math.abs(off)%60+"m":""}${off<0?" ago":""}`.trim();
+  const off=shift;$("planlbl").textContent=off===0?T("Now","现在"):ZH?`${Math.floor(Math.abs(off)/60)?Math.floor(Math.abs(off)/60)+" 小时":""}${Math.abs(off)%60?" "+Math.abs(off)%60+" 分钟":""}${off<0?"前":"后"}`.trim():`${off>0?"In":""} ${Math.floor(Math.abs(off)/60)}h ${Math.abs(off)%60?Math.abs(off)%60+"m":""}${off<0?" ago":""}`.trim();
   $("now").hidden=off===0;
   setTray();
 }
@@ -117,19 +172,19 @@ function setTray(){
   if(!desktop?.tray||perms["menu-bar"]!=="granted") return;
   const d=new Date(), p=list.find(c=>c.name===pinned)||list[0];
   const abbr=p.name==="Here"?"":p.name.replace(/[^A-Za-zÀ-ÿ ]/g,"").split(" ").map(w=>w[0]).join("").slice(0,3).toUpperCase()||p.name.slice(0,3).toUpperCase();
-  const short=p.name.length<=6?p.name:abbr;
-  desktop.tray.set({title:`${short} ${parts(p.tz,d).label}`.trim(),toolTip:list.map(c=>`${c.name} ${parts(c.tz,d).label}`).join(" · ").slice(0,100),
-    menu:[...list.map(c=>({label:`${c.name}   ${parts(c.tz,d).label}  ${parts(c.tz,d).wd}`,type:"checkbox",checked:c.name===p.name,click:()=>{pinned=c.name;save();render();}})),{type:"separator"},{label:"Open World Clock",click:()=>desktop.window.show().catch(()=>{})}]}).catch(()=>{});
+  const nm=cn(p.name), short=nm.length<=6?nm:abbr;
+  desktop.tray.set({title:`${short} ${parts(p.tz,d).label}`.trim(),toolTip:list.map(c=>`${cn(c.name)} ${parts(c.tz,d).label}`).join(" · ").slice(0,100),
+    menu:[...list.map(c=>({label:`${cn(c.name)}   ${parts(c.tz,d).label}  ${parts(c.tz,d).wd}`,type:"checkbox",checked:c.name===p.name,click:()=>{pinned=c.name;save();render();}})),{type:"separator"},{label:T("Open World Clock","打开世界时钟"),click:()=>desktop.window.show().catch(()=>{})}]}).catch(()=>{});
 }
 // add city
 const allTz=(Intl.supportedValuesOf?Intl.supportedValuesOf("timeZone"):[]);
 function suggestions(q){
   q=q.trim().toLowerCase();if(!q) return [];
-  const a=CITIES.filter(([n])=>n.toLowerCase().includes(q)).map(([n,tz])=>({name:n,tz}));
+  const a=CITIES.filter(([n])=>n.toLowerCase().includes(q)||(ZH&&CITY_ZH[n]?.includes(q))).map(([n,tz])=>({name:n,tz}));
   const b=allTz.filter(tz=>tz.toLowerCase().replace(/_/g," ").includes(q)&&!a.some(x=>x.tz===tz)).map(tz=>({name:tz.split("/").pop().replace(/_/g," "),tz}));
   return [...a,...b].slice(0,7);
 }
-$("q").addEventListener("input",()=>{const s=suggestions($("q").value);$("sugg").hidden=!s.length;$("sugg").innerHTML=s.map((x,i)=>`<button data-add="${i}"><span>${esc(x.name)}</span><small>${esc(parts(x.tz,new Date()).label)}</small></button>`).join("");$("sugg")._s=s;});
+$("q").addEventListener("input",()=>{const s=suggestions($("q").value);$("sugg").hidden=!s.length;$("sugg").innerHTML=s.map((x,i)=>`<button data-add="${i}"><span>${esc(cn(x.name))}</span><small>${esc(parts(x.tz,new Date()).label)}</small></button>`).join("");$("sugg")._s=s;});
 $("q").addEventListener("keydown",e=>{if(e.key==="Enter"){const s=$("sugg")._s;if(s?.length)addCity(s[0]);}if(e.key==="Escape"){$("sugg").hidden=true;}});
 function addCity(c){if(!list.some(x=>x.name===c.name&&x.tz===c.tz)){list.push(c);save();}$("q").value="";$("sugg").hidden=true;render();}
 document.addEventListener("click",e=>{
@@ -150,22 +205,26 @@ $("askf").addEventListener("submit",async e=>{
   const q=$("aq").value.trim(); if(!q) return;
   const now=new Date();
   const ctx=list.map(c=>{const p=parts(c.tz,now);return `${c.name} (${c.tz}): now ${p.wd} ${p.md} ${p.label}, UTC offset ${tzOff(c.tz,now)/60}h`}).join("\n");
-  $("aa").textContent="Thinking…";
+  $("aa").removeAttribute("data-no-i18n");$("aa").textContent="Thinking…";
   try{
-    const r=await sample.json(`You help someone plan across time zones. Their cities, with current local times:\n${ctx}\nThe first city is where they are. Assume working hours are 9:00-18:00 local unless they say otherwise. Answer their question in 1-3 short sentences in the language they used, naming the local time in each relevant city. If a specific moment is the answer, also give shiftMinutes: minutes from now to that moment (between -720 and 720, multiple of 15); otherwise use null. If they mention a city not in the list, answer anyway and add it to addCities as {name, tz} with an IANA zone. Reply with only JSON: {"answer": string, "shiftMinutes": number|null, "addCities": []}.\n\nQuestion: ${q.slice(0,500)}`,{modelTier:"default",cache:false});
+    const r=await sample.json(`You help someone plan across time zones. Their cities, with current local times:\n${ctx}\nThe first city is where they are. Assume working hours are 9:00-18:00 local unless they say otherwise. Answer their question in 1-3 short sentences in the language they used${ZH?" (Simplified Chinese if unclear)":""}, naming the local time in each relevant city. If a specific moment is the answer, also give shiftMinutes: minutes from now to that moment (between -720 and 720, multiple of 15); otherwise use null. If they mention a city not in the list, answer anyway and add it to addCities as {name, tz} with an IANA zone${ZH?" (name in Simplified Chinese)":""}. Reply with only JSON: {"answer": string, "shiftMinutes": number|null, "addCities": []}.\n\nQuestion: ${q.slice(0,500)}`,{modelTier:"default",cache:false});
     for(const c of (Array.isArray(r?.addCities)?r.addCities:[])){try{new Intl.DateTimeFormat("en",{timeZone:c.tz});if(c.name&&!list.some(x=>x.tz===c.tz&&x.name===c.name))list.push({name:String(c.name).slice(0,40),tz:c.tz});}catch{}}
     save();
     const sh=Number(r?.shiftMinutes);
     if(Number.isFinite(sh)&&r?.shiftMinutes!==null){shift=Math.max(-720,Math.min(720,Math.round(sh/15)*15));$("shift").value=shift;}
     render();
-    $("aa").textContent=String(r?.answer||"").slice(0,600)||"No answer.";
+    $("aa").toggleAttribute("data-no-i18n",!!r?.answer);$("aa").textContent=String(r?.answer||"").slice(0,600)||"No answer.";
   }catch(err){
-    $("aa").textContent={rate_limited:"Claude is busy or you hit your usage limit. Try later.",not_granted:"Claude isn't allowed for this app.",refused:"Claude declined this one."}[err?.code]||"Couldn't answer that. Try again.";
+    $("aa").removeAttribute("data-no-i18n");$("aa").textContent={rate_limited:"Claude is busy or you hit your usage limit. Try later.",not_granted:"Claude isn't allowed for this app.",refused:"Claude declined this one."}[err?.code]||"Couldn't answer that. Try again.";
     if(err?.code==="not_granted"||err?.code==="sampling_disabled") $("ask").hidden=true;
   }
 });
 (async()=>{sample=window.claude?.use?await window.claude.use("sample").catch(()=>null):null;$("ask").hidden=!sample;})();
 
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"world-clock-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#22337E\"/><stop offset=\"1\" stop-color=\"#0A1238\"/><\/linearGradient><radialGradient id=\"world-clock-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"world-clock-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"world-clock-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><linearGradient id=\"world-clock-day\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#FFB45C\"/><stop offset=\".5\" stop-color=\"#5CB8FF\"/><\/linearGradient><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#world-clock-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#world-clock-sh)\"/><defs><clipPath id=\"world-clock-face\"><circle cx=\"512\" cy=\"512\" r=\"320\"/><\/clipPath><\/defs><g filter=\"url(#world-clock-ds)\"><circle cx=\"512\" cy=\"512\" r=\"320\" fill=\"#fff\"/><\/g><g clip-path=\"url(#world-clock-face)\"><rect x=\"0\" y=\"0\" width=\"1024\" height=\"1024\" fill=\"url(#world-clock-day)\"/><path d=\"M150 1000L1000 150V1024H150z\" fill=\"#14205A\"/><circle cx=\"390\" cy=\"380\" r=\"70\" fill=\"#FFF6C9\"/><circle cx=\"660\" cy=\"690\" r=\"10\" fill=\"#fff\"/><circle cx=\"730\" cy=\"600\" r=\"7\" fill=\"#fff\"/><circle cx=\"600\" cy=\"780\" r=\"6\" fill=\"#fff\"/><path d=\"M720 700a70 70 0 1 1-80-90 55 55 0 1 0 80 90z\" fill=\"#FFE27A\"/><\/g><circle cx=\"512\" cy=\"512\" r=\"320\" fill=\"none\" stroke=\"#fff\" stroke-width=\"22\"/><path d=\"M512 512V330M512 512l120 70\" stroke=\"#fff\" stroke-width=\"30\" stroke-linecap=\"round\"/><circle cx=\"512\" cy=\"512\" r=\"30\" fill=\"#fff\"/><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){
   const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
   const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#2b3a6b");g.addColorStop(1,"#0f1a33");
@@ -198,9 +257,56 @@ function foot(){
     else $("foot").textContent=st==="installed"?"Installed. Open World Clock from your Applications or Start menu.":"Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.";
     return;
   }
-  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
   desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:30,width:460,height:620,minWidth:340,minHeight:420}).catch(()=>{});
   try{perms=await desktop.permissions.state();}catch{}
   render();foot();
 })();
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>
