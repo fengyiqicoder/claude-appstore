@@ -548,9 +548,63 @@ body.focusmode .top,body.focusmode .rtabs,body.focusmode .ribbon,body.focusmode 
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/diff@5.2.0/dist/diff.min.js"></script>
 <script>
+/*I18N_RUNTIME*/
+/* Chinese UI for Claude AppStore apps. When the viewer's language is Chinese, UI text nodes and
+   placeholder/title/aria-label attributes whose text is in DICT are swapped for Chinese, including
+   UI added later (menus, toasts, dialogs). User content is never touched: anything inside SKIP. */
+(()=>{
+  let ZH=/^zh/i.test(navigator.language||"");
+  try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
+  window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
+  if(!ZH)return;
+  const DICT={"AI Document Editor": "AI 文档", "Outline and recent documents": "大纲和最近的文档", "Document title": "文档标题", "Not saved yet": "尚未保存", "Editing…": "正在编辑…", "Saved on this computer": "已保存在本机", "Couldn't save on this computer": "无法保存在本机", "New document (⌘⌥N)": "新建文档 (⌘⌥N)", "New": "新建", "Open": "打开", "Open .docx, .md, .txt or .html (⌘O)": "打开 .docx、.md、.txt 或 .html (⌘O)", "Export": "导出", "Export ▾": "导出 ▾", "Draft with Claude (⌥I)": "用 Claude 起草 (⌥I)", "Draft": "起草", "Claude panel": "Claude 面板", "Install as app": "安装为应用", "Home": "开始", "Insert": "插入", "Layout": "布局", "References": "引用", "Review": "审阅", "View": "视图", "Undo (⌘Z)": "撤销 (⌘Z)", "Redo (⌘⇧Z)": "重做 (⌘⇧Z)", "Styles": "样式", "Normal": "正文", "Title": "标题", "Subtitle": "副标题", "Heading 1": "标题 1", "Heading 2": "标题 2", "Heading 3": "标题 3", "Heading 4": "标题 4", "Heading 5": "标题 5", "Heading 6": "标题 6", "Quote": "引用", "Code": "代码", "Font": "字体", "Font size (⌘⇧> / ⌘⇧<)": "字号 (⌘⇧> / ⌘⇧<)", "Bold (⌘B)": "加粗 (⌘B)", "Italic (⌘I)": "倾斜 (⌘I)", "Underline (⌘U)": "下划线 (⌘U)", "Strikethrough (⌘⇧X)": "删除线 (⌘⇧X)", "Subscript (⌘=)": "下标 (⌘=)", "Superscript (⌘⇧=)": "上标 (⌘⇧=)", "Bold": "加粗", "Italic": "倾斜", "Underline": "下划线", "Link": "链接", "Comment": "批注", "Comment (⌘⌥M)": "批注 (⌘⌥M)", "Font color": "字体颜色", "Highlight": "突出显示", "Change case": "更改大小写", "Clear formatting (⌘\\)": "清除格式 (⌘\\)", "Format painter: copy formatting, then select text to apply it": "格式刷：复制格式，再选中文字即可应用", "Bulleted list (⌘⇧L)": "项目符号 (⌘⇧L)", "Bullet styles": "项目符号样式", "Numbered list (⌘⇧7)": "编号 (⌘⇧7)", "Numbering and multilevel lists": "编号和多级列表", "Checklist": "清单", "Decrease indent (⇧Tab)": "减少缩进 (⇧Tab)", "Increase indent (Tab)": "增加缩进 (Tab)", "Align left (⌘L)": "左对齐 (⌘L)", "Center (⌘E)": "居中 (⌘E)", "Align right (⌘R)": "右对齐 (⌘R)", "Justify (⌘J)": "两端对齐 (⌘J)", "Line and paragraph spacing": "行距和段落间距", "Dictate: type with your voice": "听写：用语音输入", "Dictate": "听写", "Find and replace (⌘F)": "查找和替换 (⌘F)", "Ask Claude about the selection (⌥I)": "就所选内容询问 Claude (⌥I)", "✦ Rewrite": "✦ 改写", "Table": "表格", "Insert picture": "插入图片", "Picture": "图片", "Insert a shape": "插入形状", "Shapes": "形状", "Insert a text box": "插入文本框", "Text box": "文本框", "Insert equation (⌥=)": "插入公式 (⌥=)", "Equation": "公式", "Insert symbol": "插入符号", "Symbol": "符号", "Link (⌘K)": "链接 (⌘K)", "New comment (⌘⌥M)": "新建批注 (⌘⌥M)", "Insert footnote (⌘⌥F)": "插入脚注 (⌘⌥F)", "Footnote": "脚注", "Page break (⌘Enter)": "分页符 (⌘Enter)", "Page break": "分页符", "Table of contents from your headings": "根据标题生成目录", "Contents": "目录", "Edit header and footer": "编辑页眉和页脚", "Header & footer": "页眉和页脚", "Page numbers": "页码", "Page numbers ▾": "页码 ▾", "Insert today's date": "插入今天的日期", "Date": "日期", "Horizontal line": "水平线", "Line": "线条", "Margins ▾": "页边距 ▾", "Orientation ▾": "纸张方向 ▾", "Size ▾": "纸张大小 ▾", "Columns ▾": "分栏 ▾", "Breaks ▾": "分隔符 ▾", "Page setup…": "页面设置…", "Header & footer…": "页眉和页脚…", "Table of contents ▾": "目录 ▾", "Update table": "更新目录", "Insert footnote": "插入脚注", "Check spelling as you type": "键入时检查拼写", "Spelling": "拼写检查", "Word count (⌘⇧G)": "字数统计 (⌘⇧G)", "Word count": "字数统计", "Read aloud from the cursor": "从光标处朗读", "Read aloud": "朗读", "Stop reading": "停止朗读", "New comment": "新建批注", "Track my own edits as changes (⌘⇧E)": "将我的编辑记为修订 (⌘⇧E)", "Track changes": "修订", "Tracking changes": "正在修订", "Previous change": "上一处修订", "↑ Previous": "↑ 上一处", "Next change": "下一处修订", "↓ Next": "↓ 下一处", "✓ Accept all": "✓ 全部接受", "✕ Reject all": "✕ 全部拒绝", "Find things that make the document hard to read for people using assistive technology": "找出让使用辅助技术的读者难以阅读的问题", "Check accessibility": "检查辅助功能", "Version history": "版本历史", "Print layout": "页面视图", "Web layout": "Web 版式视图", "Zoom": "缩放", "Page width": "页宽", "Navigation pane": "导航窗格", "Show or hide the ruler": "显示或隐藏标尺", "Ruler": "标尺", "Hide everything but the page (Esc to leave)": "只显示页面（按 Esc 退出）", "Focus": "专注模式", "Find": "查找", "Previous (⇧Enter)": "上一个 (⇧Enter)", "Next (Enter)": "下一个 (Enter)", "Replace with": "替换为", "Replace": "替换", "Replace all": "全部替换", "Match case": "区分大小写", "Whole words": "全字匹配", "Regular expressions; use $1 in Replace for groups": "正则表达式；替换中用 $1 引用分组", "Wildcards (regex)": "通配符（正则）", "Close (Esc)": "关闭 (Esc)", "Close": "关闭", "Invalid pattern": "表达式无效", "No results": "无结果", "Outline": "大纲", "Recent": "最近", "＋ New document": "＋ 新建文档", "Headings you add appear here. Use the style menu or ⌘⌥1–3.": "你添加的标题会显示在这里。可使用样式菜单或 ⌘⌥1–3。", "Documents you open or write are kept here, on this computer only.": "你打开或撰写的文档会保存在这里，仅存于本机。", "Remove from this computer": "从本机删除", "Left tab": "左对齐制表位", "Center tab": "居中制表位", "Right tab": "右对齐制表位", "Left tab — click to change, then click the ruler to add": "左对齐制表位 — 点击切换，再点击标尺添加", "Center tab — click to change, then click the ruler to add": "居中制表位 — 点击切换，再点击标尺添加", "Right tab — click to change, then click the ruler to add": "右对齐制表位 — 点击切换，再点击标尺添加", "First line indent": "首行缩进", "Left indent": "左缩进", "Right indent": "右缩进", "Tab stop (drag off to remove)": "制表位（拖出标尺即可删除）", "✦ Assistant": "✦ 助手", "Ask about this document, or tell Claude what to write…": "询问这份文档，或告诉 Claude 要写什么…", "Uses the whole document": "基于整篇文档", "Send (Enter)": "发送 (Enter)", "No changes to review": "没有待审阅的修订", "Reject all": "全部拒绝", "Accept all": "全部接受", "Your name on changes and comments": "修订和批注中显示的名字", "You": "我", "Clear chat": "清空对话", "✦ Ask Claude about this document": "✦ 就这份文档询问 Claude", "Answers use the whole document — even long ones. Select text first to ask about just that part.": "回答会参考整篇文档，长文档也可以。先选中文字，就只问那一部分。", "Understand": "理解", "Summarize this document": "总结这份文档", "List the key points and decisions": "列出要点和决定", "Find action items and deadlines": "找出待办事项和截止日期", "What questions might a reader ask?": "读者可能会问哪些问题？", "Improve": "改进", "Give feedback on this draft": "点评这份草稿", "Proofread (shows tracked changes)": "校对（以修订显示）", "Change the tone…": "更改语气…", "Create": "创建", "Draft new content…": "起草新内容…", "Generate an outline…": "生成大纲…", "Translate the document…": "翻译文档…", "Insert into document": "插入到文档", "Copy": "复制", "Copied": "已复制", "Selected": "已选中", "Comments": "批注", "Reviewer": "审阅者", "When Claude edits, drafts or proofreads, each change appears here for you to accept or reject. Turn on": "Claude 编辑、起草或校对时，每处修改都会显示在这里，由你接受或拒绝。在工具栏中打开", "in the toolbar to track your own edits too.": "，你自己的编辑也会被记录。", "Tracked changes in Word files you open show up here as well, and stay tracked when you export to .docx.": "打开的 Word 文件中的修订也会显示在这里，导出为 .docx 后仍保留为修订。", "Replaced": "替换", "Inserted": "插入", "Deleted": "删除", "✓ Accept": "✓ 接受", "✕ Reject": "✕ 拒绝", "Next ↓": "下一处 ↓", "Write a comment… (⌘Enter to post)": "写批注…（⌘Enter 发布）", "Reply… (⌘Enter to post)": "回复…（⌘Enter 发布）", "Reply": "回复", "Edit": "编辑", "Resolve": "解决", "Cancel": "取消", "✦ Fix with Claude": "✦ 用 Claude 修改", "Claude revises the commented text to address this comment": "Claude 按这条批注修改所批注的文字", "⌥I asks Claude": "⌥I 询问 Claude", "Open in Claude to use the AI features": "在 Claude 中打开即可使用 AI 功能", "Stop": "停止", "Rewrite with Claude (⌥I)": "用 Claude 改写 (⌥I)", "✦ Ask Claude": "✦ 询问 Claude", "In line with text": "嵌入型", "Inline": "嵌入型", "Square wrap, picture on the left": "四周型环绕，图片居左", "Wrap left": "左侧环绕", "Square wrap, picture on the right": "四周型环绕，图片居右", "Wrap right": "右侧环绕", "Alt text": "替代文字", "Remove": "删除", "Edit shape": "编辑形状", "Drag to resize": "拖动以调整大小", "Listening…": "正在听…", "Drop to open": "拖放到此处打开", "Keep": "保留", "Discard": "放弃", "Discard and ask again": "放弃并重新生成", "↻ Try again": "↻ 重试", "Review later": "稍后审阅", "Undo": "撤销", "Export PDF": "导出 PDF", "Tell Claude how to change the selection…": "告诉 Claude 如何修改所选内容…", "Tell Claude what to write here…": "告诉 Claude 在这里写什么…", "Go": "开始", "Edit selection": "编辑所选内容", "Improve writing": "改进写作", "Fix spelling & grammar": "修正拼写和语法", "Make shorter": "缩短", "Make longer": "扩写", "Simplify language": "简化语言", "Turn into bullet points": "转为要点列表", "Turn into a table": "转为表格", "Change tone": "更改语气", "Translate selection": "翻译所选内容", "More…": "更多…", "Ask": "提问", "Explain this": "解释这段", "Summarize selection": "总结所选内容", "Write here": "在此处写作", "Continue writing": "续写", "from the cursor": "从光标处", "Draft with Claude…": "用 Claude 起草…", "Whole document": "整篇文档", "Proofread the document": "校对文档", "Change tone of the document…": "更改文档语气…", "Summarize the document": "总结文档", "Custom edit": "自定义修改", "Turned into a table": "已转为表格", "Continued writing": "续写", "From assistant": "来自助手", "Proofreading": "校对", "Writing": "写作", "Continuing…": "正在续写…", "Writing…": "正在写作…", "Drafting…": "正在起草…", "Outlining…": "正在生成大纲…", "Proofreading…": "正在校对…", "Building a table…": "正在生成表格…", "Claude is working…": "Claude 正在处理…", "Claude is answering…": "Claude 正在回答…", "Building Word file…": "正在生成 Word 文件…", "Laying out pages…": "正在排版页面…", "Select text first to turn it into a link.": "先选中文字，再把它设为链接。", "Remove link": "删除链接", "Apply": "应用", "Describe the picture for people who can't see it. Word keeps this too.": "为看不到图片的人描述这张图片。Word 也会保留这段文字。", "Save": "保存", "Insert table": "插入表格", "Rows": "行数", "Columns": "列数", "Header row": "标题行", "Insert table (3 × 3)": "插入表格 (3 × 3)", "Insert table…": "插入表格…", "Insert row above": "在上方插入行", "Insert row below": "在下方插入行", "Insert column left": "在左侧插入列", "Insert column right": "在右侧插入列", "Toggle header row": "切换标题行", "Merge with cell to the right": "与右侧单元格合并", "Merge with cell below": "与下方单元格合并", "Split merged cell": "拆分合并的单元格", "Shade cell (uses the highlight color)": "单元格底纹（使用突出显示颜色）", "Remove cell shading": "清除单元格底纹", "Delete row": "删除行", "Delete column": "删除列", "Delete table": "删除表格", "Change the tone of the document": "更改文档语气", "Claude rewrites every section. Each change is shown for you to accept or reject.": "Claude 会改写每个部分，每处修改都会显示出来，由你接受或拒绝。", "Or describe it: e.g. warmer, for a customer email": "或者描述一下：例如更亲切，用于给客户的邮件", "Rewrite document": "改写文档", "Translate": "翻译", "Translate the selection in place as tracked changes.": "在原处翻译所选内容，并以修订显示。", "Creates a translated copy of this document, keeping headings, lists, tables and pictures. Your original stays as it is.": "生成这份文档的译文副本，保留标题、列表、表格和图片，原文保持不变。", "Generate an outline": "生成大纲", "Claude writes section headings with notes on what each covers, at the cursor.": "Claude 会在光标处写出各节标题，并注明每节要写的内容。", "What is the document about? e.g. Quarterly business review for the EMEA sales team": "文档是关于什么的？例如：华东销售团队季度业务回顾", "Generate": "生成", "✦ Draft with Claude": "✦ 用 Claude 起草", "Describe what you need. Claude writes it at the cursor; you keep or discard it.": "描述你需要的内容。Claude 会在光标处写出来，由你决定保留或放弃。", "e.g. A one-page project proposal for moving our support team to a 4-day week, with goals, risks and a timeline": "例如：一页纸的项目提案，让客服团队改为每周四天工作制，包含目标、风险和时间表", "📎 Reference a file": "📎 引用文件", ".docx, .pdf, .md, .txt or .html — Claude uses it as source material.": ".docx、.pdf、.md、.txt 或 .html — Claude 会把它作为参考资料。", "Length": "篇幅", "Short": "短", "Medium": "中", "Long": "长", "Tone": "语气", "Natural": "自然", "Footnote text": "脚注文字", "Delete footnote": "删除脚注", "Insert equation": "插入公式", "Edit equation": "编辑公式", "Type LaTeX, or use the buttons. Word receives a real, editable equation.": "输入 LaTeX，或使用下方按钮。导出到 Word 后是真正可编辑的公式。", "Preview": "预览", "Preview couldn't load (no connection). You can still insert the equation.": "预览无法加载（没有网络连接）。你仍然可以插入公式。", "On its own line, centered": "单独成行并居中", "Delete equation": "删除公式", "matrix": "矩阵", "Insert shape": "插入形状", "Fill": "填充", "Size": "大小", "Text inside the shape (optional)": "形状中的文字（可选）", "Rectangle": "矩形", "Rounded rectangle": "圆角矩形", "Oval": "椭圆", "Triangle": "三角形", "Diamond": "菱形", "Arrow": "箭头", "Star": "星形", "Callout": "标注", "Line arrow": "箭头线", "Hexagon": "六边形", "Heart": "心形", "Recently used": "最近使用", "All symbols": "所有符号", "Done": "完成", "Page number": "页码", "Page count": "总页数", "Tab (left · center · right)": "制表符（左 · 中 · 右）", "Today's date": "今天的日期", "Shown on every page and saved into the Word file. A Tab splits a line into left, center and right parts.": "显示在每一页上，并保存到 Word 文件中。用制表符可把一行分成左、中、右三部分。", "Header": "页眉", "Footer": "页脚", "Left": "左", "Center": "中", "Right": "右", "Header text": "页眉文字", "Footer text": "页脚文字", "Different first page": "首页不同", "First-page header (leave empty for none)": "首页页眉（留空则不显示）", "First-page footer (leave empty for none)": "首页页脚（留空则不显示）", "Different odd & even pages": "奇偶页不同", "Header and footer above are used on odd pages; these on even pages. Use {page} and {pages} for numbers, a Tab to split left · center · right.": "上面的页眉页脚用于奇数页，这里的用于偶数页。用 {page} 和 {pages} 表示页码和总页数，用制表符分成左 · 中 · 右。", "Even-page header": "偶数页页眉", "Even-page footer": "偶数页页脚", "Remove header & footer": "删除页眉和页脚", "Double-click to add a header": "双击添加页眉", "Double-click to add a footer": "双击添加页脚", "Page setup": "页面设置", "Measurements in inches (1 in = 2.54 cm).": "单位为英寸（1 英寸 = 2.54 厘米）。", "Apply to": "应用于", "This section": "本节", "Paper size": "纸张大小", "Custom": "自定义", "Width × height": "宽 × 高", "Orientation": "纸张方向", "Portrait": "纵向", "Landscape": "横向", "Margins": "页边距", "Top": "上", "Bottom": "下", "From edge": "距边界", "Custom margins…": "自定义页边距…", "More paper sizes…": "其他纸张大小…", "One column": "一栏", "Two columns": "两栏", "Three columns": "三栏", "Page break — next text starts on a new page": "分页符 — 后面的文字从新页开始", "Section break — next page": "分节符 — 下一页", "Section break — continuous": "分节符 — 连续", "Bottom of page — center": "页面底端 — 居中", "Bottom of page — right": "页面底端 — 右侧", "Bottom of page — left": "页面底端 — 左侧", "Top of page — right": "页面顶端 — 右侧", "Top of page — center": "页面顶端 — 居中", "Page X of Y — bottom center": "第 X 页，共 Y 页 — 底端居中", "Page X of Y — top right": "第 X 页，共 Y 页 — 顶端右侧", "Remove page numbers": "删除页码", "Edit header & footer…": "编辑页眉和页脚…", "Insert table of contents": "插入目录", "Remove table of contents": "删除目录", "Remove table": "删除目录", "Remove space before paragraph": "删除段前间距", "Add space before paragraph": "增加段前间距", "Add space after paragraph": "增加段后间距", "Remove space after paragraph": "删除段后间距", "• Filled circle": "• 实心圆", "◦ Hollow circle": "◦ 空心圆", "▪ Square": "▪ 方块", "☑ Checklist": "☑ 清单", "Multilevel 1. → a. → i.": "多级列表 1. → a. → i.", "Restart numbering at 1": "重新从 1 开始编号", "Set numbering value…": "设置编号值…", "Set numbering value": "设置编号值", "Start at": "起始编号", "OK": "确定", "Sentence case.": "句首字母大写。", "lowercase": "小写", "UPPERCASE": "大写", "Capitalize Each Word": "每个单词首字母大写", "tOGGLE cASE": "切换大小写", "Blank document": "空白文档", "Word document (.docx)": "Word 文档 (.docx)", "PDF (.pdf)": "PDF (.pdf)", "Markdown (.md)": "Markdown (.md)", "Web page (.html)": "网页 (.html)", "Plain text (.txt)": "纯文本 (.txt)", "Word export keeps your file's styles, headers, footers and page setup.": "导出为 Word 时会保留文件原有的样式、页眉页脚和页面设置。", "Résumé — One page, clean sections": "简历 — 一页纸，分区清晰", "Cover letter — Business letter layout": "求职信 — 正式信函版式", "Report — Title, contents, numbered pages": "报告 — 标题、目录、页码", "Meeting notes — Agenda, decisions, action items": "会议纪要 — 议程、决定、待办事项", "Whole document (tracked deletions not counted)": "整篇文档（不含修订中删除的内容）", "Pages": "页数", "Words": "字数", "Characters (no spaces)": "字符数（不计空格）", "Characters (with spaces)": "字符数（计空格）", "Paragraphs": "段落数", "Footnotes": "脚注", "Reading time": "阅读时间", "Accessibility check": "辅助功能检查", "No issues found.": "没有发现问题。", "Picture without alt text": "图片缺少替代文字", "Click it and choose Alt text.": "点击图片并选择“替代文字”。", "Empty heading": "空标题", "Delete it or add text.": "删除它或添加文字。", "Table without a header row": "表格缺少标题行", "Table menu → Toggle header row.": "表格菜单 → 切换标题行。", "Link text doesn't say where it goes": "链接文字没有说明去向", "Text color is hard to read": "文字颜色难以看清", "Choose a darker or lighter color.": "换一种更深或更浅的颜色。", "Long document without headings": "长文档没有标题", "Use Heading styles so people can navigate.": "使用标题样式，方便读者导航。", "Saved on this computer every 10 minutes while you edit, and when you save one yourself. Restoring keeps your current text as a version first.": "编辑时每 10 分钟自动保存在本机，你也可以手动保存。恢复前会先把当前内容另存为一个版本。", "Name this version (optional)": "为此版本命名（可选）", "Save version now": "立即保存版本", "Restore this version": "恢复此版本", "No versions yet. They appear as you edit, or save one now.": "还没有版本。编辑时会自动生成，也可以现在保存一个。", "Nothing to undo.": "没有可撤销的操作。", "All changes accepted.": "已接受所有修订。", "All changes rejected.": "已拒绝所有修订。", "That document is no longer stored on this computer.": "这份文档已不在本机。", "Saved on this computer. Use Export to save a .docx file.": "已保存在本机。要保存 .docx 文件，请使用“导出”。", "Printing isn't available inside Claude. Export a PDF, then print that file.": "在 Claude 中无法直接打印。请导出 PDF 后再打印。", "Your edits are now tracked. Turn it off to edit freely.": "你的编辑现在会记为修订。关闭后即可自由编辑。", "Track changes is off.": "修订已关闭。", "Put the cursor in a table cell first.": "请先把光标放在表格单元格中。", "There's no cell to the right.": "右侧没有单元格。", "The cell below doesn't line up with this one.": "下方的单元格与这个单元格没有对齐。", "This cell isn't merged.": "这个单元格没有合并。", "Old .doc files can't be read here. Open it in Word or Pages, save as .docx, then open that.": "这里无法读取旧版 .doc 文件。请在 Word 或 Pages 中打开并另存为 .docx，再打开它。", "This PDF has no selectable text (it may be a scan), so there's nothing to edit.": "这个 PDF 没有可选中的文字（可能是扫描件），所以没有可编辑的内容。", "This app opens .docx, .pdf, .md, .txt and .html files.": "本应用可以打开 .docx、.pdf、.md、.txt 和 .html 文件。", "This file was opened in compatibility mode: some formatting may be simplified.": "该文件以兼容模式打开，部分格式可能被简化。", "Couldn't build the file. Try again; if it keeps failing, export as HTML instead.": "无法生成文件。请重试；如果一直失败，请改为导出 HTML。", "Saving files needs the Claude app.": "保存文件需要 Claude 应用。", "Another save is already waiting for you.": "已有另一个保存请求在等你确认。", "Couldn't save the file here.": "无法在此保存文件。", "Claude is busy or you've hit your usage limit. Try again in a bit.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude isn't available on this account.": "此账户无法使用 Claude。", "Claude declined this request.": "Claude 拒绝了这次请求。", "Sign in to Claude again, then retry.": "请重新登录 Claude 后再试。", "That's too much text at once. Select a smaller part.": "一次的文字太多了，请选择较少的部分。", "Claude's answer came back in an unexpected shape. Try again.": "Claude 返回的结果格式异常，请重试。", "Claude returned nothing. Try again.": "Claude 没有返回内容，请重试。", "Claude had a hiccup. Try again.": "Claude 出了点小问题，请重试。", "Too many requests at once. Wait a moment.": "同时发出的请求太多，请稍等片刻。", "Something went wrong. Try again.": "出了点问题，请重试。", "Stopped.": "已停止。", "Claude features work when you open this app in Claude.": "在 Claude 中打开本应用即可使用 Claude 功能。", "Claude is still working on the last request — Stop it first.": "Claude 仍在处理上一个请求，请先停止它。", "Claude is still working — Stop it first.": "Claude 仍在处理中，请先停止。", "Select some text first.": "请先选中一些文字。", "Claude's answer was cut short — select less text.": "Claude 的回答被截断了，请选择较少的文字。", "Select the text to turn into a table.": "请选中要转为表格的文字。", "Claude stopped at the length limit. Use “Continue writing” to add more.": "Claude 已达到长度上限。可使用“续写”继续添加。", "Claude didn't suggest any changes.": "Claude 没有提出修改。", "The document is empty.": "文档是空的。", "No spelling or grammar problems found.": "没有发现拼写或语法问题。", "Translated copy created. The original is in Recent.": "已生成译文副本，原文在“最近”中。", "Select the text you want to comment on.": "请选中要批注的文字。", "Select some text to comment on.": "请选中一些文字再批注。", "Comment resolved.": "批注已解决。", "Applied to this section.": "已应用于本节。", "Applied to the first section and sections that don't have their own setup.": "已应用于第一节以及没有单独设置的节。", "Header and footer removed.": "已删除页眉和页脚。", "Page numbers added. Double-click a header or footer to edit it.": "已添加页码。双击页眉或页脚即可编辑。", "There's no table of contents yet.": "还没有目录。", "Table of contents updated.": "目录已更新。", "Print layout needs a wider window. Showing web layout.": "页面视图需要更宽的窗口，现以 Web 版式显示。", "The text is already in one column.": "文字已经是一栏。", "Add headings (Heading 1–3), then choose Update table.": "请先添加标题（标题 1–3），再选择“更新目录”。", "Select the text to resize first.": "请先选中要调整字号的文字。", "Put the cursor in a paragraph first.": "请先把光标放在段落中。", "Put the cursor in a numbered list.": "请把光标放在编号列表中。", "Select the text to change first.": "请先选中要更改的文字。", "Select text to apply the copied formatting. Press Esc to cancel.": "选中文字即可应用复制的格式。按 Esc 取消。", "Click in formatted text first, then press the brush.": "请先点击带格式的文字，再按格式刷。", "Insert a table of contents first (Insert → Contents).": "请先插入目录（插入 → 目录）。", "No tracked changes.": "没有修订。", "Focus mode. Press Esc to show the toolbar again.": "专注模式。按 Esc 重新显示工具栏。", "Spelling check is on. Right-click a red-underlined word for suggestions.": "拼写检查已打开。右键点击带红色下划线的词可查看建议。", "Spelling check is off.": "拼写检查已关闭。", "Dictation is turned off for this app. Turn it on in the app's Permissions menu.": "此应用的听写已关闭。请在应用的“权限”菜单中打开。", "Dictation isn't available here.": "此处无法使用听写。", "Dictation is busy right now. Try again in a moment.": "听写暂时忙碌，请稍后再试。", "The microphone or speech service failed. Try again.": "麦克风或语音服务出错，请重试。", "Dictation stops after an hour. Press Dictate to keep going.": "听写一小时后会停止。按“听写”继续。", "Press Dictate again to start.": "再按一次“听写”开始。", "Dictation stopped.": "听写已停止。", "Couldn't start dictation.": "无法开始听写。", "Read aloud is busy right now. Try again later.": "朗读暂时忙碌，请稍后再试。", "Read aloud is turned off for this app.": "此应用的朗读已关闭。", "Reading stopped because of a problem with the voice. Try again.": "语音出现问题，朗读已停止，请重试。", "There's no text to read.": "没有可朗读的文字。", "Press Read aloud again to start.": "再按一次“朗读”开始。", "Claude is using the microphone. Stop dictation first.": "Claude 正在使用麦克风，请先停止听写。", "Couldn't read aloud right now.": "暂时无法朗读。", "Start writing first. Versions are saved while you work.": "请先开始写作。编辑时会自动保存版本。", "Version history needs browser storage, which is blocked here.": "版本历史需要浏览器存储，但这里已被禁止。", "Version saved.": "版本已保存。", "Couldn't save the version — storage may be full.": "无法保存版本，存储空间可能已满。", "Tab stop removed.": "已删除制表位。", "Click in a paragraph first.": "请先点击某个段落。", "Some parts didn't load. Check your connection and reopen the app.": "部分组件没有加载。请检查网络连接后重新打开应用。", "*Stopped.*": "*已停止。*", "English": "英语", "Translated to English": "翻译为英语", "Translated to English…": "正在翻译为英语…", "Chinese (Simplified)": "简体中文", "Translated to Chinese (Simplified)": "翻译为简体中文", "Translated to Chinese (Simplified)…": "正在翻译为简体中文…", "Chinese (Traditional)": "繁体中文", "Translated to Chinese (Traditional)": "翻译为繁体中文", "Translated to Chinese (Traditional)…": "正在翻译为繁体中文…", "Spanish": "西班牙语", "Translated to Spanish": "翻译为西班牙语", "Translated to Spanish…": "正在翻译为西班牙语…", "French": "法语", "Translated to French": "翻译为法语", "Translated to French…": "正在翻译为法语…", "German": "德语", "Translated to German": "翻译为德语", "Translated to German…": "正在翻译为德语…", "Japanese": "日语", "Translated to Japanese": "翻译为日语", "Translated to Japanese…": "正在翻译为日语…", "Korean": "韩语", "Translated to Korean": "翻译为韩语", "Translated to Korean…": "正在翻译为韩语…", "Portuguese": "葡萄牙语", "Translated to Portuguese": "翻译为葡萄牙语", "Translated to Portuguese…": "正在翻译为葡萄牙语…", "Italian": "意大利语", "Translated to Italian": "翻译为意大利语", "Translated to Italian…": "正在翻译为意大利语…", "Russian": "俄语", "Translated to Russian": "翻译为俄语", "Translated to Russian…": "正在翻译为俄语…", "Arabic": "阿拉伯语", "Translated to Arabic": "翻译为阿拉伯语", "Translated to Arabic…": "正在翻译为阿拉伯语…", "Hindi": "印地语", "Translated to Hindi": "翻译为印地语", "Translated to Hindi…": "正在翻译为印地语…", "Dutch": "荷兰语", "Translated to Dutch": "翻译为荷兰语", "Translated to Dutch…": "正在翻译为荷兰语…", "Turkish": "土耳其语", "Translated to Turkish": "翻译为土耳其语", "Translated to Turkish…": "正在翻译为土耳其语…", "Vietnamese": "越南语", "Translated to Vietnamese": "翻译为越南语", "Translated to Vietnamese…": "正在翻译为越南语…", "Indonesian": "印尼语", "Translated to Indonesian": "翻译为印尼语", "Translated to Indonesian…": "正在翻译为印尼语…", "Thai": "泰语", "Translated to Thai": "翻译为泰语", "Translated to Thai…": "正在翻译为泰语…", "Polish": "波兰语", "Translated to Polish": "翻译为波兰语", "Translated to Polish…": "正在翻译为波兰语…", "Professional": "专业", "Professional tone": "专业语气", "Professional tone…": "正在改为专业语气…", "Casual": "随意", "Casual tone": "随意语气", "Casual tone…": "正在改为随意语气…", "Friendly": "友好", "Friendly tone": "友好语气", "Friendly tone…": "正在改为友好语气…", "Confident": "自信", "Confident tone": "自信语气", "Confident tone…": "正在改为自信语气…", "Direct": "直接", "Direct tone": "直接语气", "Direct tone…": "正在改为直接语气…", "Persuasive": "有说服力", "Persuasive tone": "有说服力语气", "Persuasive tone…": "正在改为有说服力语气…", "Academic": "学术", "Academic tone": "学术语气", "Academic tone…": "正在改为学术语气…", "Empathetic": "有同理心", "Empathetic tone": "有同理心语气", "Empathetic tone…": "正在改为有同理心语气…", "Improve writing…": "改进写作…", "Fix spelling & grammar…": "修正拼写和语法…", "Make shorter…": "缩短…", "Make longer…": "扩写…", "Simplify language…": "简化语言…", "Turn into bullet points…": "转为要点列表…", "Custom edit…": "自定义修改…", "Normal — Top and bottom 1″, left and right 1″": "常规 — 上下 1″，左右 1″", "✓ Normal — Top and bottom 1″, left and right 1″": "✓ 常规 — 上下 1″，左右 1″", "Narrow — 0.5″ on all sides": "窄 — 四边均为 0.5″", "✓ Narrow — 0.5″ on all sides": "✓ 窄 — 四边均为 0.5″", "Moderate — Top and bottom 1″, left and right 0.75″": "适中 — 上下 1″，左右 0.75″", "✓ Moderate — Top and bottom 1″, left and right 0.75″": "✓ 适中 — 上下 1″，左右 0.75″", "Wide — Top and bottom 1″, left and right 2″": "宽 — 上下 1″，左右 2″", "✓ Wide — Top and bottom 1″, left and right 2″": "✓ 宽 — 上下 1″，左右 2″", "Letter — 8.5 × 11 in": "Letter — 8.5 × 11 英寸", "✓ Letter — 8.5 × 11 in": "✓ Letter — 8.5 × 11 英寸", "Legal — 8.5 × 14 in": "Legal — 8.5 × 14 英寸", "✓ Legal — 8.5 × 14 in": "✓ Legal — 8.5 × 14 英寸", "A4 — 21 × 29.7 cm": "A4 — 21 × 29.7 厘米", "✓ A4 — 21 × 29.7 cm": "✓ A4 — 21 × 29.7 厘米", "A5 — 14.8 × 21 cm": "A5 — 14.8 × 21 厘米", "✓ A5 — 14.8 × 21 cm": "✓ A5 — 14.8 × 21 厘米", "B5 (JIS) — 18.2 × 25.7 cm": "B5 (JIS) — 18.2 × 25.7 厘米", "✓ B5 (JIS) — 18.2 × 25.7 cm": "✓ B5 (JIS) — 18.2 × 25.7 厘米", "Executive — 7.25 × 10.5 in": "Executive — 7.25 × 10.5 英寸", "✓ Executive — 7.25 × 10.5 in": "✓ Executive — 7.25 × 10.5 英寸", "Tabloid — 11 × 17 in": "Tabloid — 11 × 17 英寸", "✓ Tabloid — 11 × 17 in": "✓ Tabloid — 11 × 17 英寸", "✓ Portrait": "✓ 纵向", "✓ Landscape": "✓ 横向"};
+  const PATTERNS=([["Page (\\d+) of (\\d+)", "第 $1 页，共 $2 页"], ["([\\d,]+) words?", "$1 字"], ["([\\d,]+) of ([\\d,]+) words", "$1 / $2 字"], ["([\\d,]+) characters", "$1 个字符"], ["(~?[\\d,]+) pages?", "$1 页"], ["(\\d+) changes? to review", "$1 处修订待审阅"], ["(\\d+) changes? — click one to jump to it", "$1 处修订，点击可跳转"], ["(\\d+) comments?, no changes", "$1 条批注，没有修订"], ["Comments \\((\\d+)\\)", "批注（$1）"], ["Changes \\((\\d+)\\)", "修订（$1）"], ["✦ (\\d+) changes?", "✦ $1 处修改"], ["(\\d+) of (\\d+)", "$1 / $2"], ["About the selection \\(([\\d,]+) words\\) · whole document as context", "关于所选内容（$1 字）· 以整篇文档为背景"], ["Uses the whole document ·", "基于整篇文档 ·"], ["(.+) · ([\\d,]+) words", "$1 · $2 字"], ["Selection: ([\\d,]+) words, ([\\d,]+) characters", "所选内容：$1 字，$2 个字符"], ["(\\d+) min", "$1 分钟"], ["Footnote (\\d+)", "脚注 $1"], ["Heading level skipped \\(H(\\d) → H(\\d)\\)", "标题级别跳级（H$1 → H$2）"], ["(\\d+) things? to fix\\. Click one to go to it\\.", "有 $1 处需要修改。点击可跳转。"], ["Go to “(.+)”", "转到“$1”"], ["Opening (.+)…", "正在打开 $1…"], ["Laying out page (\\d+) of (\\d+)…", "正在排版第 $1 页，共 $2 页…"], ["Proofreading… \\(part (\\d+) of (\\d+)\\)", "正在校对…（第 $1 部分，共 $2 部分）"], ["Rewriting \\((.+)\\)… \\(part (\\d+) of (\\d+)\\)", "正在改写（$1）…（第 $2 部分，共 $3 部分）"], ["Rewriting \\((.+)\\)…", "正在改写（$1）…"], ["Translating into (.+) \\(part (\\d+) of (\\d+)\\)…", "正在翻译为 $1（第 $2 部分，共 $3 部分）…"], ["Translating into (.+)…", "正在翻译为 $1…"], ["Opened (.+)\\. It has tracked changes from Word — review them in the Claude panel\\.", "已打开 $1。其中有来自 Word 的修订，可在 Claude 面板中审阅。"], ["Opened (.+)\\.", "已打开 $1。"], ["Couldn't open (.+): the file looks damaged or isn't a Word document\\.", "无法打开 $1：文件似乎已损坏，或不是 Word 文档。"], ["Couldn't open (.+): unreadable file\\.", "无法打开 $1：文件无法读取。"], ["(\\d+) comments? from Word — see the Review tab\\.", "有 $1 条来自 Word 的批注，请在“审阅”标签页查看。"], ["Opened (\\d+) pages? of text\\. Layout, pictures and tables from the PDF aren't kept — headings and lists are guessed\\.", "已打开 $1 页文字。PDF 中的版式、图片和表格不会保留，标题和列表是推测出来的。"], ["(\\d+) pictures? in an unsupported format \\(such as EMF\\) can't be shown, but stay in your file when you export\\.", "有 $1 张图片格式不受支持（如 EMF），无法显示，但导出时仍保留在文件中。"], ["Couldn't read (.+)\\.", "无法读取 $1。"], ["Removed “(.+)”\\.", "已删除“$1”。"], ["Replaced (\\d+) match(?:es)?\\.", "已替换 $1 处。"], ["Links open outside the app: copy it — (.*)", "链接会在应用外打开，请复制：$1"], ["Saving files needs the Claude app\\. Copied the (\\w+) to your clipboard instead\\.", "保存文件需要 Claude 应用。已改为把 $1 复制到剪贴板。"], ["Saving \\.(\\w+) files needs the Claude app\\. Open AI Document Editor there\\.", "保存 .$1 文件需要 Claude 应用，请在其中打开 AI 文档。"], ["Saved (.+)\\.docx — (\\d+) pending changes? kept as Word tracked changes\\.", "已保存 $1.docx，其中 $2 处待定修改保留为 Word 修订。"], ["Saved (.+)", "已保存 $1"], ["(\\d+) pending changes?: \\.docx keeps them as tracked changes; other formats save them as accepted\\.", "有 $1 处待定修改：.docx 会保留为修订，其他格式按已接受保存。"], ["(\\d+) parts? couldn't be processed\\. Run it again to retry those\\.", "有 $1 个部分未能处理，请再运行一次重试。"], ["Translated copy created, but (\\d+) parts? failed — those stay in the original language\\.", "已生成译文副本，但有 $1 个部分失败，这些部分保留原文。"], ["Restored the version from (.+)\\.", "已恢复 $1 的版本。"], ["Selected text set in (\\d+) columns\\.", "所选文字已分为 $1 栏。"], ["Document set in (\\d+) columns\\.", "文档已分为 $1 栏。"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",#outline a,#recent .n,.card .tx,.card .q,.card .why,.card .k b,.reply .who b,.reply>div:last-child,.msg.user,.msg.bot:not(.err)>:not(.macts),#notes,.pghf:not(.empty),.pgfnbox,#hfTop,#hfBot,#pgClone,.pglayer,.pgtop,#vPrev,#vList .n,#eqPrev,#dRefs,#dictPartial");
+  const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
+  const norm=s=>s.replace(/\s+/g," ").trim();
+  function tr(s){
+    const k=norm(s); if(!k||!/[A-Za-z]/.test(k)) return null;
+    let v=DICT[k];
+    if(v==null){for(const [re,rep] of PATTERNS){if(re.test(k)){v=k.replace(re,rep);break}}}
+    if(v==null||v===k) return null;
+    const lead=s.match(/^\s*/)[0], tail=s.match(/\s*$/)[0];
+    return lead+v+tail;
+  }
+  window.__tr=s=>tr(String(s))??s;
+  const skipped=el=>{try{return !!(el&&el.closest&&el.closest(SKIP))}catch{return false}};
+  function doText(n){const p=n.parentElement;if(!p||skipped(p))return;const v=tr(n.nodeValue);if(v!=null)n.nodeValue=v}
+  function doAttrs(el){if(el.nodeType!==1)return;for(const a of ATTRS){const x=el.getAttribute(a);if(!x)continue;if(a==="data-ph"||a==="alt"){if(skipped(el.parentElement))continue}const v=tr(x);if(v!=null)el.setAttribute(a,v)}}
+  function walk(root){
+    if(root.nodeType===3){doText(root);return}
+    if(root.nodeType!==1&&root.nodeType!==11)return;
+    if(root.nodeType===1){doAttrs(root);if(skipped(root))return}
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode(n){
+      if(n.nodeType===1){doAttrs(n);return skipped(n)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP}
+      return NodeFilter.FILTER_ACCEPT}});
+    let n;while((n=w.nextNode()))doText(n);
+  }
+  const mo=new MutationObserver(ms=>{for(const m of ms){
+    if(m.type==="childList")m.addedNodes.forEach(walk);
+    else if(m.type==="characterData")doText(m.target);
+    else if(m.type==="attributes")doAttrs(m.target);
+  }});
+  const start=()=>{document.documentElement.lang="zh-CN";const t=tr(document.title||"");if(t)document.title=t;walk(document.body);
+    mo.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:ATTRS})};
+  if(document.body)start();else document.addEventListener("DOMContentLoaded",start);
+  const _a=window.alert,_c=window.confirm,_p=window.prompt;
+  window.alert=m=>_a.call(window,tr(String(m))??m);window.confirm=m=>_c.call(window,tr(String(m))??m);window.prompt=(m,d)=>_p.call(window,tr(String(m))??m,d);
+})();
+/*END_I18N_RUNTIME*/
+</script>
+<script>
+
+
 "use strict";
 /* ============ basics ============ */
 const $=id=>document.getElementById(id);
+// Chinese UI (data/i18n/runtime.js): zh() picks the Chinese text, trUI() translates a UI label through the dictionary
+const zh=(en,c)=>window.__ZH?c:en, trUI=s=>window.__ZH&&window.__tr?window.__tr(s):s;
+const UNTITLED=zh("Untitled document","未命名文档"), APPNAME=zh("AI Document Editor","AI 文档");
 const page=$("page"), canvas=$("canvas"), sheet=$("sheet");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
@@ -573,26 +627,26 @@ let index=store.get("index",[]); // [{id,title,updated,words}]
 const saveIndex=()=>store.set("index",index.slice(0,200));
 
 /* ============ document state ============ */
-let cur={id:null,title:"Untitled document",pkg:null,css:"",hf:null,source:null,chat:[],comments:{},pg:null};
+let cur={id:null,title:UNTITLED,pkg:null,css:"",hf:null,source:null,chat:[],comments:{},pg:null};
 let dirty=false, saveT=null;
-function setTitle(t){cur.title=t||"Untitled document";$("title").value=cur.title;document.title=cur.title+" – AI Document Editor";}
+function setTitle(t){cur.title=t||UNTITLED;$("title").value=cur.title;document.title=cur.title+" – "+APPNAME;}
 function markDirty(){dirty=true;$("saved").textContent="Editing…";clearTimeout(saveT);saveT=setTimeout(saveNow,700);}
 async function saveNow(){
   clearTimeout(saveT);if(!dirty)return;
-  if(!cur.id&&!page.textContent.trim()&&!page.querySelector("img,table")&&cur.title==="Untitled document"){dirty=false;return;}
+  if(!cur.id&&!page.textContent.trim()&&!page.querySelector("img,table")&&cur.title===UNTITLED){dirty=false;return;}
   if(!cur.id)cur.id=uid();
-  if(cur.title==="Untitled document"){const first=leaves().map(l=>ownText(l).trim()).find(Boolean);if(first){setTitle(first.slice(0,60).replace(/[.,;:]+$/,""));}}
+  if(cur.title===UNTITLED){const first=leaves().map(l=>ownText(l).trim()).find(Boolean);if(first){setTitle(first.slice(0,60).replace(/[.,;:]+$/,""));}}
   const html=cleanHtml(), words=countWords(textOf(page,true)).words;
   const ok=await dbPut({id:cur.id,title:cur.title,html,pkg:cur.pkg,css:cur.css,hf:cur.hf,source:cur.source,chat:cur.chat.slice(-40),comments:cur.comments,pg:cur.pg,updated:Date.now()});
   autoVersion(html,words);
   dirty=false;
   index=index.filter(d=>d.id!==cur.id);index.unshift({id:cur.id,title:cur.title,updated:Date.now(),words});saveIndex();store.set("last",cur.id);
-  $("saved").textContent=ok?"Saved on this computer":"Couldn't save — storage is full";
+  $("saved").textContent=ok?"Saved on this computer":"Couldn't save on this computer";
   renderRecent();
 }
 function loadDoc(d){
   closeFloats();
-  cur={id:d.id||null,title:d.title||"Untitled document",pkg:d.pkg||null,css:(d.css||"").replace(/#page\b/g,".doc"),hf:d.hf||null,source:d.source||null,chat:d.chat||[],comments:d.comments||{},pg:d.pg||null};
+  cur={id:d.id||null,title:d.title||UNTITLED,pkg:d.pkg||null,css:(d.css||"").replace(/#page\b/g,".doc"),hf:d.hf||null,source:d.source||null,chat:d.chat||[],comments:d.comments||{},pg:d.pg||null};
   setTitle(cur.title);
   page.innerHTML=d.html&&d.html.trim()?d.html:"<p><br></p>";
   $("docCss").textContent=cur.css||"";
@@ -611,8 +665,8 @@ async function openRecent(id){if(id===cur.id)return;await saveNow();const d=awai
 let undoS=[], redoS=[], burstT=null;
 function textPos(container,offset){const r=document.createRange();r.selectNodeContents(page);try{r.setEnd(container,offset);}catch{return 0;}return r.toString().length;}
 function getSel(){const s=getSelection();if(!s.rangeCount||!page.contains(s.anchorNode))return null;const r=s.getRangeAt(0);return{a:textPos(r.startContainer,r.startOffset),b:textPos(r.endContainer,r.endOffset)};}
-function posToPoint(n){const w=document.createTreeWalker(page,NodeFilter.SHOW_TEXT);let t,acc=0,last=null;while((t=w.nextNode())){if(acc+t.length>=n)return[t,n-acc];acc+=t.length;last=t;}return last?[last,last.length]:[page,page.childNodes.length];}
-function setSel(s){if(!s)return;try{const r=document.createRange();const[a,ao]=posToPoint(s.a);const[b,bo]=posToPoint(s.b);r.setStart(a,ao);r.setEnd(b,bo);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);}catch{}}
+function posToPoint(n,after){const w=document.createTreeWalker(page,NodeFilter.SHOW_TEXT);let t,acc=0,last=null;while((t=w.nextNode())){if(acc+t.length>n||(!after&&acc+t.length===n))return[t,n-acc];acc+=t.length;last=t;}return last?[last,last.length]:[page,page.childNodes.length];}
+function setSel(s){if(!s)return;try{const r=document.createRange();const[a,ao]=posToPoint(s.a,s.b>s.a);const[b,bo]=posToPoint(s.b);r.setStart(a,ao);r.setEnd(b,bo);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);}catch{}}
 const cleanHtml=()=>page.innerHTML.replace(/<span class="pgsp[^"]*"[^>]*><\/span>/g,"");
 const snap=()=>({html:cleanHtml(),sel:getSel()});
 function cp(){const s=snap();if(undoS.length&&undoS[undoS.length-1].html===s.html)return;undoS.push(s);if(undoS.length>150)undoS.shift();redoS=[];}
@@ -661,7 +715,7 @@ function segments(leaf,a,b){const segs=[];let pos=0;for(const t of leafNodes(lea
 
 /* ============ tracked changes ============ */
 const nowIso=()=>new Date().toISOString().replace(/\.\d+Z$/,"Z");
-let myName=store.get("name","");const meName=()=>myName||"You";
+let myName=store.get("name","");const meName=()=>myName||zh("You","我");
 function tcEl(tag,meta){const e=document.createElement(tag);e.className="tc";e.dataset.tc=meta.id;e.dataset.by=meta.by||"Claude";if(meta.mine)e.dataset.mine="1";e.dataset.at=meta.at||nowIso();if(meta.why)e.dataset.why=meta.why;if(meta.op)e.dataset.op=meta.op;if(tag==="del")e.contentEditable="false";return e;}
 function wrapDel(leaf,a,b,meta){let last=null,first=null;for(const[t0,i,j]of segments(leaf,a,b)){let t=t0;if(i>0)t=t.splitText(i);if(j-i<t.length)t.splitText(j-i);const pi=t.parentElement.closest("ins.tc");if(pi&&leaf.contains(pi)){const nx=t.nextSibling;t.remove();if(!pi.textContent)pi.remove();continue;}const d=tcEl("del",meta);t.parentNode.insertBefore(d,t);d.appendChild(t);const prev=d.previousSibling;if(prev&&prev.nodeType===1&&prev.matches("del.tc")&&prev.dataset.tc===meta.id){prev.append(...d.childNodes);d.remove();last=prev;}else last=d;first=first||last;}if(last){last.__first=first;}return last;}
 function insertAt(leaf,pos,node){
@@ -762,8 +816,15 @@ function updateRibbon(){
 }
 
 /* ============ keyboard (Word shortcuts) ============ */
+// Editing next to (or across) a page-split spacer: Chrome treats the spacer as a block and inserts <br>s, eats spaces
+// or deletes nothing, so drop those spacers first (pagination puts them back)
+function dropSpacers(){const s=getSelection();if(!s.rangeCount||!page.contains(s.anchorNode))return;const r=s.getRangeAt(0);const ls=new Set([leafOf(r.startContainer),leafOf(r.endContainer)]);
+  let[a,ao,b,bo]=[r.startContainer,r.startOffset,r.endContainer,r.endOffset];let n=0;
+  for(const l of ls){if(!l)continue;for(const sp of l.querySelectorAll(".pgsp:not(.colsp)")){const par=sp.parentNode,k=[...par.childNodes].indexOf(sp);if(r.collapsed){const g=document.createRange();try{if(r.comparePoint(par,k)<0){g.setStartAfter(sp);g.setEnd(a,ao);}else{g.setStart(a,ao);g.setEndBefore(sp);}}catch{continue;}if(g.toString().trim())continue;}if(a===par&&ao>k)ao--;if(b===par&&bo>k)bo--;sp.remove();n++;}}
+  if(n)try{s.setBaseAndExtent(a,ao,b,bo);}catch{}}
 page.addEventListener("keydown",e=>{
   const mod=isMac?e.metaKey:e.ctrlKey;
+  if((e.key==="Backspace"||e.key==="Delete"||e.key==="Enter")&&!e.isComposing&&paged)dropSpacers();
   if(e.key==="Tab"){e.preventDefault();const l=leafOf(getSelection().anchorNode);if(l&&l.tagName==="LI")exec(e.shiftKey?"outdent":"indent");else if(l&&(l.tagName==="TD"||l.tagName==="TH"))moveCell(l,e.shiftKey?-1:1);else if(!e.shiftKey){cp();document.execCommand("insertHTML",false,'<span class="tab">\t</span>​');afterChange();}return;}
   if(!mod)return;
   const k=e.key.toLowerCase();
@@ -787,7 +848,7 @@ page.addEventListener("keydown",e=>{
 });
 document.addEventListener("keydown",e=>{
   const mod=isMac?e.metaKey:e.ctrlKey;const k=e.key.toLowerCase();
-  if(e.key==="Escape"){if(!$("dlgBack").hidden){e.preventDefault();closeDlg();return;}if(!$("aimenu").hidden||!$("menu").hidden||!$("tcpop").hidden){e.preventDefault();closeFloats();page.focus();return;}if(findOpen){e.preventDefault();closeFind();return;}if(painter){e.preventDefault();setPainter(null);return;}if(document.body.classList.contains("focusmode")){e.preventDefault();document.body.classList.remove("focusmode");return;}}
+  if(e.key==="Escape"){if(!$("dlgBack").hidden){e.preventDefault();closeDlg();ensureFocus();return;}if(!$("aimenu").hidden||!$("menu").hidden||!$("tcpop").hidden){e.preventDefault();closeFloats();page.focus();return;}if(findOpen){e.preventDefault();closeFind();return;}if(painter){e.preventDefault();setPainter(null);return;}if(document.body.classList.contains("focusmode")){e.preventDefault();document.body.classList.remove("focusmode");return;}}
   if(e.altKey&&!mod&&e.code==="KeyI"){e.preventDefault();openAI();return;}
   if(e.altKey&&!mod&&e.code==="Equal"){e.preventDefault();eqDialog();return;}
   if(!mod)return;
@@ -802,7 +863,7 @@ document.addEventListener("keydown",e=>{
   else if((k==="h"&&e.shiftKey)||(k==="h"&&!isMac)){e.preventDefault();openFind(true);}
   else if(k==="e"&&e.shiftKey){e.preventDefault();toggleTrack();}
   else if(k==="j"&&inPage&&!e.shiftKey){/* Cmd+J: justify (Word) */e.preventDefault();exec("justifyFull");}
-  else if(k==="n"&&e.altKey){e.preventDefault();newDoc();}
+  else if(e.code==="KeyN"&&e.altKey){e.preventDefault();newDoc();}
   else if(k==="g"&&e.shiftKey){e.preventDefault();wordCountDialog();}
   else if(k==="p"&&!e.shiftKey&&!e.altKey){e.preventDefault();toast("Printing isn't available inside Claude. Export a PDF, then print that file.","Export PDF",()=>exportAs("pdf"),6000);}
 });
@@ -847,7 +908,7 @@ function trackInput(e){
     const r2=sel.getRangeAt(0);
     if(inMyIns(r2.startContainer)&&r.collapsed)return; // keep typing inside your insertion
     e.preventDefault();
-    const ins=tcEl("ins",{id:repId||"you-"+uid(),by:meName(),mine:true});ins.textContent=e.data;
+    const ins=tcEl("ins",{id:repId||"you-"+uid(),by:meName(),mine:true});ins.textContent=e.data.replace(/^ | $/g,"\u00a0");
     const dl=(r2.startContainer.nodeType===1?r2.startContainer:r2.startContainer.parentElement).closest("del.tc");
     if(dl)dl.parentNode.insertBefore(ins,dl.nextSibling);else r2.insertNode(ins);
     const nr=document.createRange();nr.setStart(ins.firstChild,ins.firstChild.length);nr.collapse(true);sel.removeAllRanges();sel.addRange(nr);
@@ -932,8 +993,9 @@ function placeFloat(el,x,y){el.hidden=false;const w=el.offsetWidth,h=el.offsetHe
 function showMenu(x,y,items,note){const m=$("menu");m.replaceChildren();if(note){const n=document.createElement("div");n.className="note";n.textContent=note;m.append(n);}for(const it of items){if(!it){const s=document.createElement("div");s.style.cssText="height:1px;background:var(--line);margin:4px 2px";m.append(s);continue;}const b=document.createElement("button");b.className="mi";b.textContent=it[0];if(it[2])b.disabled=true,b.style.opacity=.45;b.onmousedown=e=>e.preventDefault();b.onclick=()=>{m.hidden=true;it[1]();};m.append(b);}placeFloat(m,x,y);}
 function closeFloats(){for(const id of["menu","aimenu","tcpop","imgbar","bubble"])$(id).hidden=true;}
 document.addEventListener("mousedown",e=>{for(const id of["menu","aimenu","tcpop"]){const el=$(id);if(!el.hidden&&!el.contains(e.target)&&!e.target.closest("#exportBtn,#tableBtn,#bubAi,#aiRibbon"))el.hidden=true;}if(!$("imgbar").contains(e.target)&&e.target.tagName!=="IMG")$("imgbar").hidden=true;});
-function openDlg(html){$("dlg").innerHTML=html;$("dlgBack").hidden=false;$("dlg").querySelectorAll("[data-close]").forEach(b=>b.onclick=closeDlg);}
-function closeDlg(){$("dlgBack").hidden=true;$("dlg").replaceChildren();}
+function openDlg(html){onDlgClose=null;$("dlg").innerHTML=html;$("dlgBack").hidden=false;$("dlg").querySelectorAll("[data-close]").forEach(b=>b.onclick=closeDlg);}
+let onDlgClose=null;
+function closeDlg(){$("dlgBack").hidden=true;$("dlg").replaceChildren();if(onDlgClose){const f=onDlgClose;onDlgClose=null;f();}}
 $("dlgBack").addEventListener("mousedown",e=>{if(e.target===$("dlgBack"))closeDlg();});
 canvas.addEventListener("scroll",()=>{$("bubble").hidden=true;$("tcpop").hidden=true;$("imgbar").hidden=true;if(!$("opbar").hidden)positionOpbar();},{passive:true});
 
@@ -955,7 +1017,7 @@ function renderCounts(){
   $("cc").textContent=`${all.chars.toLocaleString()} characters`;
   const pages=paged?pageInfo.n:Math.max(1,Math.ceil((page.scrollHeight+168)/1056));$("pc").textContent=`${paged?"":"~"}${pages} page${pages>1?"s":""}`;updatePgNow();
 }
-function ago(t){const s=(Date.now()-t)/1000;if(s<60)return"just now";if(s<3600)return Math.floor(s/60)+" min ago";if(s<86400)return Math.floor(s/3600)+" h ago";return new Date(t).toLocaleDateString();}
+function ago(t){const s=(Date.now()-t)/1000;if(s<60)return zh("just now","刚刚");if(s<3600)return Math.floor(s/60)+zh(" min ago"," 分钟前");if(s<86400)return Math.floor(s/3600)+zh(" h ago"," 小时前");return new Date(t).toLocaleDateString();}
 function renderRecent(){
   const r=$("recent");r.replaceChildren();
   if(!index.length){r.innerHTML='<div class="empty">Documents you open or write are kept here, on this computer only.</div>';return;}
@@ -968,7 +1030,7 @@ document.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{document.queryS
 $("sideBtn").onclick=()=>{$("side").hidden=!$("side").hidden;store.set("side",!$("side").hidden);};
 $("sideClose").onclick=()=>{$("side").hidden=true;store.set("side",false);};
 $("newBtn").onclick=e=>{const r=e.currentTarget.getBoundingClientRect();templatesMenu(r.left-60,r.bottom+4);};$("newBtn2").onclick=e=>{const r=e.currentTarget.getBoundingClientRect();templatesMenu(r.left,r.top-210);};
-$("title").oninput=()=>{cur.title=$("title").value.trim()||"Untitled document";document.title=cur.title+" – AI Document Editor";markDirty();};
+$("title").oninput=()=>{cur.title=$("title").value.trim()||UNTITLED;document.title=cur.title+" – "+APPNAME;markDirty();};
 $("title").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();page.focus();}};
 function applyZoom(v){let z=v;if(v==="fit"){const w=paged?pgOf().w*PX:816;z=Math.max(0.3,Math.min(2,(canvas.clientWidth-40)/w)).toFixed(3);}sheet.style.zoom=z;}
 $("zoomSel").onchange=e=>{applyZoom(e.target.value);store.set("zoom",e.target.value);placeImgUi();};
@@ -1530,7 +1592,7 @@ async function docxExport(root,pkg){
   const attachSect=(x,sp)=>{if(x.endsWith("</w:p>")){const i=x.lastIndexOf("<w:p>");if(i>=0){const rest=x.slice(i+5);if(rest.startsWith("<w:pPr>")){const j=rest.indexOf("</w:pPr>");return x.slice(0,i+5)+rest.slice(0,j)+sp+rest.slice(j);}return x.slice(0,i+5)+`<w:pPr>${sp}</w:pPr>`+rest;}}return x+`<w:p><w:pPr>${sp}</w:pPr></w:p>`;};
   const tocXml=()=>{const hs=tocHeadings(root);const tocEl=root.querySelector(".toc");const nums=[...(tocEl?.querySelectorAll(".toc-e[data-i]")||[])].reduce((m,e)=>(m[+e.dataset.i]=e.querySelector(".tn")?.textContent||"",m),{});
     const tabs=`<w:tabs><w:tab w:val="right" w:leader="dot" w:pos="${cwTw}"/></w:tabs>`;const begin='<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \\o "1-3" \\h \\z \\u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r>';
-    let x=`<w:sdt><w:sdtPr><w:docPartObj><w:docPartGallery w:val="Table of Contents"/><w:docPartUnique/></w:docPartObj></w:sdtPr><w:sdtContent><w:p><w:pPr><w:pStyle w:val="${styleId("TOCHeading")}"/></w:pPr><w:r><w:t>Contents</w:t></w:r></w:p>`;
+    let x=`<w:sdt><w:sdtPr><w:docPartObj><w:docPartGallery w:val="Table of Contents"/><w:docPartUnique/></w:docPartObj></w:sdtPr><w:sdtContent><w:p><w:pPr><w:pStyle w:val="${styleId("TOCHeading")}"/></w:pPr><w:r><w:t>${zh("Contents","目录")}</w:t></w:r></w:p>`;
     if(!hs.length)return x+`<w:p>${begin}<w:r><w:t>No table of contents entries found.</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p></w:sdtContent></w:sdt>`;
     hs.forEach((h,i)=>{const L=+h.tagName[1];x+=`<w:p><w:pPr><w:pStyle w:val="${styleId("TOC"+L)}"/>${tabs}</w:pPr>${i===0?begin:""}<w:hyperlink w:anchor="${tocBm.get(h)}" w:history="1"><w:r><w:t xml:space="preserve">${xe(h.textContent.replace(/\s+/g," ").trim())}</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t>${xe(nums[i]||"")}</w:t></w:r></w:hyperlink></w:p>`;});
     return x+'<w:p><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p></w:sdtContent></w:sdt>';};const cmLast=new Map();for(const e of cmSpans)cmLast.set(e.dataset.cid,e);const cmStarted=new Set();
@@ -1620,7 +1682,7 @@ async function exportAs(kind){
     else if(kind==="md")data=toMarkdown();else if(kind==="html")data=toHTMLDoc();else data=toText();
   }catch(e){console.error(e);toast("Couldn't build the file. Try again; if it keeps failing, export as HTML instead.");return;}finally{setAi(false);}
   if(!downloads){
-    if(kind!=="docx"){try{await navigator.clipboard.writeText(typeof data==="string"?data:"");toast("Saving files needs the Claude app. Copied the "+kind.toUpperCase()+" to your clipboard instead.");}catch{toast("Saving files needs the Claude app.");}}
+    if(typeof data==="string"){try{await navigator.clipboard.writeText(typeof data==="string"?data:"");toast("Saving files needs the Claude app. Copied the "+kind.toUpperCase()+" to your clipboard instead.");}catch{toast("Saving files needs the Claude app.");}}
     else toast(`Saving .${kind} files needs the Claude app. Open AI Document Editor there.`);
     return data;
   }
@@ -1683,8 +1745,8 @@ function openAI(){
   const go=()=>{const v=$("aiIn").value.trim();if(!v)return;m.hidden=true;if(sel)editSelection({custom:v});else writeAtCursor("custom",v);};
   $("aiGo").onclick=go;$("aiIn").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();go();}};
   m.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{m.hidden=true;const k=b.dataset.act;
-    if(ACTIONS[k])editSelection({act:k});else if(k==="table")selectionToTable();else if(k==="explain")askAbout("Explain this passage from the document in plain words:\n\n"+aiTarget.text);else if(k==="sumsel")askAbout("Summarize this passage in 3 bullet points:\n\n"+aiTarget.text);
-    else if(k==="continue")writeAtCursor("continue");else if(k==="draft")draftDialog();else if(k==="outline")outlineDialog();else if(k==="docproof")docProofread();else if(k==="doctone")toneDialog();else if(k==="doctrans")translateDialog();else if(k==="docsum")askAbout("Summarize this document: 5 bullet points with the key points, then one sentence with the main takeaway.",true);});
+    if(ACTIONS[k])editSelection({act:k});else if(k==="table")selectionToTable();else if(k==="explain")askAbout(zh("Explain this passage from the document in plain words:","用通俗的话解释文档中的这段内容：")+"\n\n"+aiTarget.text);else if(k==="sumsel")askAbout(zh("Summarize this passage in 3 bullet points:","用 3 个要点总结这段内容：")+"\n\n"+aiTarget.text);
+    else if(k==="continue")writeAtCursor("continue");else if(k==="draft")draftDialog();else if(k==="outline")outlineDialog();else if(k==="docproof")docProofread();else if(k==="doctone")toneDialog();else if(k==="doctrans")translateDialog();else if(k==="docsum")askAbout(zh("Summarize this document: 5 bullet points with the key points, then one sentence with the main takeaway.","总结这份文档：先用 5 个要点列出关键内容，再用一句话说明核心结论。"),true);});
   m.querySelectorAll("[data-tone]").forEach(b=>b.onclick=()=>{m.hidden=true;editSelection({tone:b.dataset.tone});});
   m.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{m.hidden=true;if(b.dataset.lang==="more")return translateDialog(true);editSelection({lang:b.dataset.lang});});
 }
@@ -1694,8 +1756,8 @@ function instructionFor(o){if(o.custom)return`Apply this instruction: ${o.custom
 function opLabel(o){return o.custom?"Custom edit":o.tone?o.tone+" tone":o.lang?"Translated to "+o.lang:ACTIONS[o.act].t;}
 async function editSelection(o,target){
   target=target||aiTarget;if(!target||!target.leaves.length){toast("Select some text first.");return;}
-  const ctl=beginAi(`${opLabel(o)}…`);if(!ctl)return;
-  const op="op"+uid();const meta={op,by:"Claude",why:opLabel(o)};
+  const lbl=trUI(opLabel(o));const ctl=beginAi(`${lbl}…`);if(!ctl)return;
+  const op="op"+uid();const meta={op,by:"Claude",why:lbl};
   const tier=o.act?ACTIONS[o.act].tier:"default";
   const sameLang=o.lang?"":"Write in the same language as the text. ";
   const partsWhole=target.leaves.every(p=>p.a===0&&p.b===ownText(p.leaf).length);
@@ -1731,7 +1793,7 @@ function replaceBlocksWithMd(ls,md,meta){
 }
 async function selectionToTable(target){
   target=target||aiTarget;if(!target?.leaves.length){toast("Select the text to turn into a table.");return;}
-  const ctl=beginAi("Building a table…");if(!ctl)return;const op="op"+uid();const meta={op,by:"Claude",why:"Turned into a table"};
+  const ctl=beginAi("Building a table…");if(!ctl)return;const op="op"+uid();const meta={op,by:"Claude",why:trUI("Turned into a table")};
   try{
     const res=await sample.json(`Turn this text from a document into a table. Pick sensible columns; one row per item. Keep the text's language and every fact.\nReply with only JSON: {"columns":["..."],"rows":[["..."]]}\n\nText:\n${target.text.slice(0,60000)}`,{signal:ctl.signal,modelTier:"default",cache:false});
     if(!res||!Array.isArray(res.columns)||!Array.isArray(res.rows))throw{code:"invalid_json"};
@@ -1747,7 +1809,7 @@ async function selectionToTable(target){
 function anchorBlock(range){let n=range?range.startContainer:null;let el=n?(n.nodeType===1?n:n.parentElement):null;if(!el||!page.contains(el)||el===page)return page.lastElementChild;while(el.parentElement&&el.parentElement!==page)el=el.parentElement;return el;}
 async function streamInsert(prompt,label,opts={}){
   const ctl=beginAi(label);if(!ctl)return;
-  const op="op"+uid();const meta={op,by:"Claude",why:opts.why||label.replace(/…$/,"")};
+  const op="op"+uid();const meta={op,by:"Claude",why:opts.why||trUI(label.replace(/…$/,""))};
   const r=opts.range||aiTarget?.range||lastRange;let anchor=opts.top?null:anchorBlock(r);
   const ghost=document.createElement("div");ghost.className="ghost";ghost.contentEditable="false";
   const replaceEmpty=anchor&&anchor.tagName==="P"&&!anchor.textContent.trim()&&!anchor.querySelector("img");
@@ -1761,7 +1823,7 @@ async function streamInsert(prompt,label,opts={}){
     const blocks=mdToBlocks(md);
     for(const b of blocks){markBlockIns(b,{...meta,id:op+"-"+(++tcSeq)});ghost.before(b);}
     ghost.remove();if(replaceEmpty&&anchor.isConnected&&blocks.length)anchor.remove();
-    if(cur.title==="Untitled document"&&blocks[0]&&/^H[12]$/.test(blocks[0].tagName))setTitle(blocks[0].textContent.trim().slice(0,120));
+    if(cur.title===UNTITLED&&blocks[0]&&/^H[12]$/.test(blocks[0].tagName))setTitle(blocks[0].textContent.trim().slice(0,120));
     if(!page.lastElementChild||page.lastElementChild.dataset.tcb==="ins"&&!opts.top){const p=document.createElement("p");p.innerHTML="<br>";page.append(p);}
     afterChange(true);if(truncated)toast("Claude stopped at the length limit. Use “Continue writing” to add more.");
     finishOp(op,opts.retry);
@@ -1772,9 +1834,9 @@ function writeAtCursor(kind,custom){
   const range=aiTarget?.range||lastRange;
   if(kind==="continue"){const before=range?textBefore(range):textOf(page,true).slice(-8000);if(!before.trim()){draftDialog();return;}
     const p=`You are co-writing a document in a word processor. ${docTitleCtx()}\nHere is the document up to the cursor:\n"""\n${before}\n"""\n\nContinue writing from exactly where it stops. Match the language, tone, style and formatting. Write 1–3 paragraphs (Markdown lists or headings only if the document uses them). Do not repeat what is already there. Output only the new text.`;
-    return streamInsert(p,"Continuing…",{range,why:"Continued writing",retry:()=>writeAtCursor("continue")});}
+    return streamInsert(p,"Continuing…",{range,why:trUI("Continued writing"),retry:()=>writeAtCursor("continue")});}
   if(kind==="custom"){const before=range?textBefore(range,6000):"";
-    const p=`You are writing inside a document in a word processor. ${docTitleCtx()}\n${before?`Text just before the cursor:\n"""\n${before}\n"""\n`:"The document is empty so far.\n"}\nRequest: ${custom}\n\nWrite the content to insert at the cursor. Use Markdown for structure (# headings, lists, tables) only when it helps. Same language as the document unless the request says otherwise. Output only the content.`;
+    const p=`You are writing inside a document in a word processor. ${docTitleCtx()}\n${before?`Text just before the cursor:\n"""\n${before}\n"""\n`:"The document is empty so far.\n"}\nRequest: ${custom}\n\nWrite the content to insert at the cursor. Use Markdown for structure (# headings, lists, tables) only when it helps. Same language as the document unless the request says otherwise.${zh(""," If the document is empty, use the language of the request; if that is unclear, write in Simplified Chinese.")} Output only the content.`;
     return streamInsert(p,"Writing…",{range,why:custom.slice(0,60),retry:()=>writeAtCursor("custom",custom)});}
 }
 /* op bar: Keep / Discard / Try again (like Copilot) */
@@ -1793,7 +1855,7 @@ function positionOpbar(){const b=$("opbar");if(!curOp){b.hidden=true;return;}con
 $("opbar").addEventListener("mousedown",e=>e.preventDefault());
 function showTcPop(el,x,y){const id=el.dataset.tc;const g=groups().find(z=>z.id===id);if(!g)return;const p=$("tcpop");
   const kind=g.del&&g.ins?"Replaced":g.ins?"Inserted":"Deleted";
-  p.innerHTML=`<div class="why"><b>${kind}</b> by ${esc(g.by||"Claude")}${g.why?" · "+esc(g.why):""}</div><div class="row"><button class="btn pri" id="tpA">✓ Accept</button><button class="btn" id="tpR">✕ Reject</button><button class="btn ghost" id="tpN" title="Next change">Next ↓</button></div>`;
+  p.innerHTML=`<div class="why"><b>${kind}</b>${zh(" by "," · ")}<span data-no-i18n>${esc(g.by||"Claude")}${g.why?" · "+esc(g.why):""}</span></div><div class="row"><button class="btn pri" id="tpA">✓ Accept</button><button class="btn" id="tpR">✕ Reject</button><button class="btn ghost" id="tpN" title="Next change">Next ↓</button></div>`;
   placeFloat(p,x-60,y+16);
   $("tpA").onclick=()=>{p.hidden=true;resolveGroup(id,true);gotoNext();};$("tpR").onclick=()=>{p.hidden=true;resolveGroup(id,false);gotoNext();};$("tpN").onclick=()=>{p.hidden=true;gotoNext(id);};}
 $("tcpop").addEventListener("mousedown",e=>e.preventDefault());
@@ -1822,19 +1884,19 @@ async function runDocChunks(label,maxChars,buildPrompt,apply,tier="default"){
   return{op,changed};
 }
 async function docProofread(){
-  const r=await runDocChunks("Proofreading…",9000,items=>`Proofread these blocks of a document (${docTitleCtx()}). Fix spelling, grammar, punctuation, wrong words and clear inconsistencies. Do not rewrite for style; keep the author's voice and language.\nBlocks: ${JSON.stringify(items)}\n\nReply with only JSON listing just the blocks that need changes: {"edits":[{"id":3,"text":"<full corrected block text>","why":"<reason, under 8 words>"}]}. Use {"edits":[]} if nothing needs fixing.`,
-    (l,e,op)=>trackReplace(l,0,ownText(l).length,e.text.replace(/\s*\n+\s*/g," ").trim(),{op,by:"Claude",why:String(e.why||"Proofreading").slice(0,80)}),"default");
+  const r=await runDocChunks("Proofreading…",9000,items=>`Proofread these blocks of a document (${docTitleCtx()}). Fix spelling, grammar, punctuation, wrong words and clear inconsistencies. Do not rewrite for style; keep the author's voice and language.\nBlocks: ${JSON.stringify(items)}\n\nReply with only JSON listing just the blocks that need changes: {"edits":[{"id":3,"text":"<full corrected block text>","why":"<reason, ${zh("under 8 words","in Simplified Chinese, under 12 characters")}>"}]}. Use {"edits":[]} if nothing needs fixing.`,
+    (l,e,op)=>trackReplace(l,0,ownText(l).length,e.text.replace(/\s*\n+\s*/g," ").trim(),{op,by:"Claude",why:String(e.why||trUI("Proofreading")).slice(0,80)}),"default");
   if(r){if(r.changed)finishOp(r.op);else toast("No spelling or grammar problems found.");}
 }
 function toneDialog(){openDlg(`<h2>Change the tone of the document</h2><p class="sub2">Claude rewrites every section. Each change is shown for you to accept or reject.</p><div class="chips" id="tonePick">${TONES.map((t,i)=>`<button class="btn${i===0?" on":""}" data-t="${t}">${t}</button>`).join("")}</div><div class="row"><input type="text" id="toneCustom" placeholder="Or describe it: e.g. warmer, for a customer email"></div><div class="foot"><button class="btn" data-close>Cancel</button><button class="btn pri" id="toneGo">Rewrite document</button></div>`);
   let tone=TONES[0];$("tonePick").querySelectorAll("button").forEach(b=>b.onclick=()=>{tone=b.dataset.t;$("tonePick").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));});
   $("toneGo").onclick=async()=>{const t=$("toneCustom").value.trim()||tone;closeDlg();
-    const r=await runDocChunks(`Rewriting (${t})…`,7000,items=>`Rewrite these blocks of a document (${docTitleCtx()}) in this tone: ${t}. Keep the meaning, facts, names, numbers and language. Keep headings short.\nBlocks: ${JSON.stringify(items)}\n\nReply with only JSON with one entry per block that changes: {"blocks":[{"id":1,"text":"<rewritten plain text>"}]}`,(l,e,op)=>trackReplace(l,0,ownText(l).length,e.text.replace(/\s*\n+\s*/g," ").trim(),{op,by:"Claude",why:t+" tone"}));
+    const r=await runDocChunks(`Rewriting (${t})…`,7000,items=>`Rewrite these blocks of a document (${docTitleCtx()}) in this tone: ${t}. Keep the meaning, facts, names, numbers and language. Keep headings short.\nBlocks: ${JSON.stringify(items)}\n\nReply with only JSON with one entry per block that changes: {"blocks":[{"id":1,"text":"<rewritten plain text>"}]}`,(l,e,op)=>trackReplace(l,0,ownText(l).length,e.text.replace(/\s*\n+\s*/g," ").trim(),{op,by:"Claude",why:TONES.includes(t)?trUI(t+" tone"):zh(t+" tone",t+" 语气")}));
     if(r){if(r.changed)finishOp(r.op);else toast("Claude didn't suggest any changes.");}};}
 function translateDialog(selOnly){
-  const opts=LANGS.map(l=>`<option>${l}</option>`).join("");const hasSel=aiTarget&&!aiTarget.collapsed;
+  const opts=LANGS.map(l=>`<option value="${l}">${l}</option>`).join("");const hasSel=aiTarget&&!aiTarget.collapsed;
   openDlg(`<h2>Translate</h2><p class="sub2">${selOnly&&hasSel?"Translate the selection in place as tracked changes.":"Creates a translated copy of this document, keeping headings, lists, tables and pictures. Your original stays as it is."}</p><select id="trLang">${opts}</select><div class="foot"><button class="btn" data-close>Cancel</button><button class="btn pri" id="trGo">Translate</button></div>`);
-  const pref=store.get("lang","Spanish");$("trLang").value=pref;
+  const pref=store.get("lang",window.__ZH?(/[\u4e00-\u9fff]/.test(textOf(page,true).slice(0,4000))?"English":"Chinese (Simplified)"):"Spanish");$("trLang").value=pref;
   $("trGo").onclick=()=>{const l=$("trLang").value;store.set("lang",l);closeDlg();if(selOnly&&hasSel)editSelection({lang:l});else translateDoc(l);};
 }
 async function translateDoc(lang){
@@ -1852,11 +1914,11 @@ async function translateDoc(lang){
   if(!done)return;
   await saveNow();
   let title=cur.title;try{const t=await sample(`Translate this document title into ${lang}. Output only the title: ${cur.title}`,{modelTier:"quick"});title=t.text.trim().split("\n")[0].replace(/^["“]|["”]$/g,"");}catch{}
-  loadDoc({id:uid(),title:`${title} (${lang})`,html:clone.innerHTML,css:cur.css,hf:cur.hf,pkg:cur.pkg,source:cur.source});dirty=true;await saveNow();
+  loadDoc({id:uid(),title:`${title} (${trUI(lang)})`,html:clone.innerHTML,css:cur.css,hf:cur.hf,pkg:cur.pkg,source:cur.source});dirty=true;await saveNow();
   toast(failed?`Translated copy created, but ${failed} part${failed>1?"s":""} failed — those stay in the original language.`:`Translated copy created. The original is in Recent.`,null,null,6000);
 }
-function outlineDialog(){openDlg(`<h2>Generate an outline</h2><p class="sub2">Claude writes section headings with notes on what each covers, at the cursor.</p><textarea id="olTopic" placeholder="What is the document about? e.g. Quarterly business review for the EMEA sales team"></textarea><div class="foot"><button class="btn" data-close>Cancel</button><button class="btn pri" id="olGo">Generate</button></div>`);$("olTopic").value=cur.title!=="Untitled document"?cur.title:"";$("olTopic").focus();
-  $("olGo").onclick=()=>{const t=$("olTopic").value.trim();if(!t)return;closeDlg();const range=lastRange;const run=()=>streamInsert(`Create a clear outline for a document about: ${t}\nUse "## " for main sections and "### " for subsections; under each, 1–2 bullet points on what it should cover. 5–8 main sections. Same language as the request. Output only the outline in Markdown.`,"Outlining…",{range,why:"Outline",retry:run});run();};}
+function outlineDialog(){openDlg(`<h2>Generate an outline</h2><p class="sub2">Claude writes section headings with notes on what each covers, at the cursor.</p><textarea id="olTopic" placeholder="What is the document about? e.g. Quarterly business review for the EMEA sales team"></textarea><div class="foot"><button class="btn" data-close>Cancel</button><button class="btn pri" id="olGo">Generate</button></div>`);$("olTopic").value=cur.title!==UNTITLED?cur.title:"";$("olTopic").focus();
+  $("olGo").onclick=()=>{const t=$("olTopic").value.trim();if(!t)return;closeDlg();const range=lastRange;const run=()=>streamInsert(`Create a clear outline for a document about: ${t}\nUse "## " for main sections and "### " for subsections; under each, 1–2 bullet points on what it should cover. 5–8 main sections. Same language as the request${zh("",", or Simplified Chinese if that is unclear")}. Output only the outline in Markdown.`,"Outlining…",{range,why:trUI("Outline"),retry:run});run();};}
 
 /* ----- Draft (Copilot "Draft with Copilot") ----- */
 let refs=[];
@@ -1865,7 +1927,7 @@ function draftDialog(){
   openDlg(`<h2>✦ Draft with Claude</h2><p class="sub2">Describe what you need. Claude writes it at the cursor; you keep or discard it.</p>
   <textarea id="dPrompt" placeholder="e.g. A one-page project proposal for moving our support team to a 4-day week, with goals, risks and a timeline"></textarea>
   <div class="row"><button class="btn" id="dRef">📎 Reference a file</button><span class="tips">.docx, .pdf, .md, .txt or .html — Claude uses it as source material.</span></div><div class="chips" id="dRefs"></div>
-  <div class="row"><label>Length</label><span class="seg" id="dLen"><button data-v="short">Short</button><button data-v="medium" class="on">Medium</button><button data-v="long">Long</button></span><label style="margin-left:8px">Tone</label><select id="dTone" style="width:auto"><option value="">Natural</option>${TONES.map(t=>`<option>${t}</option>`).join("")}</select></div>
+  <div class="row"><label>Length</label><span class="seg" id="dLen"><button data-v="short">Short</button><button data-v="medium" class="on">Medium</button><button data-v="long">Long</button></span><label style="margin-left:8px">Tone</label><select id="dTone" style="width:auto"><option value="">Natural</option>${TONES.map(t=>`<option value="${t}">${t}</option>`).join("")}</select></div>
   <div class="foot"><button class="btn" data-close>Cancel</button><button class="btn pri" id="dGo">Generate</button></div>`);
   const showRefs=()=>{$("dRefs").innerHTML=refs.map((r,i)=>`<span class="chip">📄 ${esc(r.name)} <button data-i="${i}">✕</button></span>`).join("");$("dRefs").querySelectorAll("button").forEach(b=>b.onclick=()=>{refs.splice(+b.dataset.i,1);showRefs();});};
   showRefs();$("dPrompt").focus();
@@ -1876,8 +1938,8 @@ function draftDialog(){
     const budget=150000;let refTxt="";for(const r of refs){const room=budget-refTxt.length;if(room<500)break;refTxt+=`\n<reference name="${r.name}">\n${r.text.slice(0,room)}\n</reference>\n`;}
     const existing=textOf(page,true);
     const words={short:"about 150–300 words",medium:"about 400–800 words",long:"about 1,200–2,000 words"}[len];
-    const prompt=`Write a document for this request: ${ask}\n\nLength: ${words}.${tone?` Tone: ${tone}.`:""}${refTxt?`\nUse these reference files as source material; do not invent facts beyond them and the request:${refTxt}`:""}${existing.trim()?`\nThe document already contains (for context; don't repeat it):\n"""\n${existing.slice(0,20000)}\n"""`:""}\n\nFormat in Markdown: a "# " title only if the document has no title yet, "## " section headings, lists and tables where they help, **bold** sparingly. Write in the language of the request. Output only the document text — no preface or closing remarks.`;
-    const run=()=>streamInsert(prompt,"Drafting…",{range,why:"Draft",retry:run,tier:len==="long"?"default":"default"});run();refs=[];};
+    const prompt=`Write a document for this request: ${ask}\n\nLength: ${words}.${tone?` Tone: ${tone}.`:""}${refTxt?`\nUse these reference files as source material; do not invent facts beyond them and the request:${refTxt}`:""}${existing.trim()?`\nThe document already contains (for context; don't repeat it):\n"""\n${existing.slice(0,20000)}\n"""`:""}\n\nFormat in Markdown: a "# " title only if the document has no title yet, "## " section headings, lists and tables where they help, **bold** sparingly. Write in the language of the request${zh("",", or in Simplified Chinese if that is unclear")}. Output only the document text — no preface or closing remarks.`;
+    const run=()=>streamInsert(prompt,"Drafting…",{range,why:trUI("Draft"),retry:run,tier:len==="long"?"default":"default"});run();refs=[];};
 }
 async function fileText(f){const ext=f.name.split(".").pop().toLowerCase();if(ext==="pdf"){const r=await pdfImport(await f.arrayBuffer());if(!r.text.trim())throw new Error("no text");return r.text;}if(ext==="docx"){const d=await docxImport(await f.arrayBuffer());const div=document.createElement("div");div.innerHTML=d.html;return textOf(div,true);}if(ext==="html"||ext==="htm"){const div=document.createElement("div");div.innerHTML=cleanHTML(await f.text());return textOf(div,true);}return await f.text();}
 $("draftBtn").onclick=()=>{if(!sample){toast("Claude features work when you open this app in Claude.");return;}aiTarget=captureTarget();draftDialog();};
@@ -1899,7 +1961,7 @@ function renderChat(){
   <div class="qa"><div class="grp">Understand</div><button data-q="sum"><span class="g">≡</span>Summarize this document</button><button data-q="keys"><span class="g">★</span>List the key points and decisions</button><button data-q="actions"><span class="g">☐</span>Find action items and deadlines</button><button data-q="faq"><span class="g">?</span>What questions might a reader ask?</button>
   <div class="grp">Improve</div><button data-q="feedback"><span class="g">✎</span>Give feedback on this draft</button><button data-q="proof"><span class="g">✓</span>Proofread (shows tracked changes)</button><button data-q="tone"><span class="g">◐</span>Change the tone…</button>
   <div class="grp">Create</div><button data-q="draft"><span class="g">✦</span>Draft new content…</button><button data-q="outline"><span class="g">☰</span>Generate an outline…</button><button data-q="trans"><span class="g">文</span>Translate the document…</button></div>`;
-    m.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const q=b.dataset.q;const Q={sum:"Summarize this document: 5 bullet points with the key points, then one sentence with the main takeaway.",keys:"List the key points, decisions and numbers in this document.",actions:"List every action item, owner and deadline mentioned in this document as a checklist. Say if there are none.",faq:"What questions would a reader most likely ask after reading this? Answer each briefly from the document.",feedback:"Give me feedback on this document as an editor: what works, what's unclear or missing, and 3–5 specific suggestions with examples."};
+    m.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const q=b.dataset.q;const Q=window.__ZH?{sum:"总结这份文档：先用 5 个要点列出关键内容，再用一句话说明核心结论。",keys:"列出这份文档中的要点、决定和关键数字。",actions:"以清单形式列出文档中提到的所有待办事项、负责人和截止日期。如果没有，请说明。",faq:"读者读完后最可能问哪些问题？请根据文档逐一简要回答。",feedback:"请以编辑的身份点评这份文档：哪些写得好，哪些不清楚或有缺漏，并给出 3–5 条具体修改建议和示例。"}:{sum:"Summarize this document: 5 bullet points with the key points, then one sentence with the main takeaway.",keys:"List the key points, decisions and numbers in this document.",actions:"List every action item, owner and deadline mentioned in this document as a checklist. Say if there are none.",faq:"What questions would a reader most likely ask after reading this? Answer each briefly from the document.",feedback:"Give me feedback on this document as an editor: what works, what's unclear or missing, and 3–5 specific suggestions with examples."};
       if(Q[q])askAbout(Q[q],true);else if(q==="proof")docProofread();else if(q==="tone")toneDialog();else if(q==="draft"){aiTarget=captureTarget();draftDialog();}else if(q==="outline")outlineDialog();else if(q==="trans")translateDialog();});
     return;}
   for(const msg of cur.chat)addMsg(msg,false);
@@ -1911,7 +1973,7 @@ function addMsg(msg,scroll=true){
   if(msg.role==="user")d.textContent=msg.show||msg.content;else{d.innerHTML=sanitize(marked.parse(msg.content||"",{gfm:true}));if(!msg.err&&msg.content){const a=document.createElement("div");a.className="macts";a.innerHTML=`<button data-a="ins">Insert into document</button><button data-a="copy">Copy</button>`;a.querySelector('[data-a="ins"]').onclick=()=>insertMd(msg.content);a.querySelector('[data-a="copy"]').onclick=async e=>{try{await navigator.clipboard.writeText(msg.content);e.target.textContent="Copied";}catch{const r=document.createRange();r.selectNodeContents(d);getSelection().removeAllRanges();getSelection().addRange(r);e.target.textContent="Selected";}};d.append(a);}}
   m.append(d);if(scroll)$("msgScroll").scrollTop=1e9;return d;
 }
-function insertMd(md){const blocks=mdToBlocks(md);if(!blocks.length)return;cp();const op="op"+uid();const anchor=anchorBlock(lastRange);let ref=anchor;for(const b of blocks){markBlockIns(b,{op,by:"Claude",why:"From assistant",id:op+"-"+(++tcSeq)});if(ref)ref.after(b);else page.append(b);ref=b;}finishOp(op);}
+function insertMd(md){const blocks=mdToBlocks(md);if(!blocks.length)return;cp();const op="op"+uid();const anchor=anchorBlock(lastRange);let ref=anchor;for(const b of blocks){markBlockIns(b,{op,by:"Claude",why:trUI("From assistant"),id:op+"-"+(++tcSeq)});if(ref)ref.after(b);else page.append(b);ref=b;}finishOp(op);}
 async function askAbout(q,whole){
   openPanelTab("chat");
   if(!sample){toast("Claude features work when you open this app in Claude.");return;}
@@ -1923,11 +1985,11 @@ async function askAbout(q,whole){
   const bot={role:"assistant",content:""};const el=addMsg({role:"assistant",content:""});el.innerHTML='<span class="spin" style="display:inline-block"></span>';
   const ctl=beginAi("Claude is answering…");if(!ctl)return;
   const history=cur.chat.slice(-9,-1).map(m=>({role:m.role,content:m.content.slice(0,8000)}));
-  const first=`You are an assistant inside a word processor, helping someone with their document.${ctx.partial?" The document is long; below are the sections most relevant to the question.":""}\n<document title="${cur.title}">\n${ctx.text}\n</document>\n\nAnswer using the document. Mention the section when it helps. If the document doesn't say, say so, then help anyway if you can. Be concise; Markdown is fine. Answer in the language of the question.`;
-  const turns=[{role:"user",content:first},{role:"assistant",content:"I've read the document. What would you like to know?"},...history,{role:"user",content:(selTxt?`About this selected passage:\n"""\n${selTxt.slice(0,20000)}\n"""\n\n`:"")+q}];
+  const first=`You are an assistant inside a word processor, helping someone with their document.${ctx.partial?" The document is long; below are the sections most relevant to the question.":""}\n<document title="${cur.title}">\n${ctx.text}\n</document>\n\nAnswer using the document. Mention the section when it helps. If the document doesn't say, say so, then help anyway if you can. Be concise; Markdown is fine. Answer in the language of the question.${zh(""," The user reads Simplified Chinese: if the question's language is unclear, answer in Simplified Chinese.")}`;
+  const turns=[{role:"user",content:first},{role:"assistant",content:zh("I've read the document. What would you like to know?","我已读完这份文档。你想了解什么？")},...history,{role:"user",content:(selTxt?`About this selected passage:\n"""\n${selTxt.slice(0,20000)}\n"""\n\n`:"")+q}];
   try{
     const {text,truncated}=await sample(turns,{signal:ctl.signal,modelTier:"default",cache:false,onText:({text})=>{el.innerHTML=sanitize(marked.parse(text,{gfm:true}));$("msgScroll").scrollTop=1e9;}});
-    bot.content=text+(truncated?"\n\n*(Cut short.)*":"");cur.chat.push(bot);el.remove();addMsg(bot);markDirty();
+    bot.content=text+(truncated?zh("\n\n*(Cut short.)*","\n\n*（回答被截断。）*"):"");cur.chat.push(bot);el.remove();addMsg(bot);markDirty();
   }catch(e){el.remove();if(e?.code!=="cancelled"){const em={role:"assistant",content:errText(e),err:true};addMsg(em);}else addMsg({role:"assistant",content:e?.text||"*Stopped.*",err:!e?.text});if(e?.code==="not_granted")aiFail(e);}
   finally{endAi();}
 }
@@ -1960,7 +2022,7 @@ function renderReview(){
   if(!n&&cids.length)return;
   if(!n){L.innerHTML='<div class="empty">When Claude edits, drafts or proofreads, each change appears here for you to accept or reject. Turn on <b>Track changes</b> in the toolbar to track your own edits too.<br><br>Tracked changes in Word files you open show up here as well, and stay tracked when you export to .docx.</div>';return;}
   for(const g of gs.slice(0,400)){const c=document.createElement("div");c.className="card";const kind=g.del&&g.ins?"Replaced":g.ins?"Inserted":"Deleted";
-    c.innerHTML=`<div class="k"><span class="dot ${g.del&&g.ins?"r":g.del?"d":""}"></span>${kind} · ${esc(g.by||"Claude")}</div><div class="tx">${g.del?`<s>${esc(g.del.slice(0,300))}</s> `:""}${g.ins?`<ins>${esc(g.ins.slice(0,400))}</ins>`:""}</div>${g.why?`<div class="why">${esc(g.why)}</div>`:""}<div class="acts"><button class="ok">✓ Accept</button><button>✕ Reject</button></div>`;
+    c.innerHTML=`<div class="k"><span class="dot ${g.del&&g.ins?"r":g.del?"d":""}"></span><span>${kind}</span> · <span data-no-i18n>${esc(g.by||"Claude")}</span></div><div class="tx">${g.del?`<s>${esc(g.del.slice(0,300))}</s> `:""}${g.ins?`<ins>${esc(g.ins.slice(0,400))}</ins>`:""}</div>${g.why?`<div class="why">${esc(g.why)}</div>`:""}<div class="acts"><button class="ok">✓ Accept</button><button>✕ Reject</button></div>`;
     c.onclick=e=>{if(e.target.closest("button"))return;const el=g.els[0];el.scrollIntoView({block:"center",behavior:"smooth"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");};
     const[a,r]=c.querySelectorAll(".acts button");a.onclick=()=>resolveGroup(g.id,true);r.onclick=()=>resolveGroup(g.id,false);L.append(c);}
 }
@@ -1998,7 +2060,7 @@ function commentCard(id){
   const c=cur.comments[id];const spans=cmtSpans(id);const quote=spans.filter(e=>!e.classList.contains("pt")).map(e=>e.textContent).join(" ").trim();
   const d=document.createElement("div");d.className="card cm";d.dataset.cid=id;
   const editing=editingCmt===id;
-  d.innerHTML=`<div class="k">💬 <b>${esc(c.author||"Reviewer")}</b>${c.date?" · "+esc(ago(Date.parse(c.date)||Date.now())):""}</div>${quote?`<div class="q">${esc(quote.slice(0,200))}</div>`:""}${editing?`<textarea placeholder="Write a comment… (⌘Enter to post)">${esc(c.text||"")}</textarea><div class="acts"><button class="ok" data-a="save">Comment</button><button data-a="cancel">Cancel</button></div>`:`<div class="tx" style="white-space:pre-wrap">${esc(c.text||"")}</div>${(c.replies||[]).map(r=>`<div class="reply"><div class="who"><b>${esc(r.author||"Reviewer")}</b>${r.date?" · "+esc(ago(Date.parse(r.date)||Date.now())):""}</div><div style="white-space:pre-wrap">${esc(r.text||"")}</div></div>`).join("")}${replyingCmt===id?`<textarea data-r="1" placeholder="Reply… (⌘Enter to post)" style="margin-top:6px"></textarea><div class="acts"><button class="ok" data-a="rsave">Reply</button><button data-a="rcancel">Cancel</button></div>`:`<div class="acts">${sample&&quote?'<button data-a="fix" title="Claude revises the commented text to address this comment">✦ Fix with Claude</button>':""}<button data-a="reply">Reply</button><button data-a="edit">Edit</button><button data-a="resolve">Resolve</button></div>`}`}`;
+  d.innerHTML=`<div class="k">💬 <b>${esc(c.author||zh("Reviewer","审阅者"))}</b>${c.date?" · "+esc(ago(Date.parse(c.date)||Date.now())):""}</div>${quote?`<div class="q">${esc(quote.slice(0,200))}</div>`:""}${editing?`<textarea placeholder="Write a comment… (⌘Enter to post)">${esc(c.text||"")}</textarea><div class="acts"><button class="ok" data-a="save">Comment</button><button data-a="cancel">Cancel</button></div>`:`<div class="tx" style="white-space:pre-wrap">${esc(c.text||"")}</div>${(c.replies||[]).map(r=>`<div class="reply"><div class="who"><b>${esc(r.author||zh("Reviewer","审阅者"))}</b>${r.date?" · "+esc(ago(Date.parse(r.date)||Date.now())):""}</div><div style="white-space:pre-wrap">${esc(r.text||"")}</div></div>`).join("")}${replyingCmt===id?`<textarea data-r="1" placeholder="Reply… (⌘Enter to post)" style="margin-top:6px"></textarea><div class="acts"><button class="ok" data-a="rsave">Reply</button><button data-a="rcancel">Cancel</button></div>`:`<div class="acts">${sample&&quote?'<button data-a="fix" title="Claude revises the commented text to address this comment">✦ Fix with Claude</button>':""}<button data-a="reply">Reply</button><button data-a="edit">Edit</button><button data-a="resolve">Resolve</button></div>`}`}`;
   d.onclick=e=>{const a=e.target.closest("button")?.dataset.a;
     if(!a){if(!editing){const el=spans[0];el?.scrollIntoView({block:"center",behavior:"smooth"});focusComment(id);}return;}
     if(a==="save"){const t=d.querySelector("textarea").value.trim();if(!t){return;}c.text=t;c.date=nowIso();editingCmt=null;markDirty();renderReview();}
@@ -2016,14 +2078,14 @@ function commentCard(id){
 $("myName").value=myName;$("myName").oninput=e=>{myName=e.target.value.trim();store.set("name",myName);};
 
 /* ============ footnotes ============ */
-function renderNotes(){const fns=[...page.querySelectorAll("sup.fn")].filter(e=>!isTcDeleted(e));const n=$("notes");n.hidden=!fns.length;n.replaceChildren();for(const f of fns){const d=document.createElement("div");d.textContent=f.dataset.note||"(empty footnote — click to write it)";d.onclick=()=>editNote(f);n.append(d);}}
-function insertFootnote(){ensureFocus();cp();const id="fn"+uid();document.execCommand("insertHTML",false,`<sup class="fn" contenteditable="false" data-fid="${id}" data-note=""></sup>`);const el=page.querySelector(`[data-fid="${id}"]`);if(el){el.removeAttribute("data-fid");afterChange(true);editNote(el,true);}}
+function renderNotes(){const fns=[...page.querySelectorAll("sup.fn")].filter(e=>!isTcDeleted(e));const n=$("notes");n.hidden=!fns.length;n.replaceChildren();for(const f of fns){const d=document.createElement("div");d.textContent=f.dataset.note||zh("(empty footnote — click to write it)","（空脚注，点击填写）");d.onclick=()=>editNote(f);n.append(d);}}
+function insertFootnote(){ensureFocus();const s=getSelection();if(!s.rangeCount||!page.contains(s.anchorNode))return;cp();/* insert the mark directly: execCommand insertHTML splits links and adds <br>s around non-editable inline nodes */const el=document.createElement("sup");el.className="fn";el.contentEditable="false";el.dataset.note="";const r=s.getRangeAt(0);r.collapse(false);r.insertNode(el);r.setStartAfter(el);r.collapse(true);s.removeAllRanges();s.addRange(r);afterChange(true);editNote(el,true);}
 function editNote(el,isNew){const num=[...page.querySelectorAll("sup.fn")].indexOf(el)+1;
   openDlg(`<h2>Footnote ${num}</h2><textarea id="fnText" placeholder="Footnote text">${esc(el.dataset.note||"")}</textarea><div class="foot"><button class="btn" id="fnDel" style="margin-right:auto">Delete footnote</button><button class="btn" data-close>Cancel</button><button class="btn pri" id="fnOk">Save</button></div>`);
   $("fnText").focus();
-  const done=()=>{if(isNew&&!el.dataset.note){el.remove();afterChange(true);}};
+  const done=()=>{if(isNew&&!el.dataset.note&&el.isConnected){el.remove();afterChange(true);}};if(isNew)onDlgClose=done;
   $("dlg").querySelector("[data-close]").onclick=()=>{closeDlg();done();};
-  $("fnOk").onclick=()=>{cp();el.dataset.note=$("fnText").value.trim();closeDlg();if(!el.dataset.note&&isNew){el.remove();}afterChange(true);};
+  $("fnOk").onclick=()=>{if(!isNew)cp();el.dataset.note=$("fnText").value.trim();closeDlg();if(!el.dataset.note&&isNew){el.remove();}else if(isNew){page.focus();let n=el.nextSibling;if(!n||n.nodeName==="BR"){n=document.createTextNode("\u200b");el.after(n);}const r=document.createRange();if(n.nodeType===3)r.setStart(n,n.data[0]==="\u200b"?1:0);else r.setStartBefore(n);r.collapse(true);const s=getSelection();s.removeAllRanges();s.addRange(r);}afterChange(true);};
   $("fnText").onkeydown=e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();$("fnOk").click();}};
   $("fnDel").onclick=()=>{cp();el.remove();closeDlg();afterChange(true);};}
 
@@ -2038,7 +2100,7 @@ const pgOf=()=>({...defPg(),...(cur.pg||{})});
 const contentWidthPx=()=>{const g=pgOf();return Math.max(120,(g.w-g.l-g.r)*PX);};
 function setPg(patch,whole){const mk=whole?null:curSectionMarker();if(mk){mk.dataset.pg=JSON.stringify({...secGeo(mk),...patch});}else{cur.pg={...pgOf(),...patch};if(whole)page.querySelectorAll("hr.secbreak[data-pg]").forEach(h=>delete h.dataset.pg);}markDirty();applyView();if($("zoomSel").value==="fit")applyZoom("fit");if(hasSections()&&!whole)toast(mk?"Applied to this section.":"Applied to the first section and sections that don't have their own setup.");}
 let paged=false, pageInfo={n:1,heads:new Map(),pages:[],secs:null,PL:0}, composing=false;
-page.addEventListener("compositionstart",()=>composing=true);
+page.addEventListener("compositionstart",()=>{composing=true;if(paged)dropSpacers();});
 page.addEventListener("compositionend",()=>{composing=false;afterChange();});
 const viewPref=()=>store.get("view","print");
 function applyView(){
@@ -2173,7 +2235,7 @@ function paginate(ctx){
         if(text)hfFill(e,text,i,n);else if(live&&i===0){e.textContent=kind==="h"?"Double-click to add a header":"Double-click to add a footer";e.classList.add("empty");}
         top.append(e);}
       if(q.notes.length){const box=document.createElement("div");box.className="pgfnbox";box.style.cssText=`left:${q.left+s.ml}px;width:${s.cw}px;top:${q.top+q.H-q.mb-q.fn+4}px`;const sep=document.createElement("div");sep.className="pgfnsep";box.append(sep);
-        for(const[f]of q.notes){const d=document.createElement("div");d.className="pgfn";d.textContent=`${fnNum.get(f)}  ${f.dataset.note||(live?"(empty footnote — click to write it)":"")}`;if(live){d.style.pointerEvents="auto";d.style.cursor="pointer";d.onclick=()=>editNote(f);}box.append(d);}
+        for(const[f]of q.notes){const d=document.createElement("div");d.className="pgfn";d.textContent=`${fnNum.get(f)}  ${f.dataset.note||(live?zh("(empty footnote — click to write it)","（空脚注，点击填写）"):"")}`;if(live){d.style.pointerEvents="auto";d.style.cursor="pointer";d.onclick=()=>editNote(f);}box.append(d);}
         top.append(box);}});}
   return{n,pages,heads,secs,PL,docW};
 }
@@ -2225,11 +2287,11 @@ function hfDialog(focus){const h=hfNorm();
   $("hfOk").onclick=()=>{cur.hf={header:$("hfH").value.replace(/\s+$/,""),footer:$("hfF").value.replace(/\s+$/,""),hAlign:al.h,fAlign:al.f,diffFirst:$("hfFirst").checked,firstHeader:$("hfFH").value.trim(),firstFooter:$("hfFF").value.trim(),diffOddEven:$("hfOE").checked,evenHeader:ev("hfEH"),evenFooter:ev("hfEF"),edited:true};closeDlg();markDirty();renderWebHf();paginateLive();};
   $("hfRm").onclick=()=>{cur.hf={header:"",footer:"",hAlign:"left",fAlign:"center",diffFirst:false,firstHeader:"",firstFooter:"",edited:true};closeDlg();markDirty();renderWebHf();paginateLive();toast("Header and footer removed.");};
 }
-function setPageNumbers(kind,align,fmt){const h=hfNorm();const key=kind==="header"?"header":"footer";const strip=t=>t.replace(/(Page\s+)?\{page\}(\s+of\s+\{pages\})?/g,"").replace(/[ \t·|–-]+$/,"").trim();
-  const pn=fmt==="xofy"?"Page {page} of {pages}":"{page}";const other=kind==="header"?"footer":"header";
+function setPageNumbers(kind,align,fmt){const h=hfNorm();const key=kind==="header"?"header":"footer";const strip=t=>t.replace(/第\s*\{page\}\s*页(，?\s*共\s*\{pages\}\s*页)?/g,"").replace(/(Page\s+)?\{page\}(\s+of\s+\{pages\})?/g,"").replace(/[ \t·|–-]+$/,"").trim();
+  const pn=fmt==="xofy"?zh("Page {page} of {pages}","第 {page} 页，共 {pages} 页"):"{page}";const other=kind==="header"?"footer":"header";
   const base=strip(h[key]);h[key]=base?(align==="right"?base+"\t\t"+pn:align==="left"?pn+"\t\t"+base:base+"\t"+pn):pn;if(base)h[kind==="header"?"hAlign":"fAlign"]="left";else h[kind==="header"?"hAlign":"fAlign"]=align;
   h[other]=strip(h[other])===h[other]?h[other]:strip(h[other]);h.edited=true;cur.hf=h;markDirty();renderWebHf();paginateLive();toast("Page numbers added. Double-click a header or footer to edit it.");}
-function removePageNumbers(){const h=hfNorm();for(const k of["header","footer","firstHeader","firstFooter","evenHeader","evenFooter"])h[k]=h[k].replace(/(Page\s+)?\{page\}(\s+of\s+\{pages\})?/g,"").replace(/^\s+|\s+$/g,"");h.edited=true;cur.hf=h;markDirty();renderWebHf();paginateLive();}
+function removePageNumbers(){const h=hfNorm();for(const k of["header","footer","firstHeader","firstFooter","evenHeader","evenFooter"])h[k]=h[k].replace(/第\s*\{page\}\s*页(，?\s*共\s*\{pages\}\s*页)?/g,"").replace(/(Page\s+)?\{page\}(\s+of\s+\{pages\})?/g,"").replace(/^\s+|\s+$/g,"");h.edited=true;cur.hf=h;markDirty();renderWebHf();paginateLive();}
 
 /* page setup */
 function sizeKey(g){for(const[k,v]of Object.entries(PG_SIZES)){if((Math.abs(v[0]-g.w)<3&&Math.abs(v[1]-g.h)<3)||(Math.abs(v[1]-g.w)<3&&Math.abs(v[0]-g.h)<3))return k;}return"custom";}
@@ -2293,7 +2355,7 @@ async function headingPages(){
   try{const info=paginate(ctx);return tocHeadings(c).map(h=>(info.heads.get(h)??0)+1);}finally{host.remove();}
 }
 async function fillTocs(undoable){const tocs=[...page.querySelectorAll(".toc")];if(!tocs.length)return;const hs=tocHeadings();
-  const html=nums=>`<p class="toc-title">Contents</p>`+(hs.length?hs.map((h,i)=>`<p class="toc-e l${h.tagName[1]}" data-i="${i}"><span class="tt">${esc(h.textContent.replace(/\s+/g," ").trim())}</span><span class="td"></span><span class="tn">${nums?nums[i]:""}</span></p>`).join(""):`<p class="toc-e"><span class="tt" style="color:#8a8f98">No headings yet. Apply Heading 1–3, then update the table.</span></p>`);
+  const html=nums=>`<p class="toc-title">${zh("Contents","目录")}</p>`+(hs.length?hs.map((h,i)=>`<p class="toc-e l${h.tagName[1]}" data-i="${i}"><span class="tt">${esc(h.textContent.replace(/\s+/g," ").trim())}</span><span class="td"></span><span class="tn">${nums?nums[i]:""}</span></p>`).join(""):`<p class="toc-e"><span class="tt" style="color:#8a8f98">${zh("No headings yet. Apply Heading 1–3, then update the table.","还没有标题。请先应用标题 1–3 样式，再更新目录。")}</span></p>`);
   if(undoable)cp();
   tocs.forEach(t=>{t.innerHTML=html(null);t.contentEditable="false";});
   let nums=null;try{nums=await headingPages();}catch(e){console.warn(e);}
@@ -2417,7 +2479,7 @@ function shapeSvg(k,fill,stroke,text,w,h){const s=2.5,m=s;const W=w-m*2,H=h-m*2;
 const svgUrl=svg=>"data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(svg)));
 function shapeDialog(img){const saved=lastRange?lastRange.cloneRange():null;let st={k:"rect",fill:"#dbe6ff",stroke:"#2f5bd3",text:"",w:200,h:110};try{if(img?.dataset.shape)st={...st,...JSON.parse(img.dataset.shape)};}catch{}
   openDlg(`<h2>${img?"Edit shape":"Insert shape"}</h2><div class="shapegrid" id="shG">${Object.entries(SHAPES).map(([k,n])=>`<button data-k="${k}" title="${n}" class="${k===st.k?"on":""}"><img alt="${n}" src="${svgUrl(shapeSvg(k,"#e8eefc","#2f5bd3","",56,34))}" style="width:56px;height:34px"></button>`).join("")}</div>
-  <div class="row"><label>Fill</label><input type="color" id="shF" value="${st.fill}"><label>Outline</label><input type="color" id="shS" value="${st.stroke}"><label>Size</label><input type="text" id="shW" value="${st.w}" style="width:56px">×<input type="text" id="shH" value="${st.h}" style="width:56px"><label>px</label></div>
+  <div class="row"><label>Fill</label><input type="color" id="shF" value="${st.fill}"><label>${zh("Outline","轮廓")}</label><input type="color" id="shS" value="${st.stroke}"><label>Size</label><input type="text" id="shW" value="${st.w}" style="width:56px">×<input type="text" id="shH" value="${st.h}" style="width:56px"><label>px</label></div>
   <div class="row"><input type="text" id="shT" placeholder="Text inside the shape (optional)" value="${esc(st.text)}"></div>
   <div class="eqprev" id="shP" style="background:#fff"></div>
   <div class="foot"><button class="btn" data-close>Cancel</button><button class="btn pri" id="shOk">${img?"Save":"Insert"}</button></div>`);
@@ -2426,9 +2488,9 @@ function shapeDialog(img){const saved=lastRange?lastRange.cloneRange():null;let 
   $("shG").onclick=e=>{const b=e.target.closest("button");if(!b)return;st.k=b.dataset.k;$("shG").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));if(/line|larrow/.test(st.k)&&+$("shH").value>40)$("shH").value=24;upd();};
   for(const id of["shF","shS","shT","shW","shH"])$(id).oninput=upd;upd();
   $("shOk").onclick=()=>{read();const src=svgUrl(shapeSvg(st.k,st.fill,st.stroke,st.text,st.w,st.h));const meta=JSON.stringify(st);closeDlg();
-    if(img){cp();img.src=src;img.dataset.shape=meta;img.alt=st.text||SHAPES[st.k];img.style.width=st.w+"px";afterChange();return;}
+    if(img){cp();img.src=src;img.dataset.shape=meta;img.alt=st.text||trUI(SHAPES[st.k]);img.style.width=st.w+"px";afterChange();return;}
     page.focus();if(saved){const s=getSelection();s.removeAllRanges();s.addRange(saved);}cp();const id="sh"+uid();
-    document.execCommand("insertHTML",false,`<img src="${src}" alt="${esc(st.text||SHAPES[st.k])}" data-shid="${id}" style="width:${st.w}px">`);
+    document.execCommand("insertHTML",false,`<img src="${src}" alt="${esc(st.text||trUI(SHAPES[st.k]))}" data-shid="${id}" style="width:${st.w}px">`);
     const n=page.querySelector(`[data-shid="${id}"]`);if(n){n.removeAttribute("data-shid");n.dataset.shape=meta;}afterChange();};
 }
 
@@ -2491,7 +2553,7 @@ const EXTRA_CMDS={
   checklist(){ensureFocus();const l=leafOf(getSelection().anchorNode);const ul=l?.closest("ul");if(ul&&ul.classList.contains("checklist")&&page.contains(ul)){exec("insertUnorderedList");return;}if(!ul||!page.contains(ul)){exec("insertUnorderedList");}const u2=leafOf(getSelection().anchorNode)?.closest("ul");if(u2){cp();u2.classList.add("checklist");u2.style.listStyleType="";afterChange();}},
   shape:()=>shapeDialog(),equation:()=>eqDialog(),symbol:symbolDialog,toc:insertToc,
   tocUpdate(){if(!page.querySelector(".toc")){toast("Insert a table of contents first (Insert → Contents).");return;}fillTocs(true).then(()=>{afterChange();toast("Table of contents updated.");});},
-  textbox(){ensureFocus();cp();const id="tb"+uid();document.execCommand("insertHTML",false,`<div class="textbox" data-tbid="${id}"><p>Text box</p></div><p><br></p>`);const n=page.querySelector(`[data-tbid="${id}"]`);if(n){n.removeAttribute("data-tbid");const r=document.createRange();r.selectNodeContents(n.querySelector("p")||n);const s=getSelection();s.removeAllRanges();s.addRange(r);}fixStructure();afterChange();},
+  textbox(){ensureFocus();cp();const id="tb"+uid();document.execCommand("insertHTML",false,`<div class="textbox" data-tbid="${id}"><p>${zh("Text box","文本框")}</p></div><p><br></p>`);const n=page.querySelector(`[data-tbid="${id}"]`);if(n){n.removeAttribute("data-tbid");const r=document.createRange();r.selectNodeContents(n.querySelector("p")||n);const s=getSelection();s.removeAllRanges();s.addRange(r);}fixStructure();afterChange();},
   hf:()=>hfDialog("h"),pagesetup:pageSetupDialog,wordcount:()=>wordCountDialog(),versions:()=>versionsDialog(),
   date(){ensureFocus();cp();document.execCommand("insertText",false,new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"}));afterChange();},
   hr(){ensureFocus();cp();document.execCommand("insertHTML",false,"<hr><p><br></p>");fixStructure();afterChange();},
@@ -2503,13 +2565,13 @@ const EXTRA_CMDS={
   focus(){document.body.classList.toggle("focusmode");if(document.body.classList.contains("focusmode")){$("side").hidden=true;$("panel").hidden=true;toast("Focus mode. Press Esc to show the toolbar again.");}},
   a11y(){const iss=[];const go=el=>()=>{closeDlg();el.scrollIntoView({block:"center",behavior:"smooth"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1200);};
     page.querySelectorAll("img").forEach(i=>{if(!(i.getAttribute("alt")||"").trim())iss.push(["Picture without alt text","Click it and choose Alt text.",i]);});
-    let last=0;page.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h=>{if(h.closest(".toc"))return;const l=+h.tagName[1];if(last&&l>last+1)iss.push([`Heading level skipped (H${last} → H${l})`,h.textContent.trim().slice(0,60),h]);last=l;if(!h.textContent.trim())iss.push(["Empty heading","Delete it or add text.",h]);});
+    let last=0;page.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h=>{if(h.closest(".toc"))return;const l=+h.tagName[1];if(last&&l>last+1)iss.push([`Heading level skipped (H${last} → H${l})`,h.textContent.trim().slice(0,60),h,1]);last=l;if(!h.textContent.trim())iss.push(["Empty heading","Delete it or add text.",h]);});
     page.querySelectorAll("table").forEach(t=>{if(!t.querySelector("th"))iss.push(["Table without a header row","Table menu → Toggle header row.",t]);});
-    page.querySelectorAll("a[href]").forEach(a=>{const t=a.textContent.trim();if(/^(click here|here|link|more)$/i.test(t)||/^https?:\/\//.test(t))iss.push(["Link text doesn't say where it goes",t.slice(0,60),a]);});
+    page.querySelectorAll("a[href]").forEach(a=>{const t=a.textContent.trim();if(/^(click here|here|link|more)$/i.test(t)||/^https?:\/\//.test(t))iss.push(["Link text doesn't say where it goes",t.slice(0,60),a,1]);});
     page.querySelectorAll(".lowc-d,.lowc-l").forEach(e=>iss.push(["Text color is hard to read","Choose a darker or lighter color.",e]));
     if(!page.querySelector("h1,h2,h3")&&countWords(textOf(page,true)).words>400)iss.push(["Long document without headings","Use Heading styles so people can navigate.",page.firstElementChild||page]);
     openDlg(`<h2>Accessibility check</h2><p class="sub2">${iss.length?`${iss.length} thing${iss.length>1?"s":""} to fix. Click one to go to it.`:"No issues found."}</p><div class="vlist" id="a11yList"></div><div class="foot"><button class="btn pri" data-close>Done</button></div>`);
-    const L=$("a11yList");for(const[t,d,el]of iss.slice(0,100)){const r=document.createElement("div");r.className="vrow";r.innerHTML='<div class="t"><div class="n"></div><div class="m"></div></div>';r.querySelector(".n").textContent=t;r.querySelector(".m").textContent=d;r.onclick=go(el);L.append(r);}},
+    const L=$("a11yList");for(const[t,d,el,quote]of iss.slice(0,100)){const r=document.createElement("div");r.className="vrow";r.innerHTML='<div class="t"><div class="n"></div><div class="m"></div></div>';r.querySelector(".n").textContent=t;r.querySelector(".m").textContent=d;if(quote)r.querySelector(".m").dataset.noI18n="";r.onclick=go(el);L.append(r);}},
 };
 function wordCountDialog(){const t=textOf(page,true);const c=countWords(t);const withSp=t.replace(/\n/g,"").length;const paras=leaves().filter(l=>ownText(l).trim()).length;const fns=page.querySelectorAll("sup.fn").length;
   const s=getSelection();const sel=s.rangeCount&&!s.isCollapsed&&page.contains(s.anchorNode)?s.toString():"";const sc=sel?countWords(sel):null;
@@ -2573,11 +2635,11 @@ async function versionsDialog(){dirty=true;await saveNow();if(!cur.id){toast("St
   <div class="vlist" id="vList"></div><div class="vprev doc" id="vPrev" hidden></div>
   <div class="foot"><button class="btn" data-close>Close</button><button class="btn pri" id="vRestore" disabled>Restore this version</button></div>`);
   const draw=l=>{const L=$("vList");if(!L)return;L.replaceChildren();if(!l.length){L.innerHTML='<div class="empty">No versions yet. They appear as you edit, or save one now.</div>';return;}
-    for(const v of l){const r=document.createElement("div");r.className="vrow";r.innerHTML=`<div class="t"><div class="n"></div><div class="m"></div></div>`;r.querySelector(".n").textContent=v.name||(v.auto?"Autosaved version":"Saved version");r.querySelector(".m").textContent=`${new Date(v.at).toLocaleString()} · ${(v.words||0).toLocaleString()} words`;
+    for(const v of l){const r=document.createElement("div");r.className="vrow";r.innerHTML=`<div class="t"><div class="n"></div><div class="m"></div></div>`;r.querySelector(".n").textContent=v.name||(v.auto?zh("Autosaved version","自动保存的版本"):zh("Saved version","手动保存的版本"));r.querySelector(".m").textContent=`${new Date(v.at).toLocaleString()} · ${(v.words||0).toLocaleString()} words`;
       r.onclick=()=>{pick=v;L.querySelectorAll(".vrow").forEach(x=>x.classList.toggle("on",x===r));const p=$("vPrev");p.hidden=false;p.innerHTML=v.html;p.querySelectorAll("[contenteditable]").forEach(e=>e.removeAttribute("contenteditable"));p.querySelectorAll(".eq").forEach(e=>e.replaceChildren());renderEqs(p);$("vRestore").disabled=false;};L.append(r);}};
   draw(list);
   $("vSave").onclick=async()=>{const ok=await saveVersion($("vName").value.trim(),false);if(ok){$("vName").value="";draw(await versList(cur.id));toast("Version saved.");}else toast("Couldn't save the version — storage may be full.");};
-  $("vRestore").onclick=async()=>{if(!pick)return;const v=pick;await saveVersion("Before restoring "+new Date(v.at).toLocaleString(),true);cp();page.innerHTML=v.html||"<p><br></p>";cur.comments=v.comments||{};if(v.hf)cur.hf=v.hf;if(v.pg)cur.pg=v.pg;closeDlg();renderWebHf();renderEqs(page);afterChange(true);toast(`Restored the version from ${new Date(v.at).toLocaleString()}.`,"Undo",undo,7000);};
+  $("vRestore").onclick=async()=>{if(!pick)return;const v=pick;await saveVersion(zh("Before restoring ","恢复前 ")+new Date(v.at).toLocaleString(),true);cp();page.innerHTML=v.html||"<p><br></p>";cur.comments=v.comments||{};if(v.hf)cur.hf=v.hf;if(v.pg)cur.pg=v.pg;closeDlg();renderWebHf();renderEqs(page);afterChange(true);toast(`Restored the version from ${new Date(v.at).toLocaleString()}.`,"Undo",undo,7000);};
 }
 
 /* ============ tab stops (custom stops per paragraph, Word's 0.5″ defaults otherwise) ============ */
@@ -2711,8 +2773,15 @@ const TEMPLATES={
   report:{n:"Report",d:"Title, contents, numbered pages",make:()=>({title:"Report",pg:{w:612,h:792,t:72,b:72,l:72,r:72,hd:36,fd:36},hf:{header:"Report title",footer:"Page {page} of {pages}",hAlign:"right",fAlign:"center",diffFirst:true,firstHeader:"",firstFooter:"",edited:true},html:`<h1 data-style="Title">Report title</h1><p data-style="Subtitle">Subtitle or one-line summary · ${new Date().toLocaleDateString(undefined,{year:"numeric",month:"long"})}</p><div class="toc" contenteditable="false"></div><h1>Executive summary</h1><p>State the question this report answers, the answer, and what you recommend, in one short paragraph.</p><h1>Background</h1><p>What the reader needs to know to follow the findings.</p><h2>Scope</h2><p>What is and isn't covered.</p><h1>Findings</h1><p>Lead with the most important finding.</p><table><tbody><tr><th>Measure</th><th>Before</th><th>After</th></tr><tr><td>Metric one</td><td>0</td><td>0</td></tr><tr><td>Metric two</td><td>0</td><td>0</td></tr></tbody></table><h1>Recommendations</h1><ol><li>Recommendation, owner, date.</li><li>Recommendation, owner, date.</li></ol><h1>Appendix</h1><p>Sources and methods.</p>`})},
   notes:{n:"Meeting notes",d:"Agenda, decisions, action items",make:()=>({title:"Meeting notes",pg:{w:612,h:792,t:72,b:72,l:72,r:72,hd:36,fd:36},hf:null,html:`<h1 data-style="Title">Team meeting</h1><table><tbody><tr><th>Date</th><td>${new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"})}</td></tr><tr><th>Time</th><td>10:00 – 10:30</td></tr><tr><th>Attendees</th><td>Names</td></tr><tr><th>Note taker</th><td>Name</td></tr></tbody></table><h2>Agenda</h2><ol><li>Topic one</li><li>Topic two</li><li>Topic three</li></ol><h2>Notes</h2><ul><li>Key point discussed.</li><li>Key point discussed.</li></ul><h2>Decisions</h2><ul><li>Decision and who made it.</li></ul><h2>Action items</h2><ul class="checklist"><li>Task — owner — due date</li><li>Task — owner — due date</li></ul><h2>Next meeting</h2><p>Date and topics.</p>`})},
 };
+// Chinese sample text for Chinese viewers (same layouts and styles; Word style IDs are unchanged)
+if(window.__ZH)Object.assign(TEMPLATES,{
+  resume:{n:"简历",d:"一页纸，分区清晰",make:()=>({title:"简历",pg:{w:595.3,h:841.9,t:54,b:54,l:54,r:54,hd:30,fd:30},hf:null,html:`<h1 data-style="Title" style="margin-bottom:2pt">你的姓名</h1><p style="color:#595959;margin-bottom:12pt">求职意向 · you@example.com · 138 0000 0000 · 城市 · 个人主页</p><h2>个人简介</h2><p>用两三句话介绍你最擅长的事和想找的下一份工作，再写一项让你自豪的成果。</p><h2>工作经历</h2><p data-tabs="483r" style="margin-bottom:0pt"><b>职位，公司</b><span class="tab">\t</span>2022 – 至今</p><ul><li>主导某个项目，让一项关键指标提升了可量化的幅度。</li><li>端到端负责一个流程，把耗时缩短了一半。</li><li>与设计、研发和销售协作，上线了客户呼声最高的功能。</li></ul><p data-tabs="483r" style="margin-bottom:0pt"><b>职位，公司</b><span class="tab">\t</span>2019 – 2022</p><ul><li>带数字的成果。</li><li>带数字的成果。</li></ul><h2>教育背景</h2><p data-tabs="483r"><b>学位，学校</b><span class="tab">\t</span>2019</p><h2>技能</h2><p>技能 · 技能 · 技能 · 技能 · 英语（流利）</p>`})},
+  letter:{n:"求职信",d:"正式信函版式",make:()=>({title:"求职信",pg:{w:595.3,h:841.9,t:72,b:72,l:72,r:72,hd:36,fd:36},hf:null,html:`<p>尊敬的招聘负责人：</p><p>您好！我希望应聘贵公司的［职位］一职。请用一句话说明为什么这个职位、这家公司是你下一步的理想选择。</p><p>在［公司］任职期间，我［带数字的成果］。再补充一两个与职位描述要求相符的例子。</p><p>期待有机会进一步交流，介绍我能如何帮助［公司］实现［目标］。感谢您抽出时间阅读。</p><p style="margin-bottom:28pt">此致<br>敬礼</p><p style="text-align:right;margin-bottom:0pt">你的姓名</p><p style="text-align:right;margin-bottom:0pt">you@example.com · 138 0000 0000</p><p style="text-align:right">${new Date().toLocaleDateString("zh-CN",{year:"numeric",month:"long",day:"numeric"})}</p>`})},
+  report:{n:"报告",d:"标题、目录、页码",make:()=>({title:"报告",pg:{w:595.3,h:841.9,t:72,b:72,l:72,r:72,hd:36,fd:36},hf:{header:"报告标题",footer:"第 {page} 页，共 {pages} 页",hAlign:"right",fAlign:"center",diffFirst:true,firstHeader:"",firstFooter:"",edited:true},html:`<h1 data-style="Title">报告标题</h1><p data-style="Subtitle">副标题或一句话摘要 · ${new Date().toLocaleDateString("zh-CN",{year:"numeric",month:"long"})}</p><div class="toc" contenteditable="false"></div><h1>摘要</h1><p>用一小段话说明这份报告要回答的问题、结论和建议。</p><h1>背景</h1><p>读者理解后续发现所需的背景信息。</p><h2>范围</h2><p>包括哪些内容，不包括哪些内容。</p><h1>主要发现</h1><p>先写最重要的发现。</p><table><tbody><tr><th>指标</th><th>之前</th><th>之后</th></tr><tr><td>指标一</td><td>0</td><td>0</td></tr><tr><td>指标二</td><td>0</td><td>0</td></tr></tbody></table><h1>建议</h1><ol><li>建议、负责人、日期。</li><li>建议、负责人、日期。</li></ol><h1>附录</h1><p>资料来源与方法。</p>`})},
+  notes:{n:"会议纪要",d:"议程、决定、待办事项",make:()=>({title:"会议纪要",pg:{w:595.3,h:841.9,t:72,b:72,l:72,r:72,hd:36,fd:36},hf:null,html:`<h1 data-style="Title">团队周会</h1><table><tbody><tr><th>日期</th><td>${new Date().toLocaleDateString("zh-CN",{year:"numeric",month:"long",day:"numeric"})}</td></tr><tr><th>时间</th><td>10:00 – 10:30</td></tr><tr><th>参会人</th><td>姓名</td></tr><tr><th>记录人</th><td>姓名</td></tr></tbody></table><h2>议程</h2><ol><li>议题一</li><li>议题二</li><li>议题三</li></ol><h2>讨论要点</h2><ul><li>讨论的要点。</li><li>讨论的要点。</li></ul><h2>决定</h2><ul><li>决定事项及决定人。</li></ul><h2>待办事项</h2><ul class="checklist"><li>任务 — 负责人 — 截止日期</li><li>任务 — 负责人 — 截止日期</li></ul><h2>下次会议</h2><p>日期和议题。</p>`})},
+});
 function templatesMenu(x,y){showMenu(x,y,[["Blank document",newDoc],null,...Object.entries(TEMPLATES).map(([k,t])=>[`${t.n} — ${t.d}`,()=>newFromTemplate(k)])]);}
-async function newFromTemplate(k){await saveNow();const d=TEMPLATES[k].make();loadDoc({...d,id:uid(),source:"template"});dirty=true;await saveNow();if(page.querySelector(".toc"))await fillTocs(false);toast(`New ${TEMPLATES[k].n.toLowerCase()}. Replace the placeholder text with yours.`);}
+async function newFromTemplate(k){await saveNow();const d=TEMPLATES[k].make();loadDoc({...d,id:uid(),source:"template"});dirty=true;await saveNow();if(page.querySelector(".toc"))await fillTocs(false);toast(zh(`New ${TEMPLATES[k].n.toLowerCase()}. Replace the placeholder text with yours.`,`已新建${TEMPLATES[k].n}。把占位文字换成你自己的内容。`));}
 
 /* ============ AI availability, desktop ============ */
 function applyAiAvailability(){
@@ -2722,6 +2791,10 @@ function applyAiAvailability(){
   else document.querySelectorAll("[data-pt='chat']").forEach(b=>b.hidden=false);
 }
 let desktop=null,capsKnown=false;
+/*DOCK_ART*/
+const DOCK_SVG="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"><defs><linearGradient id=\"document-editor-bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#3D7BFF\"/><stop offset=\"1\" stop-color=\"#1638B5\"/><\/linearGradient><radialGradient id=\"document-editor-sh\" cx=\".28\" cy=\".05\" r=\".9\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0.22\"/><stop offset=\".6\" stop-color=\"#fff\" stop-opacity=\"0\"/><\/radialGradient><filter id=\"document-editor-ds\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"22\" stdDeviation=\"26\" flood-color=\"#000\" flood-opacity=\".28\"/><\/filter><filter id=\"document-editor-ds2\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"150%\"><feDropShadow dx=\"0\" dy=\"10\" stdDeviation=\"12\" flood-color=\"#000\" flood-opacity=\".22\"/><\/filter><linearGradient id=\"document-editor-gold\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#FFE08A\"/><stop offset=\"1\" stop-color=\"#E0A21C\"/><\/linearGradient><\/defs><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#document-editor-bg)\"/><rect width=\"1024\" height=\"1024\" rx=\"230\" fill=\"url(#document-editor-sh)\"/><g filter=\"url(#document-editor-ds)\" transform=\"rotate(-7 512 520)\"><path d=\"M282 190h360l118 118v526a30 30 0 0 1-30 30H282a30 30 0 0 1-30-30V220a30 30 0 0 1 30-30z\" fill=\"#fff\"/><path d=\"M642 190v88a30 30 0 0 0 30 30h88z\" fill=\"#D7E2FF\"/><rect x=\"320\" y=\"290\" width=\"250\" height=\"40\" rx=\"20\" fill=\"#2F64F5\"/><rect x=\"320\" y=\"380\" width=\"380\" height=\"24\" rx=\"12\" fill=\"#C9D3E8\"/><rect x=\"320\" y=\"436\" width=\"380\" height=\"24\" rx=\"12\" fill=\"#C9D3E8\"/><rect x=\"320\" y=\"492\" width=\"300\" height=\"24\" rx=\"12\" fill=\"#C9D3E8\"/><rect x=\"320\" y=\"572\" width=\"380\" height=\"24\" rx=\"12\" fill=\"#C9D3E8\"/><rect x=\"320\" y=\"628\" width=\"220\" height=\"24\" rx=\"12\" fill=\"#C9D3E8\"/><\/g><g filter=\"url(#document-editor-ds2)\" transform=\"translate(690 690) rotate(45)\"><path d=\"M-62-230h124v150c0 40-14 80-40 118L0 70l-22-32c-26-38-40-78-40-118z\" fill=\"url(#document-editor-gold)\"/><path d=\"M0-70v128\" stroke=\"#7A4A06\" stroke-width=\"10\" stroke-linecap=\"round\"/><circle cx=\"0\" cy=\"-78\" r=\"18\" fill=\"#7A4A06\"/><rect x=\"-70\" y=\"-300\" width=\"140\" height=\"84\" rx=\"16\" fill=\"#20242E\"/><\/g><rect x=\"3\" y=\"3\" width=\"1018\" height=\"1018\" rx=\"228\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".14\" stroke-width=\"6\"/><\/svg>";
+function dockIconArt(){return new Promise(res=>{const img=new Image();img.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))}catch{res(dockIcon())}};img.onerror=()=>res(dockIcon());img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DOCK_SVG)})}
+/*END_DOCK_ART*/
 function dockIcon(){const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,"#3d6cf0");g.addColorStop(1,"#1f3f9e");x.fillStyle=g;x.beginPath();x.roundRect(8,8,240,240,54);x.fill();
   x.fillStyle="#fff";x.beginPath();x.roundRect(62,40,132,176,12);x.fill();x.fillStyle="#c9d5f7";for(let i=0;i<6;i++){x.fillRect(82,72+i*20,i===5?52:92,8);}
   x.fillStyle="#2a51c9";x.font="bold 64px -apple-system,Helvetica,Arial";x.textAlign="center";x.textBaseline="middle";x.fillText("✦",186,186);return c.toDataURL("image/png");}
@@ -2732,7 +2805,7 @@ function dockIcon(){const c=document.createElement("canvas");c.width=c.height=25
   if(!desktop)return;
   if(!desktop.tray){const st=await desktop.install.state().catch(()=>"unavailable");if(st==="available"){const b=document.createElement("button");b.className="btn";b.textContent="Install as app";b.onclick=()=>desktop.install.request().catch(()=>{});$("installSlot").replaceChildren(b);}return;}
   document.body.classList.add("app","inset");
-  desktop.app.dock.setIcon(dockIcon()).catch(()=>{});
+  dockIconArt().then(u=>desktop.app.dock.setIcon(u)).catch(()=>{});
   desktop.window.setOptions({titleBarStyle:"hiddenInset",dragHeight:44,width:1240,height:840,minWidth:400,minHeight:480}).catch(()=>{});
 })();
 
@@ -2752,4 +2825,51 @@ function dockIcon(){const c=document.createElement("canvas");c.width=c.height=25
 })();
 addEventListener("beforeunload",()=>{if(dirty)saveNow();});
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&dirty)saveNow();});
+</script>
+<script>
+/*INSTALL_PROMPT*/
+/* When this artifact is open in Claude Desktop but not installed as an app yet, invite the person
+   to install it. Shows once per session; the install itself is Claude's own dialog, started from
+   the person's click (install.request() needs a click). Silent in browsers, on mobile and inside the
+   installed app. */
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{if(sessionStorage.getItem("appstore.installAsked"))return}catch{}
+  const d=await claude.use("desktop").catch(()=>null);
+  if(!d||d.fs||!d.install)return;                       // d.fs exists only inside the installed app
+  const st=await d.install.state().catch(()=>"unavailable");
+  if(st!=="available")return;
+  await new Promise(r=>setTimeout(r,900));
+  if(document.querySelector(".aspi"))return;
+  const zh=window.__ZH??/^zh/i.test(navigator.language||"");
+  const T=(en,c)=>zh?c:en;
+  const name=(document.title||"").trim()||T("this app","这个 app");
+  const icon=typeof DOCK_SVG==="string"?DOCK_SVG:(typeof ICON_SVG==="object"&&ICON_SVG.store)||"";
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const st2=document.createElement("style");
+  st2.textContent=`.aspi{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(20,20,19,.42);padding:16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.aspi .b{--bg:#FAF9F5;--fg:#141413;--mu:#6B6A64;--pill:#EDE6DA;--ac:#B9532F;--on:#fff;background:var(--bg);color:var(--fg);border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (prefers-color-scheme:dark){.aspi .b{--bg:#262624;--fg:#FAF9F5;--mu:#A6A39A;--pill:#3A3632;--ac:#E08A6A;--on:#1F1E1D}}
+.aspi .ic{width:72px;height:72px}.aspi .ic svg{width:72px;height:72px;display:block}
+.aspi h3{margin:2px 0 0;font-size:18px;font-weight:700;line-height:1.25}
+.aspi p{margin:0;color:var(--mu)}
+.aspi .row{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
+.aspi button{font-family:inherit;font-weight:600;font-size:15px;line-height:1;border:0;border-radius:999px;padding:12px 16px;cursor:pointer}
+.aspi .y{background:var(--ac);color:var(--on)}.aspi .n{background:var(--pill);color:var(--fg)}`;
+  const m=document.createElement("div");m.className="aspi";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("data-no-i18n","");
+  m.innerHTML=`<div class="b"><div class="ic">${icon}</div>
+    <h3>${esc(T(`Install ${name} as an app?`,`把「${name}」安装为 app？`))}</h3>
+    <p>${esc(T("It gets its own window and Dock icon, opens like any other app, and keeps working on your Claude plan.","装好后有自己的窗口和 Dock 图标，像普通 app 一样打开，继续用你的 Claude 套餐。"))}</p>
+    <div class="row"><button class="y">${esc(T("Install","安装"))}</button><button class="n">${esc(T("Not now","以后再说"))}</button></div></div>`;
+  const close=()=>{m.remove();st2.remove();try{sessionStorage.setItem("appstore.installAsked","1")}catch{}};
+  m.addEventListener("click",async e=>{
+    if(e.target===m||e.target.closest(".n"))return close();
+    if(e.target.closest(".y")){const r=await d.install.request().catch(()=>"failed");close();
+      if(r==="failed"||r==="unavailable"){const n=document.createElement("div");n.textContent=T("Couldn't install. Use Install as app in the artifact's menu.","没装上。可以在工件菜单里选“安装为 app”。");n.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#141413;color:#fff;padding:10px 14px;border-radius:10px;z-index:2147483000;font:13px system-ui";document.body.appendChild(n);setTimeout(()=>n.remove(),5000)}}
+  });
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"&&m.isConnected){close();document.removeEventListener("keydown",k)}});
+  document.head?document.head.appendChild(st2):document.body.appendChild(st2);document.body.appendChild(m);
+  m.querySelector(".y").focus();
+})();
+/*END_INSTALL_PROMPT*/
 </script>
