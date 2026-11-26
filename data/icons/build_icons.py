@@ -199,22 +199,6 @@ I["speaking-coach"] = tile("sc", "#FF6BAA", "#C2185B", '''
  <rect x="400" y="770" width="224" height="40" rx="20" fill="#fff"/>
 </g>''', '<linearGradient id="mic" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E4E7EE"/></linearGradient>')
 
-# Party Game: tilted die + confetti
-I["party-game"] = tile("pg", "#FFD445", "#FF8A1F", '''
-<g transform="rotate(-14 512 540)" filter="url(#ds)">
- <rect x="300" y="330" width="424" height="424" rx="80" fill="#fff"/>
- <circle cx="410" cy="440" r="42" fill="#FF4D6D"/><circle cx="614" cy="440" r="42" fill="#22263A"/>
- <circle cx="512" cy="542" r="42" fill="#22263A"/>
- <circle cx="410" cy="644" r="42" fill="#22263A"/><circle cx="614" cy="644" r="42" fill="#7B5CFF"/>
-</g>
-<g filter="url(#ds2)">
- <rect x="200" y="200" width="70" height="30" rx="15" fill="#7B5CFF" transform="rotate(-30 235 215)"/>
- <rect x="760" y="230" width="80" height="30" rx="15" fill="#FF4D6D" transform="rotate(40 800 245)"/>
- <circle cx="820" cy="420" r="26" fill="#22C3E6"/><circle cx="210" cy="620" r="22" fill="#fff"/>
- <rect x="780" y="760" width="74" height="30" rx="15" fill="#22263A" transform="rotate(-20 817 775)"/>
- <path d="M560 160l18 40 44 6-32 30 8 44-38-22-38 22 8-44-32-30 44-6z" fill="#fff"/>
-</g>''')
-
 # Store: an App Store-style "A" built from three rounded bars, in Claude's colors, with the Claude spark
 I["store"] = tile("store", "#E58B68", "#B9532F", '''
 <g filter="url(#ds)" stroke-linecap="round" fill="none">

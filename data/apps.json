@@ -347,23 +347,6 @@
    "ai": true
   },
   {
-   "id": "party-game",
-   "name": "Party Game",
-   "subtitle": "Claude hosts, friends compete",
-   "category": "play",
-   "desc": "A pass-and-play party game for 3 to 8 friends on one screen. Claude writes the prompts, everyone answers in secret and votes for the funniest, then Claude teases every answer and picks its own favorite for bonus points.",
-   "author": "",
-   "maker": "Claude AppStore",
-   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/party-game",
-   "artifact": "https://claude.ai/artifact/3VqFRic6tuyhhd8mNCTwru",
-   "lang": "",
-   "added": "2026-11-25",
-   "perms": [
-    "Claude"
-   ],
-   "ai": true
-  },
-  {
    "id": "pomodoro",
    "name": "Pomodoro Timer",
    "subtitle": "Claude plans your day into sessions",
