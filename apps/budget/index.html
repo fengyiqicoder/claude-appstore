@@ -464,8 +464,32 @@ const pref={get(k,d){try{const v=localStorage.getItem("budget.pref."+k);return v
 let S=null,ver=0,past=[],future=[],saveTimer=0,saveFailed=false;
 const RTA="rta";
 function blank(){return {v:1,settings:{currency:guessCur()},accounts:[],groups:[],cats:[],txns:[],budget:{},rules:[],maps:{},recur:{},lastBackup:null,dirty:0}}
-function fixup(s){const b=blank();for(const k in b)if(s[k]==null)s[k]=b[k];for(const k in b.settings)if(s.settings[k]==null)s.settings[k]=b.settings[k];for(const t of s.txns){if(t.amt==null)t.amt=0;if(!t.clr)t.clr="u"}return s}
-function save(){clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{const ok=await DB.set("state",S);if(!ok&&!saveFailed){saveFailed=true;renderBanner()}else if(ok&&saveFailed){saveFailed=false;renderBanner()}},250)}
+/* the saved state can come from a backup file: ids only [\w-], numbers finite, dates and enum fields checked */
+const BID=/^(id|acct|gid|cat|to|from|acct2|xfer|pair|tid|rid|cid|aid|parent|src)$/,BNUM=/^(amt|o|n|bal|limit|count|day|every|interval|v|dirty|min|max|target|apr|rate|pay)$/,BBOOL=/^(on|del|demo|hidden|hide|closed|done|auto|skip|off|ign|flag|fixed)$/;
+function cleanState(v,key,d=0){if(d>12)return null;
+  if(Array.isArray(v))return v.slice(0,500000).map(x=>cleanState(x,key,d+1));
+  if(v&&typeof v==="object"){const o={};for(const [k0,x] of Object.entries(v)){const k=String(k0).replace(/[^\w-]/g,"").slice(0,80);if(k)o[k]=cleanState(x,k,d+1)}return o}
+  if(BNUM.test(key)){if(v==null)return v;const n=+v;return Number.isFinite(n)?Math.max(-1e15,Math.min(1e15,n)):0}
+  if(BBOOL.test(key))return v===true;
+  if(typeof v==="number")return Number.isFinite(v)?v:0;
+  if(typeof v==="string"){if(BID.test(key))return v.replace(/[^\w-]/g,"").slice(0,80);
+    if(/^(date|at|next|start|end|last|due|until)$/.test(key))return /^\d{4}-\d{2}(-\d{2})?$/.test(v)?v:"";
+    if(/^(color|clr|type|cur|currency|kind|k|freq|unit|mode)$/.test(key))return v.replace(/[^\w#.-]/g,"").slice(0,40);
+    return v.slice(0,20000)}
+  return typeof v==="boolean"||v===null?v:null}
+function fixup(s){s=cleanState(s,"");if(!Array.isArray(s.txns))s.txns=[];if(!Array.isArray(s.accounts))s.accounts=[];
+  if(s.budget&&typeof s.budget==="object")for(const m of Object.keys(s.budget)){const row=s.budget[m];if(!/^\d{4}-\d{2}$/.test(m)||!row||typeof row!=="object"||Array.isArray(row)){delete s.budget[m];continue}for(const c of Object.keys(row)){const n=+row[c];if(Number.isFinite(n))row[c]=n;else delete row[c]}}
+  for(const k of ["accounts","groups","cats","txns","rules"])if(Array.isArray(s[k]))s[k]=s[k].filter(x=>x&&typeof x==="object"&&!Array.isArray(x));
+  for(const t of s.txns){if(t.splits!=null&&!Array.isArray(t.splits))delete t.splits;if(Array.isArray(t.splits))t.splits=t.splits.filter(x=>x&&typeof x==="object")}
+  const b=blank();for(const k in b)if(s[k]==null)s[k]=b[k];if(!s.settings||typeof s.settings!=="object"||Array.isArray(s.settings))s.settings={};for(const k in b.settings)if(s.settings[k]==null)s.settings[k]=b.settings[k];for(const t of s.txns){if(t.amt==null)t.amt=0;if(!["u","c","r"].includes(t.clr))t.clr="u"}if(!s.settings||typeof s.settings!=="object"||Array.isArray(s.settings))s.settings={...b.settings};for(const k of ["maps","recur","budget"])if(!s[k]||typeof s[k]!=="object"||Array.isArray(s[k]))s[k]={};return s}
+/* several windows or tabs share one budget: after each save the others reload it instead of overwriting it with stale data */
+const TAB=uid();let savePending=false,bc=null;try{bc=new BroadcastChannel("claude-budget")}catch{}
+function announceSave(){try{bc?.postMessage({from:TAB})}catch{}try{localStorage.setItem("budget.ping",TAB+":"+Date.now())}catch{}}
+function save(){clearTimeout(saveTimer);savePending=true;saveTimer=setTimeout(async()=>{const ok=await DB.set("state",S);savePending=false;if(ok)announceSave();if(!ok&&!saveFailed){saveFailed=true;renderBanner()}else if(ok&&saveFailed){saveFailed=false;renderBanner()}},250)}
+let reloadT=0;
+function otherTabSaved(from){if(!from||from===TAB||!S)return;clearTimeout(reloadT);reloadT=setTimeout(async()=>{if(savePending)return;const st=await DB.get("state");if(!st||!Array.isArray(st.txns)||savePending)return;S=fixup(st);past=[];future=[];ver++;render();toast(T("Updated with changes from another Budget window","已同步另一个窗口里的修改"))},60)}
+try{if(bc)bc.onmessage=e=>otherTabSaved(e.data?.from)}catch{}
+addEventListener("storage",e=>{if(e.key==="budget.ping"&&e.newValue&&!bc)otherTabSaved(e.newValue.split(":")[0])});
 function snapshot(){return JSON.stringify(S)}
 function commit(fn,opts={}){
   const snap=snapshot();
@@ -677,6 +701,7 @@ function dialog({title,body,foot,wide,onClose,focus}){
   setTimeout(()=>{const f=focus?d.querySelector(focus):d.querySelector(".db input:not([type=checkbox]):not([type=file]),.db select,.db textarea,.df .pri");f&&f.focus()},0);
   return d;
 }
+$("dlg").addEventListener("keydown",e=>{if(e.key!=="Enter"||e.isComposing||e.keyCode===229||e.defaultPrevented||e.shiftKey||e.metaKey||e.ctrlKey)return;const t=e.target;if(t.tagName!=="INPUT"||/^(checkbox|radio|file|button|submit)$/.test(t.type))return;const pri=$("dlg").querySelector(".df .pri");if(pri){e.preventDefault();pri.click()}});
 function closeDialog(){if($("dlgw").hidden)return;$("dlgw").hidden=true;$("dlg").innerHTML="";const f=dlgOnClose;dlgOnClose=null;f&&f();try{dlgPrevFocus?.focus?.()}catch{}}
 $("dlgw").addEventListener("mousedown",e=>{if(e.target===$("dlgw"))closeDialog()});
 function mkBtn(label,cls,fn,title){const b=document.createElement("button");b.className="btn"+(cls?" "+cls:"");b.textContent=label;if(title)b.title=title;b.onclick=fn;return b}
@@ -1197,6 +1222,7 @@ function reconcile(a){
   const d=document.createElement("div");d.innerHTML=`<p style="margin:0 0 8px">${esc(T("Is your cleared balance","你的已结清余额是不是"))} <b>${fm(B.c,cur)}</b>?</p><p class="fine" style="margin:0 0 10px">${esc(T("Compare it with the balance on your bank's website or statement, leaving out pending transactions.","和银行网站或对账单上的余额对比（不算尚未入账的交易）。"))}</p><label class="fld">${esc(T("If not, what does the bank say?","如果不是，银行显示多少？"))}<input id="rBal" inputmode="decimal" placeholder="${esc(plain(B.c))}"></label>`;
   const finish=actual=>{closeDialog();commit(()=>{const diff=actual-B.c;if(diff){S.txns.push({id:uid(),acct:a.id,date:today(),payee:T("Reconciliation Balance Adjustment","对账余额调整"),amt:diff,cat:a.on&&!isCC(a)?RTA:null,clr:"c",ts:Date.now()})}for(const t of S.txns)if(t.acct===a.id&&t.clr==="c")t.clr="r";a.recAt=today()});toast(T("Reconciled. Cleared transactions are now locked 🔒.","对账完成，已结清的交易已锁定 🔒。"),T("Undo","撤销"),undo)};
   dialog({title:T("Reconcile ","对账：")+a.name,body:d,foot:[mkBtn(T("Cancel","取消"),"",closeDialog),mkBtn(T("No, adjust to bank balance","不是，按银行余额调整"),"",()=>{const v=evalAmt($("rBal").value);if(!$("rBal").value.trim()||!isFinite(v)){$("rBal").focus();toast(T("Enter the bank's balance","请输入银行余额"));return}let m=mu(v);if(isDebt(a)&&m>0&&B.c<0)m=-m;finish(m)}),mkBtn(T("Yes, it matches","是的，一致"),"pri",()=>finish(B.c))],focus:".df .pri"});
+  $("rBal").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing&&e.keyCode!==229){e.preventDefault();const bs=$("dlg").querySelectorAll(".df button");($("rBal").value.trim()?bs[1]:bs[2])?.click()}};
 }
 
 /* ================= file reading ================= */
@@ -1531,7 +1557,7 @@ async function backup(){
 }
 async function restoreFrom(text,name){
   let o;try{o=JSON.parse(text)}catch{toast(T("That isn't a valid backup file.","这不是有效的备份文件。"));return}
-  const st=o?.state||o;if(!st||!Array.isArray(st.txns)||!Array.isArray(st.accounts)){toast(T("That JSON isn't a Budget backup.","这个 JSON 不是预算备份。"));return}
+  let st=o?.state||o;if(!st||typeof st!=="object"||!Array.isArray(st.txns)||!Array.isArray(st.accounts)){toast(T("That JSON isn't a Budget backup.","这个 JSON 不是预算备份。"));return}
   const go2=()=>{commit(()=>{S=fixup(st);S.lastBackup=Date.now();S.dirty=0;UI.selCat=null;UI.view="budget"});toast(T(`Restored ${st.txns.length} transactions from ${name}`,`已从 ${name} 恢复 ${st.txns.length} 笔交易`),T("Undo","撤销"),undo)};
   if(!S.txns.length&&!S.accounts.length)return go2();
   confirmDlg(T("Restore this backup?","恢复这个备份？"),T(`This replaces everything here (${S.accounts.filter(a=>!a.del).length} accounts, ${S.txns.length} transactions) with the backup (${st.accounts.filter(a=>!a.del).length} accounts, ${st.txns.length} transactions). You can undo right after.`,`会用备份（${st.accounts.filter(a=>!a.del).length} 个账户、${st.txns.length} 笔交易）替换这里的全部数据（${S.accounts.filter(a=>!a.del).length} 个账户、${S.txns.length} 笔交易）。恢复后可以立刻撤销。`),T("Restore","恢复"),go2);

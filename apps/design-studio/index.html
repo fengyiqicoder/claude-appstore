@@ -807,13 +807,16 @@ const itemWord=()=>P?.kind==="app"?"screen":P?.kind==="web"?"variant":"graphic";
 
 /* ================= recent + persistence ================= */
 async function loadRecent(){try{recent=JSON.parse(await KV.get("recent")||"[]")||[];}catch{recent=[];}if(!Array.isArray(recent))recent=[];}
+/* another tab may have changed the list: start from what is stored */
+async function syncRecent(){try{const st=JSON.parse(await KV.get("recent")||"[]");if(Array.isArray(st)){const mine=new Map(recent.map(r=>[r.id,r]));recent=st.filter(r=>r&&r.id).map(r=>{const m=mine.get(r.id);return m&&(m.updated||0)>=(r.updated||0)?{...r,...m,thumb:m.thumb||r.thumb}:r;});}}catch{}}
 async function saveRecent(){await KV.set("recent",JSON.stringify(recent.slice(0,60)));}
 let saveT=null;
 function touch(){if(!P)return;P.updated=Date.now();$("#saved").textContent=T("Saving…","正在保存…");clearTimeout(saveT);saveT=setTimeout(saveNow,450);}
 async function saveNow(){const p=P;if(!p)return;clearTimeout(saveT);const ok=await KV.set("p:"+p.id,JSON.stringify(p));
   const e={id:p.id,name:p.name,kind:p.kind,updated:p.updated,colors:[p.ds.colors.bg,p.ds.colors.primary,p.ds.colors.accent,p.ds.colors.text],head:p.ds.fonts.head,count:p.items.filter(i=>!i.gen).length,thumb:recent.find(r=>r.id===p.id)?.thumb||null};
+  await syncRecent();
   recent=[e,...recent.filter(r=>r.id!==p.id)];await saveRecent();if(P===p)$("#saved").textContent=ok===false?T("Not saved (storage is off)","未保存（存储不可用）"):T("Saved","已保存");}
-async function makeThumb(){const proj=P;if(!proj)return;const it=proj.items.find(i=>!i.gen&&i.html);if(!it)return;try{const cv=await rasterize(it,{scale:.32,maxH:proj.kind==="web"?1100:0,proj});const c=document.createElement("canvas");const r=Math.min(1,360/cv.width,260/cv.height);c.width=Math.round(cv.width*r);c.height=Math.round(cv.height*r);c.getContext("2d").drawImage(cv,0,0,c.width,c.height);const url=c.toDataURL("image/jpeg",.72);const e=recent.find(x=>x.id===proj.id);if(e){e.thumb=url;await saveRecent();}}catch(err){console.warn("thumb",err);}}
+async function makeThumb(){const proj=P;if(!proj)return;const it=proj.items.find(i=>!i.gen&&i.html);if(!it)return;try{const cv=await rasterize(it,{scale:.32,maxH:proj.kind==="web"?1100:0,proj});const c=document.createElement("canvas");const r=Math.min(1,360/cv.width,260/cv.height);c.width=Math.round(cv.width*r);c.height=Math.round(cv.height*r);c.getContext("2d").drawImage(cv,0,0,c.width,c.height);const url=c.toDataURL("image/jpeg",.72);await syncRecent();const e=recent.find(x=>x.id===proj.id);if(e){e.thumb=url;await saveRecent();}}catch(err){console.warn("thumb",err);}}
 
 /* ================= undo ================= */
 let snapAt=0;
@@ -837,7 +840,7 @@ function startProject(p,{fit=true}={}){P=p;S.hist=[];S.fut=[];S.item=P.items[0]?
 
 /* ================= views ================= */
 function show(view){$("#home").hidden=view!=="home";$("#editor").hidden=view!=="editor";$("#crit").hidden=view!=="crit";$("#topHome").hidden=view==="editor";$("#topEd").hidden=view!=="editor";if(view!=="editor"){$("#installSlot")&&$("#topHome").append($("#installSlot"));}}
-function showHome(){if(P){saveNow();const id=P.id;makeThumb().then(()=>{if(!P||P.id!==id)renderRecent();});}abortAll();P=null;show("home");renderHome();}
+function showHome(){if(P){const id=P.id;saveNow().then(()=>makeThumb()).then(()=>{if(!P||P.id!==id)renderRecent();});}else syncRecent().then(()=>{if(!P)renderRecent();});abortAll();P=null;show("home");renderHome();}
 function showEditor(fit){show("editor");$("#ptitle").value=P.name;$("#devSeg").hidden=P.kind!=="web";$("#playLbl").textContent=P.kind==="app"?T("Prototype","原型"):T("Preview","预览");$("#itemsHead").textContent=P.kind==="app"?T("Screens","屏幕"):P.kind==="web"?T("Variants","方案"):T("Graphics","图形");
   $$("#devSeg button").forEach(b=>b.classList.toggle("on",+b.dataset.w===S.webW));updUndo();renderAll();if(fit)requestAnimationFrame(()=>fitView());$("#saved").textContent=T("Saved","已保存");}
 
@@ -875,8 +878,8 @@ function renderRecent(){const g=$("#recent");if(!recent.length){g.replaceChildre
     el("button",{class:"ib more",title:"More",html:ICON.more,onclick:e=>{e.stopPropagation();openMenu(e.currentTarget,[{label:"Open",fn:()=>openProject(r.id)},{label:"Duplicate",fn:()=>dupProject(r.id)},{label:"Download project file",fn:()=>exportProjectFile(r.id)},"-",{label:"Delete",danger:true,fn:()=>delProject(r.id)}]);}}));
     return card;}));
   $$("#recent .meta small").forEach(s=>s.setAttribute("data-no-i18n",""));}
-async function dupProject(id){const raw=await KV.get("p:"+id);if(!raw)return;const o=JSON.parse(raw);o.id=uid();o.name=o.name+" "+T("copy","副本");o.updated=Date.now();const p=normProject(o);await KV.set("p:"+p.id,JSON.stringify(p));const src=recent.find(r=>r.id===id);recent.unshift({...src,id:p.id,name:p.name,updated:p.updated});await saveRecent();renderRecent();}
-async function delProject(id){const idx=recent.findIndex(r=>r.id===id);if(idx<0)return;const entry=recent[idx];recent.splice(idx,1);renderRecent();let undone=false;
+async function dupProject(id){const raw=await KV.get("p:"+id);if(!raw)return;await syncRecent();const o=JSON.parse(raw);o.id=uid();o.name=o.name+" "+T("copy","副本");o.updated=Date.now();const p=normProject(o);await KV.set("p:"+p.id,JSON.stringify(p));const src=recent.find(r=>r.id===id);recent.unshift({...src,id:p.id,name:p.name,updated:p.updated});await saveRecent();renderRecent();}
+async function delProject(id){await syncRecent();const idx=recent.findIndex(r=>r.id===id);if(idx<0)return;const entry=recent[idx];recent.splice(idx,1);renderRecent();let undone=false;
   toast(T(`Deleted “${entry.name}”`,`已删除“${entry.name}”`),{action:{label:T("Undo","撤销"),fn:async()=>{undone=true;recent.splice(idx,0,entry);await saveRecent();renderRecent();}},onExpire:async()=>{if(!undone){await KV.del("p:"+id);}}});await saveRecent();}
 function renderAtts(box,arr){box.replaceChildren(...arr.map((a,i)=>el("div",{class:"att"},el("img",{src:a.url,alt:a.name||""}),el("button",{title:"Remove",text:"×",onclick:()=>{URL.revokeObjectURL(a.url);arr.splice(i,1);renderAtts(box,arr);}}))));}
 
@@ -1065,8 +1068,8 @@ function openMenu(anchor,items,{x,y}={}){closeMenus();const m=el("div",{class:"m
 function dialog(title,body,buttons){return new Promise(res=>{const sc=el("div",{class:"scrim"});const d=el("div",{class:"dlg",role:"dialog","aria-modal":"true"},el("header",{text:title}),el("div",{class:"body"},body));const ft=el("footer");
   const close=v=>{sc.remove();document.removeEventListener("keydown",kd,true);res(v);};
   for(const b of buttons)ft.append(el("button",{class:"btn"+(b.pri?" pri":""),text:b.label,onclick:()=>close(b.value)}));d.append(ft);sc.append(d);document.body.append(sc);
-  const kd=e=>{if(e.key==="Escape"){e.stopPropagation();close(null);}else if(e.key==="Enter"&&(e.metaKey||e.ctrlKey||e.target.tagName==="INPUT")){e.preventDefault();e.stopPropagation();const p=buttons.find(b=>b.pri);if(p)close(p.value);}};document.addEventListener("keydown",kd,true);
-  sc.addEventListener("pointerdown",e=>{if(e.target===sc)close(null);});(d.querySelector("input,textarea,select")||d.querySelector(".btn.pri"))?.focus();});}
+  const kd=e=>{if(e.key==="Escape"){e.stopPropagation();close(null);}else if(e.key==="Enter"&&!e.isComposing&&e.keyCode!==229&&(e.metaKey||e.ctrlKey||e.target.tagName==="INPUT")){e.preventDefault();e.stopPropagation();const p=buttons.find(b=>b.pri);if(p)close(p.value);}};document.addEventListener("keydown",kd,true);
+  const t0=Date.now();sc.addEventListener("pointerdown",e=>{if(e.target===sc&&Date.now()-t0>450)close(null);});(d.querySelector("input,textarea,select")||d.querySelector(".btn.pri"))?.focus();});}
 async function askText(title,val="",ph="",multi=false){const inp=el(multi?"textarea":"input",{class:"s",style:{width:"100%"},placeholder:ph,rows:multi?3:null});inp.value=val;const v=await dialog(title,inp,[{label:T("Cancel","取消"),value:null},{label:"OK",pri:true,value:"ok"}]);return v?inp.value:null;}
 async function copyText(s,msg){try{await navigator.clipboard.writeText(s);toast(msg);return;}catch{}const t=el("textarea",{style:{position:"fixed",left:"-9999px"}});t.value=s;document.body.append(t);t.select();let ok=false;try{ok=document.execCommand("copy");}catch{}t.remove();toast(ok?msg:T("Couldn't copy here. Use the export instead.","这里无法复制，请改用导出。"));}
 
@@ -1093,7 +1096,7 @@ const ctrls=new Set();
 function abortAll(){for(const c of ctrls)c.abort();ctrls.clear();setBusy(null);}
 let busyCtrl=null;
 function setBusy(txt,ctrl){const b=$("#busy");if(!txt){b.hidden=true;busyCtrl=null;return;}b.hidden=false;$("#busyTxt").textContent=txt;if(ctrl)busyCtrl=ctrl;}
-function errText(e){const c=e?.code;return({rate_limited:T("You've reached your Claude usage limit for now. Try again later.","Claude 用量暂时用完了，请稍后再试。"),refused:T("Claude declined this request. Try rewording it.","Claude 拒绝了这个请求，换个说法试试。"),prompt_too_large:T("This design is too large to send in one request. Try a smaller part.","这个设计太大，无法一次发送。请改小范围。"),session_expired:T("Your session expired. Reload the page and try again.","会话已过期，请刷新页面后重试。"),cancelled:T("Stopped.","已停止。"),images_unavailable:T("Images can't be sent to Claude here.","这里不能把图片发给 Claude。"),image_rejected:T("Claude couldn't read that image. Try a PNG or JPEG under 5 MB.","Claude 读不了这张图，请换 5 MB 以内的 PNG 或 JPEG。"),not_granted:T("Claude isn't available here.","这里无法使用 Claude。")}[c])||T(`Claude couldn't finish${c?` (${c})`:""}. Try again.`,`Claude 没能完成${c?`（${c}）`:""}，请重试。`);}
+function errText(e){const c=e?.code;return({rate_limited:T("You've reached your Claude usage limit for now. Try again later.","Claude 用量暂时用完了，请稍后再试。"),refused:T("Claude declined this request. Try rewording it.","Claude 拒绝了这个请求，换个说法试试。"),prompt_too_large:T("This design is too large to send in one request. Try a smaller part.","这个设计太大，无法一次发送。请改小范围。"),session_expired:T("Your session expired. Reload the page and try again.","会话已过期，请刷新页面后重试。"),cancelled:T("Stopped.","已停止。"),images_unavailable:T("Images can't be sent to Claude here.","这里不能把图片发给 Claude。"),image_rejected:T("Claude couldn't read that image. Try a PNG or JPEG under 5 MB.","Claude 读不了这张图，请换 5 MB 以内的 PNG 或 JPEG。"),not_granted:T("Claude isn't available here.","这里无法使用 Claude。"),bad_json:T("Claude's answer wasn't in the expected format. Try again.","Claude 的回答格式不对，请重试。"),invalid_json:T("Claude's answer wasn't in the expected format. Try again.","Claude 的回答格式不对，请重试。"),upstream_error:T("The connection to Claude dropped. Try again.","和 Claude 的连接中断了，请重试。")}[c])||T("Claude couldn't finish. Check your connection and try again.","Claude 没能完成，请检查网络后重试。");}
 function onErr(e){if(e?.code==="cancelled"||e?.name==="AbortError")return;if(e?.code==="not_granted"){SAMPLE=null;document.body.classList.add("noai");}console.warn(e);toast(errText(e),{ms:6000});}
 async function ask(input,{onText,images,tier="default",json=false,ctrl}={}){if(!SAMPLE)throw{code:"not_granted"};const o={signal:ctrl?.signal,modelTier:tier,cache:false};if(onText)o.onText=onText;if(images?.length)o.images=images;return json?SAMPLE.json(input,o):SAMPLE(input,o);}
 const canImages=()=>!!SAMPLE_LIM?.images;
@@ -1124,8 +1127,8 @@ async function streamInto(prompt,{images,label,tier="default",lockDS=false,itemE
       if(made===1&&!S.item)S.item=it.id;renderSide();rerenderItem(it);if(made===1)fitView();touch();}
     ph.name=T(`Designing ${itemWord()} ${made+1}…`,`正在设计第 ${made+1} 个…`);};
   setBusy(label||T("Designing…","正在设计…"),ctrl);
-  try{const r=await ask(prompt,{images,tier,ctrl,onText:({text})=>apply(parseBlocks(text,false))});apply(parseBlocks(r.text,true));
-    if(!made&&/<\w/.test(r.text)){const s=r.text.replace(/^[\s\S]*?(?=<)/,"");const it=addSanitized(P,placeholderName||"Design","design",s,typeof itemExtra==="function"?itemExtra():itemExtra);P.items.splice(P.items.indexOf(ph),0,it);made++;}
+  try{const r=await ask(prompt,{images,tier,ctrl,onText:({text})=>apply(parseBlocks(text,false))});apply(parseBlocks(r.text,!r.truncated));if(r.truncated)toast(T("Claude's answer was cut off. The unfinished part was left out; ask for the rest separately.","Claude 的回答被截断了，没写完的部分已略去，可以再单独要剩下的部分。"),{ms:6000});
+    if(!made&&!r.truncated&&/<\w/.test(r.text)){const s=r.text.replace(/^[\s\S]*?(?=<)/,"");const it=addSanitized(P,placeholderName||"Design","design",s,typeof itemExtra==="function"?itemExtra():itemExtra);P.items.splice(P.items.indexOf(ph),0,it);made++;}
     if(!made)toast(T("Claude's answer didn't contain a design. Try again or add detail to the brief.","Claude 的回答里没有设计，请重试或补充描述。"),{ms:6000});
   }catch(e){onErr(e);}finally{ctrls.delete(ctrl);if(P&&P.id===pid){P.items=P.items.filter(i=>i!==ph);if(!P.items.find(i=>i.id===S.item))S.item=P.items[0]?.id||null;renderAll();if(made)requestAnimationFrame(()=>fitView());touch();}if(!ctrls.size)setBusy(null);}
   return made;}
@@ -1238,19 +1241,19 @@ Current block:
 ${blockText(src)}
 Reply with only the complete updated block in the same format (one block, same slug), no commentary and no code fences.`;
   const ctrl=new AbortController();ctrls.add(ctrl);setBusy(T(`Updating ${it.name}…`,`正在更新 ${it.name}…`),ctrl);const pid=P.id;
-  try{const r=await ask(prompt,{images,ctrl,tier:elMode?"quick":"default"});if(!P||P.id!==pid)return false;const b=parseBlocks(r.text,true).find(x=>x.type!=="SYSTEM"&&/<\w/.test(x.body));const body=b?b.body:(/<\w/.test(r.text)?r.text.slice(r.text.indexOf("<")):null);
+  try{const r=await ask(prompt,{images,ctrl,tier:elMode?"quick":"default"});if(!P||P.id!==pid)return false;if(r?.truncated){toast(T("Claude's answer was cut off, so nothing was changed. Try a smaller change.","Claude 的回答被截断了，所以没有改动。请把改动范围缩小再试。"),{ms:6000});return false;}const b=parseBlocks(r.text,true).find(x=>x.type!=="SYSTEM"&&/<\w/.test(x.body));const body=b?b.body:(/<\w/.test(r.text)?r.text.slice(r.text.indexOf("<")):null);
     if(!body){toast(T("Claude's answer didn't contain the updated design.","Claude 的回答里没有更新后的设计。"));return false;}
     snap();const sz=itemSize(it,P,1280);const s=sanitize(body,P.kind,sz.w,sz.h);it.html=s.html;it.css=s.css;delete S.itemCrit[it.id];delete S.audit[it.id];
     const keep=S.elPath;rerenderItem(it);if(keep&&elAt(rootOf(hostOf(it.id)),keep))S.elPath=keep;else S.elPath=null;positionSel();renderInsp();touch();
     if(!quiet)toast(T(`Updated ${it.name}`,`已更新 ${it.name}`),{action:{label:T("Undo","撤销"),fn:undo}});return true;
   }catch(e){onErr(e);return false;}finally{ctrls.delete(ctrl);if(!ctrls.size)setBusy(null);}}
-async function sendAsk(){const txt=$("#askIn").value.trim();if(!txt)return;if(!SAMPLE)return toast(errText({code:"not_granted"}));const images=S.askAtts.length&&canImages()?await attBlobs(S.askAtts):[];
+async function sendAsk(){const txt=$("#askIn").value.trim();if(!txt)return;if(!SAMPLE)return toast(errText({code:"not_granted"}));if(ctrls.size)return toast(T("Claude is still working. Wait for it, or press Stop.","Claude 还在处理，请稍等或点“停止”。"));const images=S.askAtts.length&&canImages()?await attBlobs(S.askAtts):[];
   $("#askIn").value="";autoGrow();S.askAtts=[];renderAtts($("#askAtts"),S.askAtts);
   const live=P.items.filter(i=>!i.gen);
   if(!live.length){if(P.kind==="app")return addScreen(txt);if(P.kind==="web")return addVariant(txt,presetById(P.ds.preset)||PRESETS[0],images);return streamInto(graphicPrompt(txt,null,fmtById(P.format),1,images.length,P.ds),{images,itemExtra:{format:P.format}});}
   if(S.scope==="all"){let n=0;for(const it of live){setBusy(T(`Updating ${++n} of ${live.length}…`,`正在更新第 ${n}/${live.length} 个…`));const ok=await editItem(it,txt,{images,quiet:true});if(!ok)break;}toast(T("Updated all","全部已更新"),{action:{label:T("Undo","撤销"),fn:undo}});return;}
   await editItem(cur()||live[0],txt,{elMode:S.scope==="el"&&!!S.elPath,images});}
-function applyFix(k,iss){const it=cur();if(!it)return;const f=FIXES[k];let ins=f.ins;if(iss)ins+=` Focus on this problem: ${iss.title}. ${iss.detail||""}`;editItem(it,ins,{elMode:S.scope==="el"&&!!S.elPath});}
+function applyFix(k,iss){const it=cur();if(!it)return;if(ctrls.size)return toast(T("Claude is still working. Wait for it, or press Stop.","Claude 还在处理，请稍等或点“停止”。"));const f=FIXES[k];let ins=f.ins;if(iss)ins+=` Focus on this problem: ${iss.title}. ${iss.detail||""}`;editItem(it,ins,{elMode:S.scope==="el"&&!!S.elPath});}
 function updAsk(){if(!P)return;const it=cur();const n=selEl();let t;if(!P.items.some(i=>!i.gen))t=P.kind==="app"?T("New screen","新屏幕"):P.kind==="web"?T("New page","新页面"):T("New graphic","新图形");
   else if(S.scope==="all")t=T(`All ${P.items.filter(i=>!i.gen).length} ${P.kind==="app"?"screens":P.kind==="web"?"variants":"graphics"}`,`全部 ${P.items.filter(i=>!i.gen).length} 个`);
   else if(S.scope==="el"&&n)t=`${n.tagName.toLowerCase()}${n.classList[0]?"."+n.classList[0]:""} · ${it.name}`;else t=it?it.name:"—";$("#askTgt").textContent=t;$("#askTgt").setAttribute("data-no-i18n","");}
@@ -1265,7 +1268,7 @@ Score each area 0-10 and give an overall score 0-100. Be honest: most real desig
 Give 3-7 issues, most severe first, each with the one fix command that best addresses it. ${langLine()}
 Return only JSON in exactly this shape: ${CRIT_JSON}
 ${extra}`;}
-function normRep(j){if(!j||typeof j!=="object")return null;return{verdict:String(j.verdict||"").slice(0,60),summary:String(j.summary||"").slice(0,400),score:clamp(+j.score||0,0,100),scores:j.scores||{},strengths:(j.strengths||[]).map(String).slice(0,5),slop:(j.slop||[]).map(String).filter(s=>s.trim()).slice(0,6),issues:(j.issues||[]).filter(x=>x&&x.title).slice(0,12)};}
+function normRep(j){if(!j||typeof j!=="object"||Array.isArray(j))return null;const arr=v=>Array.isArray(v)?v:[];if(!Number.isFinite(+j.score)||(j.score==null)||(!j.summary&&!arr(j.issues).length&&!arr(j.strengths).length))return null;return{verdict:String(j.verdict||"").slice(0,60),summary:String(j.summary||"").slice(0,400),score:clamp(+j.score||0,0,100),scores:j.scores&&typeof j.scores==="object"?j.scores:{},strengths:arr(j.strengths).map(String).slice(0,5),slop:arr(j.slop).map(String).filter(s=>s.trim()).slice(0,6),issues:arr(j.issues).filter(x=>x&&typeof x==="object"&&x.title).map(x=>({...x,title:String(x.title),detail:x.detail==null?"":String(x.detail)})).slice(0,12)};}
 async function critiqueItem(it){if(!SAMPLE)return toast(errText({code:"not_granted"}));const ctrl=new AbortController();ctrls.add(ctrl);setBusy(T(`Critiquing ${it.name}…`,`正在评审 ${it.name}…`),ctrl);
   try{const j=await ask(critPrompt(`this ${kindLine(it)}, given as HTML and CSS (CSS variables resolve to the tokens)`,P.brief,`${tokensLine(dsOf(it),true)}\nThe design:\n${blockText(it).slice(0,120000)}`),{json:true,ctrl});const rep=normRep(j);if(!rep)throw{code:"bad_json"};S.itemCrit[it.id]=rep;S.tab="crit";renderInsp();}
   catch(e){onErr(e);}finally{ctrls.delete(ctrl);if(!ctrls.size)setBusy(null);}}
@@ -1414,6 +1417,7 @@ function wire(){
   window.addEventListener("beforeunload",()=>{if(P)saveNow();});
 }
 function onKey(e){const mod=e.metaKey||e.ctrlKey;
+  if(e.isComposing||e.keyCode===229)return;
   if(document.querySelector(".scrim"))return;
   if(!$("#proto").hidden){if(e.key==="Escape"){e.preventDefault();closeProto();}else if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const ids=P.items.filter(i=>!i.gen).map(i=>i.id);const i=ids.indexOf(PR.id);const n=ids[(i+(e.key==="ArrowRight"?1:-1)+ids.length)%ids.length];protoShow(n);}return;}
   const t=e.composedPath()[0];const typing=!!t&&(t.isContentEditable||(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)&&t.id!=="imeSink"));

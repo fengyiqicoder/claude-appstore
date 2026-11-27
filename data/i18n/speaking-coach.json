@@ -56,7 +56,9 @@
 "A more natural answer": "更自然的回答",
 "Couldn't check that. Try again.": "没能检查，请重试。",
 "Open Speaking Coach in the Claude app to practice with Claude.": "在 Claude 应用中打开口语教练，即可和 Claude 一起练习。",
-"Install as app": "安装为应用"
+"Install as app": "安装为应用",
+"Stopped.": "已停止。",
+"Claude's answer came back in the wrong shape. Try again.": "Claude 返回的格式不对，请重试。"
 },
 "patterns": [
 [

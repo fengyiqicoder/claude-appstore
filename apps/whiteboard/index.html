@@ -65,6 +65,7 @@ body.dark #scene{filter:invert(93%) hue-rotate(180deg)}
 #tools .ib .k{position:absolute;right:2px;bottom:1px;font-size:9px;color:var(--muted);font-weight:600;line-height:1}
 #tools .ib.on .k{color:var(--accent)}
 #tools .div{width:1px;align-self:stretch;margin:5px 3px;background:var(--line);flex-shrink:0}
+@media (max-width:520px){#tools{gap:0;padding:3px}#tools .ib{min-width:25px;width:25px;padding:0;height:32px;flex-shrink:0}#tools .ib .k{display:none}#tools .div{margin:5px 1px}}
 
 /* style panel */
 #props{position:fixed;left:12px;top:104px;z-index:20;width:222px;max-height:calc(100% - 170px);overflow:auto;padding:10px 10px 8px;
@@ -322,6 +323,8 @@ body.dark .bi .th{filter:invert(93%) hue-rotate(180deg)}
 "use strict";
 /* ================= basics ================= */
 const $=id=>document.getElementById(id);
+/* IME: while a Chinese/Japanese composition is open, Enter/Esc/arrows belong to the input method, never to app shortcuts */
+addEventListener("keydown",e=>{if(e.isComposing||e.keyCode===229)e.stopImmediatePropagation()},true);
 const T=(en,zh)=>window.__t?window.__t(en,zh):en;
 const ZH=!!window.__ZH;
 const isMac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);
@@ -356,7 +359,7 @@ const byId=id=>B&&B.els.find(e=>e.id===id);
 let IDX=new Map(); function reindex(){IDX=new Map(B.els.map(e=>[e.id,e]))}
 const get=id=>IDX.get(id);
 const defaults=()=>({stroke:"#1e1e1e",bg:"transparent",fill:"solid",sw:2,ss:"solid",rough:B&&B.style==="clean"?0:1,opacity:100,round:true,font:B&&B.style==="clean"?"sans":"hand",fontSize:20,align:"center",headS:null,headE:"arrow",shape:"straight",sticky:STICKY[0]});
-let D=Object.assign(defaults(),store.get("defaults",{}));
+let D=defaults(); // replaced with the stored, checked defaults when a board opens
 
 function newEl(type,props){
   const d=D;const el={id:uid(),type,x:0,y:0,w:0,h:0,angle:0,stroke:d.stroke,bg:d.bg,fill:d.fill,sw:d.sw,ss:d.ss,rough:d.rough,opacity:d.opacity,round:type==="rectangle"||type==="diamond"?d.round:false,seed:rseed(),groupIds:[],locked:false,text:"",fontSize:d.fontSize,font:d.font,align:d.align,valign:"middle",v:1};
@@ -392,7 +395,8 @@ const DB={mode:"idb",db:null,mem:new Map(),
 };
 // index of boards: [{id,name,updated,thumb}]
 let INDEX=[];
-function loadIndex(){INDEX=store.get("index",null)||[];if(!Array.isArray(INDEX))INDEX=[]}
+function cleanIndex(a){const seen=new Set();return(Array.isArray(a)?a:[]).filter(x=>x&&typeof x==="object"&&/^[\w-]{1,64}$/.test(String(x.id??""))&&!seen.has(String(x.id))&&seen.add(String(x.id))).map(x=>({id:String(x.id),name:x.name==null||typeof x.name==="object"?"":String(x.name).slice(0,200),updated:typeof x.updated==="number"&&Number.isFinite(x.updated)?x.updated:0,...(typeof x.thumb==="string"&&/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(x.thumb)?{thumb:x.thumb}:{})}))}
+function loadIndex(){INDEX=cleanIndex(store.get("index",null))}
 function saveIndex(){if(!store.set("index",INDEX)){/* memory only */}}
 
 /* ================= history ================= */
@@ -1108,6 +1112,33 @@ document.addEventListener("keydown",e=>{
 });
 document.addEventListener("keyup",e=>{if(e.key===" "){spaceDown=false;stage.classList.toggle("t-hand",tool==="hand")}});
 window.addEventListener("blur",()=>{spaceDown=false});
+
+/* ================= untrusted data guard =================
+   Elements from files, the clipboard, storage or other windows are rebuilt with checked types, so ids, colours,
+   numbers and enums can't carry markup into exported SVG or the page, and odd values can't crash drawing. */
+const SAFEID=/^[\w-]{1,64}$/;
+const okCss=c=>typeof c==="string"&&c.length<40&&(/^#[0-9a-f]{3,8}$/i.test(c)||/^(rgba?|hsla?)\([\d\s.,%]+\)$/i.test(c)||/^[a-z]{3,20}$/i.test(c));
+const nF=(v,d)=>{const n=typeof v==="number"?v:typeof v==="string"&&v.trim()?+v:NaN;return Number.isFinite(n)?n:d};
+const oneOf=(v,list,d)=>list.includes(v)?v:d;
+const ELTYPES=["rectangle","ellipse","diamond","sticky","text","arrow","line","freedraw","image","frame"];
+function cleanEl(e){
+  if(!e||typeof e!=="object"||!ELTYPES.includes(e.type))return null;
+  const o={id:SAFEID.test(String(e.id??""))?String(e.id):uid(),type:e.type,x:nF(e.x,0),y:nF(e.y,0),w:Math.max(0,nF(e.w,0)),h:Math.max(0,nF(e.h,0)),angle:nF(e.angle,0),
+    stroke:okCss(e.stroke)?e.stroke:"#1e1e1e",bg:okCss(e.bg)?e.bg:"transparent",fill:oneOf(e.fill,["hachure","cross-hatch","solid"],"solid"),sw:Math.max(.5,Math.min(20,nF(e.sw,2))),ss:oneOf(e.ss,["solid","dashed","dotted"],"solid"),
+    rough:Math.max(0,Math.min(3,nF(e.rough,1))),opacity:Math.max(0,Math.min(100,nF(e.opacity,100))),round:e.round===true,seed:Math.floor(nF(e.seed,rseed())),
+    groupIds:(Array.isArray(e.groupIds)?e.groupIds:[]).map(String).filter(g=>SAFEID.test(g)).slice(0,20),locked:e.locked===true,text:e.text==null||typeof e.text==="object"?"":String(e.text).slice(0,100000),
+    fontSize:Math.max(4,Math.min(400,nF(e.fontSize,20))),font:oneOf(e.font,["hand","sans","mono"],"hand"),align:oneOf(e.align,["left","center","right"],"center"),valign:oneOf(e.valign,["top","middle"],"middle"),v:Math.floor(nF(e.v,1))};
+  if(e.autoW===true)o.autoW=true;
+  if(o.type==="arrow"||o.type==="line"||o.type==="freedraw"){o.points=(Array.isArray(e.points)?e.points:[]).filter(p=>Array.isArray(p)).slice(0,20000).map(p=>[nF(p[0],0),nF(p[1],0)]);if(!o.points.length)o.points=[[0,0]]}
+  if(o.type==="arrow"||o.type==="line"){const b=x=>x&&typeof x==="object"&&SAFEID.test(String(x.id??""))?{id:String(x.id),...(Number.isFinite(x.fx)&&Number.isFinite(x.fy)?{fx:x.fx,fy:x.fy}:{})}:null;o.start=b(e.start);o.end=b(e.end);
+    const H=["arrow","triangle","dot","bar"];o.headS=oneOf(e.headS,H,null);o.headE=oneOf(e.headE,H,null);o.shape=oneOf(e.shape,["straight","curved","elbow"],"straight")}
+  if(o.type==="image"){o.fileId=SAFEID.test(String(e.fileId??""))?String(e.fileId):"missing";if(e.missing===true)o.missing=true}
+  return o}
+function cleanDefaults(o){const d=defaults();if(!o||typeof o!=="object")return d;const probe=cleanEl({...o,type:"arrow"});for(const k of ["stroke","bg","fill","sw","ss","rough","opacity","round","font","fontSize","align","headS","headE","shape"])if(k in o)d[k]=probe[k];if(okCss(o.sticky))d.sticky=o.sticky;return d}
+function cleanFiles(f){const out={};if(f&&typeof f==="object")for(const [k,v] of Object.entries(f))if(SAFEID.test(k)&&v&&typeof v.dataURL==="string"&&/^data:image\/(png|jpe?g|gif|webp|bmp);base64,[A-Za-z0-9+/=\s]+$/.test(v.dataURL))out[k]={mimeType:/^image\/[\w.+-]+$/.test(v.mimeType||"")?v.mimeType:"image/png",dataURL:v.dataURL};return out}
+function cleanEls(a){const out=[];const seen=new Set();for(const e of Array.isArray(a)?a:[]){const c=cleanEl(e);if(!c)continue;if(seen.has(c.id))c.id=uid();seen.add(c.id);out.push(c)}return out}
+function cleanBoard(b){if(!b||typeof b!=="object")return null;return{id:SAFEID.test(String(b.id??""))?String(b.id):uid(),name:b.name==null||typeof b.name==="object"?T("Untitled board","未命名白板"):String(b.name).slice(0,200),els:cleanEls(b.els),files:cleanFiles(b.files),
+  view:b.view&&typeof b.view==="object"&&[b.view.x,b.view.y,b.view.z].every(Number.isFinite)&&b.view.z>0?{x:b.view.x,y:b.view.y,z:b.view.z}:null,style:oneOf(b.style,["hand","clean"],"hand"),grid:b.grid===true,updated:nF(b.updated,Date.now())}}
 /* ================= Excalidraw format ================= */
 const FAM_IN={1:"hand",5:"hand",2:"sans",6:"sans",7:"sans",9:"sans",3:"mono",8:"mono"};
 const FAM_OUT={hand:5,sans:2,mono:3};
@@ -1130,13 +1161,13 @@ function fromExcalidraw(data){
     if(type==="arrow"||type==="line"){el.start=e.startBinding&&e.startBinding.elementId?{id:e.startBinding.elementId}:null;el.end=e.endBinding&&e.endBinding.elementId?{id:e.endBinding.elementId}:null;el.headS=HEAD_IN(e.startArrowhead);el.headE=type==="arrow"?HEAD_IN(e.endArrowhead):HEAD_IN(e.endArrowhead);el.shape=e.elbowed?"elbow":(e.roundness&&el.points.length>2?"curved":"straight");el.round=false}
     if(type==="image"){el.fileId=e.fileId;if(!files[e.fileId])el.missing=true}
     if(type==="frame"){el.text=e.name||"Frame";el.stroke="#bbbbbb";el.sw=1;el.rough=0;el.font="sans";el.round=true}
-    if(Array.isArray(cd.wbKeep))for(const k of cd.wbKeep)if(cd[k]!==undefined)el[k]=cd[k];
+    if(Array.isArray(cd.wbKeep))for(const k of cd.wbKeep)if(cd[k]!==undefined&&["fill","sw","ss","rough","opacity","round","font","fontSize","align","valign","headS","headE","shape","autoW","bg","stroke"].includes(k))el[k]=cd[k];
     out.push(el);byOld.set(el.id,el);
   }
   for(const e of src){if(e.type!=="text"||!e.containerId)continue;const c=byOld.get(e.containerId);if(!c)continue;c.text=e.originalText??e.text??"";c.fontSize=e.fontSize||20;c.font=FAM_IN[e.fontFamily]||"hand";c.align=e.textAlign||"center";c.valign=e.verticalAlign==="top"?"top":"middle";if(c.type!=="arrow"&&c.type!=="line")c.stroke=c.stroke;if(c.type==="line")c.type="arrow";if(c.type==="arrow")c.fontSize=Math.round((e.fontSize||16)/0.8)}
   for(const el of out){if(el.points){if(el.start&&!byOld.has(el.start.id))el.start=null;if(el.end&&!byOld.has(el.end.id))el.end=null}}
   const fl={};for(const el of out)if(el.type==="image"&&files[el.fileId])fl[el.fileId]={mimeType:files[el.fileId].mimeType||"image/png",dataURL:files[el.fileId].dataURL};
-  return{els:out,files:fl};
+  const cf=cleanFiles(fl);return{els:cleanEls(out).map(e=>{if(e.type==="image"&&!cf[e.fileId])e.missing=true;return e}),files:cf};
 }
 function toExcalidraw(els,opts={}){
   const now=Date.now();const outEls=[];const files={};
@@ -1175,7 +1206,7 @@ function stripLabel(s){return String(s||"").trim().replace(/^"(.*)"$/s,"$1").rep
 function mermaidKind(text){const s=String(text).replace(/^\s*(%%[^\n]*\n|---[\s\S]*?---\s*\n)*/,"").trim();const m=s.match(/^(flowchart|graph|sequenceDiagram|timeline)\b/i);return m?m[1].toLowerCase():null}
 function extractMermaid(text){const m=String(text).match(/```\s*mermaid\s*\n([\s\S]*?)```/i);if(m)return m[1];const m2=String(text).match(/```[a-z]*\s*\n([\s\S]*?)```/i);if(m2&&mermaidKind(m2[1]))return m2[1];return mermaidKind(text)?String(text):null}
 function splitStatements(text){const out=[];for(let line of String(text).replace(/\r/g,"").split("\n")){line=line.replace(/%%.*$/,"").trim();if(!line)continue;let cur="",q=false,br=0;for(const ch of line){if(ch==='"')q=!q;if(!q){if("[({".includes(ch))br++;if("])}".includes(ch))br=Math.max(0,br-1)}if(ch===";"&&!q&&!br){if(cur.trim())out.push(cur.trim());cur=""}else cur+=ch}if(cur.trim())out.push(cur.trim())}return out}
-function parseStyle(s){const o={};for(const part of String(s).split(",")){const[k,v]=part.split(":").map(x=>x&&x.trim());if(!k||!v)continue;if(k==="fill")o.fill=v;if(k==="stroke")o.stroke=v;if(k==="color")o.color=v;if(k==="stroke-dasharray")o.dash=true}return o}
+function parseStyle(s){const o={};for(const part of String(s).split(",")){const[k,v]=part.split(":").map(x=>x&&x.trim());if(!k||!v)continue;if(k!=="stroke-dasharray"&&!okCss(v))continue;if(k==="fill")o.fill=v;if(k==="stroke")o.stroke=v;if(k==="color")o.color=v;if(k==="stroke-dasharray")o.dash=true}return o}
 const SHAPE_OPEN=[["(((",")))","ellipse"],["((","))","ellipse"],["([","])","stadium"],["[[","]]","rect"],["[(",")]","cyl"],["[/","/]","rect"],["[/","\\]","rect"],["[\\","\\]","rect"],["[\\","/]","rect"],["{{","}}","hex"],[">","]","rect"],["[","]","rect"],["(",")","round"],["{","}","diamond"]];
 function parseFlow(text){
   const st=splitStatements(text);const M={kind:"flow",dir:"TB",nodes:new Map(),edges:[],subs:[],classes:{}};const stack=[];const order=[];
@@ -1757,20 +1788,30 @@ window.addEventListener("drop",e=>{e.preventDefault();const p=evW(e);const fs=[.
 
 /* ================= boards ================= */
 let saveT=0,lastThumb=0,saveState="";
+/* other windows of this app: merge their board list instead of overwriting it, and reload the open board when they save it */
+function syncIndex(){const raw=store.get("index",null);if(!Array.isArray(raw))return;const cur=cleanIndex(raw);const mine=new Map(INDEX.map(x=>[x.id,x]));INDEX=cur.map(x=>{const m=mine.get(x.id);return m&&(m.updated||0)>(x.updated||0)?m:x});}
+const BC=(()=>{try{return new BroadcastChannel("whiteboard-sync")}catch{return null}})();
+if(BC)BC.onmessage=async ev=>{const d=ev.data||{};if(!B)return;
+  if(d.t==="index"){syncIndex();if(!$("drawer").hidden)renderDrawer();return}
+  if(d.t!=="put")return;syncIndex();if(!$("drawer").hidden)renderDrawer();
+  if(d.id!==B.id||saveT||editing||pending!=null||(B.updated||0)>=(d.updated||0))return;
+  const nb=await DB.load(d.id);if(!nb||!B||B.id!==d.id)return;const v={...V},keep=[...sel];await openBoardObj(nb);V.x=v.x;V.y=v.y;V.z=v.z;viewChanged();setSel(keep.filter(id=>get(id)));};
+window.addEventListener("storage",e=>{if(e.key==="wb.index"){syncIndex();if(!$("drawer").hidden)renderDrawer()}});
 function changed(full){redraw();saveSoon(500);updateChrome()}
-function saveSoon(ms=500){clearTimeout(saveT);saveT=setTimeout(saveNow,ms)}
-async function saveNow(){clearTimeout(saveT);if(!B)return;B.updated=Date.now();const ok=await DB.put(B);
-  let ent=INDEX.find(x=>x.id===B.id);if(!ent){ent={id:B.id};INDEX.unshift(ent)}ent.name=B.name;ent.updated=B.updated;
+function saveSoon(ms=500){clearTimeout(saveT);saveT=setTimeout(saveNow,ms)||1}
+async function saveNow(){clearTimeout(saveT);saveT=0;if(!B)return;B.updated=Date.now();const ok=await DB.put(B);if(ok)BC?.postMessage({t:"put",id:B.id,updated:B.updated});
+  syncIndex();let ent=INDEX.find(x=>x.id===B.id);if(!ent){ent={id:B.id};INDEX.unshift(ent)}ent.name=B.name;ent.updated=B.updated;
   if(Date.now()-lastThumb>4000){lastThumb=Date.now();ent.thumb=await thumb()}
   INDEX.sort((a,b)=>(b.updated||0)-(a.updated||0));saveIndex();
   $("saved").textContent=DB.mode==="mem"||!ok?T("Not saved: storage is blocked","未保存：存储被阻止"):T("Saved","已保存");
   if(!$("drawer").hidden)renderDrawer()}
 async function thumb(){try{if(!B.els.length)return"";const c=await canvasOf(B.els,{bg:true,scale:1,pad:20});if(!c)return"";const k=Math.min(1,128/c.width,88/c.height);const t=document.createElement("canvas");t.width=Math.max(1,Math.round(c.width*k));t.height=Math.max(1,Math.round(c.height*k));t.getContext("2d").drawImage(c,0,0,t.width,t.height);return t.toDataURL("image/png")}catch{return""}}
-function blankBoard(name){return{id:uid(),name:name||T("Untitled board","未命名白板"),els:[],files:{},view:null,style:store.get("style","hand"),grid:false,updated:Date.now()}}
+function blankBoard(name){return{id:uid(),name:name||T("Untitled board","未命名白板"),els:[],files:{},view:null,style:store.get("style","hand")==="clean"?"clean":"hand",grid:false,updated:Date.now()}}
 async function openBoardObj(b){
   if(editing)finishEdit();if(MP)finishMP();
+  b=cleanBoard(b)||blankBoard();
   B=b;B.els=B.els||[];B.files=B.files||{};reindex();sel=new Set();editingGroup=null;H={u:[],r:[]};hover=null;IMGS.clear();clearCaches();
-  D=Object.assign(defaults(),store.get("defaults",{}));D.rough=B.style==="clean"?0:Math.max(1,D.rough||1);D.font=B.style==="clean"&&D.font==="hand"?"sans":(B.style!=="clean"&&D.font==="sans"?"hand":D.font);
+  D=cleanDefaults(store.get("defaults",{}));D.rough=B.style==="clean"?0:Math.max(1,D.rough||1);D.font=B.style==="clean"&&D.font==="hand"?"sans":(B.style!=="clean"&&D.font==="sans"?"hand":D.font);
   $("title").value=B.name;store.set("last",B.id);
   document.querySelectorAll("#styleSeg button").forEach(x=>x.classList.toggle("on",x.dataset.style===(B.style||"hand")));
   resize();
@@ -1782,12 +1823,12 @@ async function openBoardObj(b){
 }
 async function openBoard(id){if(B&&B.id===id){closeDrawer();return}await saveNow();const b=await DB.load(id);if(!b){toast("That board couldn't be found.");INDEX=INDEX.filter(x=>x.id!==id);saveIndex();renderDrawer();return}await openBoardObj(b);closeDrawer()}
 async function newBoard(name,els,files){if(B)await saveNow();const b=blankBoard(name);if(els){b.els=els;b.files=files||{}}await openBoardObj(b);for(const e of B.els)if(e.points&&(e.start||e.end))updateArrow(e);await saveNow();closeDrawer();if(els)zoomTo(B.els,1);else stage.focus()}
-async function duplicateBoard(id){await saveNow();const src=await DB.load(id);if(!src)return;const b=deep(src);b.id=uid();b.name=(src.name||"")+T(" copy"," 副本");await DB.put(b);INDEX.unshift({id:b.id,name:b.name,updated:Date.now(),thumb:(INDEX.find(x=>x.id===id)||{}).thumb});saveIndex();renderDrawer();toast("Duplicated")}
-async function deleteBoard(id){const ent=INDEX.find(x=>x.id===id);if(!ent)return;const data=B&&B.id===id?deep(B):await DB.load(id);await DB.del(id);INDEX=INDEX.filter(x=>x.id!==id);saveIndex();
+async function duplicateBoard(id){await saveNow();const src=await DB.load(id);if(!src)return;const b=deep(src);b.id=uid();b.name=(src.name||"")+T(" copy"," 副本");await DB.put(b);syncIndex();INDEX.unshift({id:b.id,name:b.name,updated:Date.now(),thumb:(INDEX.find(x=>x.id===id)||{}).thumb});saveIndex();renderDrawer();toast("Duplicated")}
+async function deleteBoard(id){syncIndex();const ent=INDEX.find(x=>x.id===id);if(!ent)return;const data=B&&B.id===id?deep(B):await DB.load(id);await DB.del(id);INDEX=INDEX.filter(x=>x.id!==id);saveIndex();
   if(B&&B.id===id){if(INDEX.length)await openBoardObj(await DB.load(INDEX[0].id)||blankBoard());else await openBoardObj(blankBoard())}
   renderDrawer();toast(`Deleted “${ent.name||"board"}”`,{label:"Undo",fn:async()=>{if(!data)return;await DB.put(data);INDEX.unshift(ent);saveIndex();renderDrawer();toast("Restored")}},8000)}
 function renameBoard(id){if(B&&B.id===id){closeDrawer();const t=$("title");t.focus();t.select();return}const ent=INDEX.find(x=>x.id===id);const inp=document.createElement("input");inp.value=ent.name||"";inp.style.cssText="width:100%;height:32px;border:1px solid var(--line);border-radius:7px;padding:0 9px;background:var(--bg)";inp.setAttribute("aria-label","Board name");
-  const ok=async()=>{const v=inp.value.trim();if(!v)return;const b=await DB.load(id);if(b){b.name=v;await DB.put(b)}ent.name=v;saveIndex();closeDialog();renderDrawer()};
+  const ok=async()=>{const v=inp.value.trim();if(!v)return;const b=await DB.load(id);if(b){b.name=v;await DB.put(b)}syncIndex();(INDEX.find(x=>x.id===id)||ent).name=v;saveIndex();closeDialog();renderDrawer()};
   dialog("Rename board",inp,[{label:"Cancel",fn:closeDialog},{label:"Rename",pri:true,fn:ok}],{focus:"input"});inp.select();inp.addEventListener("keydown",e=>{if(e.key==="Enter")ok()})}
 $("title").addEventListener("input",()=>{if(!B)return;B.name=$("title").value.trim()||T("Untitled board","未命名白板");saveSoon(600)});
 $("title").addEventListener("blur",()=>{if(!$("title").value.trim())$("title").value=B.name});
@@ -1835,7 +1876,7 @@ function setBoardStyle(s){if(B.style===s&&B.els.every(e=>s==="clean"?e.rough===0
   document.querySelectorAll("#styleSeg button").forEach(x=>x.classList.toggle("on",x.dataset.style===s));saveSoon();renderProps();
   toast(s==="clean"?"Clean style. ⌘Z to undo.":"Hand-drawn style. ⌘Z to undo.")}
 $("styleSeg").onclick=e=>{const b=e.target.closest("button");if(b){setBoardStyle(b.dataset.style);refocus()}};
-let theme=store.get("theme","system");const mq=matchMedia("(prefers-color-scheme: dark)");
+let theme=store.get("theme","system");if(!["system","light","dark"].includes(theme))theme="system";const mq=matchMedia("(prefers-color-scheme: dark)");
 function applyTheme(){const dark=theme==="dark"||theme==="system"&&mq.matches;if(theme==="system")delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;document.body.classList.toggle("dark",dark);redraw()}
 function cycleTheme(){theme={system:"light",light:"dark",dark:"system"}[theme];store.set("theme",theme);applyTheme();toast("Theme: "+({system:"System",light:"Light",dark:"Dark"})[theme])}
 mq.addEventListener&&mq.addEventListener("change",applyTheme);

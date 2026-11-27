@@ -596,7 +596,21 @@ const freshSession=()=>({id:uid(),at:Date.now(),input:"",versions:[],cur:-1});
 let S=sessions.find(x=>x.id===store.get("current",null))||freshSession();
 const curV=()=>S.versions[S.cur]||null;
 let undoSt=[],redoSt=[];
+const deletedIds=new Set();
+const validSession=s=>s&&typeof s.id==="string"&&Array.isArray(s.versions);
+function mergeDisk(){ // keep sessions another tab saved since we loaded
+  try{const d=JSON.parse(localStorage.getItem("rewriter.sessions")||"[]");if(!Array.isArray(d))return;
+    const have=new Set(sessions.map(s=>s.id));
+    const extra=d.filter(s=>validSession(s)&&!have.has(s.id)&&!deletedIds.has(s.id)&&s.id!==S.id);
+    if(extra.length){sessions.push(...extra);sessions.sort((a,b)=>(b.at||0)-(a.at||0));}}catch{}
+}
+addEventListener("storage",e=>{
+  if(e.key!=="rewriter.sessions")return;let d;try{d=JSON.parse(e.newValue||"[]");}catch{return;}if(!Array.isArray(d))return;
+  d=d.filter(validSession);const i=d.findIndex(s=>s.id===S.id);if(i>=0)d[i]=S;else if(sessions.includes(S))d.unshift(S);
+  sessions=d;if(!$("hist").hidden)renderHist();
+});
 function saveSessions(){
+  mergeDisk();
   let list=sessions.slice(0,100);
   for(let n=list.length;n>=0;n=n?Math.floor(n*0.6):-1){
     try{localStorage.setItem("rewriter.sessions",JSON.stringify(list.slice(0,n)));sessions=sessions.slice(0,Math.max(n,1));return;}catch(e){if(n===0){warnStorage();return;}}
@@ -608,10 +622,12 @@ function persist(now){
   const go=()=>{const has=S.input.trim()||S.versions.length;
     const i=sessions.indexOf(S);
     if(has){S.at=Date.now();if(i<0)sessions.unshift(S);else if(i>0){sessions.splice(i,1);sessions.unshift(S);}}
-    else if(i>=0)sessions.splice(i,1);
+    else if(i>=0){sessions.splice(i,1);deletedIds.add(S.id);}
     saveSessions();store.set("current",S.id);if(!$("hist").hidden)renderHist();};
   if(now)go();else persistT=setTimeout(go,400);
 }
+addEventListener("pagehide",()=>persist(true));
+document.addEventListener("visibilitychange",()=>{if(document.hidden)persist(true);});
 
 /* ---------- UI: modes ---------- */
 function renderModes(){
@@ -638,7 +654,7 @@ function renderFreezeBtn(){const n=freezeList().length;$("freezeBtn").textConten
 $("freezeIn").addEventListener("input",()=>{store.set("freeze",$("freezeIn").value);renderFreezeBtn();});
 $("freezeBtn").onclick=()=>{$("freezeRow").hidden=!$("freezeRow").hidden;renderFreezeBtn();if(!$("freezeRow").hidden)$("freezeIn").focus();};
 function renderVoiceSel(){
-  $("voiceSel").innerHTML=voices.length?voices.map(v=>`<option value="${v.id}">${esc(v.name||T("Untitled voice","未命名语气"))}</option>`).join(""):`<option value="">${esc(T("No voice yet","还没有语气"))}</option>`;
+  $("voiceSel").innerHTML=voices.length?voices.map(v=>`<option value="${esc(v.id)}">${esc(v.name||T("Untitled voice","未命名语气"))}</option>`).join(""):`<option value="">${esc(T("No voice yet","还没有语气"))}</option>`;
   const v=curVoice();if(v)$("voiceSel").value=v.id;
 }
 $("voiceSel").onchange=()=>{activeVoice=$("voiceSel").value;store.set("activeVoice",activeVoice);};
@@ -770,7 +786,7 @@ async function rewrite(){
     else{$("outSt").textContent=errText(e);if(e?.code==="not_granted"){sample=null;}}
   }finally{if(ctl===my){ctl=null;setRunning(false);}}
 }
-$("goBtn").onclick=()=>rewrite();
+$("goBtn").onclick=e=>{if(e.detail>1)return;rewrite();};
 
 /* ---------- result rendering ---------- */
 let OT=null; // analysed result: {key,text,toks,same,sents,best,pct}
@@ -1080,7 +1096,7 @@ function renderHist(){
   const q=$("histSearch").value.trim().toLowerCase();
   const list=sessions.filter(s=>!q||s.input.toLowerCase().includes(q)||s.versions.some(v=>v.text.toLowerCase().includes(q)));
   $("histList").innerHTML=list.length?list.map(s=>{const modes=[...new Set(s.versions.map(v=>mName(v.mode)))].join(", ");
-    return `<div class="hitem${s===S?" on":""}" data-id="${s.id}" role="button" tabindex="0"><div class="hb"><div class="hp" data-no-i18n>${esc((s.input||s.versions[0]?.text||"").slice(0,160)||T("Empty","空"))}</div><div class="hm">${esc(fmtTime(s.at))}${s.versions.length?" · "+esc(T(`${s.versions.length} versions`,`${s.versions.length} 个版本`))+" · "+esc(modes):""}</div></div><button class="ib" data-del="${s.id}" title="${esc(T("Delete","删除"))}" aria-label="Delete"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;}).join("")
+    return `<div class="hitem${s===S?" on":""}" data-id="${esc(s.id)}" role="button" tabindex="0"><div class="hb"><div class="hp" data-no-i18n>${esc((s.input||s.versions[0]?.text||"").slice(0,160)||T("Empty","空"))}</div><div class="hm">${esc(fmtTime(s.at))}${s.versions.length?" · "+esc(T(`${s.versions.length} versions`,`${s.versions.length} 个版本`))+" · "+esc(modes):""}</div></div><button class="ib" data-del="${esc(s.id)}" title="${esc(T("Delete","删除"))}" aria-label="Delete"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;}).join("")
     :`<div class="tnone">${esc(q?T("Nothing matches.","没有匹配的记录。"):T("Your rewrites are saved here, on this computer.","你的改写会保存在这里，只存在这台电脑上。"))}</div>`;
 }
 function openHist(){$("hist").hidden=false;$("scrim").hidden=false;renderHist();$("histSearch").focus();}
@@ -1090,9 +1106,9 @@ $("histClose").onclick=closeHist;$("scrim").onclick=closeHist;
 $("histSearch").addEventListener("input",renderHist);
 $("histList").addEventListener("click",e=>{
   const d=e.target.closest("[data-del]");
-  if(d){e.stopPropagation();const s=sessions.find(x=>x.id===d.dataset.del);if(!s)return;const i=sessions.indexOf(s);sessions.splice(i,1);saveSessions();
+  if(d){e.stopPropagation();const s=sessions.find(x=>x.id===d.dataset.del);if(!s)return;const i=sessions.indexOf(s);sessions.splice(i,1);deletedIds.add(s.id);saveSessions();
     if(s===S){S=freshSession();ta.value="";loadSession(S);}renderHist();
-    toast(T("Deleted from history.","已从历史中删除。"),()=>{sessions.splice(i,0,s);saveSessions();renderHist();});return;}
+    toast(T("Deleted from history.","已从历史中删除。"),()=>{deletedIds.delete(s.id);sessions.splice(i,0,s);saveSessions();renderHist();});return;}
   const it=e.target.closest(".hitem");if(it){const s=sessions.find(x=>x.id===it.dataset.id);if(s){loadSession(s);closeHist();}}
 });
 $("histList").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("hitem")){e.preventDefault();e.target.click();}});
@@ -1109,10 +1125,24 @@ $("moreMenu").addEventListener("click",e=>{const b=e.target.closest("[data-m]");
   else if(m==="hotkey")requestHotkey();else if(m==="install")desktop?.install.request().catch(()=>{});});
 
 /* ---------- open files ---------- */
+function htmlToMd(html){ // Word headings, lists, bold and italics come back as the Markdown this app exports
+  const doc=new DOMParser().parseFromString(`<body>${html}</body>`,"text/html");
+  const inl=n=>[...n.childNodes].map(c=>{if(c.nodeType===3)return c.nodeValue;if(c.nodeType!==1)return "";const t=c.tagName,x=inl(c);
+    if(t==="BR")return "\n";if(/^(UL|OL)$/.test(t))return "";if((t==="STRONG"||t==="B")&&x.trim())return `**${x}**`;if((t==="EM"||t==="I")&&x.trim())return `*${x}*`;return x;}).join("");
+  const list=(el,d)=>[...el.children].filter(li=>li.tagName==="LI").map((li,i)=>{const sub=[...li.children].filter(c=>/^(UL|OL)$/.test(c.tagName)).map(c=>list(c,d+1)).join("\n");
+    return "  ".repeat(d)+(el.tagName==="OL"?`${i+1}. `:"- ")+inl(li).trim()+(sub?"\n"+sub:"");}).join("\n");
+  const out=[];
+  for(const el of doc.body.children){const t=el.tagName,h=/^H([1-6])$/.exec(t);
+    if(h)out.push("#".repeat(+h[1])+" "+inl(el).trim());
+    else if(t==="UL"||t==="OL")out.push(list(el,0));
+    else if(t==="TABLE")out.push([...el.querySelectorAll("tr")].map(r=>[...r.children].map(c=>c.textContent.trim()).join(" | ")).join("\n"));
+    else out.push(inl(el));}
+  return out.join("\n\n");
+}
 async function readFile(f){
   const ext=(f.name.split(".").pop()||"").toLowerCase();
   try{
-    if(ext==="docx"){if(!window.mammoth)throw new Error("lib");const r=await mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()});return r.value.replace(/\n{3,}/g,"\n\n").trim();}
+    if(ext==="docx"){if(!window.mammoth)throw new Error("lib");const r=await mammoth.convertToHtml({arrayBuffer:await f.arrayBuffer()});return htmlToMd(r.value).replace(/\n{3,}/g,"\n\n").trim();}
     if(["doc","pdf","pages","rtf","odt"].includes(ext)){toast(T(`.${ext} files can't be opened here. Save it as .docx, .txt or .md first.`,`这里打不开 .${ext} 文件，请先另存为 .docx、.txt 或 .md。`));return null;}
     return (await f.text()).replace(/\r\n?/g,"\n").replace(/^\uFEFF/,"");
   }catch(e){toast(e?.message==="lib"?T("The Word reader didn't load. Check your connection and reopen the app.","Word 读取组件没加载，请检查网络后重新打开。"):T(`Couldn't read “${f.name}”. Is it a valid .${ext} file?`,`读不了“${f.name}”，确认是有效的 .${ext} 文件吗？`));return null;}
@@ -1242,7 +1272,7 @@ function openVoice(){
   setTimeout(()=>(vEdit.samples?$("vName"):$("vSamples")).focus(),0);
 }
 function fillVoice(){
-  $("vSel").innerHTML=voices.map(v=>`<option value="${v.id}">${esc(v.name||T("Untitled voice","未命名语气"))}</option>`).join("");
+  $("vSel").innerHTML=voices.map(v=>`<option value="${esc(v.id)}">${esc(v.name||T("Untitled voice","未命名语气"))}</option>`).join("");
   $("vSel").value=vEdit.id;$("vName").value=vEdit.name||"";$("vSamples").value=vEdit.samples||"";$("vProfile").value=vEdit.profile||"";vCount();
 }
 function vCount(){const n=($("vSamples").value||"").trim().length;$("vCount").textContent=n?T(`${n} characters. ${n<800?"Aim for 1,000 or more for a good match.":"Good."}`,`${n} 个字符。${n<800?"建议 1000 以上，效果更好。":"足够了。"}`):T("Aim for 1,000 characters or more.","建议 1000 个字符以上。");}
@@ -1329,7 +1359,7 @@ function openSettings(){
   $("stIgn").onclick=()=>{ignored.clear();store.set("ignored",[]);refreshTells();$("stIgn").textContent=T("Clear ignored AI tells (0)","清除已忽略的 AI 痕迹 (0)");};
 }
 function openKeys(){
-  const K=[["⌘V",T("Paste anywhere: fills Your text and rewrites","在任意处粘贴：填入并立即改写")],["⌘↵",T("Rewrite","改写")],["Esc",T("Stop, or close a panel","停止，或关闭面板")],["⌘⇧C",T("Copy result","复制结果")],["⌘C",T("Copy result (when the result is focused and nothing is selected)","复制结果（焦点在结果上且未选中文字时）")],["⌘⇧U",T("Use result as input","把结果作为输入")],["⌘⇧K",T("AI tells","AI 痕迹")],["⌘⇧H",T("History","历史")],["⌥1 … ⌥9, ⌥0",T("Switch mode (Standard … Creative, My voice)","切换模式（标准…创意、我的语气）")],["⌥[  ⌥]",T("Fewer or more synonyms","减少或增加同义词")],["⌥M",T("Compare modes","比较模式")],["⌥N",T("New text","新建")],["⌘Z  ⌘⇧Z",T("Undo or redo changes to the result","撤销或重做对结果的修改")],["⌘O",T("Open a file","打开文件")],["⌘S",T("Export result as Word","把结果导出为 Word")],["↑ ↓  1–9",T("In a synonym list: move and pick","在同义词列表中：移动和选择")],["⌥ click",T("Rephrase the whole sentence","改写整句")]];
+  const K=[["⌘V",T("Paste anywhere: fills Your text and rewrites","在任意处粘贴：填入并立即改写")],["⌘↵",T("Rewrite","改写")],["Esc",T("Stop, or close a panel","停止，或关闭面板")],["⌘⇧C",T("Copy result","复制结果")],["⌘C",T("Copy result (when the result is focused and nothing is selected)","复制结果（焦点在结果上且未选中文字时）")],["⌘⇧U",T("Use result as input","把结果作为输入")],["⌘⇧K",T("AI tells","AI 痕迹")],["⌘⇧H",T("History","历史")],["⌥1 … ⌥9, ⌥0",T("Switch mode (Standard … Creative, My voice)","切换模式（标准…创意、我的语气）")],["⌥[  ⌥]",T("Fewer or more synonyms","减少或增加同义词")],["⌥M",T("Compare modes","比较模式")],["⌥N",T("New text","新建")],["⌘Z  ⌘⇧Z",T("Undo or redo changes to the result","撤销或重做对结果的修改")],["⌘O",T("Open a file","打开文件")],["⌘S",T("Export result as Word","把结果导出为 Word")],["↑ ↓  1–9",T("In a synonym list: move and pick","在同义词列表中：移动和选择")],[T("⌥ click","⌥ 点击"),T("Rephrase the whole sentence","改写整句")]];
   openModal("keys",`<div class="dh"><h2>${esc(T("Keyboard shortcuts","快捷键"))}</h2>${X}</div><div class="db"><dl class="kl">${K.map(([k,d])=>`<dt>${esc(k)}</dt><dd>${esc(d)}</dd>`).join("")}</dl></div>`);
 }
 

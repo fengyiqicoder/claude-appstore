@@ -271,7 +271,7 @@ body.aiwork #toast{bottom:70px}
 .anbadge{position:absolute;min-width:18px;height:18px;padding:0 4px;border-radius:4px;font:700 11px/18px var(--font);color:#fff;background:#2f9e44;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .anbadge.emph{background:#e8a317}.anbadge.exit{background:#d93025}
 /* format bar */
-#obar{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;align-items:center;gap:2px;background:var(--panel);border-bottom:1px solid var(--line);padding:4px max(10px,env(safe-area-inset-left,0px));min-height:40px}
+#obar{display:flex;flex-wrap:wrap;row-gap:2px;overflow-x:auto;scrollbar-width:thin;align-items:center;gap:2px;background:var(--panel);border-bottom:1px solid var(--line);padding:4px max(10px,env(safe-area-inset-left,0px));min-height:40px}
 #obar .btn{border:0}
 #obar .btn.on,.brow .btn.on,.fxb.on{background:var(--accent-soft);color:var(--accent)}
 .osep{width:1px;height:20px;background:var(--line);margin:0 4px}
@@ -361,7 +361,7 @@ body.master #thumbs .th.mth0{opacity:1}
 #pres .hud button.on{background:rgba(255,255,255,.25)}
 #fmt select{border:0;background:transparent;font:600 12px var(--font);color:var(--fg);max-width:110px;height:28px}
 @media (max-width:900px){#side{position:absolute;right:0;top:0;bottom:0;z-index:15;box-shadow:var(--shadow)}}
-@media (max-width:760px){#side{width:min(320px,100%)}#obar .olab{display:none}}
+@media (max-width:760px){#side{width:min(320px,100%)}#obar .olab{display:none}#obar{flex-wrap:nowrap}}
 </style>
 
 <div id="app">
@@ -550,6 +550,8 @@ body.master #thumbs .th.mth0{opacity:1}
 </script>
 <script>
 "use strict";
+/* Enter and Escape pressed while an input method is composing (Chinese, Japanese…) only pick or cancel the candidate: keep them away from every handler below. */
+addEventListener("keydown",e=>{if((e.isComposing||e.keyCode===229)&&(e.key==="Enter"||e.key==="Escape"||e.key==="Tab"))e.stopImmediatePropagation()},true);
 const $=id=>document.getElementById(id);
 const __tr=window.__tr||(s=>s),__t=window.__t||((en,zh)=>en),__ZH=!!window.__ZH;
 let W=1280,H=720,PXI=1/96;
@@ -577,6 +579,23 @@ function inlineProps(c){
   const fs=st.fontSize;if(fs&&/em$/.test(fs)&&parseFloat(fs)>0)o.em=+parseFloat(fs).toFixed(3);
   const ff=st.fontFamily||(tag==="font"&&c.getAttribute("face"));if(ff){const f=ff.split(",")[0].replace(/["']/g,"").trim();if(f&&!/^(inherit|initial)$/.test(f))o.font=f}
   return o}
+/* deck files come from outside: every field is cleaned by kind before it can reach a template */
+function cleanDeckJSON(v,key,depth=0){
+  if(depth>12)return undefined;
+  if(typeof v==="number")return Number.isFinite(v)?Math.max(-1e9,Math.min(1e9,v)):0;
+  if(typeof v==="boolean"||v===null)return v;
+  if(Array.isArray(v))return v.slice(0,2000).map(x=>cleanDeckJSON(x,key,depth+1)).filter(x=>x!==undefined);
+  if(typeof v==="object"){const o={};for(const [k0,x] of Object.entries(v)){const k=String(k0).replace(/[^\w:.-]/g,"").slice(0,80);if(!k)continue;const c=cleanDeckJSON(x,k,depth+1);if(c!==undefined)o[k]=c}return o}
+  if(typeof v!=="string")return undefined;
+  if(/^(id|.*Id)$/.test(key))return v.replace(/[^\w-]/g,"").slice(0,80);
+  if(/^(sid|spid|grp|h0|k|role|valign|align|layout|kind|theme|icon|transition|anim|type|ph|semLayout|fit|dir|shape|preset|effect)$/.test(key))return v.replace(/[^\w:.#-]/g,"").slice(0,80);
+  if(/(^|[a-z])(color|colour|bg|fill|stroke|accent|fg|muted|line|border|hl)$/i.test(key))return /^#?[0-9a-f]{3,8}$/i.test(v)?v:undefined;
+  if(/^(image|bgImage|logo|poster|thumb|url|src|href|media|link)$/i.test(key))return /^(data:(image|video|audio)\/[\w.+-]+;base64,|blob:)/i.test(v)||(/^(href|link|url)$/i.test(key)&&/^(https?:|mailto:)/i.test(v))?v:undefined;
+  if(/^(font|face|ff|fontFamily|family|latin|ea|cs)$/i.test(key))return v.replace(/[;"'<>\\{}()]/g,"").slice(0,80);
+  if(/^\s*[\[{]/.test(v)){try{return JSON.stringify(cleanDeckJSON(JSON.parse(v),key,depth+1))}catch{}}
+  if(key==="notes")return v.replace(/</g,"‹").replace(/>/g,"›");
+  return /[<>]/.test(v)?sanitizeInline(v):v;
+}
 function sanitizeInline(html){
   const t=document.createElement("template");t.innerHTML=String(html??"");let out="";
   (function walk(n){for(const c of n.childNodes){
@@ -852,7 +871,7 @@ function fitText(t){
 function fitTable(tb){const box=tb.parentElement;let s=+tb.dataset.fs,g=0;tb.style.fontSize=s+"px";while(tb.offsetHeight>box.clientHeight+1&&s>9&&g++<30){s*=.94;tb.style.fontSize=s.toFixed(1)+"px"}tb.dataset.cur=s.toFixed(1)}
 function hashStr(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0}return h.toString(16)+":"+str.length}
 function rgbaHex(c,a){const n=parseInt(c,16);return a!=null&&a<1?`rgba(${n>>16&255},${n>>8&255},${n&255},${a})`:"#"+c}
-function gradCss(g){const st=g.stops.map(x=>`${rgbaHex(x.color,x.alpha)} ${x.pos}%`).join(",");return g.type==="radial"?`radial-gradient(circle,${st})`:`linear-gradient(${(g.ang+90)%360}deg,${st})`}
+function gradCss(g){const stops=g&&Array.isArray(g.stops)?g.stops.filter(x=>x&&/^[0-9a-f]{6}$/i.test(x.color)):[];if(!stops.length)return "#FFFFFF";const st=stops.map(x=>`${rgbaHex(x.color,Number.isFinite(+x.alpha)?+x.alpha:1)} ${Number.isFinite(+x.pos)?+x.pos:0}%`).join(",");return g.type==="radial"?`radial-gradient(circle,${st})`:`linear-gradient(${((Number.isFinite(+g.ang)?+g.ang:0)+90)%360}deg,${st})`}
 function gradXml(g){return `<a:gradFill rotWithShape="1"><a:gsLst>${g.stops.map(x=>`<a:gs pos="${Math.round(x.pos*1000)}"><a:srgbClr val="${x.color}">${x.alpha!=null&&x.alpha<1?`<a:alpha val="${Math.round(x.alpha*100000)}"/>`:""}</a:srgbClr></a:gs>`).join("")}</a:gsLst>${g.type==="radial"?'<a:path path="circle"><a:fillToRect l="50000" t="50000" r="50000" b="50000"/></a:path>':`<a:lin ang="${Math.round(g.ang*60000)}" scaled="0"/>`}</a:gradFill>`}
 function paraCss(p){return `${p.ls&&p.ls!==1?`line-height:${(1.18*p.ls).toFixed(3)};`:""}${p.u||p.s?`text-decoration:${[p.u&&"underline",p.s&&"line-through"].filter(Boolean).join(" ")};`:""}font-size:calc(${p.size}px * var(--k,1));color:#${p.color};text-align:${p.align||"left"};margin-left:${(p.lvl||0)*1.1}em;font-weight:${p.b?700:400};font-style:${p.i?"italic":"normal"};font-family:${fontCss(p.font||"Arial")}`}
 function fitFree(t){const box=t.parentElement;let k=1,g=0;t.style.setProperty("--k",1);while((t.offsetHeight>box.clientHeight+1||t.scrollWidth>t.clientWidth+1)&&k>.4&&g++<40){k*=.94;t.style.setProperty("--k",k.toFixed(3))}t.dataset.cur=k.toFixed(3)}
@@ -939,7 +958,20 @@ function undo(){if(!hist.u.length)return;hist.r.push(JSON.stringify(deck));deck=
 function redo(){if(!hist.r.length)return;hist.u.push(JSON.stringify(deck));deck=JSON.parse(hist.r.pop());setDeckSize(deck);cur=clamp(cur,0,deck.slides.length-1);changed(true);updUndo()}
 function updUndo(){$("undoBtn").disabled=!hist.u.length;$("redoBtn").disabled=!hist.r.length}
 function changed(full){if(!deck)return;deck.updated=Date.now();$("saved").textContent="Saving…";clearTimeout(saveT);saveT=setTimeout(saveNow,500);if(full){renderRail();renderStage()}}
-async function saveNow(){clearTimeout(saveT);if(!deck)return;try{await DB.put(clone(deck));$("saved").textContent=DB.bad?"Not saved on this device":"Saved";maybeSnap()}catch(e){$("saved").textContent="Storage full";toast("This device is out of storage for decks. Export as .json or .pptx to keep a copy, or delete old decks.")}}
+async function saveNow(){clearTimeout(saveT);saveT=null;if(!deck)return;try{await DB.put(clone(deck));$("saved").textContent=DB.bad?"Not saved on this device":"Saved";try{BC?.postMessage({id:deck.id,updated:deck.updated})}catch{}maybeSnap()}catch(e){$("saved").textContent="Storage full";toast("This device is out of storage for decks. Export as .json or .pptx to keep a copy, or delete old decks.")}}
+
+/* ---------- another window saved: pick up its version of the open deck, so the next save here doesn't overwrite it ---------- */
+let BC=null,extPending=null;try{BC=new BroadcastChannel("ai-slide-maker")}catch{}
+function busyEditing(){const a=document.activeElement;return !!(saveT||aiCtl||P.on||a&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))&&!$("home").contains(a))}
+async function pullExternal(){
+  const m=extPending;if(!m||!deck||m.id!==deck.id||view==="home")return;
+  if(busyEditing()){setTimeout(pullExternal,800);return}
+  extPending=null;const d=await DB.get(m.id);if(!d||!deck||d.id!==deck.id||!(d.updated>deck.updated))return;
+  deck=d;deck.slides=deck.slides.map(s=>coerce(s,s.layout));hist.u=[];hist.r=[];updUndo();setDeckSize(deck);cur=clamp(cur,0,deck.slides.length-1);
+  if(!masterMode)setSel([]);$("deckTitle").value=deck.title;renderRail();renderStage();if(!$("sorter").hidden)renderSorter();
+  toast(__t("Updated with changes made in another window.","已同步另一个窗口里的修改。"));
+}
+if(BC)BC.onmessage=e=>{const m=e.data;if(!m||!m.id)return;if(view==="home"){renderRecent();return}if(deck&&m.id===deck.id&&m.updated>deck.updated){extPending=m;pullExternal()}};
 
 /* ---------- toast / popover / modal / ai bar ---------- */
 let toastT=null;
@@ -1295,8 +1327,12 @@ $("slideBox").addEventListener("paste",e=>{
     if(lines.length>1){for(let k=0;k<lines.length;k++){if(k)document.execCommand("insertParagraph");document.execCommand("insertText",false,lines[k])}}}
   else document.execCommand("insertText",false,text.replace(/\s*\n\s*/g," "));
 });
+/* ⌘Z inside slide text or notes uses the app's undo (the same as the Undo button): the browser's own undo stack spans every field and would undo typing in another box. */
+function fieldUndo(e,t){const k=e.key.toLowerCase();if(!(e.metaKey||e.ctrlKey)||e.altKey||(k!=="z"&&k!=="y"))return false;e.preventDefault();e.stopPropagation();const r=k==="y"||e.shiftKey;t.blur();r?redo():undo();return true}
+$("notes").addEventListener("keydown",e=>{if(fieldUndo(e,$("notes"))&&!masterMode)$("notes").focus()});
 $("slideBox").addEventListener("keydown",e=>{
   const t=e.target;if(!t.isContentEditable)return;
+  if(fieldUndo(e,t))return;
   if(e.key==="Escape"){e.preventDefault();t.blur();armType();return}
   if(e.key==="Enter"&&!t.classList.contains("ls")&&!t.classList.contains("fx")){e.preventDefault();if(t.tagName==="TD"){const nx=t.parentElement.nextElementSibling?.children[t.cellIndex];if(nx)nx.focus();else t.blur()}else t.blur();return}
   if(e.key==="Tab"&&t.classList.contains("fx")){e.preventDefault();const sel=getSelection();let n=sel.anchorNode;while(n&&n.parentNode!==t)n=n.parentNode;if(!n||n.nodeType!==1)return;const ee=getPath(curS(),JSON.parse(t.dataset.path));readFreeInto(t,ee);const i=[...t.children].indexOf(n);const p=ee.paras[i];if(!p)return;if(!editDirty&&editSnap){hist.u.push(editSnap);hist.r=[];editDirty=true;updUndo()}p.lvl=clamp((p.lvl||0)+(e.shiftKey?-1:1),0,8);n.style.marginLeft=p.lvl*1.1+"em";changed();refreshThumbSoon();return}
@@ -1738,8 +1774,8 @@ async function importFile(f,mode){
       hist.u=[];hist.r=[];cur=0;openEditor();saveNow();
       const nf=d.slides.filter(x=>x.layout==="free").length;
       if(nf)toast(`Opened ${d.slides.length} slides with their original design.`,"Restyle with a theme",restyleAll,9000);else toast(`Opened ${d.slides.length} slides in the ${__tr(th().name)} theme. Pick another under Theme.`,null,null,7000);return}
-    if(ext==="json"){const o=JSON.parse(await f.text());const d=o.deck||o;if(!Array.isArray(d.slides))throw new Error("not a deck");
-      if(o.media&&typeof o.media==="object")for(const [id,u] of Object.entries(o.media)){try{await DB.putFile(id,dataUrlBlob(u))}catch{}}
+    if(ext==="json"){const o=JSON.parse(await f.text());const d0=o&&typeof o==="object"?(o.deck||o):null;if(!d0||!Array.isArray(d0.slides))throw new Error("not a deck");const d=cleanDeckJSON(d0,"");d.slides=d.slides.filter(x=>x&&typeof x==="object"&&!Array.isArray(x));
+      if(o.media&&typeof o.media==="object")for(const [id0,u] of Object.entries(o.media)){const id=String(id0).replace(/[^\w:.-]/g,"");if(!id||typeof u!=="string"||!/^data:(image|video|audio)\/[\w.+-]+;base64,/i.test(u))continue;try{await DB.putFile(id,dataUrlBlob(u))}catch{}}
       if(mode==="append"&&deck){checkpoint();deck.slides.splice(cur+1,0,...d.slides.map(s=>normSlide(s,{...s,id:uid()})));changed(true);return}
       deck={...newDeck(d.title,d.theme),...d,id:uid(),updated:Date.now()};deck.slides=deck.slides.map(s=>coerce({...s,id:s.id||uid()},LAYOUT_IDS.includes(s.layout)||(s.layout==="free"&&s.free)?s.layout:"bullets"));hist.u=[];hist.r=[];cur=0;openEditor();saveNow();return}
     let o=null,raw="";
@@ -1756,7 +1792,8 @@ async function importFile(f,mode){
     o.title=o.title||f.name.replace(/\.[^.]+$/,"");
     openOutline(o,{sub:`From ${f.name}. Edit, reorder, then generate with AI or build as written.`});
     if(ext!=="md"&&ext!=="txt")outline.source=o.sourceText||"";
-  }catch(e){aiDone();console.error(e);toast(`Couldn't open ${f.name}: ${e?.message||"the file looks damaged"}.`)}
+  }catch(e){aiDone();console.warn(e);const nd=/not a deck/.test(e?.message||"");
+    toast(nd?__t(`Couldn't open ${f.name}: it isn't an AI Slide Maker deck file.`,`无法打开 ${f.name}：这不是 AI 幻灯片的演示文稿文件。`):__t(`Couldn't open ${f.name}: the file looks damaged or isn't a real .${ext} file.`,`无法打开 ${f.name}：文件似乎已损坏，或者不是真正的 .${ext} 文件。`),null,null,6000)}
 }
 const NS_A="http://schemas.openxmlformats.org/drawingml/2006/main";
 const xml=s=>new DOMParser().parseFromString(s,"application/xml");
@@ -2696,7 +2733,7 @@ function runStep(root,st,instant){let all=[];for(const f of st.fx)all=all.concat
 function stepsDuration(st){return Math.max(0,...st.fx.map(f=>f.end))}
 /* ---------- side panel: animations / comments ---------- */
 let sideTab="anim",lastElTarget=null;
-function openSide(tab,addNow){sideTab=tab;$("side").hidden=false;renderSide();layoutStage();drawSel();if(addNow&&tab==="anim")setTimeout(()=>addAnimPop($("anAdd")),30)}
+function openSide(tab,addNow){sideTab=tab;$("side").hidden=false;renderSide();layoutStage();drawSel();if(addNow&&tab==="anim")setTimeout(()=>{const b=$("anAdd");if(b&&!$("side").hidden&&sideTab==="anim")addAnimPop(b)},30)}
 function closeSide(){$("side").hidden=true;layoutStage();drawSel()}
 function animTargets(){if(SEL.length)return [...SEL];if(lastElTarget&&$("slideBox").querySelector(`[data-t="${CSS.escape(lastElTarget)}"]`))return [lastElTarget];return []}
 function renderSide(){const box=$("sideBody");if(!box||$("side").hidden||!deck)return;for(const b of $("sideTabs").children)b.classList.toggle("on",b.dataset.t===sideTab);box.replaceChildren();
@@ -2892,7 +2929,7 @@ function bgMenu(anchor){const s=deck.slides[cur];const free=s.layout==="free";co
     mi(p,"Gradient…",()=>openPop(anchor,q=>{mlab(q,"Gradient");const t=th();const pairs=[[t.accent,t.bg],[t.bg,t.accent2],[mix(t.accent,"000000",.4),t.accent],["0F172A","1E3A5F"],["FFF4E6","FFD8B8"],["F4F1FF","DCD3FF"]];const g=document.createElement("div");g.className="cgrid";for(const [a,b] of pairs){const btn=document.createElement("button");btn.className="sw";btn.style.background=`linear-gradient(135deg,#${a},#${b})`;btn.onclick=()=>{closePop();const gr={type:"linear",ang:45,stops:[{pos:0,color:a,alpha:1},{pos:100,color:b,alpha:1}]};setBg(x=>{if(free){x.free.bgGrad=gr;x.free.bg=a;delete x.free.bgImage}else x.bgo={grad:gr,color:a}})};g.append(btn)}q.append(g)},{force:true}),{stay:true,icon:"layers"});
     mi(p,"Picture…",()=>{const inp=document.createElement("input");inp.type="file";inp.accept="image/*";inp.onchange=async()=>{const f=inp.files[0];if(!f)return;try{const d=await downscale(f,1920);setBg(x=>{if(free)x.free.bgImage=d;else x.bgo={...(x.bgo||{}),image:d}})}catch{toast("Couldn't read that image.")}};inp.click()},{icon:"img"});
     mi(p,"Apply this background to all slides",()=>{checkpoint();for(const x of deck.slides){if(x===s)continue;if(free&&x.layout==="free")x.free={...x.free,bg:s.free.bg,bgImage:s.free.bgImage,bgGrad:s.free.bgGrad};else if(!free&&x.layout!=="free"){if(s.bgo)x.bgo=clone(s.bgo);else delete x.bgo}}changed(true);toast("Background applied to every slide.","Undo",undo)},{icon:"check"})}})}
-function hfEditor(){const hf=deck.hf={num:false,date:false,dateText:"",footer:"",notTitle:true,...(deck.hf||{})};checkpoint();const box=document.createElement("div");box.style.whiteSpace="normal";
+function hfEditor(){checkpoint();const hf=deck.hf={num:false,date:false,dateText:"",footer:"",notTitle:true,...(deck.hf||{})};const box=document.createElement("div");box.style.whiteSpace="normal";
   box.innerHTML=`<label class="mi"><input type="checkbox" id="hfN" ${hf.num?"checked":""}> <span style="flex:1">Slide number</span></label>
   <label class="mi"><input type="checkbox" id="hfD" ${hf.date?"checked":""}> <span style="flex:1">Date</span><input class="s" id="hfDT" placeholder="${esc(new Date().toLocaleDateString())} (today)" value="${esc(hf.dateText||"")}" style="width:180px"></label>
   <label class="mi"><input type="checkbox" id="hfF" ${hf.footer?"checked":""}> <span style="flex:1">Footer</span><input class="s" id="hfFT" value="${esc(hf.footer||"")}" placeholder="Footer text" style="width:220px"></label>

@@ -962,10 +962,18 @@ function normScene(x){
   if(x.stat&&typeof x.stat==="object")s.stat={value:+x.stat.value||0,prefix:String(x.stat.prefix||""),suffix:String(x.stat.suffix||""),decimals:clamp(+x.stat.decimals||0,0,3)};
   if(x.chart&&typeof x.chart==="object"){const v=(x.chart.values||[]).map(Number).filter(isFinite).slice(0,12);s.chart={kind:["bar","line","donut"].includes(x.chart.kind)?x.chart.kind:"bar",labels:(x.chart.labels||[]).map(String).slice(0,v.length),values:v,hi:clamp(+x.chart.hi||0,0,Math.max(0,v.length-1))}}
   if(ANIMS[x.anim])s.anim=x.anim;if(TRS[x.tr])s.tr=x.tr;if(["theme","accent","invert","media"].includes(x.bg))s.bg=x.bg;
-  for(const k of ["media","fit","kb","clipIn","vol","id"])if(x[k]!=null)s[k]=x[k];
+  if(x.media)s.media=String(x.media);if(x.fit==="contain")s.fit="contain";if(x.kb===false)s.kb=false;s.clipIn=numOr(x.clipIn,0,0,36000);if(x.vol!=null)s.vol=numOr(x.vol,s.vol,0,2);if(x.id)s.id=String(x.id).replace(/[^\w-]/g,"")||uid();
   return s;
 }
-function normProject(o){const p=newProject();Object.assign(p,o||{});p.th=Object.assign(clone(LOOKS[p.look]||LOOKS.ink),o?.th||{});p.music=Object.assign(newProject().music,o?.music||{});p.scenes=(o?.scenes||[]).map(normScene);p.caps=(o?.caps||[]).filter(c=>c&&isFinite(c.s)&&isFinite(c.e)).map(c=>({s:+c.s,e:+c.e,t:String(c.t||"")}));if(!DIMS[p.ar])p.ar="16:9";return p}
+const HEX=/^#[0-9a-f]{6}$/i,numOr=(v,d,a,b)=>{v=+v;return isFinite(v)?clamp(v,a,b):d};
+function normProject(o){const p=newProject();Object.assign(p,o||{});if(!LOOKS[p.look])p.look="ink";const base=LOOKS[p.look];p.th=Object.assign(clone(base),o?.th||{});
+  for(const k of ["bg","ink","accent"])if(!HEX.test(String(p.th[k])))p.th[k]=base[k];for(const k of ["font","body"])if(!FW[p.th[k]])p.th[k]=base[k];if(!DECOS[p.th.deco])p.th.deco=base.deco;p.th.name=String(p.th.name||base.name);
+  const d=newProject().music,m=Object.assign({},d,o?.music||{});p.music={mood:MOODS[m.mood]?m.mood:"none",bpm:numOr(m.bpm,0,0,300),vol:numOr(m.vol,d.vol,0,2),fx:!!m.fx,fxVol:numOr(m.fxVol,d.fxVol,0,2),duck:m.duck!==false};
+  const au=o?.audio;p.audio=au&&typeof au==="object"&&au.media?{media:String(au.media),at:numOr(au.at,0,0,3600),trim:numOr(au.trim,0,0,3600),vol:numOr(au.vol,1,0,2),bpm:numOr(au.bpm,0,0,300),off:numOr(au.off,0,0,3600)}:null;
+  p.capOn=p.capOn!==false;if(!CAPSTYLES[p.capStyle])p.capStyle="clean";if(!["top","middle","bottom"].includes(p.capPos))p.capPos="bottom";p.capWords=Math.round(numOr(p.capWords,4,1,12));p.capSize=numOr(p.capSize,1,.6,1.6);if(!HEX.test(String(p.capHi)))p.capHi="#ffd60a";if(p.capSrc!=="scenes")p.capSrc="manual";
+  p.logo=p.logo?String(p.logo):null;p.logoCorner=!!p.logoCorner;p.progress=!!p.progress;p.title=String(p.title??"");p.id=String(p.id||uid()).replace(/[^\w-]/g,"")||uid();
+  p.created=+p.created||Date.now();p.updated=+p.updated||Date.now();
+  p.scenes=(Array.isArray(o?.scenes)?o.scenes:[]).filter(x=>x&&typeof x==="object").map(normScene);p.caps=(Array.isArray(o?.caps)?o.caps:[]).filter(c=>c&&isFinite(c.s)&&isFinite(c.e)).map(c=>({s:+c.s,e:+c.e,t:String(c.t||"")}));if(!DIMS[p.ar])p.ar="16:9";return p}
 const curScene=()=>P?.scenes[clamp(sel,0,P.scenes.length-1)]||null;
 
 /* scene text -> captions */
@@ -984,12 +992,12 @@ function undo(){if(!hist.u.length)return;hist.r.push(snap());P=normProject(JSON.
 function redo(){if(!hist.r.length)return;hist.u.push(snap());P=normProject(JSON.parse(hist.r.pop()));hist.key="";sel=clamp(sel,0,Math.max(0,P.scenes.length-1));changed({})}
 let saveT=null,thumbT=null;
 function changed(o={}){
-  if(!P)return;P.updated=Date.now();syncCaps();$("arLab").textContent=P.ar;$("saved").textContent=__t("Saving…","正在保存…");clearTimeout(saveT);saveT=setTimeout(saveNow,600);
+  if(!P)return;P.updated=Date.now();syncCaps();$("arLab").textContent=P.ar;if(document.activeElement!==$("vTitle")&&$("vTitle").value!==P.title)$("vTitle").value=P.title;$("saved").textContent=__t("Saving…","正在保存…");clearTimeout(saveT);saveT=setTimeout(saveNow,600);
   $("undoBtn").disabled=!hist.u.length;$("redoBtn").disabled=!hist.r.length;
   if(!o.soft)renderInspector();else refreshInspectorBits();
   renderSceneList();renderTimeline();sizePreview();requestDraw();scheduleAudio();
 }
-function projIndex(){try{return JSON.parse(LS.get("vs.index")||"[]")}catch{return []}}
+function projIndex(){try{const v=JSON.parse(LS.get("vs.index")||"[]");return (Array.isArray(v)?v:[]).filter(x=>x&&typeof x==="object"&&x.id).map(x=>({id:String(x.id).replace(/[^\w-]/g,""),title:String(x.title??""),updated:+x.updated||0,ar:DIMS[x.ar]?x.ar:"16:9",dur:numOr(x.dur,0,0,1e6),n:+x.n|0,thumb:/^data:image\/(png|jpeg|webp);base64,[\w+\/=]+$/.test(x.thumb||"")?x.thumb:""})).filter(x=>x.id)}catch{return []}}
 let storageBad=false;
 function saveNow(){
   if(!P)return;clearTimeout(saveT);const ok=LS.set("vs.p."+P.id,JSON.stringify(P));
@@ -1012,9 +1020,9 @@ function mi(p,label,fn,o={}){const b=document.createElement("button");b.classNam
 const msep=p=>{const d=document.createElement("div");d.className="msep";p.append(d)};
 const mlab=(p,t)=>{const d=document.createElement("div");d.className="mlab";d.textContent=t;p.append(d)};
 function modal(title,body,buttons,o={}){$("mTitle").textContent=title;const b=$("mBody");b.replaceChildren();if(typeof body==="string")b.innerHTML=body;else b.append(body);const f=$("mFoot");f.replaceChildren();
-  for(const [l,fn,cls] of buttons||[]){const x=document.createElement("button");x.className="btn "+(cls||"");x.textContent=l;x.onclick=()=>fn(x);f.append(x)}$("modal").hidden=false;modal.onclose=o.onclose||null;return b}
+  for(const [l,fn,cls] of buttons||[]){const x=document.createElement("button");x.className="btn "+(cls||"");x.textContent=l;x.onclick=()=>fn(x);f.append(x)}if($("modal").hidden)modal.at=Date.now();$("modal").hidden=false;modal.onclose=o.onclose||null;return b}
 function closeModal(){$("modal").hidden=true;const f=modal.onclose;modal.onclose=null;f&&f()}
-$("mClose").onclick=closeModal;$("modal").addEventListener("mousedown",e=>{if(e.target===$("modal")&&!modal.busy)closeModal()});
+$("mClose").onclick=closeModal;$("modal").addEventListener("mousedown",e=>{if(e.target===$("modal")&&!modal.busy&&Date.now()-(modal.at||0)>400)closeModal()});
 const fmtT=(x,dec=1)=>{const q=Math.pow(10,dec);x=Math.round(Math.max(0,x||0)*q)/q;const m=Math.floor(x/60),s=x-m*60;return m+":"+(s<10?"0":"")+s.toFixed(dec)};
 let pickCb=null;
 function pickFile(accept,multiple,cb){const f=$("fileIn");f.accept=accept;f.multiple=!!multiple;f.value="";pickCb=cb;f.click()}
@@ -1094,7 +1102,7 @@ function renderTemplates(){
 function renderRecent(){
   const idx=projIndex(),g=$("recent");g.replaceChildren();
   if(!idx.length){g.innerHTML=`<div class="empty" style="grid-column:1/-1">${esc(__t("Videos you make are kept here on this computer. Start from a template above, or describe a video.","你做的视频会保存在这台电脑上。可以从上面的模板开始，或者描述一个视频。"))}${storageBad?"<br>"+esc(__t("This browser isn't letting the app save, so close-and-reopen won't keep your work. Export or save the project file to keep it.","这个浏览器不允许保存，关闭后作品不会保留。请导出视频或保存项目文件。")):""}</div>`;return}
-  for(const it of idx){const d=document.createElement("div");d.className="rc";d.innerHTML=`<div class="tw">${it.thumb?`<img alt="" src="${esc(it.thumb)}">`:""}</div><div class="nm" data-no-i18n>${esc(it.title)}</div><div class="dt">${it.ar} · ${fmtT(it.dur,0)} · ${new Date(it.updated).toLocaleDateString(__ZH?"zh-CN":undefined)}</div><button class="ib more" aria-label="More">⋯</button>`;
+  for(const it of idx){const d=document.createElement("div");d.className="rc";d.innerHTML=`<div class="tw">${it.thumb?`<img alt="" src="${esc(it.thumb)}">`:""}</div><div class="nm" data-no-i18n>${esc(it.title)}</div><div class="dt">${esc(it.ar)} · ${esc(fmtT(it.dur,0))} · ${new Date(it.updated).toLocaleDateString(__ZH?"zh-CN":undefined)}</div><button class="ib more" aria-label="More">⋯</button>`;
     d.onclick=e=>{if(e.target.closest(".more"))return;const p=loadProject(it.id);if(p)openProject(p);else toast(__t("That video couldn't be opened. It may have been saved in another browser.","打不开这个视频，可能保存在别的浏览器里。"))};
     d.querySelector(".more").onclick=e=>{e.stopPropagation();openPop(e.currentTarget,p=>{mi(p,__t("Open","打开"),()=>d.click());mi(p,__t("Duplicate","复制"),()=>{const q=loadProject(it.id);if(!q)return;q.id=uid();q.title+=__t(" copy"," 副本");P=q;saveNow();P=null;renderRecent()});msep(p);mi(p,__t("Delete","删除"),()=>{LS.del("vs.p."+it.id);LS.set("vs.index",JSON.stringify(projIndex().filter(x=>x.id!==it.id)));renderRecent();toast(__t("Video deleted","视频已删除"))},{danger:true,icon:ICO.trash})},{right:true})};
     g.append(d)}
@@ -1307,7 +1315,7 @@ function bindInspector(){
   b.querySelectorAll("[data-mood]").forEach(btn=>btn.onclick=()=>edit(()=>{P.music.mood=btn.dataset.mood;P.music.bpm=0}));
   b.querySelectorAll("[data-a]").forEach(btn=>btn.onclick=()=>inspAction(btn.dataset.a,btn));
   b.querySelectorAll("[data-ai]").forEach(btn=>btn.onclick=()=>aiScene(btn.dataset.ai));
-  const ai=$("sceneAiIn");if(ai)ai.onkeydown=e=>{if(e.key==="Enter"&&ai.value.trim()){e.preventDefault();aiScene(ai.value.trim())}};
+  const ai=$("sceneAiIn");if(ai)ai.onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing&&e.keyCode!==229&&ai.value.trim()){e.preventDefault();aiScene(ai.value.trim())}};
   const allTr=$("allTr");if(allTr)allTr.onchange=()=>{if(allTr.value)edit(()=>P.scenes.forEach((s,i)=>{if(i)s.tr=allTr.value}))};
   const cl=$("cueList");if(cl){
     cl.addEventListener("input",e=>{const r=e.target.closest(".cue");if(!r||P.capSrc==="scenes")return;const j=+r.dataset.cue,k=e.target.dataset.c;if(k==="t"){autoGrow(e.target);edit(()=>{P.caps[j].t=e.target.value},"cue"+j)}});
@@ -1460,7 +1468,7 @@ document.addEventListener("keydown",e=>{
   if(e.key==="ArrowLeft"||e.key==="ArrowRight"){e.preventDefault();const d=(e.key==="ArrowLeft"?-1:1)*(e.shiftKey?1:1/30);if(PB.playing)stopPlay();seek(PB.t+d);return}
   if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();select(sel+(e.key==="ArrowUp"?-1:1),{seek:true});return}
   if(e.key==="Home"){e.preventDefault();seek(0);return}if(e.key==="End"){e.preventDefault();seek(totalDur(P));return}
-  if(e.key==="j"){seek(PB.t-1);return}if(e.key==="l"){if(!PB.playing)play();return}
+  if(e.key==="j"){e.preventDefault();seek(PB.t-1);return}if(e.key==="l"){e.preventDefault();if(!PB.playing)play();return}
   if(e.key==="Enter"){e.preventDefault();setITab("scene");setTimeout(()=>$("fHead")?.focus(),0);return}
   if(!mod&&e.key.length===1&&e.target!==$("keyTrap")){focusTrap()}
 });
@@ -1562,7 +1570,7 @@ async function runStoryboard(prompt,o){
   if(!P)return;
   if(!got){const id=P.id;P=null;LS.del("vs.p."+id);LS.set("vs.index",JSON.stringify(projIndex().filter(x=>x.id!==id)));showHome();if(r)toast(__t("Claude's storyboard came back empty. Try again or add more detail.","Claude 返回的分镜是空的，请重试或多给点信息。"));return}
   hist.u=[];fitZoom();ensureFonts(P).then(()=>{THC.clear();changed({})});changed({});saveNow();seek(0);
-  const needs=P.scenes.filter(s=>s.type==="media"&&!s.media).length;toast(needs?__t(`Storyboard ready. ${needs} scene${needs>1?"s":""} need${needs>1?"":"s"} your photo or screenshot.`,`分镜写好了，有 ${needs} 个场景需要你的照片或截图。`):__t("Storyboard ready. Press Space to play.","分镜写好了，按空格键播放。"),null,null,6000);
+  const needs=P.scenes.filter(s=>s.type==="media"&&!s.media).length;if(r?.truncated){toast(__t(`Claude's answer was cut off, so the storyboard may be missing its last scenes (${got} written). Add scenes with + Scene, or try a shorter video.`,`Claude 的回答被截断了，分镜可能缺少最后几个场景（已写 ${got} 个）。可以用 + 场景 补上，或者试试更短的视频。`),null,null,9000)}else toast(needs?__t(`Storyboard ready. ${needs} scene${needs>1?"s":""} need${needs>1?"":"s"} your photo or screenshot.`,`分镜写好了，有 ${needs} 个场景需要你的照片或截图。`):__t("Storyboard ready. Press Space to play.","分镜写好了，按空格键播放。"),null,null,6000);
 }
 $("goBtn").onclick=async()=>{
   const o={ar:$("optAr").value,look:$("optLook").value,type:$("optType").value,len:+$("optLen").value};
@@ -1595,7 +1603,7 @@ ${langLine()} Keep the scene's existing language unless asked.
 Schema: {"type":"title|words|stat|chart|list|quote|compare|media|logo|cta","dur":3.5,"head":"","sub":"","items":[],"stat":{"value":0,"prefix":"","suffix":"","decimals":0},"chart":{"kind":"bar","labels":[],"values":[],"hi":0},"anim":"blur|rise|pop|ink|slam|type","bg":"theme|accent|invert","cap":"","need":""}
 Video title: ${JSON.stringify(P.title)}. Scene ${i+1} of ${P.scenes.length}. Previous scene: ${JSON.stringify(sceneBrief(P.scenes[i-1]))}. Next scene: ${JSON.stringify(sceneBrief(P.scenes[i+1]))}.
 Current scene: ${JSON.stringify(sceneBrief(s))}`,{signal,modelTier:"quick",cache:false}));
-  if(!r||typeof r!=="object")return;
+  if(!r)return;if(typeof r!=="object"||Array.isArray(r)||!TYPES[r.type]||![r.head,r.sub,...(Array.isArray(r.items)?r.items:[])].some(x=>String(x??"").trim())){toast(__tr(ERR.invalid_json),null,null,6000);return}
   edit(()=>{const n=normScene({...r,id:s.id,media:s.media,fit:s.fit,kb:s.kb,clipIn:s.clipIn,vol:s.vol,tr:s.tr});if(s.media&&!["media","clip","logo"].includes(n.type)&&s.type==="media")n.bg="media";P.scenes[i]=n});
   const inp=$("sceneAiIn");if(inp)inp.value="";toast(__t("Scene rewritten.","场景已改写。"),__t("Undo","撤销"),undo,7000);
 }
@@ -1616,7 +1624,7 @@ ${SCHEMA}
 Current storyboard:
 ${cur.map(x=>JSON.stringify(x)).join("\n")}`;
   let lines=[];const r=await withAI(__t("Rewriting video…","正在重写视频…"),async signal=>{const res=await sample(prompt,{signal,modelTier:"default",cache:false,onText:({text})=>{const n=text.split("\n").filter(l=>/"type"/.test(l)).length;if(n)$("aiMsg").textContent=__t(`Rewriting video… ${n} scenes`,`正在重写视频…${n} 个场景`)}});lines=res.text.split("\n").map(parseLine).filter(Boolean);return res});
-  if(!r)return;const head=lines.find(x=>x.title&&!x.type);const sc=lines.filter(x=>x.type);if(!sc.length){toast(__t("Claude didn't return a storyboard. Try rewording.","Claude 没有返回分镜，请换个说法再试。"));return}
+  if(!r)return;if(r.truncated){toast(__t("Claude's answer was cut off before the end, so your video was left as it was. Try a shorter request.","Claude 的回答被截断了，视频保持原样没有改动。请换个简短点的要求再试。"),null,null,8000);return}const head=lines.find(x=>x.title&&!x.type);const sc=lines.filter(x=>x.type);if(!sc.length){toast(__t("Claude didn't return a storyboard. Try rewording.","Claude 没有返回分镜，请换个说法再试。"));return}
   hist.u.push(before);hist.r=[];hist.key="";
   if(head){if(head.title)P.title=String(head.title).slice(0,80);if(MOODS[head.music]&&!P.audio)P.music.mood=head.music}$("vTitle").value=P.title;
   P.scenes=sc.map((x,j)=>{const k=+x.keep-1;const m=keepMedia[k];const s=normScene(x);if(j===0)s.tr="cut";if(m&&m.media){s.media=m.media;s.fit=m.fit;s.kb=m.kb;s.clipIn=m.clipIn;s.vol=m.vol;if(m.type==="clip")s.type="clip";if(!["media","clip","logo"].includes(s.type))s.bg="media"}return s});

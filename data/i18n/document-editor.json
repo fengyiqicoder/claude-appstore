@@ -486,6 +486,7 @@
 "This file was opened in compatibility mode: some formatting may be simplified.": "该文件以兼容模式打开，部分格式可能被简化。",
 "Couldn't build the file. Try again; if it keeps failing, export as HTML instead.": "无法生成文件。请重试；如果一直失败，请改为导出 HTML。",
 "Saving files needs the Claude app.": "保存文件需要 Claude 应用。",
+"This document was also changed in another window. Saving here will replace those changes.":"这份文档在另一个窗口里也改过了。在这里保存会覆盖那边的修改。",
 "Another save is already waiting for you.": "已有另一个保存请求在等你确认。",
 "Couldn't save the file here.": "无法在此保存文件。",
 "Claude is busy or you've hit your usage limit. Try again in a bit.": "Claude 正忙，或你已达到用量上限，请稍后再试。",

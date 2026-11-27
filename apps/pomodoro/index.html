@@ -103,7 +103,7 @@ summary::-webkit-details-marker{display:none}
   try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
   window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
   if(!ZH)return;
-  const DICT={"Pomodoro Timer": "番茄钟", "Focus": "专注", "Short break": "短休息", "Long break": "长休息", "Ready to focus": "准备专注", "Focusing": "专注中", "On a break": "休息中", "Paused": "已暂停", "Time for a break": "该休息了", "Reset": "重置", "Start": "开始", "Pause": "暂停", "Resume": "继续", "Skip": "跳过", "Skip to next": "跳到下一段", "Sessions today": "今日完成数", "What do you want to get done today? Dump it all here, messy is fine.": "今天想完成什么？都写在这里，乱一点也没关系。", "What to get done": "要完成的事", "Claude turns it into focus sessions.": "Claude 会把它拆成一个个专注时段。", "✦ Plan my sessions": "✦ 帮我排时段", "New plan": "新计划", "Done": "已完成", "All done. Nice work.": "全部完成，干得漂亮。", "Write what you want to get done first.": "先写下你想完成的事。", "Thinking…": "思考中…", "Claude is busy or you hit your usage limit. Try later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude declined this one. Try rewording.": "Claude 拒绝了这次请求，换个说法试试。", "Couldn't make a plan. Try again.": "没能生成计划，请重试。", "Settings": "设置", "Focus (minutes)": "专注（分钟）", "Start next session automatically": "自动开始下一段", "Press Option+Shift+P anywhere to start or pause. The countdown shows in your menu bar.": "在任何地方按 Option+Shift+P 开始或暂停，倒计时会显示在菜单栏。", "Start a session to turn on the menu bar timer and notifications.": "开始一个时段即可开启菜单栏计时和通知。", "Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.": "在 Mac 或 Windows 版 Claude 中打开，即可安装为带菜单栏计时的应用。", "Install as app": "安装为应用", "Installed. Open Pomodoro Timer from your Applications or Start menu.": "已安装。请从“应用程序”或“开始”菜单打开番茄钟。"};
+  const DICT={"Pomodoro Timer": "番茄钟", "Focus": "专注", "Short break": "短休息", "Long break": "长休息", "Ready to focus": "准备专注", "Focusing": "专注中", "On a break": "休息中", "Paused": "已暂停", "Time for a break": "该休息了", "Reset": "重置", "Start": "开始", "Pause": "暂停", "Resume": "继续", "Skip": "跳过", "Skip to next": "跳到下一段", "Sessions today": "今日完成数", "What do you want to get done today? Dump it all here, messy is fine.": "今天想完成什么？都写在这里，乱一点也没关系。", "What to get done": "要完成的事", "Claude turns it into focus sessions.": "Claude 会把它拆成一个个专注时段。", "✦ Plan my sessions": "✦ 帮我排时段", "New plan": "新计划", "Done": "已完成", "All done. Nice work.": "全部完成，干得漂亮。", "Write what you want to get done first.": "先写下你想完成的事。", "Thinking…": "思考中…", "Claude is busy or you hit your usage limit. Try later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude declined this one. Try rewording.": "Claude 拒绝了这次请求，换个说法试试。", "Couldn't make a plan. Try again.": "没能生成计划，请重试。", "Settings": "设置", "Focus (minutes)": "专注（分钟）", "Start next session automatically": "自动开始下一段", "Press Option+Shift+P anywhere to start or pause. The countdown shows in your menu bar.": "在任何地方按 Option+Shift+P 开始或暂停，倒计时会显示在菜单栏。", "Start a session to turn on the menu bar timer and notifications.": "开始一个时段即可开启菜单栏计时和通知。", "Open this in Claude for Mac or Windows to install it as an app with a menu bar timer.": "在 Mac 或 Windows 版 Claude 中打开，即可安装为带菜单栏计时的应用。", "Install as app": "安装为应用", "Installed. Open Pomodoro Timer from your Applications or Start menu.": "已安装。请从“应用程序”或“开始”菜单打开番茄钟。", "Stop": "停止", "Stopped. Edit your notes or try again.": "已停止。可以改一改再试。", "Claude isn't available here. Open this app in Claude to plan sessions.": "这里用不了 Claude。请在 Claude 中打开此应用来排时段。", "Claude's answer wasn't a plan. Try again.": "Claude 的回答不是计划，请重试。", "That's too much text. Shorten your notes and try again.": "内容太长了，请删减后重试。", "Your Claude session expired. Reopen the app and try again.": "Claude 会话已过期，请重新打开应用再试。"};
   const PATTERNS=([["(\\d+) today", "今天完成 $1 个"], ["(\\d+) sessions? left, about ([\\d.]+) h", "还剩 $1 个时段，约 $2 小时"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
   const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.tasks li span");
   const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
@@ -154,9 +154,13 @@ let S={
   dur:store.get("dur",{focus:25,short:5,long:15}),
   auto:store.get("auto",false),
   mode:"focus", running:false, endAt:0, left:0,
-  done:(store.get("day","")===today())?store.get("done",0):0
+  done:(store.get("day","")===today())?store.get("done",0):0,
+  day:today()
 };
 S.left=S.dur[S.mode]*60;
+// restore a session that was running or paused when the window was closed or reloaded
+(()=>{const r=store.get("run",null);if(!r||!S.dur[r.mode])return;S.mode=r.mode;S.running=!!r.running;S.endAt=+r.endAt||0;S.left=Math.min(+r.left||0,S.dur[r.mode]*60);if(!S.running&&!(S.left>0))S.left=S.dur[S.mode]*60;})();
+const saveRun=()=>store.set("run",{mode:S.mode,running:S.running,endAt:S.endAt,left:S.left});
 let desktop=null, perms={}, lastTitle="";
 
 function fmt(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
@@ -199,20 +203,20 @@ function setTray(){
     ]
   }).catch(()=>{});
 }
-function save(){store.set("dur",S.dur);store.set("auto",S.auto);store.set("done",S.done);store.set("day",today())}
-async function toggle(){
+function save(){S.day=today();store.set("dur",S.dur);store.set("auto",S.auto);store.set("done",S.done);store.set("day",S.day)}
+function toggle(){
   if(S.running){S.left=remaining();S.running=false;}
-  else{await ensurePerms();S.endAt=Date.now()+S.left*1000;S.running=true;}
-  paint();
+  else{S.endAt=Date.now()+S.left*1000;S.running=true;ensurePerms();}
+  saveRun();paint();
 }
-function reset(){S.running=false;S.left=S.dur[S.mode]*60;paint();}
-function setMode(m,start=false){S.mode=m;S.running=false;S.left=S.dur[m]*60;if(start){S.endAt=Date.now()+S.left*1000;S.running=true;}paint();}
+function reset(){S.running=false;S.left=S.dur[S.mode]*60;saveRun();paint();}
+function setMode(m,start=false){S.mode=m;S.running=false;S.left=S.dur[m]*60;if(start){S.endAt=Date.now()+S.left*1000;S.running=true;}saveRun();paint();}
 function nextMode(){return S.mode!=="focus"?"focus":(S.done>0&&S.done%4===0?"long":"short")}
 function skip(){setMode(nextMode(),false)}
 function finish(){
   const was=S.mode;
   const finishedTask=was==="focus"?curTask():null;
-  if(was==="focus"){S.done++;save();if(finishedTask){finishedTask.spent=(finishedTask.spent||0)+1;if(finishedTask.spent>=finishedTask.sessions)finishedTask.done=true;saveTasks();renderTasks();}}
+  if(was==="focus"){S.done=(store.get("day","")===today()?Math.max(+store.get("done",0)||0,S.day===today()?S.done:0):0)+1;save();if(finishedTask){finishedTask.spent=(finishedTask.spent||0)+1;if(finishedTask.spent>=finishedTask.sessions)finishedTask.done=true;saveTasks();renderTasks();}}
   chime();
   const next=nextMode();
   const msg=was==="focus"?T(`Focus session done${finishedTask?` on "${finishedTask.task.slice(0,80)}"`:""}. ${S.done} today. Time for a ${next==="long"?"long":"short"} break.`,`${finishedTask?`“${finishedTask.task.slice(0,80)}”的`:""}专注时段完成。今天已完成 ${S.done} 个，该${next==="long"?"长":"短"}休息了。`):T("Break's over. Ready for the next focus session?","休息结束。准备好开始下一个专注时段了吗？");
@@ -227,10 +231,11 @@ let ac=null;
 function chime(){
   try{ac=ac||new AudioContext();const t=ac.currentTime;[0,0.18,0.36].forEach((d,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=[784,988,1175][i];g.gain.setValueAtTime(0.0001,t+d);g.gain.exponentialRampToValueAtTime(0.18,t+d+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+d+0.5);o.connect(g).connect(ac.destination);o.start(t+d);o.stop(t+d+0.55);});}catch{}
 }
-setInterval(()=>{if(S.running&&remaining()<=0){finish();}else if(S.running)paint();},250);
+setInterval(()=>{if(S.day!==today()){S.day=today();S.done=0;if(!S.running)paint();}if(S.running&&remaining()<=0){finish();}else if(S.running)paint();},250);
 
 // AI planning
-let tasks=store.get("tasks",[]);
+const okTasks=v=>Array.isArray(v)?v.filter(t=>t&&typeof t==="object").map(t=>({...t,task:String(t.task??"").slice(0,200),sessions:Math.min(12,Math.max(1,Math.round(+t.sessions)||1)),spent:Math.max(0,Math.round(+t.spent)||0),done:t.done===true})):[];
+let tasks=okTasks(store.get("tasks",[]));
 const saveTasks=()=>store.set("tasks",tasks);
 function curTask(){return tasks.find(t=>!t.done)}
 function renderTasks(){
@@ -242,21 +247,32 @@ function renderTasks(){
   $("tst").textContent=left?`${left} session${left===1?"":"s"} left, about ${Math.round(left*(S.dur.focus+S.dur.short)/6)/10} h`:"All done. Nice work.";
 }
 $("tasks").addEventListener("change",e=>{const i=e.target.dataset.t;if(i==null)return;tasks[+i].done=e.target.checked;saveTasks();renderTasks();paint();});
-$("clear").onclick=()=>{tasks=[];saveTasks();renderTasks();paint();$("brain").focus();};
-let sample=null;
+$("clear").onclick=()=>{tasks=[];saveTasks();renderTasks();paint();if(!sample){$("plan").hidden=true;return;}$("brain").focus();};
+// keep two open windows in step
+addEventListener("storage",e=>{
+  if(e.key==="focus.tasks"){tasks=okTasks(store.get("tasks",[]));renderTasks();if(!sample)$("plan").hidden=!tasks.length;paint();}
+  else if(e.key==="focus.done"||e.key==="focus.day"){S.done=store.get("day","")===today()?store.get("done",0):0;paint();}
+  else if(e.key==="focus.dur"){S.dur=store.get("dur",S.dur);["focus","short","long"].forEach(k=>$("d-"+k).value=S.dur[k]);if(!S.running&&S.left>S.dur[S.mode]*60)S.left=S.dur[S.mode]*60;paint();}
+});
+let sample=null, planCtl=null;
 $("mk").onclick=async()=>{
+  if(planCtl){planCtl.abort();return;}
   const dump=$("brain").value.trim();
   if(!dump){$("pst").textContent="Write what you want to get done first.";return;}
-  $("mk").disabled=true;$("pst").textContent="Thinking…";
+  if(!sample){$("pst").textContent="Claude isn't available here. Open this app in Claude to plan sessions.";return;}
+  const ctl=planCtl=new AbortController();
+  $("mk").textContent="Stop";$("pst").textContent="Thinking…";
   try{
-    const out=await sample.json(`You plan pomodoro work. A focus session is ${S.dur.focus} minutes. Turn the person's notes into an ordered list of concrete tasks, most important or most blocking first, each with how many focus sessions it needs (1 to 4). Split vague items into doable steps, drop duplicates, keep the person's language${window.__ZH?" (Simplified Chinese if unclear)":""}, keep each task under 60 characters. Reply with only a JSON array like [{"task":"${window.__ZH?"写报告开头":"Draft the intro"}","sessions":2}].\n\nNotes:\n${dump.slice(0,8000)}`,{modelTier:"default",cache:false});
+    const out=await sample.json(`You plan pomodoro work. A focus session is ${S.dur.focus} minutes. Turn the person's notes into an ordered list of concrete tasks, most important or most blocking first, each with how many focus sessions it needs (1 to 4). Split vague items into doable steps, drop duplicates, keep the person's language${window.__ZH?" (Simplified Chinese if unclear)":""}, keep each task under 60 characters. Reply with only a JSON array like [{"task":"${window.__ZH?"写报告开头":"Draft the intro"}","sessions":2}].\n\nNotes:\n${dump.slice(0,8000)}`,{modelTier:"default",cache:false,signal:ctl.signal});
+    if(ctl.signal.aborted) throw {code:"cancelled"};
     const list=(Array.isArray(out)?out:[]).filter(t=>t&&t.task).slice(0,12).map(t=>({task:String(t.task).slice(0,80),sessions:Math.min(4,Math.max(1,Math.round(+t.sessions||1))),spent:0,done:false}));
     if(!list.length) throw {code:"empty_completion"};
     tasks=list;saveTasks();renderTasks();paint();$("pst").textContent="Claude turns it into focus sessions.";
   }catch(e){
-    $("pst").textContent={rate_limited:"Claude is busy or you hit your usage limit. Try later.",not_granted:"Claude isn't allowed for this app.",refused:"Claude declined this one. Try rewording."}[e?.code]||"Couldn't make a plan. Try again.";
+    if(e?.code==="cancelled"||ctl.signal.aborted){$("pst").textContent="Stopped. Edit your notes or try again.";return;}
+    $("pst").textContent={rate_limited:"Claude is busy or you hit your usage limit. Try later.",not_granted:"Claude isn't allowed for this app.",refused:"Claude declined this one. Try rewording.",invalid_json:"Claude's answer wasn't a plan. Try again.",prompt_too_large:"That's too much text. Shorten your notes and try again.",session_expired:"Your Claude session expired. Reopen the app and try again."}[e?.code]||"Couldn't make a plan. Try again.";
     if(e?.code==="not_granted"||e?.code==="sampling_disabled") $("plan").hidden=true;
-  }finally{$("mk").disabled=false;}
+  }finally{if(planCtl===ctl){planCtl=null;$("mk").textContent="✦ Plan my sessions";}}
 };
 renderTasks();
 (async()=>{sample=window.claude?.use?await window.claude.use("sample").catch(()=>null):null;$("plan").hidden=!sample&&!tasks.length;if(!sample)$("dump").hidden=true;})();
@@ -304,7 +320,7 @@ function hint(){
 // wire up
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
 $("go").onclick=toggle;$("reset").onclick=reset;$("skip").onclick=skip;
-["focus","short","long"].forEach(k=>{const i=$("d-"+k);i.value=S.dur[k];i.onchange=()=>{const v=Math.min(+i.max,Math.max(1,Math.round(+i.value||S.dur[k])));i.value=v;S.dur[k]=v;save();if(!S.running&&S.mode===k){S.left=v*60;}paint();};});
+["focus","short","long"].forEach(k=>{const i=$("d-"+k);i.value=S.dur[k];i.onchange=()=>{const v=Math.min(+i.max,Math.max(1,(i.value===""||isNaN(+i.value)?S.dur[k]:Math.round(+i.value))));i.value=v;S.dur[k]=v;save();if(!S.running&&S.mode===k){S.left=v*60;saveRun();}paint();};});
 $("auto").checked=S.auto;$("auto").onchange=e=>{S.auto=e.target.checked;save();};
 document.addEventListener("keydown",e=>{if(e.code==="Space"&&!e.isComposing&&!/^(INPUT|TEXTAREA|SELECT|BUTTON|SUMMARY|A)$/.test(e.target.tagName)&&!e.target.isContentEditable){e.preventDefault();toggle();}});
 paint();

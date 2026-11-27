@@ -416,6 +416,8 @@ body.app.inset .quick .qtop{padding-left:max(80px,env(safe-area-inset-left,0px))
 
 
 const $=id=>document.getElementById(id);
+/* IME: while a Chinese/Japanese composition is open, Enter/Esc/arrows/Tab belong to the input method, never to app shortcuts */
+addEventListener("keydown",e=>{if(e.isComposing||e.keyCode===229)e.stopImmediatePropagation()},true);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 // when localStorage is blocked, keep data in memory for this session so documents can still be switched
 let LS=null; try{LS=window.localStorage;LS.getItem("gc.index");}catch{LS=null;}
@@ -471,8 +473,9 @@ applyTheme();
 function newDocObj(text="",title=""){return {id:uid(),title,text,sugg:[],checked:[],dismissed:[],cites:[],goals:{...GOALS_DEF,...store.get("goalsDefault",{})},created:Date.now(),updated:Date.now()};}
 function saveDoc(){
   if(!doc) return;
-  if(!doc.text.trim()&&!doc.title){if(index.some(d=>d.id===doc.id)){index=index.filter(d=>d.id!==doc.id);store.set("index",index);store.del("doc."+doc.id);}return;}
-  doc.updated=Date.now();
+  if(!doc.text.trim()&&!doc.title){if(LS)index=cleanIndex(store.get("index",index));if(index.some(d=>d.id===doc.id)){index=index.filter(d=>d.id!==doc.id);store.set("index",index);store.del("doc."+doc.id);}return;}
+  doc.updated=Date.now(); clearTimeout(saveT); saveT=0;
+  if(LS) index=cleanIndex(store.get("index",index)); // another window may have added or removed documents
   const ok=store.set("doc."+doc.id,doc);
   const words=countWords(doc.text);
   const i=index.findIndex(d=>d.id===doc.id), meta={id:doc.id,title:docTitle(),updated:doc.updated,words};
@@ -482,15 +485,27 @@ function saveDoc(){
   if(!ok) toast("Storage is full. Download this document and delete old ones to keep saving.");
 }
 let saveT=0; function scheduleSave(){clearTimeout(saveT);saveT=setTimeout(saveDoc,500);}
+/* other windows of this app: pick up their document list and their edits to the open document */
+window.addEventListener("storage",e=>{
+  if(!LS||!e.key||!e.key.startsWith("gc.")||!doc) return;
+  if(e.key==="gc.index"){index=cleanIndex(store.get("index",[]));if(!$("drawer").hidden)renderDocs();return;}
+  if(e.key==="gc.doc."+doc.id&&e.newValue&&!saveT){
+    let d=null;try{d=cleanDoc(JSON.parse(e.newValue));}catch{} if(!d||(d.updated||0)<=(doc.updated||0)||d.text===doc.text&&d.title===doc.title) return;
+    const a=ed.selectionStart,b=ed.selectionEnd,foc=document.activeElement===ed,top=$("scroller").scrollTop;
+    doc=null; openDocObj(d);
+    if(foc){ed.focus({preventScroll:true});ed.setSelectionRange(Math.min(a,ed.value.length),Math.min(b,ed.value.length));}
+    $("scroller").scrollTop=top;
+  }
+});
 function docTitle(){if(doc.title) return doc.title; const l=(doc.text.split("\n").find(x=>x.trim())||"").replace(/^#+\s*/,"").trim();return l?l.slice(0,60):__t("Untitled document","未命名文档");}
 function loadDoc(id){
-  const d=store.get("doc."+id,null); if(!d) return false;
+  const d=cleanDoc(store.get("doc."+id,null)); if(!d) return false;
   openDocObj(d); return true;
 }
 function openDocObj(d){
   if(doc) saveDoc();
   ctlAll();
-  doc=Object.assign(newDocObj(),d); doc.goals={...GOALS_DEF,...(d.goals||{})};
+  doc=cleanDoc(Object.assign(newDocObj(),d,{goals:{...GOALS_DEF,...(d.goals||{})}}));
   inflight=[];failed.clear();rwCards=[];activeId=null;genAnchor=null;cEdit=null;cErr="";synR=null;speakR=null;
   ed.value=doc.text; lastText=doc.text;
   $("title").value=doc.title||"";
@@ -704,10 +719,11 @@ async function sendBatch(batch){
 const ERR={rate_limited:"Claude is busy or you hit your usage limit. Try again later.",not_granted:"Claude isn't allowed for this app, so only the built-in checks run.",sampling_disabled:"Claude isn't available on this account, so only the built-in checks run.",refused:"Claude declined to check part of this text.",session_expired:"Sign in to Claude again, then press Check now.",prompt_too_large:"That part is too long to send. Split it into smaller paragraphs.",invalid_json:"Claude's answer was garbled. Press Check now to try again.",upstream_error:"Claude had a hiccup. Press Check now to try again."};
 
 /* ---------- score, tone, stats ---------- */
-function countWords(t){const m=t.match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu);return m?m.length:0;}
+const CJK=/[぀-ヿ㐀-鿿가-힯]/g;
+function countWords(t){const cjk=(t.match(CJK)||[]).length;const m=t.replace(CJK," ").match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu);return (m?m.length:0)+cjk;}
 function syllables(w){w=w.toLowerCase().replace(/[^a-z]/g,"");if(!w)return 0;if(w.length<=3)return 1;w=w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/,"").replace(/^y/,"");const m=w.match(/[aeiouy]{1,2}/g);return Math.max(1,m?m.length:1);}
 function stats(t){
-  const words=t.match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu)||[];
+  const words=t.replace(CJK," ").match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu)||[];
   const sents=(t.replace(/\n+/g," . ").match(/[^.!?。！？]*[\p{L}\p{N}][^.!?。！？]*[.!?。！？]*/gu)||[]).filter(s=>/[\p{L}\p{N}]/u.test(s));
   const paras=t.split(/\n/).filter(x=>x.trim()).length;
   const syl=words.reduce((a,w)=>a+syllables(w),0);
@@ -783,7 +799,8 @@ function suggDiff(s){
 }
 function preview(s){if(!/[\p{L}\p{N}]/u.test(s.original+s.replacement))return esc(s.title);return s.replacement?`<del style="color:var(--muted)">${esc(s.original.slice(0,24))}</del> → <b>${esc(s.replacement.slice(0,40))}</b>`:`Remove “${esc(s.original.slice(0,30))}”`;}
 function cardHTML(s,inPop){
-  const single=/^[\p{L}'’-]+$/u.test(s.original)&&s.cat==="correctness";
+  // "Add to dictionary" only makes sense for a word flagged as misspelled, not for a capital letter or a/an fix
+  const single=/^[\p{L}'’-]{2,}$/u.test(s.original)&&s.cat==="correctness"&&!!s.replacement&&s.replacement.toLowerCase()!==s.original.toLowerCase()&&!/^(rep|cap|i|an|a|sp|sb|sa)$/.test(s.id.split("-").pop());
   return `<div class="${inPop?"":"hd"}">${inPop?"":`<span class="dot"></span><span class="t">${CATS[s.cat]}</span><span class="pv">${preview(s)}</span>`}</div>
   <div class="${inPop?"":"bd"}"><div style="font-weight:600;font-size:13px;margin-bottom:4px">${esc(s.title)}</div>
   <div class="diff">${suggDiff(s)}</div>${s.expl?`<p class="expl"${s.cat==="style"&&s.expl!=="Your style guide prefers this."?" data-no-i18n":""}>${esc(s.expl)}</p>`:""}
@@ -1020,14 +1037,15 @@ function startRewrite(label,instr,n){
   if(!sample) return;
   const t=getTarget(rwTarget); if(!doc.text.slice(t.start,t.end).trim()){toast("Put the cursor in a paragraph or select text first.");return;}
   const parts=chunks(t.start,t.end);
-  rwCards.forEach(c=>{if(c.state!=="loading")c.state="gone";});
+  // a new request replaces the previous one (also stops a double-click from sending twice)
+  rwCards.forEach(c=>{if(c.state==="loading"){c.ctl?.abort();c.hl=false;}c.state="gone";});
   rwCards=rwCards.filter(c=>c.state!=="gone");
   parts.forEach((pt,i)=>{const orig=doc.text.slice(pt.start,pt.end);const c={id:uid(),start:pt.start,end:pt.end,orig,label,instr,n:parts.length===1&&orig.length<=1500?n:1,part:parts.length>1?`${i+1} of ${parts.length}`:"",dead:false,state:"loading",hl:true};rwCards.push(c);});
   renderMirror(); renderRewrite();
   setTimeout(()=>$("pRewrite").querySelector(".rcard")?.scrollIntoView({block:"nearest",behavior:"smooth"}),30);
   // run sequentially-ish: two at a time
   const queue=rwCards.filter(c=>c.state==="loading"&&!c.started);
-  let active=0; const next=()=>{while(active<2&&queue.length){const c=queue.shift();c.started=true;active++;runCard(c).finally(()=>{active--;renderMirror();next();});}};
+  let active=0; const next=()=>{while(active<2&&queue.length){const c=queue.shift();if(c.state==="gone")continue;c.started=true;active++;runCard(c).finally(()=>{active--;renderMirror();next();});}};
   next();
 }
 function applyCard(c){
@@ -1468,7 +1486,7 @@ $("modal").addEventListener("mousedown",e=>{if(e.target===$("modal"))hideModal()
 /* ---------- Documents drawer ---------- */
 function renderDocs(){
   const q=$("docSearch").value.trim().toLowerCase();
-  const list=index.filter(d=>!q||d.title.toLowerCase().includes(q)||(store.get("doc."+d.id,{text:""}).text||"").toLowerCase().includes(q));
+  const list=index.filter(d=>!q||d.title.toLowerCase().includes(q)||gStr(store.get("doc."+d.id,{text:""})?.text).toLowerCase().includes(q));
   $("docList").innerHTML=list.length?list.map(d=>`<div class="doc${d.id===doc.id?" on":""}" data-id="${d.id}" tabindex="0"><div class="m"><b>${esc(d.title)}</b><small>${new Date(d.updated).toLocaleDateString(undefined,{month:"short",day:"numeric",year:new Date(d.updated).getFullYear()===new Date().getFullYear()?undefined:"numeric"})} · ${d.words} words</small></div><button class="x" data-del="${d.id}" title="Delete document" aria-label="Delete document"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg></button></div>`).join(""):`<p class="note" style="padding:8px 10px">${q?"No documents match.":"No documents yet."}</p>`;
 }
 function openDrawer(){saveDoc();renderDocs();$("drawer").hidden=false;$("scrim").hidden=false;$("docSearch").focus();}
@@ -1480,7 +1498,7 @@ $("newDoc").onclick=()=>newDocument();
 $("openDoc").onclick=()=>$("file").click();
 $("docList").addEventListener("click",e=>{
   const del=e.target.closest("[data-del]");
-  if(del){const id=del.dataset.del;const d=store.get("doc."+id,null);const meta=index.find(x=>x.id===id);index=index.filter(x=>x.id!==id);store.set("index",index);store.del("doc."+id);
+  if(del){const id=del.dataset.del;const d=store.get("doc."+id,null);if(LS)index=cleanIndex(store.get("index",index));const meta=index.find(x=>x.id===id);index=index.filter(x=>x.id!==id);store.set("index",index);store.del("doc."+id);
     if(id===doc.id){doc=null;if(index[0]&&loadDoc(index[0].id)){}else newDocument();}
     renderDocs();
     toast(`Deleted “${meta?.title||"document"}”.`,()=>{if(d){store.set("doc."+id,d);index.push(meta);index.sort((a,b)=>b.updated-a.updated);store.set("index",index);renderDocs();}});return;}
@@ -1651,22 +1669,33 @@ async function exportAs(kind){
 function exportReport(){
   if(!window.jspdf){toast("The PDF maker didn't load. Check your connection and reopen the app.");return;}
   const st=stats(doc.text), sc=score(cached,st.words), counts={}; for(const s of cached) counts[s.cat]=(counts[s.cat]||0)+1;
-  const pdf=new jspdf.jsPDF({unit:"pt",format:"letter"}); let y=64; const L=60;
-  const line=(t,size=11,bold=false,gap=6)=>{pdf.setFont("helvetica",bold?"bold":"normal");pdf.setFontSize(size);for(const l of pdf.splitTextToSize(t.replace(/[^\x00-\xff–—‘’“”…]/g,"?"),492)){if(y>740){pdf.addPage();y=64;}pdf.text(l,L,y);y+=size*1.35;}y+=gap;};
-  line("Writing performance report",20,true,4);
-  line(`${docTitle()} · ${new Date().toLocaleString()}`,10,false,14);
-  line(`Overall score: ${sc==null?"n/a":sc+" / 100"}`,14,true,10);
-  line("Word count",13,true,2);
-  line(`Characters ${st.chars}   Words ${st.words}   Sentences ${st.sentences}   Paragraphs ${st.paragraphs}`);
-  line(`Reading time ${fmtT(st.read)}   Speaking time ${fmtT(st.speak)}`,11,false,12);
-  line("Readability",13,true,2);
-  line(`Word length ${st.wordLen.toFixed(1)}   Sentence length ${st.sentLen.toFixed(1)}   Flesch reading ease ${st.fre}   Grade level ${st.grade.toFixed(1)}`,11,false,12);
-  line("Vocabulary",13,true,2);
-  line(`Unique words ${Math.round(st.uniq*100)}%   Rare or long words ${Math.round(st.rare*100)}%`,11,false,12);
-  const tones=toneSummary(); if(tones.length){line("Tone",13,true,2);line(tones.map(t=>`${t.name} ${Math.round(t.score*100)}%`).join("   "),11,false,12);}
-  line("Open suggestions",13,true,2);
-  line(Object.keys(CATS).map(c=>`${CATS[c]} ${counts[c]||0}`).join("   "),11,false,8);
-  for(const s of cached.slice(0,80)) line(`- [${CATS[s.cat]}] ${s.title}: "${s.original.slice(0,80)}" -> "${s.replacement.slice(0,80)}"`,9.5,false,1);
+  const pdf=new jspdf.jsPDF({unit:"pt",format:"letter"}); let y=64; const L=60, MAXW=492;
+  /* The built-in PDF fonts only cover Latin. Lines with other scripts (Chinese, Japanese, Korean, Cyrillic, Arabic…)
+     are drawn with the system font on a canvas and placed as a sharp image, so they show exactly as typed. */
+  const LATIN=/^[\x00-\xff–—‘’“”…]*$/, K=4, cv=document.createElement("canvas"), cx=cv.getContext("2d");
+  const cfont=(size,bold)=>`${bold?"bold ":""}${size*K}px -apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","Noto Sans",sans-serif`;
+  const cwrap=(t,size,bold)=>{cx.font=cfont(size,bold);const out=[];for(const para of t.split("\n")){let cur="";for(const ch of Array.from(para)){const next=cur+ch;if(cx.measureText(next).width/K>MAXW&&cur){let cut=cur.search(/\s\S*$/);if(cut>0&&/[\x00-\xff]$/.test(cur)){out.push(cur.slice(0,cut));cur=cur.slice(cut+1)+ch;}else{out.push(cur);cur=ch;}}else cur=next;}out.push(cur);}return out;};
+  const imgLine=(l,size,bold)=>{cx.font=cfont(size,bold);const w=Math.max(1,Math.ceil(cx.measureText(l).width));const h=Math.ceil(size*1.35*K);cv.width=w+4;cv.height=h;cx.font=cfont(size,bold);cx.fillStyle="#000";cx.textBaseline="alphabetic";cx.fillText(l,0,Math.round(size*1.02*K));pdf.addImage(cv.toDataURL("image/png"),"PNG",L,y-size*1.02,(w+4)/K,h/K,undefined,"FAST");};
+  const line=(t,size=11,bold=false,gap=6)=>{pdf.setFont("helvetica",bold?"bold":"normal");pdf.setFontSize(size);
+    if(LATIN.test(t)){for(const l of pdf.splitTextToSize(t,MAXW)){if(y>740){pdf.addPage();y=64;}pdf.text(l,L,y);y+=size*1.35;}}
+    else for(const l of cwrap(t,size,bold)){if(y>740){pdf.addPage();y=64;}if(l)imgLine(l,size,bold);y+=size*1.35;}
+    y+=gap;};
+  const tr=(en,zh)=>window.__ZH?zh:en, C=c=>tr(CATS[c],{correctness:"正确性",clarity:"清晰度",engagement:"吸引力",delivery:"表达",style:"风格指南"}[c]);
+  const T2=s=>tr(`${fmtT(s)}`,s<60?`${Math.max(1,Math.round(s))} 秒`:`${Math.floor(s/60)} 分 ${Math.round(s%60)} 秒`);
+  line(tr("Writing performance report","写作表现报告"),20,true,4);
+  line(`${docTitle()} · ${new Date().toLocaleString(window.__ZH?"zh-CN":undefined)}`,10,false,14);
+  line(tr(`Overall score: ${sc==null?"n/a":sc+" / 100"}`,`总分：${sc==null?"无":sc+" / 100"}`),14,true,10);
+  line(tr("Word count","字数统计"),13,true,2);
+  line(tr(`Characters ${st.chars}   Words ${st.words}   Sentences ${st.sentences}   Paragraphs ${st.paragraphs}`,`字符 ${st.chars}   词数 ${st.words}   句子 ${st.sentences}   段落 ${st.paragraphs}`));
+  line(tr(`Reading time ${T2(st.read)}   Speaking time ${T2(st.speak)}`,`阅读时间 ${T2(st.read)}   朗读时间 ${T2(st.speak)}`),11,false,12);
+  line(tr("Readability","可读性"),13,true,2);
+  line(tr(`Word length ${st.wordLen.toFixed(1)}   Sentence length ${st.sentLen.toFixed(1)}   Flesch reading ease ${st.fre}   Grade level ${st.grade.toFixed(1)}`,`平均词长 ${st.wordLen.toFixed(1)}   平均句长 ${st.sentLen.toFixed(1)}   Flesch 易读度 ${st.fre}   年级水平 ${st.grade.toFixed(1)}`),11,false,12);
+  line(tr("Vocabulary","词汇"),13,true,2);
+  line(tr(`Unique words ${Math.round(st.uniq*100)}%   Rare or long words ${Math.round(st.rare*100)}%`,`不重复词 ${Math.round(st.uniq*100)}%   生僻或长词 ${Math.round(st.rare*100)}%`),11,false,12);
+  const tones=toneSummary(); if(tones.length){line(tr("Tone","语气"),13,true,2);line(tones.map(t=>`${t.name} ${Math.round(t.score*100)}%`).join("   "),11,false,12);}
+  line(tr("Open suggestions","待处理建议"),13,true,2);
+  line(Object.keys(CATS).map(c=>`${C(c)} ${counts[c]||0}`).join("   "),11,false,8);
+  for(const s of cached.slice(0,80)) line(`- [${C(s.cat)}] ${window.__ZH&&window.__tr?window.__tr(s.title):s.title}: "${s.original.slice(0,80)}" -> "${s.replacement.slice(0,80)}"`,9.5,false,1);
   save(fname("pdf").replace(/\.pdf$/," report.pdf"),pdf.output("arraybuffer"));
 }
 async function copyText(t){if(!t)return;try{await navigator.clipboard.writeText(t);toast("Copied.");}catch{const ta=document.createElement("textarea");ta.value=t;document.body.append(ta);ta.select();let ok=false;try{ok=document.execCommand("copy");}catch{}ta.remove();toast(ok?"Copied.":"Couldn't copy. Select the text and press ⌘C.");}}
@@ -1990,8 +2019,41 @@ $("deskMenu").addEventListener("click",async e=>{
   if(b.dataset.d==="hide"){await copyText(doc.text);desktop.window.hide().catch(()=>{});}
 });
 
+
+/* ---------- untrusted data guard: anything read back from storage (or another window) is rebuilt with safe types,
+   so ids, numbers and enums can never carry markup into the page ---------- */
+const SAFEID=/^[\w-]{1,64}$/;
+const gStr=(v,max=2000000)=>v==null||typeof v==="object"?"":String(v).slice(0,max);
+const gNum=(v,d=0)=>typeof v==="number"&&Number.isFinite(v)?v:d;
+const gArr=v=>Array.isArray(v)?v:[];
+function cleanDoc(d){
+  if(!d||typeof d!=="object") return null;
+  const text=gStr(d.text);const okR=r=>r&&typeof r==="object"&&Number.isInteger(r.start)&&Number.isInteger(r.end)&&r.start>=0&&r.end>=r.start&&r.end<=text.length;
+  const g=d.goals&&typeof d.goals==="object"?d.goals:{};const goals={...GOALS_DEF};
+  for(const k of ["domain","intent","audience","formality"]) if(GOAL_OPTS[k].opts.includes(g[k])) goals[k]=g[k];
+  if(LANG[g.variant]) goals.variant=g.variant; goals.voice=gStr(g.voice,500);
+  return {id:SAFEID.test(String(d.id??""))?String(d.id):uid(),title:gStr(d.title,500),text,goals,
+    created:gNum(d.created,Date.now()),updated:gNum(d.updated,Date.now()),
+    sugg:gArr(d.sugg).filter(okR).filter(x=>CATS[x.cat]).map(x=>({id:SAFEID.test(String(x.id??""))?String(x.id):uid(),start:x.start,end:x.end,original:gStr(x.original,20000),replacement:gStr(x.replacement,20000),cat:x.cat,title:gStr(x.title,60),expl:gStr(x.expl,300),src:x.src==="local"?"local":"ai"})),
+    checked:gArr(d.checked).filter(okR).map(x=>({start:x.start,end:x.end,text:gStr(x.text),len:gNum(x.len,0),tone:gArr(x.tone).filter(t=>t&&typeof t==="object").slice(0,3).map(t=>({name:gStr(t.name,24),score:Math.max(0,Math.min(1,gNum(t.score,.5)))}))})),
+    dismissed:gArr(d.dismissed).map(x=>gStr(x,500)),
+    cites:gArr(d.cites).filter(c=>c&&typeof c==="object").map(c=>{const o={id:SAFEID.test(String(c.id??""))?String(c.id):uid(),type:CFIELDS[c.type]?c.type:"website"};for(const k of ["authors","title","container","publisher","place","year","month","day","volume","issue","pages","doi","url","accessed","edition"])o[k]=gStr(c[k],2000);o.unsure=gArr(c.unsure).map(x=>gStr(x,30));if(c.ai===true)o.ai=true;if(c.checked===true)o.checked=true;return o;})};
+}
+function cleanIndex(a){const seen=new Set();return gArr(a).filter(x=>x&&typeof x==="object"&&SAFEID.test(String(x.id??""))&&!seen.has(String(x.id))&&seen.add(String(x.id))).map(x=>({id:String(x.id),title:gStr(x.title,500),updated:gNum(x.updated,0),words:Math.max(0,Math.floor(gNum(x.words,0)))}));}
+function cleanState(){
+  index=cleanIndex(index); dict=gArr(dict).map(w=>gStr(w,60)).filter(Boolean);
+  styleRules=gArr(styleRules).filter(r=>r&&typeof r==="object"&&typeof r.find==="string"&&r.find).map(r=>({find:r.find.slice(0,200),replace:gStr(r.replace,200),note:gStr(r.note,300),...(r.cs===true?{cs:true}:{})}));
+  snippets=gArr(snippets).filter(x=>x&&typeof x==="object"&&typeof x.trigger==="string"&&x.trigger&&typeof x.text==="string").map(x=>({trigger:x.trigger.slice(0,40),text:x.text.slice(0,20000)}));
+  const one=(k,list,d)=>{if(!list.includes(S[k]))S[k]=d;};
+  one("sumFmt",["points","para","tldr"],"points");one("sumLen",["Short","Medium","Long"],"Medium");one("citeStyle",CSTYLES.map(x=>x[0]),"apa");one("qMode",QMODES.map(x=>x[0]),"fix");
+  one("counter",["words","chars","noSpace","read","speak","sentences","paragraphs"],"words");one("depth",["fast","thorough"],"fast");one("theme",["system","light","dark"],"system");
+  if(!LANG[S.trLang])S.trLang="Spanish";if(typeof S.hotkey!=="string"||!/^[\w+]{1,40}$/.test(S.hotkey))S.hotkey="Alt+Shift+G";
+  for(const k of ["auto","lines","serif","showGoals"])S[k]=!!S[k];
+  if(!PARA.some(x=>x[0]===paraMode))paraMode="standard";
+}
 /* ---------- boot ---------- */
 (function boot(){
+  cleanState(); applyTheme();
   const cur=store.get("current",null);
   if(!(cur&&loadDoc(cur))&&!(index[0]&&loadDoc(index[0].id))){doc=newDocObj();openDocObj(doc);}
   setTab("review"); status();

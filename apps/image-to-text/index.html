@@ -602,7 +602,7 @@ function renderTables(r){
     title.oninput=()=>{t.title=title.value;r.edited=true;persist(cur);};
     const sc=document.createElement("div");sc.className="tscroll";
     const tb=document.createElement("table");tb.className="grid";
-    t.rows.forEach((row,ri)=>{const tr=tb.insertRow();row.forEach((cell,ci)=>{const td=tr.insertCell();td.contentEditable="plaintext-only";if(td.contentEditable!=="plaintext-only")td.contentEditable="true";td.textContent=cell;td.oninput=()=>{t.rows[ri][ci]=td.innerText.replace(/\n$/,"");r.edited=true;persist(cur);};td.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();const nx=tb.rows[ri+1]?.cells[ci];nx?.focus();}};});});
+    t.rows.forEach((row,ri)=>{const tr=tb.insertRow();row.forEach((cell,ci)=>{const td=tr.insertCell();td.contentEditable="plaintext-only";if(td.contentEditable!=="plaintext-only")td.contentEditable="true";td.textContent=cell;td.oninput=()=>{t.rows[ri][ci]=td.innerText.replace(/\n$/,"");r.edited=true;persist(cur);};td.onkeydown=e=>{if(e.isComposing||e.keyCode===229)return;if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();const nx=tb.rows[ri+1]?.cells[ci];nx?.focus();}};});});
     sc.append(tb);
     const tools=document.createElement("div");tools.className="tools";
     const mk=(label,fn)=>{const b=document.createElement("button");b.className="btn ghost";b.textContent=label;b.onclick=fn;tools.append(b);};
@@ -1019,7 +1019,7 @@ async function runOne(q){
   const it=q.it;
   if(!items.includes(it))return;
   if(!q.fresh&&it.results[q.key])return;
-  const ctl=new AbortController();job={it,key:q.key,ctl,msg:"Reading…"};delete it.err[q.key];
+  const ctl=new AbortController();job={it,key:q.key,ctl,msg:"Reading…",t0:Date.now()};delete it.err[q.key];
   renderStrip();if(cur===it&&rkey()===q.key){$("out").value="";renderResult();}
   const live=(txt,msg)=>{if(msg)job.msg=msg;if(cur===it&&rkey()===q.key){if(txt!=null&&TEXTY(q.mode)){$("out").value=txt;$("ph").hidden=true;}status();}};
   const json=q.mode==="table"||q.mode==="fields";
@@ -1061,7 +1061,7 @@ async function runOne(q){
     else if(code==="cancelled"){if(e.text&&TEXTY(q.mode)&&!it.results[q.key])setResult(it,q.key,{text:cleanText(e.text),partial:true});}
     else{
       if(e?.text&&TEXTY(q.mode)&&code!=="refused"&&!it.results[q.key])setResult(it,q.key,{text:cleanText(e.text),partial:true});
-      it.err[q.key]=ERR[code]||(e instanceof Error?"Couldn't prepare this image. Try another file.":"Something went wrong. Try again.");
+      it.err[q.key]=ERR[code]||(e instanceof TypeError&&/fetch|network/i.test(e.message)?ERR.network_error:e instanceof Error?"Couldn't prepare this image. Try another file.":"Something went wrong. Try again.");
       if(code==="not_granted"||code==="rate_limited"||code==="sampling_disabled"||code==="session_expired"){if(queue.length)toast(ztr(it.err[q.key])+zt(" The rest of the batch was stopped."," 其余图片已停止。"));queue=[];q.stopAll=true;}
       if(code==="images_unavailable"){limits={...limits,images:null};queue=[];q.stopAll=true;}
     }
@@ -1155,7 +1155,7 @@ async function copyCurrent(quiet){
   if(S.mode==="table"&&curResult()?.tables?.length)return copyTable(curResult().tables);
   const sel=TEXTY(S.mode)?$("out").value.slice($("out").selectionStart,$("out").selectionEnd):"";
   const t=sel&&document.activeElement===$("out")?sel:plainOf(cur);
-  if(quiet){if(!t)return;const ok=await writeClip(S.stack?[...stackBuf,t].join("\n\n"):t);if(ok){if(S.stack){stackBuf.push(t);renderStack();}status("Copied to the clipboard");}else status("Done. Press ⌘⇧C to copy.");return;}
+  if(quiet){if(!t)return;const ok=await writeClip(S.stack?[...stackBuf,t].join("\n\n"):t);if(ok){if(S.stack){stackBuf.push(t);renderStack();}toast("Copied to the clipboard");}else toast("Done. Press ⌘⇧C to copy.");return;}
   return copyText(t,sel?"Selection copied":"Copied");
 }
 $("copyBtn").onclick=()=>copyCurrent();
@@ -1248,7 +1248,7 @@ function openMenu(anchor,list){
 }
 function closeMenu(){$("menu").hidden=true;menuFrom=null;}
 document.addEventListener("pointerdown",e=>{if(!$("menu").hidden&&!$("menu").contains(e.target)&&e.target!==menuFrom&&!menuFrom?.contains(e.target))closeMenu();});
-$("menu").addEventListener("keydown",e=>{const bs=[...$("menu").querySelectorAll("button,a.mi")];const i=bs.indexOf(document.activeElement);if(e.key==="ArrowDown"){e.preventDefault();bs[(i+1)%bs.length]?.focus();}if(e.key==="ArrowUp"){e.preventDefault();bs[(i-1+bs.length)%bs.length]?.focus();}});
+$("menu").addEventListener("keydown",e=>{if(e.target.closest?.("select,input,textarea"))return;const bs=[...$("menu").querySelectorAll("button,a.mi")];const i=bs.indexOf(document.activeElement);if(e.key==="ArrowDown"){e.preventDefault();bs[(i+1)%bs.length]?.focus();}if(e.key==="ArrowUp"){e.preventDefault();bs[(i-1+bs.length)%bs.length]?.focus();}});
 
 /* settings */
 function hotkeySel(){
@@ -1295,7 +1295,7 @@ async function renderHist(){
     d.innerHTML=`<img alt="" src="${esc(r.thumb)}"><div class="m"><div class="n"></div><div class="s"></div></div><button class="del" title="Delete from history" aria-label="Delete from history">Delete</button>`;
     d.querySelector(".n").textContent=`${r.name} · ${fmtDate(r.updated)}`;d.querySelector(".s").textContent=snippet(r)||zt("Not read yet","尚未识别");
     d.onclick=e=>{if(e.target.closest(".del"))return;openRecord(r);closeHist();};
-    d.onkeydown=e=>{if(e.key==="Enter")d.click();};
+    d.onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)d.click();};
     d.querySelector(".del").onclick=async()=>{await DB.del(r.id).catch(()=>{});renderHist();};
     list.append(d);
   }
@@ -1334,7 +1334,7 @@ $("listenBtn").onclick=async()=>{
 /* ---------- run button, input sources, keys ---------- */
 $("runBtn").onclick=()=>{
   if(!cur)return;const key=rkey();
-  if(job?.it===cur&&job.key===key){job.ctl.abort();return;}
+  if(job?.it===cur&&job.key===key){if(Date.now()-(job.t0||0)>400)job.ctl.abort();return;}
   if(S.mode==="codes"){scanQueue(cur,true);return;}
   enqueue([cur],true,curResult()?.engine==="local"&&claudeOK()?{force:"claude"}:{});
 };
@@ -1358,6 +1358,7 @@ addEventListener("dragleave",()=>{dragDepth=Math.max(0,dragDepth-1);if(!dragDept
 addEventListener("dragover",e=>{if([...(e.dataTransfer?.types||[])].includes("Files"))e.preventDefault();});
 addEventListener("drop",e=>{dragDepth=0;$("veil").hidden=true;if(e.dataTransfer?.files?.length){e.preventDefault();addFiles(e.dataTransfer.files);}});
 document.addEventListener("keydown",e=>{
+  if(e.isComposing||e.keyCode===229)return;
   const mod=e.metaKey||e.ctrlKey,k=e.key.toLowerCase();
   const editing=e.target.closest?.("textarea,input,select,[contenteditable]");
   if(e.key==="Escape"){if(!$("menu").hidden){closeMenu();return;}if(!$("vid").hidden){closeVideo();return;}if(capture){disarm();return;}if(liveOn&&!$("lsel").hidden){getSelection().removeAllRanges();return;}if(!$("drawer").hidden){closeHist();return;}if(selRect){clearSel();return;}if(job||queue.length){stopAll();return;}if(liveOn){setLive(false);return;}return;}

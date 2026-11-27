@@ -84,7 +84,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
   window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
   if(!ZH)return;
-  const DICT={"World Clock": "世界时钟", "Add a city": "添加城市", "Ask: best time for a 30-min call with London and Tokyo?": "问问：和伦敦、东京开 30 分钟电话，什么时间最合适？", "Ask about times": "询问时间问题", "✦ Ask": "✦ 提问", "Back to now": "回到现在", "Shift time to plan a meeting": "拖动时间来安排会议", "Drag to see what time it will be everywhere. Good for picking a meeting slot.": "拖动查看各地届时的时间，方便挑选会议时段。", "Remove": "移除", "Thinking…": "思考中…", "No answer.": "没有答案。", "Claude is busy or you hit your usage limit. Try later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude declined this one.": "Claude 拒绝了这个问题。", "Couldn't answer that. Try again.": "没能回答，请重试。", "The dot picks the city shown in your menu bar.": "点一下圆点，选择在菜单栏显示的城市。", "Show time in menu bar": "在菜单栏显示时间", "Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.": "在 Mac 或 Windows 版 Claude 中打开并安装，即可在菜单栏常驻一个城市的时间。", "Install as app": "安装为应用", "Installed. Open World Clock from your Applications or Start menu.": "已安装。请从“应用程序”或“开始”菜单打开世界时钟。"};
+  const DICT={"World Clock": "世界时钟", "Add a city": "添加城市", "Ask: best time for a 30-min call with London and Tokyo?": "问问：和伦敦、东京开 30 分钟电话，什么时间最合适？", "Ask about times": "询问时间问题", "✦ Ask": "✦ 提问", "Back to now": "回到现在", "Shift time to plan a meeting": "拖动时间来安排会议", "Drag to see what time it will be everywhere. Good for picking a meeting slot.": "拖动查看各地届时的时间，方便挑选会议时段。", "Remove": "移除", "Thinking…": "思考中…", "No answer.": "没有答案。", "Stop": "停止", "Stopped.": "已停止。", "Claude is busy or you hit your usage limit. Try later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude declined this one.": "Claude 拒绝了这个问题。", "Couldn't answer that. Try again.": "没能回答，请重试。", "The dot picks the city shown in your menu bar.": "点一下圆点，选择在菜单栏显示的城市。", "Show time in menu bar": "在菜单栏显示时间", "Open this in Claude for Mac or Windows to install it and keep a city's time in your menu bar.": "在 Mac 或 Windows 版 Claude 中打开并安装，即可在菜单栏常驻一个城市的时间。", "Install as app": "安装为应用", "Installed. Open World Clock from your Applications or Start menu.": "已安装。请从“应用程序”或“开始”菜单打开世界时钟。"};
   const PATTERNS=([]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
   const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",.city b, #sugg span");
   const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
@@ -133,7 +133,9 @@ const T=window.__t, ZH=window.__ZH;
 const CITY_ZH={"Here":"这里","Honolulu":"檀香山","Anchorage":"安克雷奇","San Francisco":"旧金山","Los Angeles":"洛杉矶","Seattle":"西雅图","Vancouver":"温哥华","Denver":"丹佛","Phoenix":"凤凰城","Chicago":"芝加哥","Austin":"奥斯汀","Mexico City":"墨西哥城","New York":"纽约","Toronto":"多伦多","Miami":"迈阿密","Bogotá":"波哥大","Lima":"利马","Santiago":"圣地亚哥","Buenos Aires":"布宜诺斯艾利斯","São Paulo":"圣保罗","Reykjavík":"雷克雅未克","Lisbon":"里斯本","London":"伦敦","Dublin":"都柏林","Paris":"巴黎","Amsterdam":"阿姆斯特丹","Berlin":"柏林","Madrid":"马德里","Rome":"罗马","Zurich":"苏黎世","Stockholm":"斯德哥尔摩","Warsaw":"华沙","Athens":"雅典","Istanbul":"伊斯坦布尔","Kyiv":"基辅","Moscow":"莫斯科","Cairo":"开罗","Lagos":"拉各斯","Nairobi":"内罗毕","Johannesburg":"约翰内斯堡","Tel Aviv":"特拉维夫","Dubai":"迪拜","Riyadh":"利雅得","Tehran":"德黑兰","Karachi":"卡拉奇","Mumbai":"孟买","Delhi":"德里","Kolkata":"加尔各答","Bangalore":"班加罗尔","Kathmandu":"加德满都","Dhaka":"达卡","Bangkok":"曼谷","Jakarta":"雅加达","Ho Chi Minh City":"胡志明市","Singapore":"新加坡","Kuala Lumpur":"吉隆坡","Manila":"马尼拉","Hong Kong":"香港","Taipei":"台北","Shanghai":"上海","Beijing":"北京","Shenzhen":"深圳","Seoul":"首尔","Tokyo":"东京","Perth":"珀斯","Adelaide":"阿德莱德","Brisbane":"布里斯班","Sydney":"悉尼","Melbourne":"墨尔本","Auckland":"奥克兰"};
 const cn=n=>ZH&&CITY_ZH[n]||n;
 const store={get(k,d){try{const v=localStorage.getItem("zones."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("zones."+k,JSON.stringify(v))}catch{}}};
-let list=store.get("list",null)||[{name:"Here",tz:localTz},["New York","America/New_York"],["London","Europe/London"],["Tokyo","Asia/Tokyo"]].map(x=>Array.isArray(x)?{name:x[0],tz:x[1]}:x).filter((c,i,a)=>i===0||c.tz!==localTz);
+const validTz=tz=>{try{new Intl.DateTimeFormat("en",{timeZone:tz});return typeof tz==="string"}catch{return false}};
+const loadList=()=>{let l=store.get("list",null);if(!Array.isArray(l))return null;l=l.filter(c=>c&&typeof c.name==="string"&&validTz(c.tz)).map(c=>({name:c.name,tz:c.name==="Here"?localTz:c.tz}));if(!l.length||l[0].name!=="Here")l.unshift({name:"Here",tz:localTz});return l.filter((c,i)=>i===0||!(c.name==="Here"));};
+let list=loadList()||[{name:"Here",tz:localTz},["New York","America/New_York"],["London","Europe/London"],["Tokyo","Asia/Tokyo"]].map(x=>Array.isArray(x)?{name:x[0],tz:x[1]}:x).filter((c,i,a)=>i===0||c.tz!==localTz);
 let pinned=store.get("pin",list[1]?.tz?list[1].name:list[0].name);
 let shift=0, desktop=null, perms={};
 const save=()=>{store.set("list",list);store.set("pin",pinned)};
@@ -148,7 +150,7 @@ function tzOff(tz,d){const f=new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCy
 function offsetMin(tz,d){return tzOff(tz,d)-tzOff(localTz,d)}
 function rel(tz,d){
   const off=offsetMin(tz,d);if(tz===localTz) return T("Local time","本地时间");if(off===0) return T("Same time as you","与你时间相同");
-  const h=off/60, s=(h>0?"+":h<0?"−":"")+(Math.abs(h)%1?Math.abs(h).toFixed(1):Math.abs(h))+"h";
+  const am=Math.abs(off), s=(off>0?"+":"−")+Math.floor(am/60)+(am%60?":"+String(am%60).padStart(2,"0"):"")+"h";
   const p=parts(tz,d),l=parts(localTz,d);
   const day=p.md===l.md?"Today":(offsetMin(tz,d)>0?"Tomorrow":"Yesterday");
   return ZH?`${{Today:"今天",Tomorrow:"明天",Yesterday:"昨天"}[day]}，${s.replace("h"," 小时")}`:`${day}, ${s}`;
@@ -164,7 +166,7 @@ function render(){
     <div class="city"><b><button class="pin ${c.name===pinned?"on":""}" data-pin="${i}" title="${T("Show in menu bar","在菜单栏显示")}" aria-label="${T(`Show ${esc(c.name)} in menu bar`,`在菜单栏显示${esc(cn(c.name))}`)}">${c.name===pinned?"●":"○"}</button>${esc(cn(c.name))}</b><span>${esc(rel(c.tz,d))} · ${esc(p.wd)} ${esc(p.md)}${i?` · <button class="del" data-del="${i}">Remove</button>`:""}</span></div>
     <div class="clock"><b>${p.label}</b></div>
     <div class="band" style="background:${band()}"><i style="left:calc(${((p.h*60+p.m)/1440*100).toFixed(2)}% - 1px)"></i></div></div>`}).join("");
-  const off=shift;$("planlbl").textContent=off===0?T("Now","现在"):ZH?`${Math.floor(Math.abs(off)/60)?Math.floor(Math.abs(off)/60)+" 小时":""}${Math.abs(off)%60?" "+Math.abs(off)%60+" 分钟":""}${off<0?"前":"后"}`.trim():`${off>0?"In":""} ${Math.floor(Math.abs(off)/60)}h ${Math.abs(off)%60?Math.abs(off)%60+"m":""}${off<0?" ago":""}`.trim();
+  const off=shift;{const H=Math.floor(Math.abs(off)/60),M=Math.abs(off)%60;$("planlbl").textContent=off===0?T("Now","现在"):ZH?`${H?H+" 小时":""}${M?(H?" ":"")+M+" 分钟":""}${off<0?"前":"后"}`:`${off>0?"In ":""}${H?H+"h":""}${M?(H?" ":"")+M+"m":""}${off<0?" ago":""}`;}
   $("now").hidden=off===0;
   setTray();
 }
@@ -185,29 +187,35 @@ function suggestions(q){
   return [...a,...b].slice(0,7);
 }
 $("q").addEventListener("input",()=>{const s=suggestions($("q").value);$("sugg").hidden=!s.length;$("sugg").innerHTML=s.map((x,i)=>`<button data-add="${i}"><span>${esc(cn(x.name))}</span><small>${esc(parts(x.tz,new Date()).label)}</small></button>`).join("");$("sugg")._s=s;});
-$("q").addEventListener("keydown",e=>{if(e.key==="Enter"){const s=$("sugg")._s;if(s?.length)addCity(s[0]);}if(e.key==="Escape"){$("sugg").hidden=true;}});
+$("q").addEventListener("keydown",e=>{if(e.isComposing||e.keyCode===229)return;if(e.key==="Enter"){const s=$("sugg")._s;if(s?.length)addCity(s[0]);}if(e.key==="Escape"){$("sugg").hidden=true;}});
 function addCity(c){if(!list.some(x=>x.name===c.name&&x.tz===c.tz)){list.push(c);save();}$("q").value="";$("sugg").hidden=true;render();}
 document.addEventListener("click",e=>{
   const a=e.target.closest("[data-add]");if(a){addCity($("sugg")._s[+a.dataset.add]);return;}
-  const d=e.target.closest("[data-del]");if(d){const c=list.splice(+d.dataset.del,1)[0];if(c.name===pinned)pinned=list[0].name;save();render();return;}
+  const d=e.target.closest("[data-del]");if(d){if(e.detail>1)return;const c=list.splice(+d.dataset.del,1)[0];if(c.name===pinned)pinned=list[0].name;save();render();return;}
   const p=e.target.closest("[data-pin]");if(p){pinned=list[+p.dataset.pin].name;save();render();ensurePerms();return;}
   if(!e.target.closest(".add"))$("sugg").hidden=true;
 });
 $("shift").addEventListener("input",e=>{shift=+e.target.value;render();});
 $("now").onclick=()=>{shift=0;$("shift").value=0;render();};
 render();
-setInterval(render,15000);
+function rerender(){const a=document.activeElement,k=a&&a.closest&&a.closest("#list")?["data-pin","data-del"].map(n=>a.getAttribute(n)!=null&&`[${n}="${a.getAttribute(n)}"]`).find(Boolean):null;render();if(k)document.querySelector("#list "+k)?.focus();}
+(function tick(){rerender();setTimeout(tick,60000-Date.now()%60000+50);})();
+addEventListener("storage",e=>{if(e.key==="zones.list"||e.key==="zones.pin"){list=loadList()||list;pinned=store.get("pin",pinned);if(!list.some(c=>c.name===pinned))pinned=list[0].name;rerender();}});
 
 // AI: answer time questions and move the slider
 let sample=null;
+let askCtl=null;
+const askBtn=()=>$("askf").querySelector("button");
 $("askf").addEventListener("submit",async e=>{
   e.preventDefault();
-  const q=$("aq").value.trim(); if(!q) return;
+  if(askCtl){askCtl.abort();return;}
+  const q=$("aq").value.trim(); if(!q){$("aq").focus();return;}
+  const ctl=askCtl=new AbortController();askBtn().textContent=T("Stop","停止");
   const now=new Date();
   const ctx=list.map(c=>{const p=parts(c.tz,now);return `${c.name} (${c.tz}): now ${p.wd} ${p.md} ${p.label}, UTC offset ${tzOff(c.tz,now)/60}h`}).join("\n");
   $("aa").removeAttribute("data-no-i18n");$("aa").textContent="Thinking…";
   try{
-    const r=await sample.json(`You help someone plan across time zones. Their cities, with current local times:\n${ctx}\nThe first city is where they are. Assume working hours are 9:00-18:00 local unless they say otherwise. Answer their question in 1-3 short sentences in the language they used${ZH?" (Simplified Chinese if unclear)":""}, naming the local time in each relevant city. If a specific moment is the answer, also give shiftMinutes: minutes from now to that moment (between -720 and 720, multiple of 15); otherwise use null. If they mention a city not in the list, answer anyway and add it to addCities as {name, tz} with an IANA zone${ZH?" (name in Simplified Chinese)":""}. Reply with only JSON: {"answer": string, "shiftMinutes": number|null, "addCities": []}.\n\nQuestion: ${q.slice(0,500)}`,{modelTier:"default",cache:false});
+    const r=await sample.json(`You help someone plan across time zones. Their cities, with current local times:\n${ctx}\nThe first city is where they are. Assume working hours are 9:00-18:00 local unless they say otherwise. Answer their question in 1-3 short sentences in the language they used${ZH?" (Simplified Chinese if unclear)":""}, naming the local time in each relevant city. If a specific moment is the answer, also give shiftMinutes: minutes from now to that moment (between -720 and 720, multiple of 15); otherwise use null. If they mention a city not in the list, answer anyway and add it to addCities as {name, tz} with an IANA zone${ZH?" (name in Simplified Chinese)":""}. Reply with only JSON: {"answer": string, "shiftMinutes": number|null, "addCities": []}.\n\nQuestion: ${q.slice(0,500)}`,{modelTier:"default",cache:false,signal:ctl.signal});
     for(const c of (Array.isArray(r?.addCities)?r.addCities:[])){try{new Intl.DateTimeFormat("en",{timeZone:c.tz});if(c.name&&!list.some(x=>x.tz===c.tz&&x.name===c.name))list.push({name:String(c.name).slice(0,40),tz:c.tz});}catch{}}
     save();
     const sh=Number(r?.shiftMinutes);
@@ -215,9 +223,9 @@ $("askf").addEventListener("submit",async e=>{
     render();
     $("aa").toggleAttribute("data-no-i18n",!!r?.answer);$("aa").textContent=String(r?.answer||"").slice(0,600)||"No answer.";
   }catch(err){
-    $("aa").removeAttribute("data-no-i18n");$("aa").textContent={rate_limited:"Claude is busy or you hit your usage limit. Try later.",not_granted:"Claude isn't allowed for this app.",refused:"Claude declined this one."}[err?.code]||"Couldn't answer that. Try again.";
+    $("aa").removeAttribute("data-no-i18n");if(err?.code==="cancelled"){$("aa").textContent="Stopped.";return;}$("aa").textContent={rate_limited:"Claude is busy or you hit your usage limit. Try later.",not_granted:"Claude isn't allowed for this app.",refused:"Claude declined this one."}[err?.code]||"Couldn't answer that. Try again.";
     if(err?.code==="not_granted"||err?.code==="sampling_disabled") $("ask").hidden=true;
-  }
+  }finally{if(askCtl===ctl){askCtl=null;askBtn().textContent=T("✦ Ask","✦ 提问");}}
 });
 (async()=>{sample=window.claude?.use?await window.claude.use("sample").catch(()=>null):null;$("ask").hidden=!sample;})();
 

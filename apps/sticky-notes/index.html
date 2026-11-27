@@ -66,8 +66,8 @@ textarea::placeholder{color:var(--muted)}
   try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
   window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
   if(!ZH)return;
-  const DICT={"Sticky Notes": "便签", "Ask Claude to rework this note": "让 Claude 改写这张便签", "Turn into a checklist": "转成清单", "Clean up the writing": "润色文字", "Summarize": "总结", "Suggest next steps": "建议下一步", "Translate": "翻译", "Copy": "复制", "Copied": "已复制", "Selected": "已选中", "Copy this note": "复制这张便签", "Hide": "隐藏", "Hide (Option+Shift+J brings it back)": "隐藏（按 Option+Shift+J 唤回）", "Jot something down…": "随手记点什么…", "Note": "便签", "Saved on this computer": "已保存在本机", "Write something first.": "先写点内容。", "Thinking…": "思考中…", "Done": "完成", "Undo": "撤销", "Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined this note.": "Claude 拒绝处理这张便签。", "Sign in to Claude again.": "请重新登录 Claude。", "Something went wrong. Try again.": "出了点问题，请重试。", "Float on top": "置顶悬浮", "Normal window": "普通窗口", "Keep the note above other windows and summon it with Option+Shift+J": "让便签浮在其他窗口之上，并可用 Option+Shift+J 唤出", "Install from Claude Desktop to float it": "从 Claude 桌面版安装后可置顶悬浮", "Install as app": "安装为应用", "Installed": "已安装"};
-  const PATTERNS=([["(\\d+) words?", "$1 个词"], ["Note (\\d+)", "便签 $1"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
+  const DICT={"Sticky Notes": "便签", "Ask Claude to rework this note": "让 Claude 改写这张便签", "Turn into a checklist": "转成清单", "Clean up the writing": "润色文字", "Summarize": "总结", "Suggest next steps": "建议下一步", "Translate": "翻译", "Copy": "复制", "Copied": "已复制", "Selected": "已选中", "Copy this note": "复制这张便签", "Hide": "隐藏", "Hide (Option+Shift+J brings it back)": "隐藏（按 Option+Shift+J 唤回）", "Jot something down…": "随手记点什么…", "Note": "便签", "Saved on this computer": "已保存在本机", "Write something first.": "先写点内容。", "Thinking…": "思考中…", "Done": "完成", "Undo": "撤销", "Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined this note.": "Claude 拒绝处理这张便签。", "Sign in to Claude again.": "请重新登录 Claude。", "Something went wrong. Try again.": "出了点问题，请重试。", "Float on top": "置顶悬浮", "Normal window": "普通窗口", "Keep the note above other windows and summon it with Option+Shift+J": "让便签浮在其他窗口之上，并可用 Option+Shift+J 唤出", "Install from Claude Desktop to float it": "从 Claude 桌面版安装后可置顶悬浮", "Install as app": "安装为应用", "Installed": "已安装", "Stop": "停止", "Stopped. Your note wasn't changed.": "已停止，便签没有改动。", "Claude's answer was cut off, so your note wasn't changed. Try a shorter note.": "Claude 的回答被截断了，便签没有改动。可以换一张短一点的便签再试。", "Claude returned nothing. Your note wasn't changed.": "Claude 没有返回内容，便签没有改动。", "This note is too long for Claude.": "这张便签太长，Claude 处理不了。", "This note is too long for Claude to rewrite. Keep it under 12,000 characters.": "这张便签太长，Claude 改写不了。请控制在 12,000 字以内。"};
+  const PATTERNS=([["(\\d+) words?", "$1 个字"], ["Note (\\d+)", "便签 $1"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
   const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+("");
   const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
   const norm=s=>s.replace(/\s+/g," ").trim();
@@ -111,17 +111,29 @@ textarea::placeholder{color:var(--muted)}
 const $=id=>document.getElementById(id);
 const COLORS=["y","p","g","b"];
 const store={get(k,d){try{const v=localStorage.getItem("jot."+k);return v==null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem("jot."+k,JSON.stringify(v))}catch{}}};
-let notes=store.get("notes",["","","",""]), cur=store.get("cur",0), desktop=null, perms={};
+const clean=v=>{const a=Array.isArray(v)?v:[];return COLORS.map((_,i)=>typeof a[i]==="string"?a[i]:"");};
+let notes=clean(store.get("notes",null)), cur=store.get("cur",0), desktop=null, perms={};
+if(!(Number.isInteger(cur)&&cur>=0&&cur<COLORS.length)) cur=0;
+/* Save only the notes this tab changed, merged into what is stored, so two open copies don't overwrite each other. */
+const dirty=new Set();
+function save(){if(!dirty.size)return;const s=clean(store.get("notes",null));dirty.forEach(i=>{s[i]=notes[i]});dirty.clear();store.set("notes",s);}
+function touch(i){dirty.add(i);}
+window.addEventListener("storage",e=>{
+  if(e.key!=="jot.notes"||e.newValue==null)return;
+  let inc;try{inc=clean(JSON.parse(e.newValue))}catch{return}
+  inc.forEach((v,i)=>{if(!dirty.has(i))notes[i]=v});
+  if(!dirty.has(cur)&&$("t").value!==notes[cur]){const t=$("t"),a=t.selectionStart,z=t.selectionEnd;t.value=notes[cur];if(document.activeElement===t)try{t.setSelectionRange(a,z)}catch{}info();}
+});
 function paint(){
   document.documentElement.style.setProperty("--paper",`var(--${COLORS[cur]})`);
   $("dots").innerHTML=COLORS.map((c,i)=>`<button style="background:var(--${c}i)" class="${i===cur?"on":""}" data-i="${i}" aria-label="Note ${i+1}"></button>`).join("");
   if($("t").value!==notes[cur]) $("t").value=notes[cur];
   info();
 }
-function info(){const w=(notes[cur].trim().match(/\S+/g)||[]).length;$("info").textContent=w?`${w} word${w===1?"":"s"}`:"Saved on this computer";}
+function info(){const s=notes[cur]||"";const cjk=(s.match(/[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af]/g)||[]).length;const w=cjk+(s.replace(/[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af]/g," ").trim().match(/\S+/g)||[]).length;$("info").textContent=w?`${w} word${w===1?"":"s"}`:"Saved on this computer";}
 let tm=0;
-$("t").addEventListener("input",e=>{notes[cur]=e.target.value;info();clearTimeout(tm);tm=setTimeout(()=>store.set("notes",notes),250);});
-$("dots").addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;store.set("notes",notes);cur=+b.dataset.i;store.set("cur",cur);paint();$("t").focus();});
+$("t").addEventListener("input",e=>{notes[cur]=e.target.value;touch(cur);info();clearTimeout(tm);tm=setTimeout(save,250);});
+$("dots").addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;save();cur=+b.dataset.i;store.set("cur",cur);paint();$("t").focus();});
 $("copy").onclick=async()=>{try{await navigator.clipboard.writeText(notes[cur]);$("copy").textContent="Copied";}catch{$("t").select();$("copy").textContent="Selected";}setTimeout(()=>$("copy").textContent="Copy",1200);};
 // AI
 let sample=null, ctl=null, undo=null;
@@ -135,30 +147,51 @@ const PROMPTS={
 };
 const ERR={rate_limited:"Claude is busy or you hit your usage limit. Try again later.",not_granted:"Claude isn't allowed for this app.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined this note.",session_expired:"Sign in to Claude again."};
 function say(t){$("info").textContent=t;}
+const MAXLEN={sum:100000};
+function stopAI(){if(ctl){ctl.abort();}}
 async function runAI(kind){
   $("menu").hidden=true;
   const src=notes[cur].trim();
   if(!src){say("Write something first.");return;}
-  ctl?.abort();ctl=new AbortController();
-  undo={i:cur,text:notes[cur]};
+  if(src.length>(MAXLEN[kind]||12000)){say(kind==="sum"?"This note is too long for Claude.":"This note is too long for Claude to rewrite. Keep it under 12,000 characters.");return;}
+  ctl?.abort();const my=ctl=new AbortController();
+  const job={i:cur,text:notes[cur]};
+  save();
   document.body.classList.add("busy");say("Thinking…");
+  const prevAct=[...$("act").childNodes].filter(n=>!(n.classList&&n.classList.contains("stopai")));
+  const stop=document.createElement("button");stop.className="stopai";stop.textContent="Stop";stop.onclick=stopAI;$("act").replaceChildren(stop);
+  const restore=()=>{if(cur===job.i&&!dirty.has(job.i))$("t").value=notes[job.i];};
+  /* typing while Claude writes would mix with its draft, so the note is read-only until it finishes */
+  $("t").readOnly=true;
   try{
-    const {text}=await sample(PROMPTS[kind]+"\n\nNote:\n"+src.slice(0,12000),{signal:ctl.signal,cache:false,modelTier:"quick",onText:({text})=>{if(cur===undo.i){$("t").value=text;}}});
-    notes[undo.i]=text.trim();store.set("notes",notes);paint();
-    const u=document.createElement("button");u.textContent="Undo";u.onclick=()=>{notes[undo.i]=undo.text;store.set("notes",notes);undo=null;paint();u.remove();if(desktop?.tray)setup();};
+    const {text,truncated}=await sample(PROMPTS[kind]+"\n\nNote:\n"+src,{signal:my.signal,cache:false,modelTier:"quick",onText:({text})=>{if(ctl===my&&cur===job.i){$("t").value=text;}}});
+    if(ctl!==my)return;
+    const out=(text||"").trim();
+    if(!out||truncated){restore();say(truncated?"Claude's answer was cut off, so your note wasn't changed. Try a shorter note.":"Claude returned nothing. Your note wasn't changed.");$("act").replaceChildren(...prevAct);return;}
+    undo=job;
+    notes[job.i]=out;touch(job.i);save();paint();
+    const u=document.createElement("button");u.textContent="Undo";u.onclick=()=>{if(!undo)return;notes[undo.i]=undo.text;touch(undo.i);save();undo=null;paint();u.remove();if(desktop?.tray)setup();};
     $("act").replaceChildren(u);say("Done");
   }catch(e){
-    if(undo&&cur===undo.i) $("t").value=undo.text;
+    if(ctl!==my)return;
+    restore();
     if(e?.code==="not_granted"||e?.code==="sampling_disabled") $("ai").hidden=true;
-    if(e?.code!=="cancelled") say(ERR[e?.code]||"Something went wrong. Try again.");
-  }finally{document.body.classList.remove("busy");}
+    say(e?.code==="cancelled"?"Stopped. Your note wasn't changed.":(ERR[e?.code]||"Something went wrong. Try again."));
+    $("act").replaceChildren(...prevAct);
+  }finally{if(ctl===my){ctl=null;document.body.classList.remove("busy");$("t").readOnly=false;if(!$("act").childNodes.length&&desktop?.tray)setup();}}
 }
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape"||e.isComposing)return;
+  if(!$("menu").hidden){$("menu").hidden=true;$("aibtn").focus();e.preventDefault();}
+  else if(ctl){stopAI();e.preventDefault();}
+});
 $("aibtn").onclick=e=>{e.stopPropagation();$("menu").hidden=!$("menu").hidden;};
 $("menu").addEventListener("click",e=>{const b=e.target.closest("[data-ai]");if(b)runAI(b.dataset.ai);});
 document.addEventListener("click",e=>{if(!e.target.closest("#ai"))$("menu").hidden=true;});
 (async()=>{sample=window.claude?.use?await window.claude.use("sample").catch(()=>null):null;if(sample)$("ai").hidden=false;})();
 
-window.addEventListener("beforeunload",()=>store.set("notes",notes));
+window.addEventListener("beforeunload",save);
+window.addEventListener("pagehide",save);
 paint();
 
 /*DOCK_ART*/
@@ -179,7 +212,7 @@ async function toggleVisible(){
 }
 async function makeFloating(){
   try{perms=await desktop.permissions.request(["overlay","shortcuts"]);}catch{}
-  if(perms.overlay==="granted"){store.set("float",true);store.set("notes",notes);applyWindow();}
+  if(perms.overlay==="granted"){store.set("float",true);save();applyWindow();}
   setup();
 }
 function applyWindow(){
@@ -198,7 +231,7 @@ function setup(){
   if(!(store.get("float",false)&&perms.overlay==="granted")){
     const b=document.createElement("button");b.textContent="Float on top";b.title="Keep the note above other windows and summon it with Option+Shift+J";b.onclick=makeFloating;act.append(b);
   }else{
-    const b=document.createElement("button");b.textContent="Normal window";b.onclick=()=>{store.set("float",false);store.set("notes",notes);applyWindow();setup();};act.append(b);
+    const b=document.createElement("button");b.textContent="Normal window";b.onclick=()=>{store.set("float",false);save();applyWindow();setup();};act.append(b);
   }
 }
 $("hide").onclick=()=>desktop?.window.hide().catch(()=>{});

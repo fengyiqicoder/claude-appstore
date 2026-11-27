@@ -358,9 +358,11 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
 const clone=o=>JSON.parse(JSON.stringify(o));
 const isMac=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);
-const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+const isoDay=d=>{d=new Date(d);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+const today=()=>isoDay(new Date());
 function fmtDate(iso){if(!iso)return"";const d=new Date(iso.length<=10?iso+"T12:00:00":iso);if(isNaN(d))return iso;return d.toLocaleDateString(ZH()?"zh-CN":"en-US",{month:"short",day:"numeric",year:d.getFullYear()===new Date().getFullYear()?undefined:"numeric"});}
-function ago(ts){const s=(Date.now()-ts)/1000;if(s<60)return T("just now","刚刚");if(s<3600)return ZH()?`${Math.floor(s/60)} 分钟前`:`${Math.floor(s/60)} min ago`;if(s<86400)return ZH()?`${Math.floor(s/3600)} 小时前`:`${Math.floor(s/3600)} h ago`;return fmtDate(new Date(ts).toISOString().slice(0,10));}
+function ago(ts){const s=(Date.now()-ts)/1000;if(s<60)return T("just now","刚刚");if(s<3600)return ZH()?`${Math.floor(s/60)} 分钟前`:`${Math.floor(s/60)} min ago`;if(s<86400)return ZH()?`${Math.floor(s/3600)} 小时前`:`${Math.floor(s/3600)} h ago`;return fmtDate(isoDay(ts));}
+const safeId=v=>{v=String(v??"");return /^[\w-]{1,48}$/.test(v)?v:uid();};const refId=v=>{v=String(v??"");return /^[\w-]{1,48}$/.test(v)?v:"";};
 const slug=s=>(String(s||"").replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim().slice(0,80))||"Resume";
 
 /* ================= storage ================= */
@@ -371,12 +373,14 @@ const DB={resumes:[],jobs:[],sessions:[],ui:{}};
 function loadDB(){
   const d=LS.get("db",null);
   if(d&&typeof d==="object"){DB.resumes=Array.isArray(d.resumes)?d.resumes:[];DB.jobs=Array.isArray(d.jobs)?d.jobs:[];DB.sessions=Array.isArray(d.sessions)?d.sessions:[];DB.ui=d.ui||{};}
-  DB.resumes.forEach(normResume);DB.jobs.forEach(normJob);
+  DB.resumes.forEach(normResume);DB.jobs.forEach(normJob);DB.sessions=DB.sessions.filter(x=>x&&typeof x==="object").map(normSession);
   try{localStorage.setItem("jobkit.__t","1");localStorage.removeItem("jobkit.__t");}catch{STORE_OK=false;}
 }
 let saveT=0;
 function save(now){clearTimeout(saveT);const f=()=>{if(!LS.set("db",DB)&&!$("storeBanner").dataset.shown){$("storeBanner").hidden=false;$("storeBanner").dataset.shown="1";}};if(now)f();else saveT=setTimeout(f,250);}
 window.addEventListener("beforeunload",()=>save(true));
+// another tab saved: reload so this tab never writes an older copy over it
+window.addEventListener("storage",e=>{if(e.key!=="jobkit.db"||e.newValue==null)return;clearTimeout(saveT);const keep={view:DB.ui.view,resumeId:DB.ui.resumeId,jobId:DB.ui.jobId,jtab:DB.ui.jtab};const f=focusInfo();loadDB();Object.assign(DB.ui,keep);if(!cur()&&DB.resumes[0])DB.ui.resumeId=DB.resumes[0].id;const open=!$("drawer").hidden&&curJob();setView(DB.ui.view||"resumes");if(open&&curJob()){$("drawer").hidden=false;document.body.classList.add("jopen");renderDrawer();}else if(!$("drawer").hidden)closeDrawer();restoreFocus(f);clearTimeout(saveT);});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")save(true);});
 
 /* ================= resume model ================= */
@@ -415,18 +419,18 @@ function blankResume(name){
 }
 function defaultPage(){const l=(navigator.language||"en-US");return /^en-(US|CA)$/i.test(l)||/^es-(MX|US)$/i.test(l)?"letter":"a4";}
 function normResume(r){
-  r.id=r.id||uid();r.name=r.name||"Resume";r.created=r.created||Date.now();r.updated=r.updated||Date.now();
+  r.id=safeId(r.id);r.name=String(r.name||"Resume");if(r.jobId)r.jobId=refId(r.jobId);r.created=r.created||Date.now();r.updated=r.updated||Date.now();
   r.template=TEMPLATES[r.template]?r.template:"modern";
-  r.design=Object.assign({accent:"",size:0,margins:"normal",page:defaultPage(),spacing:"normal"},r.design||{});
+  r.design=Object.assign({accent:"",size:0,margins:"normal",page:defaultPage(),spacing:"normal"},r.design||{});if(!/^#[0-9a-f]{6}$/i.test(r.design.accent))r.design.accent="";r.design.size=Math.max(-2,Math.min(2,Math.round(+r.design.size||0)));if(!MARG[r.design.margins])r.design.margins="normal";if(!PAGE[r.design.page])r.design.page=defaultPage();if(!SPACING[r.design.spacing])r.design.spacing="normal";
   r.basics=Object.assign({name:"",headline:"",email:"",phone:"",location:"",links:""},r.basics||{});
   if(Array.isArray(r.basics.links))r.basics.links=r.basics.links.join("\n");
   r.sections=(Array.isArray(r.sections)?r.sections:[]).map(s=>{
     const st=SECTION_TYPES[s.type]?s.type:(s.kind==="list"?"customList":s.kind==="text"?"customText":"custom");
     const kind=SECTION_TYPES[st].kind;
-    const o={id:s.id||uid(),type:st,kind,title:s.title??T(SECTION_TYPES[st].en,SECTION_TYPES[st].zh),hidden:!!s.hidden};
+    const o={id:safeId(s.id),type:st,kind,title:s.title??T(SECTION_TYPES[st].en,SECTION_TYPES[st].zh),hidden:!!s.hidden};
     if(kind==="text")o.text=String(s.text??(Array.isArray(s.items)?s.items.map(i=>i.text||i.title||"").join("\n"):""));
-    else o.items=(Array.isArray(s.items)?s.items:[]).map(it=>kind==="list"?{id:it.id||uid(),label:String(it.label??""),text:String(it.text??(Array.isArray(it.keywords)?it.keywords.join(", "):""))}
-      :{id:it.id||uid(),title:String(it.title??""),subtitle:String(it.subtitle??""),date:String(it.date??""),location:String(it.location??""),bullets:(Array.isArray(it.bullets)?it.bullets:String(it.bullets||"").split("\n")).map(String)});
+    else o.items=(Array.isArray(s.items)?s.items:[]).map(it=>kind==="list"?{id:safeId(it.id),label:String(it.label??""),text:String(it.text??(Array.isArray(it.keywords)?it.keywords.join(", "):""))}
+      :{id:safeId(it.id),title:String(it.title??""),subtitle:String(it.subtitle??""),date:String(it.date??""),location:String(it.location??""),bullets:(Array.isArray(it.bullets)?it.bullets:String(it.bullets||"").split("\n")).map(String)});
     return o;});
   return r;
 }
@@ -447,7 +451,9 @@ function resumeText(r){
 /* ================= jobs model ================= */
 const STATUSES=[["saved","Saved","已收藏","#8a94a6"],["applying","Applying","准备投递","#c28a13"],["applied","Applied","已投递","#2f62d8"],["interviewing","Interviewing","面试中","#8a4fd8"],["offer","Offer","Offer","#1d9459"],["rejected","Closed","已结束","#c0504d"]];
 const stLabel=k=>{const s=STATUSES.find(x=>x[0]===k)||STATUSES[0];return T(s[1],s[2]);};
-function normJob(j){j.id=j.id||uid();j.status=STATUSES.some(s=>s[0]===j.status)?j.status:"saved";for(const k of["title","company","location","salary","url","jd","notes","letter","letterPrev","saved","applied","followup","interview","resumeId","source"])j[k]=j[k]==null?"":String(j[k]);j.created=j.created||Date.now();j.updated=j.updated||Date.now();j.order=j.order??j.created;if(!j.saved)j.saved=new Date(j.created).toISOString().slice(0,10);return j;}
+function normJob(j){j.id=safeId(j.id);j.status=STATUSES.some(s=>s[0]===j.status)?j.status:"saved";for(const k of["title","company","location","salary","url","jd","notes","letter","letterPrev","saved","applied","followup","interview","resumeId","source"])j[k]=j[k]==null?"":String(j[k]);j.resumeId=refId(j.resumeId);if(j.match&&typeof j.match==="object"){if(j.match.resumeId)j.match.resumeId=refId(j.match.resumeId);if(!Array.isArray(j.match.keywords))j.match.keywords=[];}else j.match=null;j.created=+j.created||Date.now();j.updated=+j.updated||Date.now();j.order=isFinite(+j.order)&&j.order!==""?+j.order:j.created;if(!j.saved)j.saved=isoDay(j.created);return j;}
+function normSession(s){s.id=safeId(s.id);s.created=+s.created||Date.now();s.jobId=refId(s.jobId);s.resumeId=refId(s.resumeId);s.role=String(s.role||"");s.focus=String(s.focus||"mixed");
+  s.questions=(Array.isArray(s.questions)?s.questions:[]).filter(q=>q&&q.q).map(q=>({q:String(q.q),type:String(q.type||""),why:String(q.why||""),answer:String(q.answer||""),fb:q.fb&&typeof q.fb==="object"?{score:Math.max(0,Math.min(10,Math.round(+q.fb.score)||0)),verdict:String(q.fb.verdict||""),strengths:(Array.isArray(q.fb.strengths)?q.fb.strengths:[]).map(String),improvements:(Array.isArray(q.fb.improvements)?q.fb.improvements:[]).map(String),betterAnswer:String(q.fb.betterAnswer||""),followUp:String(q.fb.followUp||"")}:null}));return s;}
 function newJob(o){return normJob(Object.assign({id:uid(),status:"saved",saved:today(),created:Date.now()},o||{}));}
 
 /* ================= undo history (per resume) ================= */
@@ -1102,7 +1108,9 @@ async function readFileText(f){
   if(n.endsWith(".docx")){await loadScript(LIB.mammoth);const buf=await f.arrayBuffer();const res=await window.mammoth.convertToHtml({arrayBuffer:buf});return htmlToLines(res.value);}
   if(n.endsWith(".pdf")){return pdfText(await f.arrayBuffer());}
   if(n.endsWith(".doc"))throw new Error(T("Old .doc files can't be read. Save it as .docx or PDF first.","无法读取旧版 .doc 文件，请先另存为 .docx 或 PDF。"));
-  return await f.text();
+  const bad=()=>new Error(T("That file type can't be imported. Use a .docx, .pdf, .txt, .md or JSON Resume file, or paste the text.","这种文件无法导入。请使用 .docx、.pdf、.txt、.md 或 JSON Resume 文件，或直接粘贴文字。"));
+  if(/^(image|audio|video)\//.test(f.type||"")||/\.(png|jpe?g|gif|webp|heic|bmp|mp3|wav|m4a|mp4|mov|zip|xlsx?|pptx?|pages|key|numbers|exe|dmg)$/i.test(n))throw bad();
+  const t=await f.text();if(/\u0000/.test(t.slice(0,4096)))throw bad();return t;
 }
 function htmlToLines(html){
   const d=document.createElement("div");d.innerHTML=html;const out=[];
@@ -1219,7 +1227,7 @@ async function restoreBackup(j){
   const ok=await ask(T("Restore backup?","恢复备份？"),ZH()?`将加入 ${j.resumes?.length||0} 份简历、${j.jobs?.length||0} 个职位和 ${j.sessions?.length||0} 次模拟面试。已有的同一条目会被备份中的版本替换。`:`This adds ${j.resumes?.length||0} resumes, ${j.jobs?.length||0} jobs and ${j.sessions?.length||0} interview sessions. Items that already exist are replaced by the backup's version.`,T("Restore","恢复"));
   if(!ok)return;
   const merge=(arr,inc,norm)=>{for(const x of inc||[]){const i=arr.findIndex(y=>y.id===x.id);const v=norm?norm(x):x;if(i>=0)arr[i]=v;else arr.push(v);}};
-  merge(DB.resumes,j.resumes,normResume);merge(DB.jobs,j.jobs,normJob);merge(DB.sessions,j.sessions);
+  const objs=a=>(Array.isArray(a)?a:[]).filter(x=>x&&typeof x==="object");merge(DB.resumes,objs(j.resumes),normResume);merge(DB.jobs,objs(j.jobs),normJob);merge(DB.sessions,objs(j.sessions),normSession);
   if(!cur()&&DB.resumes[0])DB.ui.resumeId=DB.resumes[0].id;save(true);renderAll();toast(T("Backup restored","备份已恢复"));
 }
 
@@ -1236,7 +1244,7 @@ function parseCsv(text){
 }
 const CSV_MAP={title:/^(job )?(title|position|role|job)( title)?$|职位|岗位/i,company:/company|employer|organi[sz]ation|公司/i,status:/status|stage|状态/i,location:/location|city|地点|城市/i,salary:/salary|compensation|pay|薪资/i,url:/url|link|posting|链接/i,saved:/date (saved|added|created)|saved|added|created|收藏/i,applied:/(date )?applied|投递/i,followup:/follow.?up|跟进/i,interview:/interview( date)?|面试/i,notes:/notes?|comments?|备注/i,jd:/description|job description|jd|职位描述/i};
 function mapStatus(s){s=String(s||"").toLowerCase();if(/offer|accept|negotiat|录用/.test(s))return"offer";if(/interview|screen|面试/.test(s))return"interviewing";if(/^applied|submitted|已投/.test(s))return"applied";if(/applying|prepar|准备/.test(s))return"applying";if(/reject|declin|closed|archiv|withdr|ghost|拒|结束/.test(s))return"rejected";if(/apply|applied/.test(s))return"applied";return"saved";}
-function normDate(s){s=String(s||"").trim();if(!s)return"";const d=new Date(s);if(!isNaN(d))return d.toISOString().slice(0,10);return s;}
+function normDate(s){s=String(s||"").trim();if(!s)return"";let m=s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);if(m)return`${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return`${m[3]}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`;const d=new Date(s);if(!isNaN(d))return isoDay(d);return s;}
 async function importCsv(f){
   try{
     const rows=parseCsv(await f.text());if(rows.length<2){toast(T("That CSV has no rows.","这个 CSV 没有数据。"));return;}
@@ -1639,7 +1647,7 @@ let IV={sid:null,idx:0,ctl:null,live:""};
 const FOCUS=[["mixed","Mixed","综合"],["behavioral","Behavioral (STAR)","行为面试（STAR）"],["technical","Technical","技术"],["role","Role-specific","岗位专业"],["leadership","Leadership","领导力"],["screen","Recruiter screen","HR 初筛"]];
 function ivSession(){return DB.sessions.find(s=>s.id===IV.sid);}
 function histHtml(s){const done=s.questions.filter(q=>q.fb);const avg=done.length?Math.round(done.reduce((a,q)=>a+(+q.fb.score||0),0)/done.length*10)/10:null;
-  return `<button class="hist" data-act="openSession" data-id="${s.id}"><b data-no-i18n>${esc(s.role||T("Interview","面试"))}</b><span>${esc(fmtDate(new Date(s.created).toISOString().slice(0,10)))} · ${esc(ZH()?`${done.length}/${s.questions.length} 题`:`${done.length}/${s.questions.length} answered`)}${avg!=null?` · ${avg}/10`:""}</span></button>`;}
+  return `<button class="hist" data-act="openSession" data-id="${s.id}"><b data-no-i18n>${esc(s.role||T("Interview","面试"))}</b><span>${esc(fmtDate(isoDay(s.created)))} · ${esc(ZH()?`${done.length}/${s.questions.length} 题`:`${done.length}/${s.questions.length} answered`)}${avg!=null?` · ${avg}/10`:""}</span></button>`;}
 function renderInterviewSide(){
   const o=DB.ui.ivOpts||{jobId:"",role:"",focus:"mixed",count:5,read:true};
   const jobs=[...DB.jobs].sort((a,b)=>b.updated-a.updated);

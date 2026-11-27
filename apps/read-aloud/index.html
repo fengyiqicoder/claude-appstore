@@ -483,9 +483,12 @@ const DB={db:null,ok:false,mem:new Map(),
   async del(id){this.mem.delete(id);if(!this.ok)return;try{await new Promise((res,rej)=>{const t=this.db.transaction("docs","readwrite");t.objectStore("docs").delete(id);t.oncomplete=res;t.onerror=()=>rej(t.error)})}catch{}}
 };
 let lib=store.get("lib",[]);if(!Array.isArray(lib))lib=[];
+const finN=(v,d)=>{v=+v;return Number.isFinite(v)?v:d};
+lib=lib.filter(m=>m&&typeof m==="object"&&m.id).map(m=>({...m,id:String(m.id).replace(/[^\w-]/g,""),title:String(m.title??""),type:String(m.type||"text").replace(/[^\w]/g,""),added:finN(m.added,0),opened:finN(m.opened,0),prog:Math.max(0,Math.min(1,finN(m.prog,0))),chars:finN(m.chars,0),done:m.done===true,lang:String(m.lang||"").replace(/[^\w-]/g,"")})).filter(m=>m.id);
 const libOK=store.set("probe",1);
 function saveLib(){store.set("lib",lib)}
 const S=Object.assign({voice:"buttery",rate:1,webRate:1,webVoice:"",fs:19,font:"serif",width:680,theme:"auto",hl:"word",follow:true,side:true},store.get("settings",{}));
+{const D={rate:1,webRate:1,fs:19,width:680};for(const k in D){const v=+S[k];S[k]=Number.isFinite(v)&&v>0&&v<5000?v:D[k]}for(const k of ["voice","webVoice","font","theme","hl"])S[k]=typeof S[k]==="string"?S[k]:"";if(!S.voice)S.voice="buttery";if(!S.font)S.font="serif";if(!S.theme)S.theme="auto";if(!S.hl)S.hl="word";}
 function saveS(){store.set("settings",S)}
 
 /* ---------- text helpers ---------- */
@@ -766,7 +769,7 @@ function renderList(){
   if(!items.length){L.innerHTML=`<div class="emptylist">${esc(T("No documents match your search.","没有匹配的文档。"))}</div>`;return}
   L.innerHTML=items.map(m=>{const pct=Math.round((m.prog||0)*100);const left=(m.chars||0)*(1-(m.prog||0))/cps(m.lang,curRate()||1);
     const sub=m.done?T("Finished","已读完"):(pct?`${pct}% · ${leftStr(left)}`:`${fmtDur(left)}`);
-    return `<div class="li${cur.meta&&cur.meta.id===m.id?" on":""}" data-id="${m.id}" role="button" tabindex="0"><span class="lic">${typeLabel(m.type)}</span><span class="lt"><span class="ln" data-no-i18n>${esc(m.title)}</span><span class="ls">${esc(sub)}</span><span class="lp"><i style="width:${m.done?100:pct}%"></i></span></span><span class="lx"><button data-act="ren" title="Rename" aria-label="Rename"><svg class="ic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 16l1-4 8-8 3 3-8 8z"/></svg></button><button data-act="del" title="Remove from library" aria-label="Remove from library"><svg class="ic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4.5 6h11M8 6V4.5h4V6M6 6l.7 10h6.6L14 6"/></svg></button></span></div>`}).join("");
+    return `<div class="li${cur.meta&&cur.meta.id===m.id?" on":""}" data-id="${esc(m.id)}" role="button" tabindex="0"><span class="lic">${typeLabel(m.type)}</span><span class="lt"><span class="ln" data-no-i18n>${esc(m.title)}</span><span class="ls">${esc(sub)}</span><span class="lp"><i style="width:${m.done?100:pct}%"></i></span></span><span class="lx"><button data-act="ren" title="Rename" aria-label="Rename"><svg class="ic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 16l1-4 8-8 3 3-8 8z"/></svg></button><button data-act="del" title="Remove from library" aria-label="Remove from library"><svg class="ic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4.5 6h11M8 6V4.5h4V6M6 6l.7 10h6.6L14 6"/></svg></button></span></div>`}).join("");
 }
 $("list").addEventListener("click",e=>{const li=e.target.closest(".li");if(!li||li.querySelector("input"))return;const b=e.target.closest("button[data-act]");const id=li.dataset.id;
   if(b&&b.dataset.act==="del"){removeDoc(id);return}
@@ -793,6 +796,12 @@ function removeDoc(id){
 }
 function commitDel(){if(!pendingDel)return;clearTimeout(pendingDel.timer);DB.del(pendingDel.m.id);pendingDel=null}
 window.addEventListener("pagehide",commitDel);
+window.addEventListener("storage",e=>{
+  if(e.key!=="readaloud.lib")return;let nl;try{nl=JSON.parse(e.newValue||"[]")}catch{return}if(!Array.isArray(nl))return;
+  if(pendingDel)nl=nl.filter(x=>x.id!==pendingDel.m.id);
+  if(cur.meta){const i=nl.findIndex(x=>x.id===cur.meta.id);if(i>=0){if(nl[i].title&&nl[i].title!==cur.meta.title){cur.meta.title=nl[i].title;if(cur.doc){cur.doc.title=nl[i].title;$("dtitle").textContent=nl[i].title}}nl[i]=cur.meta}}
+  lib=nl;renderList();
+});
 
 /* ---------- segmentation ---------- */
 const segS=(()=>{try{return new Intl.Segmenter(undefined,{granularity:"sentence"})}catch{return null}})();
@@ -1329,6 +1338,7 @@ function docText(fmt){
   for(const ch of cur.doc.chapters){
     if(fmt==="md"&&cur.doc.chapters.length>1&&!(ch.blocks[0]&&ch.blocks[0].k==="h"))out.push("## "+ch.title,"");
     for(const b of ch.blocks){
+      if(fmt==="md"&&b.k==="h"&&b===cur.doc.chapters[0].blocks[0]&&norm(b.x)===norm(cur.doc.title))continue;
       if(fmt==="md"){if(b.k==="h")out.push("#".repeat(clamp((b.l||1)+1,2,6))+" "+b.x);else if(b.k==="li")out.push("- "+b.x);else if(b.k==="q")out.push("> "+b.x);else if(b.k==="pre")out.push("```\n"+b.x+"\n```");else out.push(b.x)}
       else out.push(b.x);
       out.push("");
@@ -1380,7 +1390,7 @@ $("cards").addEventListener("click",e=>{
   else if(a==="copy")copyText(n.text);
   else if(a==="del"){ctls.get(id)?.abort();cur.doc.notes=cur.doc.notes.filter(x=>x!==n);DB.put(cur.doc);renderCards()}
   else if(a==="listen")listenNote(n.text);
-  else if(a==="retry"){cur.doc.notes=cur.doc.notes.filter(x=>x!==n);if(n.kind==="summary")summarize(n.c)}
+  else if(a==="retry"){cur.doc.notes=cur.doc.notes.filter(x=>x!==n);renderCards();if(n.kind==="summary")summarize(n.c);else if(n.kind==="clean")cleanup(n.c)}
 });
 function newNote(kind,title,quote,c){const n={id:uid(),kind,title,quote:quote||"",text:"",c,at:Date.now()};cur.doc.notes=cur.doc.notes||[];cur.doc.notes.unshift(n);if(cur.doc.notes.length>60)cur.doc.notes.length=60;showPanel(true,"ai");renderCards();return n}
 async function runNote(n,prompt,tier){
@@ -1389,8 +1399,9 @@ async function runNote(n,prompt,tier){
   catch(e){n.text=(e&&e.text)||n.text||"";if(e&&e.code==="cancelled")n.err=T("Stopped.","已停止。");else{n.err=serr(e);if(e&&e.code==="not_granted")setAi(false)}}
   finally{ctls.delete(n.id);DB.put(doc);if(cur.doc===doc)updCard(n)}
 }
+const busyKind=(kind,c)=>(cur.doc.notes||[]).some(x=>x.kind===kind&&x.c===c&&ctls.has(x.id));
 async function summarize(c){
-  if(!sample||!cur.doc)return;c=c??cur.vc;const ch=cur.doc.chapters[c];
+  if(!sample||!cur.doc)return;c=c??cur.vc;const ch=cur.doc.chapters[c];if(!ch||busyKind("summary",c))return;
   const n=newNote("summary",T(`Summary: ${ch.title}`,`总结：${ch.title}`),"",c);
   const txt=chapterText(c);
   const ask=t=>`You are helping someone who is listening to "${cur.doc.title}". Summarize the chapter text below for them. Write in ${outLang()}. Start with a 2-3 sentence overview, then 4-8 lines starting with "- " for the key points, in the order they appear. Plain text, no headings, no Markdown other than the "- " bullets.\n\nChapter: ${ch.title}\n\n${t}`;
@@ -1428,8 +1439,8 @@ function listenNote(text){
 }
 /* cleanup with review */
 let review=null,undoStack=[];
-async function cleanup(){
-  if(!sample||!cur.doc)return;const c=cur.vc;const ch=cur.doc.chapters[c];
+async function cleanup(c0){
+  if(!sample||!cur.doc)return;const c=typeof c0==="number"?c0:cur.vc;const ch=cur.doc.chapters[c];if(!ch||busyKind("clean",c)||review)return;
   const before=ch.blocks.map(b=>(b.k==="h"?"# ":"")+b.x).join("\n\n");
   const parts=chunkText(before,24000);
   const n=newNote("clean",T(`Cleaning up: ${ch.title}`,`清理：${ch.title}`),"",c);
@@ -1475,7 +1486,7 @@ function undoCleanup(){
 }
 $("rvYes").onclick=()=>reviewDecide(true);$("rvNo").onclick=()=>reviewDecide(false);
 $("mReview").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();reviewDecide(true)}});
-$("cleanBtn").onclick=cleanup;
+$("cleanBtn").onclick=()=>cleanup();
 function setAi(on){$("aiOn").hidden=!on;$("aiOff").hidden=on;if(!on)sample=null}
 
 /* ---------- keyboard, paste, drop ---------- */

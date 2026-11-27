@@ -394,8 +394,64 @@ const S={
   notebook:LS.get("notebook",[]),
   settings:Object.assign({subject:"auto",level:"auto",mode:"solve",thorough:false,kb:true,kbTab:"basic",side:true},LS.get("settings",{})),
 };
-if(!Array.isArray(S.history))S.history=[];
-if(!Array.isArray(S.notebook))S.notebook=[];
+/* Stored data and imported backups may be old, hand-edited or damaged: coerce every field to the shape the views expect. */
+const _str=v=>typeof v==="string"?v:v==null?"":String(v);
+const _num=(v,d)=>typeof v==="number"&&isFinite(v)?v:(typeof v==="string"&&v.trim()&&isFinite(+v)?+v:d);
+const _arr=v=>Array.isArray(v)?v:[];
+const _obj=v=>v&&typeof v==="object"&&!Array.isArray(v);
+const okImg=u=>typeof u==="string"&&/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+\/=\s]+$/i.test(u)?u:null;
+const SUBJECTS=["math","physics","chemistry","other"];
+function cleanResult(R){
+  if(!_obj(R))return null;
+  return {problem:_str(R.problem),unclear:_str(R.unclear),steps:_arr(R.steps).filter(_obj).map(x=>({title:_str(x.title),work:_str(x.work),why:_str(x.why)})),
+    answer:_str(R.answer),values:_arr(R.values).map(Number).filter(isFinite),
+    self:_obj(R.self)?{method:_str(R.self.method),work:_str(R.self.work),passed:R.self.passed!==false}:null,
+    machine:_arr(R.machine).filter(_obj).map(c=>({expr:_str(c.expr),expect:Number(c.expect),tol:c.tol!=null&&isFinite(+c.tol)?+c.tol:null,note:_str(c.note)})),
+    graph:_obj(R.graph)&&_arr(R.graph.functions).length?{functions:R.graph.functions.map(_str).slice(0,5),xmin:Number(R.graph.xmin),xmax:Number(R.graph.xmax),points:_arr(R.graph.points).filter(q=>Array.isArray(q)&&q.length===2&&q.every(v=>isFinite(+v))).map(q=>q.map(Number)).slice(0,12)}:null,
+    concepts:_arr(R.concepts).map(_str).slice(0,4)};
+}
+function cleanVerify(V){
+  if(!_obj(V))return null;
+  const ind=_obj(V.indep)?V.indep:{};
+  let st=["wait","na","done"].includes(ind.state)?ind.state:"na";
+  const out={machine:_obj(V.machine)?{state:V.machine.state==="na"?"na":"done",items:_arr(V.machine.items).filter(_obj).map(c=>({expr:_str(c.expr),expect:Number(c.expect),tol:null,note:_str(c.note),value:typeof c.value==="number"&&isFinite(c.value)?c.value:null,ok:c.ok===true?true:c.ok===false?false:null}))}:null,
+    indep:{state:st,answer:_str(ind.answer),values:_arr(ind.values).map(Number).filter(isFinite),method:_str(ind.method),why:_str(ind.why)},
+    compare:_obj(V.compare)?{equivalent:!!V.compare.equivalent,note:_str(V.compare.note)}:null};
+  return out;
+}
+const cleanTurns=a=>_arr(a).filter(m=>_obj(m)&&(m.role==="user"||m.role==="assistant")).map(m=>({role:m.role,content:_str(m.content)}));
+function cleanProblem(h,fromLoad){
+  if(!_obj(h)||h.id==null)return null;
+  const o=Object.assign({},h);
+  o.id=_str(h.id).replace(/[^\w-]/g,"").slice(0,64);if(!o.id)return null;o.title=_str(h.title);o.text=_str(h.text);o.mode=h.mode==="hint"?"hint":"solve";
+  o.subject=SUBJECTS.includes(h.subject)?h.subject:"math";o.subjectSet=SUBJECTS.includes(h.subjectSet)||h.subjectSet==="auto"?h.subjectSet:o.subject;
+  o.level=_str(h.level)||"auto";o.topic=_str(h.topic);o.created=_num(h.created,Date.now());o.updated=_num(h.updated,o.created);
+  o.images=_arr(h.images).map(okImg).filter(Boolean);
+  o.result=cleanResult(h.result);o.verify=o.result?cleanVerify(h.verify):null;
+  o.prevResult=_obj(h.prevResult)&&cleanResult(h.prevResult.result)?{result:cleanResult(h.prevResult.result),verify:cleanVerify(h.prevResult.verify)}:null;
+  o.chat=cleanTurns(h.chat);o.hint=cleanTurns(h.hint);o.hproblem=_str(h.hproblem);
+  o.practice=_arr(h.practice).filter(x=>_obj(x)&&x.problem!=null).map(x=>({problem:_str(x.problem),answer:_str(x.answer),values:_arr(x.values).map(Number).filter(isFinite),solution:_str(x.solution),mine:_str(x.mine),shown:!!x.shown,result:x.result==="right"||x.result==="wrong"?x.result:undefined,saved:x.saved?_str(x.saved):null,solOpen:!!x.solOpen}));
+  o.userFns=_arr(h.userFns).map(_str).filter(Boolean);o.open=_arr(h.open).map(Number).filter(Number.isInteger);
+  for(const k of ["error","chatErr","hintErr","practiceErr","chatDraft","hintDraft","chatLive","hintLive","progress"])o[k]=h[k]==null?null:_str(h[k]);
+  o.savedMistake=h.savedMistake?_str(h.savedMistake):null;o.allWhy=!!h.allWhy;delete o._g;
+  if(fromLoad){ // the app was closed while Claude was still working on this one
+    o.progress=null;o.chatLive="";o.hintLive="";
+    if(o.result&&!o.verify)o.verify={machine:{state:"na",items:[]},indep:{state:"wait"},compare:null};
+    if(o.verify&&o.verify.indep.state==="wait")o.verify.indep={state:"na",why:T("Didn't finish. Check again.","没有完成，请再核对一次。")};
+    if(o.mode==="solve"&&!o.result&&!o.error)o.error=T("Didn't finish. Try again.","没有完成，请重试。");
+    if(o.mode==="hint"&&!o.hint.length&&!o.hintErr)o.hintErr=T("Didn't finish. Try again.","没有完成，请重试。");
+  }
+  return o;
+}
+function cleanMistake(m){
+  if(!_obj(m)||m.id==null)return null;
+  const mid=_str(m.id).replace(/[^\w-]/g,"").slice(0,64);if(!mid)return null;
+  return Object.assign({},m,{id:mid,created:_num(m.created,Date.now()),subject:SUBJECTS.includes(m.subject)?m.subject:"other",topic:_str(m.topic),problem:_str(m.problem),image:okImg(m.image),
+    answer:_str(m.answer),solution:_str(m.solution),myAnswer:_str(m.myAnswer),note:_str(m.note),reasons:_arr(m.reasons).map(_str),box:_num(m.box,0),due:_num(m.due,Date.now()),
+    reviews:_arr(m.reviews).filter(_obj),mastered:!!m.mastered,source:m.source==null?undefined:_str(m.source),_open:!!m._open});
+}
+S.history=_arr(S.history).map(h=>cleanProblem(h,true)).filter(Boolean);
+S.notebook=_arr(S.notebook).map(cleanMistake).filter(Boolean);
 function saveSettings(){LS.set("settings",S.settings)}
 function saveHistory(){
   let r=LS.set("history",S.history.slice(0,80));
@@ -420,7 +476,7 @@ function md(src){
   s=s.replace(/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]/g,(m,a,b)=>{math.push([a??b,true]);return `@@M${math.length-1}@@`});
   s=s.replace(/\\\(([\s\S]+?)\\\)|(?<![\\$\w])\$(?![\s$])([^$\n]+?)(?<![\s\\])\$(?![\w$])/g,(m,a,b)=>{math.push([a??b,false]);return `@@M${math.length-1}@@`});
   let h;
-  if(window.marked&&window.DOMPurify){try{h=DOMPurify.sanitize(marked.parse(s,{breaks:true,gfm:true}))}catch{h=null}}
+  if(window.marked&&window.DOMPurify){try{h=DOMPurify.sanitize(marked.parse(s,{breaks:true,gfm:true}),{FORBID_TAGS:["style","form","input","button","textarea","select"],FORBID_ATTR:["style"]})}catch{h=null}}
   if(h==null)h=esc(s).replace(/\n/g,"<br>");
   h=h.replace(/@@M(\d+)@@/g,(m,i)=>tex(math[+i][0],math[+i][1]));
   return h;
@@ -672,7 +728,7 @@ function setMode(m){S.settings.mode=m;saveSettings();if(view.name==="compose"){d
 function toggleKb(){S.settings.kb=!S.settings.kb;saveSettings();if($("mkb")){$("mkb").hidden=!S.settings.kb;$("kbBtn").classList.toggle("on",S.settings.kb);$("q").focus()}}
 function renderKeys(){
   const K=$("keys");if(!K)return;
-  K.innerHTML=KB[S.settings.kbTab||"basic"].map(([l,ins],i)=>`<button class="key" data-k="${i}" title="${esc(ins.replace("|","").trim())}" aria-label="${esc(ins.replace("|","").trim())}">${tex(l,false)}</button>`).join("")+
+  K.innerHTML=(Object.hasOwn(KB,S.settings.kbTab)?KB[S.settings.kbTab]:KB.basic).map(([l,ins],i)=>`<button class="key" data-k="${i}" title="${esc(ins.replace("|","").trim())}" aria-label="${esc(ins.replace("|","").trim())}">${tex(l,false)}</button>`).join("")+
    `<button class="key fn" data-fn="left" title="Move left" aria-label="Move left">←</button><button class="key fn" data-fn="right" title="Move right" aria-label="Move right">→</button><button class="key fn" data-fn="wrap" title="Mark as math with $…$" aria-label="Mark as math">$…$</button><button class="key fn" data-fn="back" title="Delete" aria-label="Delete">⌫</button>`;
   K.onmousedown=e=>{if(e.target.closest(".key"))e.preventDefault()}; // keep focus in the textarea
   K.onclick=e=>{const b=e.target.closest(".key");if(!b)return;const q=$("q");q.focus();
@@ -682,7 +738,7 @@ function renderKeys(){
       else if(fn==="back"){if(q.selectionStart===q.selectionEnd&&q.selectionStart>0)q.setSelectionRange(q.selectionStart-1,q.selectionStart);document.execCommand("delete")}
       else if(fn==="wrap"){const s=q.value.slice(q.selectionStart,q.selectionEnd);insertAtCaret(q,"$"+(s||"|")+"$")}
       return}
-    insertAtCaret(q,KB[S.settings.kbTab||"basic"][+b.dataset.k][1]);
+    insertAtCaret(q,(Object.hasOwn(KB,S.settings.kbTab)?KB[S.settings.kbTab]:KB.basic)[+b.dataset.k][1]);
   };
 }
 function insertAtCaret(q,ins){
@@ -748,7 +804,7 @@ function pinfo(h){return {subject:h.subjectSet||h.subject,level:h.level,text:h.t
 function imgs(h){return h.images?.length?h.images.map(dataURLtoBlob):undefined}
 async function solve(h,extra){
   if(!sample)return;
-  running.get(h.id)?.ctl.abort();
+  running.get(h.id)?.ctl.abort();running.get(h.id+":v")?.ctl.abort();running.delete(h.id+":v");
   const ctl=new AbortController();running.set(h.id,{ctl,kind:"solve"});
   h.error=null;h.progress=T("Reading the problem…","正在读题…");
   if(!extra){h.result=null;h.verify=null}
@@ -783,9 +839,11 @@ function normResult(r){
 }
 async function verify(h){
   const R=h.result;if(!R)return;
-  h.verify={machine:null,indep:{state:"wait"},compare:null};rerender(h);
+  running.get(h.id+":v")?.ctl.abort();
+  const V=h.verify={machine:null,indep:{state:"wait"},compare:null};rerender(h);
   // 1) computed checks, run locally
   const m=await ensureMath();
+  if(h.verify!==V||h.result!==R)return;
   if(!m)h.verify.machine={state:"na",items:[]};
   else{const items=R.machine.map(c=>{try{const v=evalNum(c.expr);const ok=isFinite(c.expect)?close(v,c.expect,c.tol&&c.tol>0?Math.min(c.tol,.05):1e-6):false;return {...c,value:v,ok}}catch{return {...c,value:null,ok:null}}});
     h.verify.machine={state:"done",items}}
@@ -795,6 +853,7 @@ async function verify(h){
   const ctl=new AbortController();running.set(h.id+":v",{ctl,kind:"verify"});
   try{
     let r=await sample.json(verifyPrompt(pinfo(h)),{signal:ctl.signal,images:imgs(h),cache:false,modelTier:"default"});
+    if(h.verify!==V)return;
     r=fixTex(r);const ind={state:"done",answer:String(r?.answer||""),values:(Array.isArray(r?.answer_values)?r.answer_values:[]).map(Number).filter(isFinite),method:String(r?.method||"")};
     h.verify.indep=ind;rerender(h);
     let agree=null;
@@ -805,13 +864,15 @@ async function verify(h){
     }
     if(agree===null||agree===false){
       const j=await sample.json(`Two tutors solved the same problem. Are their final answers mathematically equivalent (same value(s), allowing different but equivalent forms, rounding to the stated precision, and order)? If the problem has several parts, every part must match.\nProblem:\n${R.problem.slice(0,4000)}\nAnswer A:\n${R.answer}\nAnswer B:\n${ind.answer}\nReply with only JSON: {"equivalent": true|false, "note": "one short sentence${ZH?" in Simplified Chinese":""}"}`,{signal:ctl.signal,modelTier:"quick",cache:false});
+      if(h.verify!==V)return;
       h.verify.compare={equivalent:!!j?.equivalent,note:String(j?.note||"")};
     }else h.verify.compare={equivalent:agree,note:""};
   }catch(e){
+    if(h.verify!==V)return;
     if(e?.code==="cancelled"){h.verify.indep={state:"na",why:T("Stopped","已停止")}}
     else h.verify.indep={state:"na",why:errText(e)};
   }
-  running.delete(h.id+":v");h.updated=Date.now();saveHistory();rerender(h);
+  if(running.get(h.id+":v")?.ctl===ctl)running.delete(h.id+":v");h.updated=Date.now();saveHistory();rerender(h);
 }
 function verdict(h){
   const R=h.result,V=h.verify;if(!R)return null;
@@ -930,7 +991,7 @@ function initGraph(h){
   $("gfns").innerHTML=fns.map((f,i)=>`<span class="gfn"><i style="background:${GCOL[i%GCOL.length]}"></i><span class="uc">y = ${esc(f)}</span>${i>=(R.graph?.functions||[]).length?`<button data-rmf="${i-(R.graph?.functions||[]).length}" title="Remove function" aria-label="Remove function">×</button>`:""}</span>`).join("");
   $("gfns").querySelectorAll("[data-rmf]").forEach(b=>b.onclick=()=>{h.userFns.splice(+b.dataset.rmf,1);saveHistory();rerender(h)});
   const add=()=>{const v=$("gnew").value.trim();if(!v)return;const m=window.math;if(m){try{m.compile(normExpr(v.replace(/^y\s*=\s*/,"")))}catch{toast(T("That function couldn't be read. Try something like 2*x+1.","这个函数读不懂，试试 2*x+1 这样的写法。"));return}}(h.userFns=h.userFns||[]).push(v.replace(/^y\s*=\s*/,""));saveHistory();rerender(h)};
-  $("gAddBtn").onclick=add;$("gnew").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();add()}};
+  $("gAddBtn").onclick=add;$("gnew").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing&&e.keyCode!==229){e.preventDefault();add()}};
   const zoom=(k,cx,cy)=>{const v=g.vp;if(!v)return;const px=cx??(v.x0+v.x1)/2,py=cy??(v.y0+v.y1)/2;g.vp={x0:px+(v.x0-px)*k,x1:px+(v.x1-px)*k,y0:py+(v.y0-py)*k,y1:py+(v.y1-py)*k};draw()};
   $("gIn").onclick=()=>zoom(.7);$("gOut").onclick=()=>zoom(1/.7);$("gReset").onclick=()=>{g.vp=defaults();draw()};
   function draw(){
@@ -1014,7 +1075,7 @@ async function checkPractice(h,i){
 function wirePractice(V,h){
   const on=(id,f)=>{const el=$(id);if(el)el.onclick=f};
   on("pracMore",()=>practice(h));on("pracStop",()=>running.get(h.id+":p")?.ctl.abort());
-  V.querySelectorAll("[data-pin]").forEach(inp=>{inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();checkPractice(h,+inp.dataset.pin)}};inp.oninput=()=>{h.practice[+inp.dataset.pin].mine=inp.value}});
+  V.querySelectorAll("[data-pin]").forEach(inp=>{inp.onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing&&e.keyCode!==229){e.preventDefault();checkPractice(h,+inp.dataset.pin)}};inp.oninput=()=>{h.practice[+inp.dataset.pin].mine=inp.value}});
   V.querySelectorAll("[data-pcheck]").forEach(b=>b.onclick=()=>checkPractice(h,+b.dataset.pcheck));
   V.querySelectorAll("[data-pshow]").forEach(b=>b.onclick=()=>{h.practice[+b.dataset.pshow].shown=true;saveHistory();rerender(h)});
   V.querySelectorAll("[data-psol]").forEach(b=>b.onclick=()=>{const p=h.practice[+b.dataset.psol];p.solOpen=!p.solOpen;rerender(h)});
@@ -1037,9 +1098,9 @@ function wireChat(V,h){
   const fq=$("fq");if(!fq)return;
   fq.value=h.chatDraft||"";
   fq.oninput=()=>{h.chatDraft=fq.value;fq.style.height="auto";fq.style.height=Math.min(160,fq.scrollHeight)+"px"};
-  fq.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();sendFollow(h)}};
+  fq.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();sendFollow(h)}};
   const s=$("fSend");if(s)s.onclick=()=>sendFollow(h);
-  const st=$("fStop");if(st)st.onclick=()=>running.get(h.id+":c")?.ctl.abort();
+  const st=$("fStop");if(st)st.onclick=()=>{const r=running.get(h.id+":c");if(r&&Date.now()-r.t>500)r.ctl.abort()};
   V.querySelectorAll("[data-sugg]").forEach(b=>b.onclick=()=>{fq.value=b.dataset.sugg;sendFollow(h)});
 }
 function solutionContext(h){const R=h.result;return `Problem:\n${R.problem}\n\nSolution shown to the student:\n${R.steps.map((s,i)=>`Step ${i+1}: ${s.title}\n${s.work}`).join("\n")}\nFinal answer: ${R.answer}`}
@@ -1048,12 +1109,12 @@ async function sendFollow(h){
   if(!sample){toast(T("Follow-ups need Claude.","追问需要 Claude。"));return}
   if(running.get(h.id+":c"))return;
   h.chat=h.chat||[];h.chat.push({role:"user",content:q});h.chatDraft="";h.chatErr=null;h.chatLive="";
-  const ctl=new AbortController();running.set(h.id+":c",{ctl,kind:"chat"});rerender(h);
+  const ctl=new AbortController();running.set(h.id+":c",{ctl,kind:"chat",t:Date.now()});rerender(h);
   const rules=`You are a patient tutor answering a student's follow-up questions about a problem you solved for them. Be clear and concise, show math in LaTeX ($...$ / $$...$$), and if you notice the original solution has an error, say so plainly and correct it. ${LANG()}\n\n${solutionContext(h).slice(0,30000)}`;
   const turns=[{role:"user",content:rules},...h.chat.slice(-12)];
   try{
     const r=await sample(turns,{signal:ctl.signal,cache:false,onText:({text})=>{h.chatLive=text;const el=$("chatLive");if(el&&view.id===h.id)el.innerHTML=mdEl(text)}});
-    h.chat.push({role:"assistant",content:r.text});
+    h.chat.push({role:"assistant",content:r.text});if(r.truncated)h.chatErr=T("Claude's answer was cut off. Ask for the rest, or ask a narrower question.","Claude 的回答被截断了。可以让它接着说，或者问得更具体一些。");
   }catch(e){if(e?.text)h.chat.push({role:"assistant",content:e.text});if(e?.code!=="cancelled")h.chatErr=errText(e);if(!e?.text&&e?.code==="cancelled"){}}
   running.delete(h.id+":c");h.chatLive="";h.updated=Date.now();saveHistory();rerender(h);
   setTimeout(()=>$("fq")?.focus(),0);
@@ -1061,7 +1122,7 @@ async function sendFollow(h){
 
 /* ---------- hint-only mode ---------- */
 async function startHints(h){
-  const ctl=new AbortController();running.set(h.id+":h",{ctl,kind:"hint"});h.hintErr=null;rerender(h);
+  const ctl=new AbortController();running.set(h.id+":h",{ctl,kind:"hint",t:Date.now()});h.hintErr=null;rerender(h);
   try{
     let r=await sample.json(`${hintRules("(see below)",h.subjectSet==="auto"?"infer it":h.subjectSet,h.level==="auto"?"infer it":h.level)}
 ${h.images?.length?"The problem is in the attached photo(s); read it carefully."+(h.text?" The typed text is the student's correction where it differs.":""):""}
@@ -1077,11 +1138,11 @@ This is the start of the session. ${JSONTEX} Reply with only JSON: {"problem": "
 async function hintTurn(h,msg){
   if(!sample||running.get(h.id+":h"))return;
   h.hint=h.hint||[];h.hint.push({role:"user",content:msg});h.hintErr=null;h.hintLive="";
-  const ctl=new AbortController();running.set(h.id+":h",{ctl,kind:"hint"});rerender(h);
+  const ctl=new AbortController();running.set(h.id+":h",{ctl,kind:"hint",t:Date.now()});rerender(h);
   const rules=hintRules(h.hproblem||h.text,h.subject,h.level==="auto"?"infer it":h.level);
   const turns=[{role:"user",content:rules+"\n\nThe session so far follows. Your first hint was the first assistant turn."}];
   for(const m of h.hint.slice(-16))turns.push({role:m.role,content:m.content});
-  try{const r=await sample(turns,{signal:ctl.signal,cache:false,onText:({text})=>{h.hintLive=text;const el=$("hintLive");if(el&&view.id===h.id)el.innerHTML=mdEl(text)}});h.hint.push({role:"assistant",content:r.text})}
+  try{const r=await sample(turns,{signal:ctl.signal,cache:false,onText:({text})=>{h.hintLive=text;const el=$("hintLive");if(el&&view.id===h.id)el.innerHTML=mdEl(text)}});h.hint.push({role:"assistant",content:r.text});if(r.truncated)h.hintErr=T("Claude's answer was cut off. Ask for the rest, or ask a narrower question.","Claude 的回答被截断了。可以让它接着说，或者问得更具体一些。")}
   catch(e){if(e?.text)h.hint.push({role:"assistant",content:e.text});if(e?.code!=="cancelled")h.hintErr=errText(e)}
   running.delete(h.id+":h");h.hintLive="";h.updated=Date.now();saveHistory();rerender(h);setTimeout(()=>$("hq")?.focus(),0);
 }
@@ -1098,9 +1159,9 @@ function renderHint(V,h){
   V.innerHTML=s;
   const hq=$("hq");hq.value=h.hintDraft||"";hq.oninput=()=>h.hintDraft=hq.value;
   const send=()=>{const v=hq.value.trim();if(!v){hq.focus();return}h.hintDraft="";hintTurn(h,v)};
-  hq.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}};
+  hq.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();send()}};
   const on=(id,f)=>{const el=$(id);if(el)el.onclick=f};
-  on("hSend",send);on("hStop",()=>running.get(h.id+":h")?.ctl.abort());on("hRetry",()=>startHints(h));
+  on("hSend",send);on("hStop",()=>{const r=running.get(h.id+":h");if(r&&Date.now()-r.t>500)r.ctl.abort()});on("hRetry",()=>startHints(h));
   on("hMore",()=>hintTurn(h,T("I'm stuck. Give me another, slightly bigger hint (still not the answer).","我卡住了。再给一个稍微多一点的提示（仍然不要给答案）。")));
   on("hCheck",()=>{const v=hq.value.trim();h.hintDraft="";hintTurn(h,v?T("Here is my work so far. Am I on track?\n","这是我目前的过程，我做得对吗？\n")+v:T("Am I on track? Summarize what I've done right so far and what to do next, without the answer.","我做得对吗？总结一下我目前做对了什么、下一步做什么，但不要给答案。"))});
   on("hReveal",()=>{h.mode="solve";if(h.hproblem&&!h.images?.length)h.text=h.hproblem;saveHistory();solve(h)});
@@ -1162,7 +1223,8 @@ function renderNotebook(V){
   on("expBtn",()=>menu($("expBtn"),[{label:T("Export as PDF","导出为 PDF"),run:exportPdf},{label:T("Export as Markdown","导出为 Markdown"),run:exportMd},{label:T("Copy as Markdown","复制为 Markdown"),run:()=>copyText(notebookMd(filtered()))},"-",{label:T("Back up everything (.json)","备份全部数据 (.json)"),run:exportJson},{label:T("Import backup (.json)","导入备份 (.json)"),run:()=>$("jsonPick").click()}]));
   V.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{nbFilter.tab=b.dataset.tab;render()});
   const sj=$("nbSubj");if(sj)sj.onchange=()=>{nbFilter.subj=sj.value;render()};
-  const nq=$("nbQ");if(nq){nq.oninput=()=>{nbFilter.q=nq.value;const p=nq.selectionStart;render();const n=$("nbQ");n.focus();n.setSelectionRange(p,p)}}
+  const nq=$("nbQ");if(nq){const apply=()=>{nbFilter.q=nq.value;const p=nq.selectionStart;render();const n=$("nbQ");n.focus();n.setSelectionRange(p,p)};
+    nq.oninput=e=>{if(e.isComposing)return;apply()};nq.addEventListener("compositionend",()=>setTimeout(apply,0))}
   V.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{const m=S.notebook.find(x=>x.id===b.dataset.open);m._open=!m._open;render()});
   V.querySelectorAll("[data-rev1]").forEach(b=>b.onclick=()=>startReview([b.dataset.rev1]));
   V.querySelectorAll("[data-src]").forEach(b=>b.onclick=()=>openProblem(b.dataset.src));
@@ -1235,12 +1297,11 @@ async function saveFile(name,data,type){
 function exportMd(){const l=filtered();if(!l.length){toast(T("Nothing to export.","没有可导出的内容。"));return}saveFile(T("Mistake notebook","错题本")+".md",notebookMd(l),"text/markdown")}
 function exportJson(){saveFile("homework-helper-backup.json",JSON.stringify({app:"homework-helper",version:1,exported:Date.now(),notebook:S.notebook,history:S.history.map(h=>{const c={...h};delete c._g;return c})},null,1),"application/json")}
 $("jsonPick").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
-  try{const d=JSON.parse(await f.text());if(!d||(!Array.isArray(d.notebook)&&!Array.isArray(d.history)))throw 0;
-    let n=0,k=0;const ids=new Set(S.notebook.map(m=>m.id));for(const m of d.notebook||[])if(m&&m.id&&!ids.has(m.id)&&typeof m.problem==="string"){S.notebook.push(m);n++}
-    const hid=new Set(S.history.map(h=>h.id));for(const h of d.history||[])if(h&&h.id&&!hid.has(h.id)){S.history.push(h);k++}
-    S.notebook.sort((a,b)=>b.created-a.created);S.history.sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));
-    saveNotebook();saveHistory();render();toast(T(`Imported ${n} mistakes and ${k} problems`,`已导入 ${n} 道错题和 ${k} 道题目`));
-  }catch{toast(T("That file isn't a Homework Helper backup.","这个文件不是作业助手的备份。"))}};
+  let d;try{d=JSON.parse(await f.text());if(!_obj(d)||(!Array.isArray(d.notebook)&&!Array.isArray(d.history)))throw 0}catch{toast(T("That file isn't a Homework Helper backup.","这个文件不是作业助手的备份。"));return}
+  let n=0,k=0;const ids=new Set(S.notebook.map(m=>m.id));for(const raw of _arr(d.notebook)){const m=cleanMistake(raw);if(m&&!ids.has(m.id)){ids.add(m.id);S.notebook.push(m);n++}}
+  const hid=new Set(S.history.map(h=>h.id));for(const raw of _arr(d.history)){const h=cleanProblem(raw,true);if(h&&!hid.has(h.id)){hid.add(h.id);S.history.push(h);k++}}
+  S.notebook.sort((a,b)=>b.created-a.created);S.history.sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));
+  saveNotebook();saveHistory();render();toast(T(`Imported ${n} mistakes and ${k} problems`,`已导入 ${n} 道错题和 ${k} 道题目`));};
 let pdfLibP=null;
 function ensurePdfLibs(){return pdfLibP??=Promise.all([window.htmlToImage||loadScript("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"),window.jspdf||loadScript("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js")]).then(()=>!!(window.htmlToImage&&window.jspdf)).catch(()=>{pdfLibP=null;return false})}
 async function exportPdf(){
@@ -1277,6 +1338,7 @@ function helpDlg(){
 }
 $("helpBtn").onclick=helpDlg;
 document.addEventListener("keydown",e=>{
+  if(e.isComposing||e.keyCode===229)return; // keys pressed while an input method is composing belong to it
   if(e.key==="Escape"){if(openMenu){closeMenu();e.preventDefault();return}if(openDlg){imgTarget=null;closeDlg();e.preventDefault();return}if(document.body.classList.contains("sideopen")){document.body.classList.remove("sideopen");$("sidescrim").hidden=true;return}
     const r=view.id&&(running.get(view.id)||running.get(view.id+":h")||running.get(view.id+":c")||running.get(view.id+":p"));if(r){r.ctl.abort();e.preventDefault()}return}
   if(openDlg)return;
@@ -1299,6 +1361,26 @@ document.addEventListener("keydown",e=>{
     else if(e.key==="1"&&$("rvWrong")){e.preventDefault();$("rvWrong").click()}
     else if(e.key==="2"&&$("rvRight")){e.preventDefault();$("rvRight").click()}
   }
+});
+
+/* ---------- another open copy changed the data: take its version, keep what this copy is still working on ---------- */
+addEventListener("storage",e=>{
+  if(e.key!=="hwh.history"&&e.key!=="hwh.notebook")return;
+  let inc;try{inc=JSON.parse(e.newValue||"[]")}catch{return}
+  const isH=e.key==="hwh.history";const cleanF=isH?x=>cleanProblem(x,false):cleanMistake;
+  const local=isH?S.history:S.notebook;const byId=new Map(local.map(x=>[x.id,x]));
+  const busy=id=>isH&&[...running.keys()].some(k=>k.split(":")[0]===id);
+  const seen=new Set();const out=[];
+  for(const raw of _arr(inc)){const c=cleanF(raw);if(!c||seen.has(c.id))continue;seen.add(c.id);const o=byId.get(c.id);
+    if(!o){out.push(c);continue}
+    if(!busy(o.id)){const keep={_g:o._g,_open:o._open};for(const k of Object.keys(o))delete o[k];Object.assign(o,c);if(keep._g)o._g=keep._g;if(isH)delete o._open;else o._open=keep._open}
+    out.push(o)}
+  for(const o of local)if(!seen.has(o.id)&&busy(o.id))out.unshift(o);
+  if(isH)S.history=out;else S.notebook=out;
+  const ae=document.activeElement;const typing=ae&&$("view").contains(ae)&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
+  if(view.name==="problem"&&!cur()){go({name:"compose"});return}
+  if(view.name==="compose"||view.name==="review"||typing||openDlg)renderSide();
+  else{const y=$("scroll").scrollTop;render();$("scroll").scrollTop=y}
 });
 
 /* ---------- desktop / startup ---------- */

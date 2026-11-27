@@ -7,7 +7,7 @@
 "Shift time to plan a meeting":"拖动时间来安排会议",
 "Drag to see what time it will be everywhere. Good for picking a meeting slot.":"拖动查看各地届时的时间，方便挑选会议时段。",
 "Remove":"移除",
-"Thinking…":"思考中…","No answer.":"没有答案。",
+"Thinking…":"思考中…","No answer.":"没有答案。","Stop":"停止","Stopped.":"已停止。",
 "Claude is busy or you hit your usage limit. Try later.":"Claude 正忙，或你已达到用量上限，请稍后再试。",
 "Claude isn't allowed for this app.":"此应用未获准使用 Claude。",
 "Claude declined this one.":"Claude 拒绝了这个问题。",

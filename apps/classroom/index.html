@@ -298,7 +298,7 @@ body.app .pbar .sp{app-region:drag;-webkit-app-region:drag}
 .fcard .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--s-panel);border:2px solid var(--s-line);border-radius:22px;display:flex;align-items:center;justify-content:center;padding:4vh 4vw;text-align:center;font-weight:750;font-size:clamp(28px,5.4vw,88px);line-height:1.15;overflow-wrap:anywhere;overflow:auto}
 .fcard .face.back{transform:rotateY(180deg);font-size:clamp(20px,3.2vw,52px);font-weight:600}
 .fcard .side{position:absolute;top:14px;left:18px;font-size:13px;color:var(--s-muted);font-weight:600}
-.fstat{display:flex;gap:10px;margin-top:14px;align-items:center;font-size:15px;color:var(--s-muted)}
+.fstat{display:flex;gap:10px;margin-top:14px;align-items:center;font-size:15px;color:var(--s-muted);position:relative;z-index:2}
 /* matching */
 .match{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,3vw,60px);width:min(1400px,100%)}
 .match .col{display:flex;flex-direction:column;gap:clamp(6px,1.2vh,14px)}
@@ -526,12 +526,14 @@ function blankSet(o={}){
   return normSet(Object.assign({id:uid(),title:T("Untitled activity","未命名活动"),created:Date.now(),updated:Date.now(),seed:(Math.random()*1e9)|0},o));
 }
 const str=v=>v==null?"":String(v);
+const fin=v=>{v=+v;return Number.isFinite(v)?v:0};
+const normClass=c=>({id:str(c.id).replace(/[^\w-]/g,"").slice(0,64)||uid(),name:str(c.name),students:(Array.isArray(c.students)?c.students:[]).map(str),teamCount:Math.max(0,Math.min(50,fin(c.teamCount)|0)),order:(Array.isArray(c.order)?c.order:[]).map(x=>typeof x==="number"?fin(x):str(x)),updated:fin(c.updated)||Date.now(),...(c.teams&&Array.isArray(c.teams)?{teams:c.teams.map(t=>Array.isArray(t)?t.map(x=>typeof x==="number"?fin(x):str(x)):[])}:{})});
 function normSet(s){
   s=s&&typeof s==="object"?s:{};
-  const o={id:str(s.id)||uid(),title:str(s.title).trim()||T("Untitled activity","未命名活动"),grade:str(s.grade),subject:str(s.subject),topic:str(s.topic),standards:str(s.standards),lang:str(s.lang),notes:str(s.notes),
-    created:+s.created||Date.now(),updated:+s.updated||Date.now(),seed:(+s.seed||((Math.random()*1e9)|0))>>>0,
+  const o={id:str(s.id).replace(/[^\w-]/g,"").slice(0,64)||uid(),title:str(s.title).trim()||T("Untitled activity","未命名活动"),grade:str(s.grade),subject:str(s.subject),topic:str(s.topic),standards:str(s.standards),lang:str(s.lang),notes:str(s.notes),
+    created:fin(s.created)||Date.now(),updated:fin(s.updated)||Date.now(),seed:(fin(s.seed)||((Math.random()*1e9)|0))>>>0,
     terms:[],questions:[],tf:[],cloze:[],groups:[],lesson:str(s.lesson),
-    passage:{title:"",text:"",questions:[],versions:[]},rubric:{title:"",levels:[],criteria:[]},opened:+s.opened||0};
+    passage:{title:"",text:"",questions:[],versions:[]},rubric:{title:"",levels:[],criteria:[]},opened:fin(s.opened)};
   for(const t of (Array.isArray(s.terms)?s.terms:[]))if(t&&(t.term||t.def))o.terms.push({term:str(t.term),def:str(t.def)});
   for(const q of (Array.isArray(s.questions)?s.questions:[])){if(!q)continue;let ch=(Array.isArray(q.choices)?q.choices:[]).map(str).slice(0,6);while(ch.length<2)ch.push("");o.questions.push({q:str(q.q),choices:ch,answer:clamp(+q.answer||0,0,ch.length-1),explain:str(q.explain)})}
   for(const t of (Array.isArray(s.tf)?s.tf:[]))if(t)o.tf.push({s:str(t.s),a:t.a===false||t.a==="false"||t.a==="False"?false:true});
@@ -544,15 +546,36 @@ function normSet(s){
   return o;
 }
 let sets=(LS.get("sets",[])||[]).map(normSet);
-let classes=LS.get("classes",[])||[];
+let classes=LS.get("classes",[])||[];classes=Array.isArray(classes)?classes.filter(c=>c&&typeof c==="object").map(normClass):[];
 let prefs=Object.assign({sort:"edited",stage:"dark",timer:20,autoTimer:true,teams:2,classId:"",tf:"",sound:true},LS.get("prefs",{})||{});
 try{localStorage.setItem("classroom.__t","1");localStorage.removeItem("classroom.__t")}catch{storageOK=false}
 const getSet=id=>sets.find(s=>s.id===id);
 let saveTimer=0;
-function saveSets(now){clearTimeout(saveTimer);const f=()=>LS.set("sets",sets);if(now)f();else saveTimer=setTimeout(f,250)}
-const saveClasses=()=>LS.set("classes",classes);
+/* several tabs can be open: merge with what's stored instead of overwriting another tab's sets */
+let lastSync=Date.now();const deletedIds=new Set();
+function mergeSets(keepCur){let st;try{st=JSON.parse(localStorage.getItem("classroom.sets"))}catch{return sets}if(!Array.isArray(st))return sets;
+  const stored=new Map();for(const raw of st)if(raw&&raw.id&&!deletedIds.has(String(raw.id)))stored.set(String(raw.id),raw);
+  const open=V&&V.name==="set"?V.id:null;const out=[];const seen=new Set();
+  for(const m of sets){const raw=stored.get(m.id);seen.add(m.id);
+    if(raw){out.push((keepCur&&m.id===open)||(+m.updated||0)>=(+raw.updated||0)?m:normSet(raw))}
+    else if((+m.updated||0)>=lastSync||(+m.created||0)>=lastSync||m.id===open)out.push(m)}
+  for(const [id,raw] of stored)if(!seen.has(id))out.push(normSet(raw));
+  return out}
+function persistSets(){sets=mergeSets(true);LS.set("sets",sets);lastSync=Date.now()}
+function saveSets(now){clearTimeout(saveTimer);const f=()=>persistSets();if(now)f();else saveTimer=setTimeout(f,250)}
+addEventListener("storage",e=>{if(e.key!=="classroom.sets")return;const before=sets.map(x=>x.id+":"+x.updated).join();sets=mergeSets(true);lastSync=Date.now();if(sets.map(x=>x.id+":"+x.updated).join()!==before){renderSide();if(V.name!=="set")renderView()}});
+/* class lists merge like sets: per-class update time, so two tabs never drop each other's edits */
+let lastClsSync=Date.now();const deletedCls=new Set();
+const stampCls=c=>{if(c)c.updated=Date.now()};
+function mergeClasses(){let st;try{st=JSON.parse(localStorage.getItem("classroom.classes"))}catch{return classes}if(!Array.isArray(st))return classes;
+  const stored=new Map();for(const c of st)if(c&&c.id&&!deletedCls.has(String(c.id)))stored.set(String(c.id),c);
+  const out=[];const seen=new Set();
+  for(const m of classes){const raw=stored.get(m.id);seen.add(m.id);if(raw)out.push((+m.updated||0)>=(+raw.updated||0)?m:raw);else if((+m.updated||0)>=lastClsSync)out.push(m)}
+  for(const [id,raw] of stored)if(!seen.has(id))out.push(raw);return out}
+const saveClasses=()=>{classes=mergeClasses();LS.set("classes",classes);lastClsSync=Date.now()};
+addEventListener("storage",e=>{if(e.key!=="classroom.classes")return;classes=mergeClasses();lastClsSync=Date.now();renderSide();const a=document.activeElement;if(V.name==="classes"&&!(a&&a.dataset&&a.dataset.cbind))renderView()});
 const savePrefs=()=>LS.set("prefs",prefs);
-addEventListener("beforeunload",()=>{clearTimeout(saveTimer);LS.set("sets",sets)});
+addEventListener("beforeunload",()=>{clearTimeout(saveTimer);persistSets()});
 
 /* ---------- undo ---------- */
 const HIST={};
@@ -566,7 +589,7 @@ function touch(set){set.updated=Date.now();saveSets();updateUndoBtns()}
 function undoRedo(redo){
   const s=cur();if(!s)return;const H=hist(s.id);const from=redo?H.r:H.u,to=redo?H.u:H.r;
   if(!from.length){toast(redo?T("Nothing to redo","没有可重做的操作"):T("Nothing to undo","没有可撤销的操作"));return}
-  to.push(JSON.stringify(s));const prev=normSet(JSON.parse(from.pop()));
+  to.push(JSON.stringify(s));const prev=normSet(JSON.parse(from.pop()));prev.updated=Date.now();
   const i=sets.findIndex(x=>x.id===s.id);sets[i]=prev;H.key="";saveSets();
   const f=document.activeElement?.dataset?.bind;render();
   if(f){const el=document.querySelector(`[data-bind="${CSS.escape(f)}"]`);if(el){el.focus();}}
@@ -843,7 +866,7 @@ document.addEventListener("input",e=>{
   const el=e.target;
   if(el.dataset?.bind){onBind(el);return}
   if(el.dataset?.cbind){const [i,k]=el.dataset.cbind.split(".");const c=classes[+i];if(!c)return;
-    if(k==="students"){c.students=el.value.split("\n").map(x=>x.trim()).filter(Boolean)}else c[k]=el.value;saveClasses();
+    if(k==="students"){c.students=el.value.split("\n").map(x=>x.trim()).filter(Boolean)}else c[k]=el.value;stampCls(c);saveClasses();
     clearTimeout(el._t);el._t=setTimeout(()=>{if(k==="students"){const card=el.closest(".cls");const hint=card?.querySelector(".hint");if(hint)hint.textContent=plural(studentsOf(c).length,"student","students","名学生");const tw=card?.querySelector(".teams");if(tw||c.teamCount){const nt=teamsOf(c);const html=`<div class="teams">${nt.map(t=>`<div class="teamcard"><b class="uc">${esc(t.name)}</b><span class="uc">${esc(t.members.join(", "))||"—"}</span></div>`).join("")}</div>`;if(tw)tw.outerHTML=html;else if(nt.length)card.insertAdjacentHTML("beforeend",html)}}renderSide()},300);return}
   if(el.id==="search")renderSide();
 });
@@ -855,7 +878,7 @@ document.addEventListener("change",e=>{
   if(el.id==="lenSel"){prefs.len=el.value;savePrefs()}
   if(el.id==="genreSel"){prefs.genre=el.value;savePrefs()}
   if(el.id==="lvlSel"){prefs.lv=+el.value;savePrefs()}
-  if(el.dataset?.actChange==="teamCount"){const c=classes[+el.dataset.i];c.teamCount=+el.value;saveClasses();renderView()}
+  if(el.dataset?.actChange==="teamCount"){const c=classes[+el.dataset.i];c.teamCount=+el.value;stampCls(c);saveClasses();renderView()}
 });
 /* Enter moves through the word list like a spreadsheet */
 document.addEventListener("keydown",e=>{
@@ -914,9 +937,9 @@ const ACT={
   delCrit(b){const s=cur();snap(s);s.rubric.criteria.splice(+b.dataset.i,1);touch(s);renderView()},
   addLevel(){const s=cur();snap(s);s.rubric.levels.push(T("Level","等级")+" "+(s.rubric.levels.length+1));s.rubric.criteria.forEach(c=>c.descriptors.push(""));touch(s);renderView()},
   delLevel(){const s=cur();if(s.rubric.levels.length<2)return;snap(s);s.rubric.levels.pop();s.rubric.criteria.forEach(c=>c.descriptors.pop());touch(s);renderView()},
-  newClass(){classes.push({id:uid(),name:T("Class","班级")+" "+(classes.length+1),students:[],teamCount:2,order:[]});saveClasses();if(V.name!=="classes")go("classes");else render();setTimeout(()=>{const t=document.querySelectorAll('[data-cbind$=".students"]');t[t.length-1]?.focus()},30)},
-  delClass(b){const i=+b.dataset.i;const c=classes.splice(i,1)[0];saveClasses();render();toast(T("Class deleted","已删除班级"),{undo:()=>{classes.splice(i,0,c);saveClasses();render()}})},
-  shuffleTeams(b){const c=classes[+b.dataset.i];c.order=shuffle(studentsOf(c));saveClasses();renderView();toast(T("Teams shuffled","已重新分队"))},
+  newClass(){classes.push({id:uid(),name:T("Class","班级")+" "+(classes.length+1),students:[],teamCount:2,order:[],updated:Date.now()});saveClasses();if(V.name!=="classes")go("classes");else render();setTimeout(()=>{const t=document.querySelectorAll('[data-cbind$=".students"]');t[t.length-1]?.focus()},30)},
+  delClass(b){const i=+b.dataset.i;const c=classes.splice(i,1)[0];deletedCls.add(c.id);saveClasses();render();toast(T("Class deleted","已删除班级"),{undo:()=>{deletedCls.delete(c.id);stampCls(c);classes.splice(i,0,c);saveClasses();render()}})},
+  shuffleTeams(b){const c=classes[+b.dataset.i];c.order=shuffle(studentsOf(c));stampCls(c);saveClasses();renderView();toast(T("Teams shuffled","已重新分队"))},
   stopAI(b){AI.busy[b.dataset.k]?.abort()},
   aiMore(b){aiMore(b.dataset.kind)},aiLesson(){aiLesson()},aiReading(){aiReading()},aiDiff(){aiDiff()},aiRubric(){aiRubric()},
 };
@@ -928,7 +951,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches?.('.card[data-act],.tpl[data-act]')&&e.target===document.activeElement){e.preventDefault();e.target.click()}});
 function dupSet(s){const c=normSet(JSON.parse(JSON.stringify(s)));c.id=uid();c.title=s.title+" "+T("(copy)","（副本）");c.created=c.updated=Date.now();c.opened=0;sets.unshift(c);saveSets(true);render();toast(T("Duplicated","已复制"))}
-function delSet(s){const i=sets.indexOf(s);sets.splice(i,1);saveSets(true);if(V.id===s.id)go("home");else render();toast(T("Deleted “","已删除“")+s.title+T("”","”"),{undo:()=>{sets.splice(i,0,s);saveSets(true);render()}})}
+function delSet(s){const i=sets.indexOf(s);sets.splice(i,1);deletedIds.add(s.id);saveSets(true);if(V.id===s.id)go("home");else render();toast(T("Deleted “","已删除“")+s.title+T("”","”"),{undo:()=>{deletedIds.delete(s.id);s.updated=Date.now();sets.splice(i,0,s);saveSets(true);render()}})}
 const safeName=s=>(String(s||"activity").replace(/[\\/:*?"<>|\n\r\t]+/g," ").trim().slice(0,80)||"activity");
 
 /* ---------- saving files ---------- */
@@ -945,7 +968,7 @@ function restoreFrom(obj){
   const inSets=(Array.isArray(obj?.sets)?obj.sets:Array.isArray(obj)?obj:[]).map(normSet);const inCls=Array.isArray(obj?.classes)?obj.classes:[];
   if(!inSets.length&&!inCls.length){toast(T("That file has no activity sets.","这个文件里没有活动。"));return}
   let added=0;for(const s of inSets){const ex=getSet(s.id);if(ex){if(s.updated>ex.updated){sets[sets.indexOf(ex)]=s;added++}}else{sets.push(s);added++}}
-  for(const c of inCls){if(c&&!classes.find(x=>x.id===c.id))classes.push({id:c.id||uid(),name:str(c.name),students:(c.students||[]).map(str),teamCount:+c.teamCount||0,order:c.order||[]})}
+  for(const c0 of inCls){if(!c0||typeof c0!=="object")continue;const c=normClass(c0);if(!classes.find(x=>x.id===c.id))classes.push({...c,updated:Date.now()})}
   saveSets(true);saveClasses();render();toast(T(`Restored ${added} activity sets`,`已恢复 ${added} 个活动`));
 }
 
@@ -1199,14 +1222,14 @@ async function aiLesson(s=cur(),auto){
   if(cur()===s&&V.tab==="lesson")renderView();
   const vocab=s.terms.slice(0,30).map(t=>t.term).join(", ");
   const prompt=`Write a ready-to-teach ${dur}-minute lesson plan in ${teacherLang()}, in Markdown.\n${ctxLine(s)}\nActivity set title: ${s.title}\n${vocab?"Key vocabulary: "+vocab+"\n":""}${s.passage.title?"Reading passage in this set: "+s.passage.title+"\n":""}The teacher will project these games from the same set: quiz show with teams, matching, flash cards, anagram, word search, crossword, group sort, true/false, fill in the blank, and a wheel of names for picking students. Use two or three of them where they fit.\nSections (use ## headings): Objectives (measurable, "Students will be able to…"), Standards, Materials, Vocabulary, Warm-up (with minutes), Direct instruction (with minutes), Guided practice (with minutes), Independent practice (with minutes), Assessment / exit ticket (include 3 exit-ticket questions with answers), Differentiation (support, extension, English learners), Closure. Put the minutes for each part in its heading, e.g. "## Warm-up (5 min)", adding up to ${dur} minutes. Be concrete: say what the teacher says and does. No preamble.`;
-  const before=s.lesson;let got="";
+  const before=s.lesson;let got="",cutShort=false;
   try{
     const r=await sample(prompt,{signal:ctl.signal,modelTier:"default",cache:false,onText:({text})=>{got=text;const el=$("lessonDoc");if(el&&cur()===s)el.innerHTML=md(text)}});
-    got=r.text;if(r.truncated)setStatus("lesson",T("The plan was cut short. Ask for a shorter lesson.","教案被截断了，可以改成短一点的课时。"));
+    got=r.text;cutShort=!!r.truncated;
   }catch(e){got=e?.code==="cancelled"&&before?"":(e?.text||"");if(e?.code==="cancelled"&&before)setStatus("lesson",T("Stopped. Your previous plan is unchanged.","已停止，原教案没有改动。"));if(e?.code!=="cancelled"){delete AI.busy.lesson;if(cur()===s)renderView();setStatus("lesson",errText(e),true);if(e?.code==="not_granted")hideAI();return}}
   delete AI.busy.lesson;
   if(got.trim()&&getSet(s.id)===s){snap(s);s.lesson=got.trim();touch(s);if(before)toast(T("Lesson plan rewritten","教案已重写"),{undo:()=>{if(cur()===s)undoRedo(false)}})}
-  if(cur()===s)renderView();
+  if(cur()===s){renderView();if(cutShort)setStatus("lesson",T("The plan was cut short. Ask for a shorter lesson.","教案被截断了，可以改成短一点的课时。"),true)}
 }
 
 const LENW={short:200,medium:400,long:700};
@@ -1819,6 +1842,7 @@ $("present").addEventListener("change",e=>{
 function removePicked(){if(P.picked==null)return;P.out.add(P.pickedK);P.picked=null;rWheel()}
 function presenterKey(e){
   if(!P)return false;
+  if(e.isComposing||e.keyCode===229)return true;
   const tgt=e.target;const inSel=tgt&&tgt.tagName==="SELECT";const inCw=tgt&&tgt.id==="cwIn";
   if(e.metaKey||e.ctrlKey||e.altKey){if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();return true}return false}
   if(e.key==="Escape"){e.preventDefault();const st=$("present").querySelector(".psettings");if(st){st.remove();return true}closePresenter();return true}
@@ -2117,7 +2141,7 @@ function openHelp(){
 
 /* ---------- global keys ---------- */
 document.addEventListener("keydown",e=>{
-  if(e.defaultPrevented)return;
+  if(e.defaultPrevented||e.isComposing||e.keyCode===229)return;
   if(!$("present").hidden){if(presenterKey(e))return;return}
   const mod=e.metaKey||e.ctrlKey;const k=e.key.toLowerCase();
   if(menuEl&&e.key==="Escape")return;

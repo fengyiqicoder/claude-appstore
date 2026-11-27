@@ -53,9 +53,9 @@ textarea,#out{flex:1;width:100%;border:0;resize:none;background:transparent;colo
   </div>
 </div>
 <main>
-  <div class="box"><textarea id="in" placeholder="Paste or type. Pasting translates right away; ⌘↩ to run." aria-label="Text"></textarea>
+  <div class="box"><textarea id="in" dir="auto" placeholder="Paste or type. Pasting translates right away; ⌘↩ to run." aria-label="Text"></textarea>
     <div class="bar"><div class="tones" id="tones" hidden><button data-tone="natural" class="on">Natural</button><button data-tone="casual">Casual</button><button data-tone="formal">Formal</button></div><span class="st" id="det"></span><button class="btn pri" id="go">✦ Run</button></div></div>
-  <div class="box"><div id="out" aria-live="polite" data-empty="Claude's version appears here."></div>
+  <div class="box"><div id="out" dir="auto" aria-live="polite" data-empty="Claude's version appears here."></div>
     <div class="bar"><span class="st" id="st"></span><button class="btn" id="speak" hidden>Listen</button><button class="btn" id="copy">Copy</button></div></div>
 </main>
 <div class="foot"><span id="hint">Needs Claude: open it in the Claude app.</span><span id="act"></span></div>
@@ -70,7 +70,7 @@ textarea,#out{flex:1;width:100%;border:0;resize:none;background:transparent;colo
   try{const o=localStorage.getItem("appstore.lang");if(o==="en")ZH=false;else if(o==="zh")ZH=true}catch{}
   window.__ZH=ZH; window.__t=(en,zh)=>ZH?zh:en;
   if(!ZH)return;
-  const DICT={"AI Translator": "AI 翻译", "Your language": "你的语言", "Swap languages": "互换语言", "Other language": "另一种语言", "Translate": "翻译", "Polish": "润色", "Explain": "讲解", "Paste or type. Pasting translates right away; ⌘↩ to run.": "粘贴或输入文字。粘贴后立即翻译；⌘↩ 运行。", "Text": "文本", "Natural": "自然", "Casual": "随意", "Formal": "正式", "✦ Run": "✦ 运行", "Stop": "停止", "Listen": "朗读", "Playing…": "播放中…", "Copy": "复制", "Copied": "已复制", "Selected": "已选中", "Thinking…": "思考中…", "Writing…": "输出中…", "Stopped": "已停止", "Cut short. Try a shorter piece.": "内容被截断，换短一点的试试。", "Translated by Claude": "由 Claude 翻译", "Polished by Claude": "由 Claude 润色", "Explained by Claude": "由 Claude 讲解", "Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined this text.": "Claude 拒绝处理这段文字。", "Sign in to Claude again.": "请重新登录 Claude。", "That's too long. Try a shorter piece.": "内容太长，换短一点的试试。", "Something went wrong. Try again.": "出了点问题，请重试。", "Needs Claude: open it in the Claude app.": "需要 Claude：请在 Claude 应用中打开。", "Float on top": "置顶悬浮", "Normal window": "普通窗口", "Option+Shift+T brings AI Translator up anywhere.": "在任何地方按 Option+Shift+T 唤出 AI 翻译。", "Float it on top to get the Option+Shift+T shortcut.": "开启置顶悬浮后可用 Option+Shift+T 快捷键。", "Open AI Translator in the Claude app to translate with Claude.": "在 Claude 应用中打开 AI 翻译，即可用 Claude 翻译。", "Install from the Claude desktop app to float it with a shortcut.": "从 Claude 桌面应用安装后，可置顶悬浮并用快捷键唤出。", "Install as app": "安装为应用", "Install it to float on top with a shortcut.": "安装后可置顶悬浮并用快捷键唤出。", "Installed. Open AI Translator from Applications or Start.": "已安装。请从“应用程序”或“开始”菜单打开 AI 翻译。"};
+  const DICT={"AI Translator": "AI 翻译", "Your language": "你的语言", "Swap languages": "互换语言", "Other language": "另一种语言", "Translate": "翻译", "Polish": "润色", "Explain": "讲解", "Paste or type. Pasting translates right away; ⌘↩ to run.": "粘贴或输入文字。粘贴后立即翻译；⌘↩ 运行。", "Text": "文本", "Natural": "自然", "Casual": "随意", "Formal": "正式", "✦ Run": "✦ 运行", "Stop": "停止", "Listen": "朗读", "Playing…": "播放中…", "Copy": "复制", "Copied": "已复制", "Selected": "已选中", "Thinking…": "思考中…", "Writing…": "输出中…", "Stopped": "已停止", "Cut short. Try a shorter piece.": "内容被截断，换短一点的试试。", "Translated by Claude": "由 Claude 翻译", "Polished by Claude": "由 Claude 润色", "Explained by Claude": "由 Claude 讲解", "Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限，请稍后再试。", "Claude isn't allowed for this app.": "此应用未获准使用 Claude。", "Claude isn't available on this account.": "此账号无法使用 Claude。", "Claude declined this text.": "Claude 拒绝处理这段文字。", "Sign in to Claude again.": "请重新登录 Claude。", "That's too long. Try a shorter piece.": "内容太长，换短一点的试试。", "Something went wrong. Try again.": "出了点问题，请重试。", "Needs Claude: open it in the Claude app.": "需要 Claude：请在 Claude 应用中打开。", "Float on top": "置顶悬浮", "Normal window": "普通窗口", "Option+Shift+T brings AI Translator up anywhere.": "在任何地方按 Option+Shift+T 唤出 AI 翻译。", "Float it on top to get the Option+Shift+T shortcut.": "开启置顶悬浮后可用 Option+Shift+T 快捷键。", "Open AI Translator in the Claude app to translate with Claude.": "在 Claude 应用中打开 AI 翻译，即可用 Claude 翻译。", "Install from the Claude desktop app to float it with a shortcut.": "从 Claude 桌面应用安装后，可置顶悬浮并用快捷键唤出。", "Install as app": "安装为应用", "Install it to float on top with a shortcut.": "安装后可置顶悬浮并用快捷键唤出。", "Installed. Open AI Translator from Applications or Start.": "已安装。请从“应用程序”或“开始”菜单打开 AI 翻译。", "Only the first 20,000 characters were sent. Split the rest into another run.": "只发送了前 20,000 个字符，剩下的请分开再运行一次。"};
   const PATTERNS=([["(\\d+) characters", "$1 个字符"]]).map(([re,rep])=>[new RegExp("^"+re+"$"),rep]);
   const SKIP='script,style,textarea,input,code,pre,[contenteditable]:not([contenteditable="false"]),[data-no-i18n]'+(",#out");
   const ATTRS=["placeholder","title","aria-label","data-tip","data-ph","alt"];
@@ -127,7 +127,8 @@ document.querySelectorAll("#tones button").forEach(b=>b.onclick=()=>{S.tone=b.da
 document.querySelectorAll("#tones button").forEach(x=>x.classList.toggle("on",x.dataset.tone===S.tone));
 setMode(S.mode);
 
-let sample=null, tts=null, ctl=null;
+let sample=null, tts=null, ctl=null, runAt=0, speaking=false;
+const MAXIN=20000;
 function prompt(text){
   const pair=`The person's two languages are ${S.a} and ${S.b}.`;
   if(S.mode==="tr") return `${pair} Translate the text below. If it is written in ${S.a}, translate it into ${S.b}; otherwise translate it into ${S.a}. Keep meaning, tone, formatting and line breaks. Output only the translation, nothing else.\n\nText:\n${text}`;
@@ -137,25 +138,31 @@ function prompt(text){
 const ERR={rate_limited:"Claude is busy or you hit your usage limit. Try again later.",not_granted:"Claude isn't allowed for this app.",sampling_disabled:"Claude isn't available on this account.",refused:"Claude declined this text.",session_expired:"Sign in to Claude again.",prompt_too_large:"That's too long. Try a shorter piece."};
 async function run(){
   const text=$("in").value.trim(); if(!text){$("in").focus();$("st").textContent=(window.__t?window.__t("Type or paste some text first.","先输入或粘贴要处理的文字。"):"Type or paste some text first.");return;} if(!sample) return;
-  ctl?.abort(); ctl=new AbortController(); const my=ctl;
+  ctl?.abort(); ctl=new AbortController(); const my=ctl; runAt=Date.now();
+  const cut=text.length>MAXIN;
   $("out").textContent=""; $("st").textContent="Thinking…"; $("go").textContent="Stop";
   try{
-    const {text:out,truncated}=await sample(prompt(text.slice(0,20000)),{signal:my.signal,modelTier:S.mode==="explain"?"default":"quick",onText:({text})=>{if(ctl===my){$("out").textContent=text;$("st").textContent="Writing…";}}});
+    const {text:out,truncated}=await sample(prompt(text.slice(0,MAXIN)),{signal:my.signal,modelTier:S.mode==="explain"?"default":"quick",onText:({text})=>{if(ctl===my){$("out").textContent=text;$("st").textContent="Writing…";}}});
     if(ctl!==my) return;
-    $("out").textContent=out; $("st").textContent=truncated?"Cut short. Try a shorter piece.":`${S.mode==="tr"?"Translated":S.mode==="polish"?"Polished":"Explained"} by Claude`;
+    $("out").textContent=out; saveText(); $("st").textContent=truncated?"Cut short. Try a shorter piece.":cut?"Only the first 20,000 characters were sent. Split the rest into another run.":`${S.mode==="tr"?"Translated":S.mode==="polish"?"Polished":"Explained"} by Claude`;
   }catch(e){
     if(ctl!==my) return;
-    $("out").textContent=e?.text||"";
+    $("out").textContent=e?.code==="refused"?"":(e?.text||""); saveText();
     if(e?.code!=="cancelled") $("st").textContent=ERR[e?.code]||"Something went wrong. Try again.";
     else $("st").textContent="Stopped";
   }finally{ if(ctl===my){$("go").textContent="✦ Run";ctl=null;} }
 }
-$("go").onclick=()=>{ if(ctl){ctl.abort();} else run(); };
-$("in").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();run();}});
+$("go").onclick=()=>{ if(ctl){ if(Date.now()-runAt>400) ctl.abort(); } else run(); };
+$("in").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();if(e.isComposing||e.keyCode===229)return;run();}});
 $("in").addEventListener("paste",()=>setTimeout(run,30));
-$("in").addEventListener("input",()=>{const n=$("in").value.trim().length;$("det").textContent=n?`${n} characters`:"";});
+function countText(){const n=$("in").value.trim().length;$("det").textContent=n?`${n} characters`:"";}
+let saveT=0;
+function saveText(){clearTimeout(saveT);saveT=setTimeout(()=>{store.set("text",$("in").value.slice(0,200000));store.set("out",$("out").textContent.slice(0,200000));},250);}
+$("in").addEventListener("input",()=>{countText();saveText();});
+$("in").value=store.get("text","");$("out").textContent=store.get("out","");countText();
+addEventListener("pagehide",()=>{clearTimeout(saveT);store.set("text",$("in").value.slice(0,200000));store.set("out",$("out").textContent.slice(0,200000));});
 $("copy").onclick=async()=>{const t=$("out").textContent;if(!t){$("st").textContent=(window.__t?window.__t("Nothing to copy yet.","还没有可复制的结果。"):"Nothing to copy yet.");return;}try{await navigator.clipboard.writeText(t);$("copy").textContent="Copied";}catch{const r=document.createRange();r.selectNodeContents($("out"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("copy").textContent="Selected";}setTimeout(()=>$("copy").textContent="Copy",1200);};
-$("speak").onclick=async()=>{const t=$("out").textContent.trim();if(!t||!tts)return;$("speak").textContent="Playing…";try{await tts.speak(t.slice(0,2000));}catch(e){if(e?.code==="not_granted")$("speak").hidden=true;}$("speak").textContent="Listen";};
+$("speak").onclick=async()=>{if(speaking){try{tts.stop?.()}catch{}return;}const t=$("out").textContent.trim();if(!t||!tts)return;speaking=true;$("speak").textContent="Stop";try{await tts.speak(t.slice(0,2000));}catch(e){if(e?.code==="not_granted")$("speak").hidden=true;}speaking=false;$("speak").textContent="Listen";};
 
 // desktop
 let desktop=null, perms={};

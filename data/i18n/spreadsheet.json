@@ -931,7 +931,9 @@
 "Undid typing": "已撤销：输入",
 "Redid typing": "已恢复：输入",
 "Undid style import": "已撤销：导入样式",
-"Redid style import": "已恢复：导入样式"
+"Redid style import": "已恢复：导入样式",
+"This workbook was also changed in another window. Saving here keeps this window's version.": "这个工作簿也在另一个窗口里改过。在这里保存会保留本窗口的版本。",
+"Updated from another window": "已同步另一个窗口的修改"
 },
 "patterns": [
 [
@@ -1729,6 +1731,10 @@
 [
 "Create this table on the active sheet, starting at A1, with a bold header row and formulas wherever values can be calculated: (.*)",
 "在当前工作表从 A1 开始建这张表，标题行加粗，能计算的值都用公式：$1"
+],
+[
+"There's no empty cell under the selection for the (\\w+)\\. Select the numbers plus one empty row below them, or click an empty cell under a column of numbers\\.",
+"选区下方没有空单元格放 $1。请连同数字下面的一个空行一起选中，或点一下一列数字下方的空单元格。"
 ]
 ],
 "skip": "#tabs .tab,#recent .nm,.chart .ch span,.slicer .sh span,.slicer .sb,#tip,#ac,#ifL,.msg.user,.msg.ai>div:not([class]),.fcard .val,.fcard .f,#cleanOut td,#fillOutBox td,#fillOutBox th+th,#nmList b"

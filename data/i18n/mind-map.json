@@ -411,7 +411,8 @@
   "heart": "爱心",
   "money": "钱",
   "time": "时间",
-  "people": "人物"
+  "people": "人物",
+  "This link can't be opened. Links must start with https://, http:// or mailto:.": "这个链接打不开。链接需要以 https://、http:// 或 mailto: 开头。"
  },
  "patterns": [
   [
@@ -565,6 +566,14 @@
   [
    "Couldn't import (.+?): couldn't be read",
    "无法导入 $1：无法读取"
+  ],
+  [
+   "Couldn't import (.+?): The file is damaged or isn't a Mind Map backup\\.",
+   "无法导入 $1：文件已损坏，或者不是导图备份文件。"
+  ],
+  [
+   "Couldn't import (.+?): The file is damaged or isn't a real \\.xmind or \\.zip file\\.",
+   "无法导入 $1：文件已损坏，或者不是真正的 .xmind / .zip 文件。"
   ],
   [
    "Couldn't import (.+)",

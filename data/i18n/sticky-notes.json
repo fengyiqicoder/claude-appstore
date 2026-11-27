@@ -1,22 +1,53 @@
-{"dict":{
-"Sticky Notes":"便签",
-"Ask Claude to rework this note":"让 Claude 改写这张便签",
-"Turn into a checklist":"转成清单","Clean up the writing":"润色文字","Summarize":"总结","Suggest next steps":"建议下一步","Translate":"翻译",
-"Copy":"复制","Copied":"已复制","Selected":"已选中","Copy this note":"复制这张便签",
-"Hide":"隐藏","Hide (Option+Shift+J brings it back)":"隐藏（按 Option+Shift+J 唤回）",
-"Jot something down…":"随手记点什么…","Note":"便签",
-"Saved on this computer":"已保存在本机",
-"Write something first.":"先写点内容。","Thinking…":"思考中…","Done":"完成","Undo":"撤销",
-"Claude is busy or you hit your usage limit. Try again later.":"Claude 正忙，或你已达到用量上限，请稍后再试。",
-"Claude isn't allowed for this app.":"此应用未获准使用 Claude。",
-"Claude isn't available on this account.":"此账号无法使用 Claude。",
-"Claude declined this note.":"Claude 拒绝处理这张便签。",
-"Sign in to Claude again.":"请重新登录 Claude。",
-"Something went wrong. Try again.":"出了点问题，请重试。",
-"Float on top":"置顶悬浮","Normal window":"普通窗口",
-"Keep the note above other windows and summon it with Option+Shift+J":"让便签浮在其他窗口之上，并可用 Option+Shift+J 唤出",
-"Install from Claude Desktop to float it":"从 Claude 桌面版安装后可置顶悬浮",
-"Install as app":"安装为应用","Installed":"已安装"
+{
+"dict": {
+"Sticky Notes": "便签",
+"Ask Claude to rework this note": "让 Claude 改写这张便签",
+"Turn into a checklist": "转成清单",
+"Clean up the writing": "润色文字",
+"Summarize": "总结",
+"Suggest next steps": "建议下一步",
+"Translate": "翻译",
+"Copy": "复制",
+"Copied": "已复制",
+"Selected": "已选中",
+"Copy this note": "复制这张便签",
+"Hide": "隐藏",
+"Hide (Option+Shift+J brings it back)": "隐藏（按 Option+Shift+J 唤回）",
+"Jot something down…": "随手记点什么…",
+"Note": "便签",
+"Saved on this computer": "已保存在本机",
+"Write something first.": "先写点内容。",
+"Thinking…": "思考中…",
+"Done": "完成",
+"Undo": "撤销",
+"Claude is busy or you hit your usage limit. Try again later.": "Claude 正忙，或你已达到用量上限，请稍后再试。",
+"Claude isn't allowed for this app.": "此应用未获准使用 Claude。",
+"Claude isn't available on this account.": "此账号无法使用 Claude。",
+"Claude declined this note.": "Claude 拒绝处理这张便签。",
+"Sign in to Claude again.": "请重新登录 Claude。",
+"Something went wrong. Try again.": "出了点问题，请重试。",
+"Float on top": "置顶悬浮",
+"Normal window": "普通窗口",
+"Keep the note above other windows and summon it with Option+Shift+J": "让便签浮在其他窗口之上，并可用 Option+Shift+J 唤出",
+"Install from Claude Desktop to float it": "从 Claude 桌面版安装后可置顶悬浮",
+"Install as app": "安装为应用",
+"Installed": "已安装",
+"Stop": "停止",
+"Stopped. Your note wasn't changed.": "已停止，便签没有改动。",
+"Claude's answer was cut off, so your note wasn't changed. Try a shorter note.": "Claude 的回答被截断了，便签没有改动。可以换一张短一点的便签再试。",
+"Claude returned nothing. Your note wasn't changed.": "Claude 没有返回内容，便签没有改动。",
+"This note is too long for Claude.": "这张便签太长，Claude 处理不了。",
+"This note is too long for Claude to rewrite. Keep it under 12,000 characters.": "这张便签太长，Claude 改写不了。请控制在 12,000 字以内。"
 },
-"patterns":[["(\\d+) words?","$1 个词"],["Note (\\d+)","便签 $1"]],
-"skip":""}
+"patterns": [
+[
+"(\\d+) words?",
+"$1 个字"
+],
+[
+"Note (\\d+)",
+"便签 $1"
+]
+],
+"skip": ""
+}
