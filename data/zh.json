@@ -246,6 +246,14 @@
       "subtitle": "AI 备课、课堂游戏、练习纸",
       "replaces": "Wordwall, Twinkl, MagicSchool",
       "desc": "告诉 Claude 年级、学科和主题，它会写好词汇、题目、分层阅读文章、教案和评分量表。同一份内容可以变成投影知识竞赛（分队计分）、连连看、找单词、填字游戏、随机点名转盘等，也能导出带答案的 PDF 和 Word 练习纸。"
+    },
+    "leaf-blower": {
+      "subtitle": "孩子出主意做的小游戏",
+      "desc": "作者让孩子直接对着 Claude 说想玩什么游戏，做出来的吹落叶小游戏。浏览器里能玩，装成 app 更好玩。"
+    },
+    "family-recipes": {
+      "subtitle": "手写菜谱拍照整理",
+      "desc": "给手写菜谱拍张照，Claude 把它整理成统一、清楚的格式保存下来。作者用它来留住家里的菜谱。"
     }
   },
   "official": {

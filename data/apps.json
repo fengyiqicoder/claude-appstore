@@ -794,6 +794,30 @@
    "ai": true,
    "replaces": "Wordwall, Twinkl, MagicSchool",
    "batch": 3
+  },
+  {
+   "id": "leaf-blower",
+   "name": "Leaf Blower",
+   "subtitle": "A game designed by kids",
+   "category": "play",
+   "desc": "A small leaf blower game built from ideas the author's kids dictated straight into Claude. Plays in the browser, and works best installed as an app.",
+   "author": "felixrieseberg",
+   "post": "https://x.com/felixrieseberg/status/2126008112033534392",
+   "artifact": "https://claude.ai/artifact/W45hzJe83bsMDFq8iJCp3y",
+   "lang": "",
+   "added": "2026-11-27"
+  },
+  {
+   "id": "family-recipes",
+   "name": "Family Recipes",
+   "subtitle": "Photos of recipes, neatly formatted",
+   "category": "life",
+   "desc": "Snap a picture of a handwritten recipe card and Claude turns it into a clean, consistent recipe you can keep. Made to save a family's recipes.",
+   "author": "dfeinition",
+   "post": "https://x.com/dfeinition/status/2125992849468445090",
+   "artifact": "https://claude.ai/artifact/HJkFiAQzBBmLcoEj9tW6cu",
+   "lang": "",
+   "added": "2026-11-27"
   }
  ],
  "official": [
