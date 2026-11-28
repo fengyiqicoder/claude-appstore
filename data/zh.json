@@ -388,18 +388,6 @@
    "replaces": "Day One",
    "desc": "Day One 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
-  "alt-paste": {
-   "name": "Paste AI 替代",
-   "subtitle": "能搜索的剪贴板历史",
-   "replaces": "Paste",
-   "desc": "Paste 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
-  "alt-raycast": {
-   "name": "Raycast AI 替代",
-   "subtitle": "一键唤出 Claude 的启动器",
-   "replaces": "Raycast",
-   "desc": "Raycast 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
   "alt-otter": {
    "name": "Otter AI 替代",
    "subtitle": "把说的话变成会议纪要",

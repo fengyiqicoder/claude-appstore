@@ -106,8 +106,6 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **Things AI Alt** - Today, Upcoming and projects. Planned, not available yet.
 - **Trello AI Alt** - Boards, lists and cards. Planned, not available yet.
 - **Fantastical AI Alt** - A calendar that understands sentences. Planned, not available yet.
-- **Paste AI Alt** - Clipboard history you can search. Planned, not available yet.
-- **Raycast AI Alt** - A launcher with Claude one key away. Planned, not available yet.
 - **Otter AI Alt** - Meeting notes from your voice. Planned, not available yet.
 - **Sketch AI Alt** - Design screens and open .sketch files. Planned, not available yet.
 
