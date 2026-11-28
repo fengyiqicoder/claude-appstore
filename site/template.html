@@ -1,6 +1,8 @@
 <title>Claude AppStore</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="A community catalog of Claude artifacts you can install as Mac and Windows apps.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&display=swap">
 <style>
 [hidden]{display:none!important}
 /* Layout: Mac store window. Fixed sidebar (nav + search) on the left, scrolling content on the right; on phones the sidebar becomes a top tab strip. */
@@ -8,7 +10,7 @@
   --bg:#FAF9F5; --side:#F0EEE6; --fg:#141413; --muted:#6B6A64; --line:#E3DFD3;
   --accent:#B9532F; --on-accent:#fff; --pill:#EDE6DA; --hover:#E8E3D7; --card:#F4F1EA;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
-  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",system-ui,sans-serif;
+  --display:"Source Serif 4","Iowan Old Style","Charter",Georgia,"Songti SC","Noto Serif SC",serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#262624; --side:#1F1E1D; --fg:#FAF9F5; --muted:#A6A39A; --line:#3A3935;
@@ -25,7 +27,7 @@ a:hover{text-decoration:underline}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 .app{display:grid;grid-template-columns:232px minmax(0,1fr);height:100%}
 .side{background:var(--side);border-right:1px solid var(--line);padding-block:18px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:14px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
-.brand{display:flex;align-items:center;gap:9px;font:600 15px/1 var(--display);padding:0 6px}
+.brand{display:flex;align-items:center;gap:9px;font:500 17px/1 var(--display);letter-spacing:-.01em;padding:0 6px}
 .brand svg,.brandic{flex:none}.brandic{width:24px;height:24px;display:inline-block}.brandic svg{width:24px;height:24px;display:block}
 .search{position:relative}
 .search input{width:100%;font:inherit;padding:6px 10px 6px 28px;border-radius:7px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
@@ -35,18 +37,24 @@ nav a{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:7px
 nav a:hover{background:var(--hover);text-decoration:none}
 nav a.on{background:var(--hover);font-weight:600}
 nav a svg{color:var(--accent);flex:none}
+.inst{margin-top:auto;display:flex;gap:10px;align-items:center;padding:10px 11px;border-radius:12px;background:var(--bg);border:1px solid var(--line);color:var(--fg);text-decoration:none!important;cursor:pointer}
+.inst:hover{border-color:var(--muted)}
+.inst.done{cursor:default}.inst.done:hover{border-color:var(--line)}
+.instic{width:38px;height:38px;flex:none}.instic svg{width:38px;height:38px;display:block}
+.insttx{min-width:0}.insttx b{display:block;font-weight:600;font-size:13px;line-height:1.25}.insttx small{display:block;color:var(--muted);font-size:12px;line-height:1.3;margin-top:2px}
+.inst:not([hidden])+.foot{margin-top:0}
 .side .foot{margin-top:auto;font-size:12px;color:var(--muted);padding:0 6px;display:flex;flex-direction:column;gap:6px}
 main{overflow-y:auto;padding-block:28px 48px;padding-left:max(16px,4vw);padding-right:max(16px,env(safe-area-inset-right,0px),4vw)}
 .wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:34px}
-h1{font:700 30px/1.1 var(--display);margin:0;letter-spacing:-.01em}
-h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
+h1{font:500 32px/1.12 var(--display);margin:0;letter-spacing:-.015em}
+h2{font:500 22px/1.2 var(--display);margin:0;letter-spacing:-.01em}
 .sec{display:flex;flex-direction:column;gap:14px}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:16px}
 .sec-head a{font-size:13px}
 .lede{color:var(--muted);margin:6px 0 0;max-width:62ch}
 /* featured */
 .hero{display:flex;flex-direction:column;gap:14px;padding-block:8px 4px}
-.hero h1{font:800 clamp(40px,7.5vw,76px)/.98 var(--display);letter-spacing:-.035em;margin:0;text-wrap:balance}
+.hero h1{font:400 clamp(40px,7vw,72px)/1.02 var(--display);letter-spacing:-.025em;margin:0;text-wrap:balance}
 .hero h1 em{font-style:normal;color:var(--accent)}
 .hero p{font-size:clamp(15px,1.8vw,18px);color:var(--muted);margin:0;max-width:56ch}
 .hero .ctas{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -67,7 +75,7 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
 .feat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .fcard{border-radius:14px;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:space-between;min-height:250px;padding:20px;position:relative;cursor:pointer;text-decoration:none!important}
 .fcard .eyebrow{font:700 11px/1 var(--font);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-.fcard h3{font:700 26px/1.1 var(--display);margin:8px 0 0;text-wrap:balance;max-width:16ch}
+.fcard h3{font:500 27px/1.1 var(--display);margin:8px 0 0;text-wrap:balance;max-width:16ch}
 .fcard p{margin:6px 0 0;opacity:.9;max-width:40ch}
 .fcard .row{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.22);backdrop-filter:blur(8px);border-radius:12px;padding:10px 12px}
 .fcard .row .meta{flex:1;min-width:0}
@@ -95,13 +103,13 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
 .back{font-size:13px;display:inline-flex;gap:4px;align-items:center}
 .dhead{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
 .dhead .meta{flex:1;min-width:220px}
-.dhead h1{font-size:28px}
+.dhead h1{font-size:32px}
 .dhead p{margin:4px 0 12px;color:var(--muted);font-size:16px}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));border-block:1px solid var(--line);padding-block:12px}
 .facts div{padding:0 14px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:3px;align-items:center;text-align:center;min-width:0}
 .facts div:first-child{border-left:0}
 .facts small{font:600 10.5px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.facts b{font:600 15px/1.2 var(--display);overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+.facts b{font:600 15px/1.2 var(--font);overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
 .prose{max-width:66ch;font-size:15px;line-height:1.55;margin:0}
 .steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:66ch}
 .note{background:var(--card);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--muted);max-width:66ch}
@@ -117,7 +125,7 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
   .side{border-right:0;border-bottom:1px solid var(--line);padding-block:12px;padding-right:max(16px,env(safe-area-inset-right,0px));padding-left:max(16px,env(safe-area-inset-left,0px));gap:10px;overflow:visible}
   nav{flex-direction:row;overflow-x:auto;gap:4px}
   nav a{white-space:nowrap}
-  .side .foot{display:none}
+  .side .foot,.inst{display:none!important}
   .feat,.grid{grid-template-columns:1fr}
   .facts{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:12px}
   .facts div:nth-child(3){border-left:0}
@@ -126,7 +134,7 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
 .modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(20,20,19,.45);padding:16px}
 .modal .box{background:var(--bg);color:var(--fg);border-radius:18px;max-width:420px;width:100%;padding:26px 24px 20px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:12px;text-align:center;align-items:center}
 .modal .box .mic{width:64px;height:64px}.modal .box .mic svg{width:64px;height:64px;display:block}
-.modal h3{font:700 19px/1.25 var(--display);margin:4px 0 0}
+.modal h3{font:500 21px/1.25 var(--display);margin:4px 0 0}
 .modal p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
 .modal ol{margin:0;padding-left:20px;text-align:left;font-size:14px;line-height:1.6;align-self:stretch}
 .modal .acts{display:flex;flex-direction:column;gap:8px;align-self:stretch;margin-top:6px}
@@ -142,12 +150,12 @@ h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.005em}
     <div class="brand"><span class="brandic" aria-hidden="true"></span>Claude AppStore</div>
     <label class="search"><svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="q" type="search" placeholder="Search" aria-label="Search apps"></label>
     <nav id="nav"></nav>
+    <a id="selfinstall" class="inst" hidden href="#" rel="noopener"><span class="instic" aria-hidden="true"></span><span class="insttx"><b></b><small></small></span></a>
     <div class="foot">
       <a href="https://github.com/fengyiqicoder/claude-appstore/issues/new" target="_blank" rel="noopener">Submit your app</a>
       <a href="https://github.com/fengyiqicoder/claude-appstore" target="_blank" rel="noopener">Source on GitHub</a>
       <span>Community catalog, not affiliated with Anthropic or Apple. Apps belong to their creators.</span>
       <span id="upd"></span>
-      <button id="selfinstall" class="get" hidden style="align-self:flex-start">Install the store</button>
     </div>
   </aside>
   <main id="main"><div class="wrap" id="view"></div></main>
@@ -349,10 +357,28 @@ window.addEventListener("hashchange",()=>{qi.value="";render();main.scrollTop=0;
 qi.addEventListener("input",render);
 {const q=document.getElementById("q");q.placeholder=t("Search","搜索");q.setAttribute("aria-label",t("Search apps","搜索 app"));
  const f=document.querySelectorAll(".foot a, .foot span");f[0].textContent=t("Submit your app","提交你的 app");f[1].textContent=t("Source on GitHub","GitHub 源码");f[2].textContent=t("Community catalog, not affiliated with Anthropic or Apple. Apps belong to their creators.","社区目录，与 Anthropic 和 Apple 无关。各 app 归作者所有。");
- document.getElementById("selfinstall").textContent=t("Install the store","安装商店");
  if(SITE){const sw=document.createElement("a");sw.href=ZH?"../?lang=en":"zh/";sw.textContent=ZH?"English":"中文";sw.onclick=()=>{try{localStorage.setItem("lang",ZH?"en":"zh")}catch{}};f[1].after(sw);}}
 document.getElementById("upd").textContent=UPDATED&&!UPDATED.startsWith("/*")?t(`${DATA.apps.length} apps · updated ${UPDATED}`,`${DATA.apps.length} 个 app · 更新于 ${UPDATED}`):"";
 render();
+/* Sidebar card: install the store itself as an app.
+   ask  = this Claude window can install it now (click calls install.request)
+   done = already installed on this computer
+   open = elsewhere on a Mac or Windows computer: open the store artifact in the Claude desktop app, where it can be installed */
+function setInst(mode,onClick){
+  const a=document.getElementById("selfinstall");if(!a)return;
+  a.querySelector(".instic").innerHTML=ICON_SVG.store||"";
+  const tx={ask:[t("Install Claude AppStore","安装 Claude AppStore"),t("Get it as a Mac or Windows app","装成 Mac 或 Windows 上的 app")],
+            done:[t("Claude AppStore is installed","Claude AppStore 已安装"),t("Open it from your Dock or Start menu","在程序坞或开始菜单里打开")],
+            open:[t("Install Claude AppStore","安装 Claude AppStore"),t("Opens in the Claude desktop app","在 Claude 桌面端里打开安装")]}[mode];
+  a.querySelector("b").textContent=tx[0];a.querySelector("small").textContent=tx[1];
+  a.classList.toggle("done",mode==="done");a.hidden=false;
+  if(mode==="ask"){a.removeAttribute("href");a.onclick=e=>{e.preventDefault();onClick()};}
+  else if(mode==="done"){a.removeAttribute("href");a.onclick=e=>e.preventDefault();}
+  else{const id=STORE_ARTIFACT.split("/").pop();
+    if(SITE){a.href=STORE_ARTIFACT;a.target="_blank";a.onclick=e=>{if(openInDesktop(STORE_ARTIFACT))e.preventDefault();};}
+    else{a.href="claude://claude.ai/artifact/"+id;a.target="_top";a.onclick=null;}}
+}
+if(DESKTOP_OS&&STORE_ARTIFACT&&!STORE_ARTIFACT.startsWith("/*"))setInst("open");
 function storeIcon(){
   return new Promise(res=>{const img=new Image();img.onload=()=>{const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");
     x.shadowColor="rgba(0,0,0,.3)";x.shadowBlur=20;x.shadowOffsetY=8;x.drawImage(img,50,44,412,412);res(c.toDataURL("image/png"))};
@@ -361,11 +387,10 @@ function storeIcon(){
 (async()=>{
   const desktop=window.claude?.use?await window.claude.use("desktop").catch(()=>null):null;
   if(!desktop) return;
-  if(desktop.tray){storeIcon().then(u=>u&&desktop.app.dock.setIcon(u)).catch(()=>{});return;}
-  if(await desktop.install.state().catch(()=>"unavailable")==="available"){
-    const b=document.getElementById("selfinstall");b.hidden=false;
-    b.onclick=()=>desktop.install.request().catch(()=>{});
-  }
+  if(desktop.tray){document.getElementById("selfinstall").hidden=true;storeIcon().then(u=>u&&desktop.app.dock.setIcon(u)).catch(()=>{});return;}
+  const st=await desktop.install.state().catch(()=>"unavailable");
+  if(st==="available"){setInst("ask",()=>desktop.install.request().then(r=>{if(r==="installed")setInst("done")}).catch(()=>{}));}
+  else if(st==="installed")setInst("done");
 })();
 </script>
 <script>
