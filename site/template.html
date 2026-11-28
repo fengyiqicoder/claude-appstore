@@ -221,7 +221,7 @@ const authorUrl=a=>a.authorUrl||({"Hacker News":"https://news.ycombinator.com/us
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function getBtn(a,cls=""){
   return a.artifact
-    ? `<a class="get ${cls}" href="${esc(a.artifact)}" target="_blank" rel="noopener" data-desk aria-label="${t("Get","获取")} ${esc(L(a,"name"))}">${t("Get","获取")}</a>`
+    ? `<a class="get ${cls}" href="${esc(a.artifact)}" target="${SITE?"_blank":"_top"}" rel="noopener" data-desk aria-label="${t("Get","获取")} ${esc(L(a,"name"))}">${t("Get","获取")}</a>`
     : `<a class="get view ${cls}" href="${esc(a.post)}" target="_blank" rel="noopener" aria-label="${t("View","查看")} ${esc(L(a,"name"))}">${t("View","查看")}</a>`;
 }
 function row(a){
