@@ -57,73 +57,73 @@
    "desc": "一个关于边走路边看手机有多危险的小模拟。免费、不用注册，手机电脑都能玩；同一条帖子还有姊妹游戏 Walk Beside Me，作者也做了日文版。"
   },
   "document-editor": {
-   "name": "Word AI 替代（由 Claude 驱动）",
+   "name": "Word AI Alt",
    "subtitle": "用 Claude 编辑 .docx 文件",
    "replaces": "Word 里的 Copilot, WPS AI",
    "desc": "打开你的 .docx 文件，在真实的分页视图里继续写：页面、页眉页脚、页码、分节、分栏、目录、公式、批注、脚注和修订都原样保留。让 Claude 起草、改写、缩写、换语气、校对、翻译，或把文字变成表格；每处 AI 修改都是一条修订，由你接受或拒绝。自带听写、朗读和版本历史，可以导出回 Word、PDF、Markdown、HTML 或纯文本。"
   },
   "spreadsheet": {
-   "name": "Excel AI 替代（由 Claude 驱动）",
+   "name": "Excel AI Alt",
    "subtitle": "Excel 文件，内置 Claude",
    "replaces": "Excel 里的 Copilot, GPT for Sheets, Formula Bot",
    "desc": "打开 .xlsx、.xls 和 .csv 文件，所有工作表、公式、格式、图表和图片都在。用大白话提问，得到准确数字和背后的公式。能做真正的数据透视表、数据验证、条件格式、迷你图、分组和带趋势线的图表，用 Claude 清洗或分类成千上万行，保存回 Excel 时什么都不丢。"
   },
   "slide-maker": {
-   "name": "PowerPoint AI 替代（由 Claude 驱动）",
+   "name": "PowerPoint AI Alt",
    "subtitle": "从一个主题或你的 .pptx 做出演示",
    "replaces": "PowerPoint 里的 Copilot, Gamma, Beautiful.ai",
    "desc": "描述一场演讲、粘贴笔记，或者拖进 .pptx、.docx、PDF，Claude 用智能版式和主题写好幻灯片。然后像 PowerPoint 一样编辑：形状、图片、表格、图表、图示、动画、切换、视频、母版、分节和批注。带演讲者备注和画笔放映，导出可编辑的 PowerPoint、PDF 或讲义；你没动过的幻灯片原样导出。"
   },
   "pdf-chat": {
-   "name": "Acrobat AI 替代（由 Claude 驱动）",
+   "name": "Acrobat AI Alt",
    "subtitle": "阅读、签名、编辑和提问 PDF",
    "replaces": "Adobe Acrobat（AI 助手、填写和签名）, ChatPDF",
    "desc": "打开 PDF、Word、PowerPoint 或文本文件直接提问，每个回答都标出页码并高亮原文。可以高亮、批注、画图、填表和签名，重新排序、旋转、合并和提取页面，保存出的真 PDF 能在 Acrobat 和预览里打开。内置摘要、大纲、表格导出到 Excel、翻译和朗读，文件只留在你的设备上。"
   },
   "grammar-checker": {
-   "name": "Grammarly AI 替代（由 Claude 驱动）",
+   "name": "Grammarly AI Alt",
    "subtitle": "改语法、改清晰度、改语气",
    "replaces": "Grammarly Premium, QuillBot, Wordtune",
    "desc": "写或粘贴文字，实时标出正确性、清晰度、吸引力和表达方面的问题，每条都有解释，一键接受。任何句子都能改得更短、更清楚、更正式或更亲切，有 9 种改写模式，还能设目标、语气和团队用语规范。能打开和保存 .docx、.md、.txt，按 Option+Shift+G 浮在其他 app 上面。"
   },
   "mind-map": {
-   "name": "Xmind AI 替代（由 Claude 驱动）",
+   "name": "Xmind AI Alt",
    "subtitle": "打开你的 Xmind 和 MindNode 导图",
    "replaces": "Xmind Pro, MindNode Plus, MindMeister",
    "desc": "用 Xmind 和 MindNode 的快捷键画导图，有十四种结构，包括矩阵、括号图、树形表格、时间线和鱼骨图，每个分支能用不同结构；还有自由主题、区域、标注、编号、模板和版本历史。打开你的 .xmind、.opml、.mm 和 Markdown 文件，按 Cmd+S 存回原文件。Claude 能从一句话或一篇文章画出整张导图、展开任意主题、总结一个分支，或把导图写成文章。"
   },
   "image-to-text": {
-   "name": "TextSniper AI 替代（由 Claude 驱动）",
+   "name": "TextSniper AI Alt",
    "subtitle": "从任意图片里复制文字",
    "replaces": "TextSniper, Prizmo",
    "desc": "粘贴截图、拖入照片或打开 PDF，得到可以编辑、复制、朗读或导出的文字。保留排版、生成 Markdown、把表格变成 Excel 或 CSV、翻译，还能把小票和名片拆成字段。二维码和条形码在本机识别。"
   },
   "translator": {
-   "name": "DeepL AI 替代（由 Claude 驱动）",
+   "name": "DeepL AI Alt",
    "subtitle": "翻译、润色和讲解任何文字",
    "desc": "粘贴文字，Claude 在你的两种语言之间翻译，按自然、口语或正式的语气润色到像母语一样，或者讲解关键词和语法。可以朗读结果。装好后它浮在最上层，在任何地方按 Option+Shift+T 唤出。",
    "replaces": "DeepL Pro"
   },
   "speaking-coach": {
-   "name": "ELSA Speak AI 替代（由 Claude 驱动）",
+   "name": "ELSA Speak AI Alt",
    "subtitle": "练口语，马上得到反馈",
    "desc": "Claude 按你的水平用 9 种语言之一写一小段口语材料并读给你听。你跟读或大声回答它的问题，Claude 给你打分、纠错，并读一遍更地道的说法。",
    "replaces": "ELSA Speak Pro"
   },
   "pomodoro": {
-   "name": "Be Focused AI 替代（由 Claude 驱动）",
+   "name": "Be Focused AI Alt",
    "subtitle": "Claude 把你的一天排成番茄",
    "desc": "把要做的事一股脑倒进来，Claude 排成有先后的任务，并算好每项要几个番茄。计时器按顺序走，在菜单栏和 Dock 里倒计时，番茄结束时通知你，在任何地方按 Option+Shift+P 开始或暂停。",
    "replaces": "Be Focused Pro, Session"
   },
   "world-clock": {
-   "name": "Dato AI 替代（由 Claude 驱动）",
+   "name": "Dato AI Alt",
    "subtitle": "时区和会议时间规划",
    "desc": "把常打交道的城市并排放着，每个都有昼夜条。用大白话问，比如“和伦敦、东京开会什么时间最好”，Claude 回答并把时间滑块拖过去。装好后，你选的城市会常驻菜单栏。",
    "replaces": "Dato"
   },
   "sticky-notes": {
-   "name": "Stickies AI 替代（由 Claude 驱动）",
+   "name": "Stickies AI Alt",
    "subtitle": "浮在最上层的便签",
    "desc": "一个小窗口里四张彩色便签。Claude 能把乱糟糟的便签变成清单、整理文字、总结、建议下一步或翻译，一键撤销。装好后它浮在所有窗口上面，按 Option+Shift+J 隐藏或唤回。",
    "replaces": "Stickies, Quick Note"
@@ -141,19 +141,19 @@
    "desc": "作者一直想要的 Mac 清理 app，在 Claude 里做出来并装成了桌面 app；帖子里有运行画面。"
   },
   "video-studio": {
-   "name": "Lumen5 AI 替代（由 Claude 驱动）",
+   "name": "Lumen5 AI Alt",
    "subtitle": "输入主题，导出 MP4",
    "replaces": "Canva 视频, Animoto, Lumen5, Submagic",
    "desc": "描述一个视频或粘贴脚本，Claude 写好带动画的分镜。在时间轴上编辑场景，加内置音乐或你自己的歌并自动卡点，烧录字幕，导出 16:9、9:16 或 1:1 的 MP4 或 WebM。"
   },
   "design-studio": {
-   "name": "Canva AI 替代（由 Claude 驱动）",
+   "name": "Canva AI Alt",
    "subtitle": "界面、网页、海报、设计点评",
    "replaces": "Canva Pro, Uizard, Framer AI",
    "desc": "描述一个 app 或一门生意，或拖入一张截图，Claude 就能设计可点击的手机界面、2 到 3 种风格的落地页，或海报和社交配图，所有设计共用一套可实时修改的设计规范。还能给设计打分点评并一键修改，导出 PNG、HTML/CSS、SVG 或设计令牌。"
   },
   "thinking-partner": {
-   "name": "ChatPRD AI 替代（由 Claude 驱动）",
+   "name": "ChatPRD AI Alt",
    "subtitle": "想清楚，再动手",
    "replaces": "ChatPRD, Notion AI",
    "desc": "粘贴一个计划、想法或决定，Claude 会提出关键问题，每个都附推荐答案，一键接受。实时地图记录已解决、待定和搁置的问题，以及术语、决定和风险。可导出需求说明、PRD、问卷、可导入 Linear 或 Jira 的任务单，或交接文档。"
@@ -199,55 +199,55 @@
    "desc": "Kit 创始人装的一个工件：从自己的 Kit 账号取数据，按人数和影响力把全球的 newsletter 订阅者画在地图上。原帖有视频，没有公开的工件链接。"
   },
   "job-search": {
-   "name": "Teal AI 替代（由 Claude 驱动）",
+   "name": "Teal AI Alt",
    "subtitle": "简历、投递跟踪、面试教练",
    "replaces": "Teal, Rezi, Kickresume, Final Round AI",
    "desc": "用 6 个能通过 ATS 筛选的模板写简历，所见即所得，导出 PDF 和 Word 直接投。粘贴职位描述，得到关键词匹配分、逐条由你确认的定制版简历和求职信。用看板跟踪每一份申请，再和会给每个回答打分的模拟面试官练一练。"
   },
   "flashcards": {
-   "name": "Anki AI 替代（由 Claude 驱动）",
+   "name": "Anki AI Alt",
    "subtitle": "间隔复习、测验、AI 出卡",
    "replaces": "Anki add-ons, Knowt",
    "desc": "用和新版 Anki 一样的 FSRS 算法复习，也能像 Quizlet 那样用学习、测试、配对模式练习。粘贴笔记或拖入 PDF、Word、照片，Claude 写好卡片或测验，你审核后再加入。能导入 Quizlet 和 Anki .apkg 牌组连同复习记录；数据只在你的电脑上，一键备份。"
   },
   "rewriter": {
-   "name": "QuillBot AI 替代（由 Claude 驱动）",
+   "name": "QuillBot AI Alt",
    "subtitle": "读起来像你自己写的",
    "replaces": "QuillBot Premium, Wordtune",
    "desc": "粘贴任意文字，用 11 种模式改写，从标准、自然到精简、学术，以及你自己的语气，改动的词都会标出来。点一个词换同义词，点一句话换说法；AI 痕迹检查能找出英文和中文里的套话、破折号、“不是 X 而是 Y”，一键改掉。带历史记录、版本对比和 Word 导出，样本和历史只存在你的电脑上。"
   },
   "budget": {
-   "name": "YNAB AI 替代（由 Claude 驱动）",
+   "name": "YNAB AI Alt",
    "subtitle": "给每一块钱安排用途",
    "replaces": "YNAB, Monarch, Copilot Money",
    "desc": "和 YNAB 一样的零基预算：把手上的钱分到各个分类，按月结转，设目标，超支马上看得到。导入银行的 CSV、OFX、QFX、QIF，或 YNAB、Mint、Monarch、Copilot 的导出文件，也能读支付宝和微信账单；Claude 帮你给交易分类，回答花钱的问题。不用登录银行，不用订阅，数据只在你的电脑上。"
   },
   "read-aloud": {
-   "name": "Speechify AI 替代（由 Claude 驱动）",
+   "name": "Speechify AI Alt",
    "subtitle": "什么都能听",
    "replaces": "Speechify Premium, NaturalReader",
    "desc": "把 PDF、EPUB、Word 和文章变成有声书，逐词高亮，下次从上次的地方接着听。按句、按段跳读，换声音和语速，设睡眠定时，加书签。Claude 能总结章节、解释难懂的段落、清理乱糟糟的 PDF 文字。"
   },
   "homework-helper": {
-   "name": "Photomath AI 替代（由 Claude 驱动）",
+   "name": "Photomath AI Alt",
    "subtitle": "每个答案都核对过",
    "replaces": "Photomath Plus, Gauth, Chegg",
    "desc": "拍照、粘贴或输入数学、物理、化学题，得到分步解答，每一步都讲清为什么。每个答案都经过代回检验、独立重解和计算器三重核对，对不上会提醒你。仅提示模式、同类练习和按间隔复习的错题本，帮你真正学会。"
   },
   "whiteboard": {
-   "name": "Miro AI 替代（由 Claude 驱动）",
+   "name": "Miro AI Alt",
    "subtitle": "画草图、出图表、让 Claude 讲解",
    "replaces": "Miro, Whimsical",
    "desc": "无限画布，快捷键和 Excalidraw 一样，手绘或简洁风格任选，有图形、吸附的连线、便签、框架、画笔、对齐和编组。能打开 .excalidraw 文件、Mermaid 和图片，导出 PNG、SVG、PDF、Excalidraw 或 Mermaid。描述一张流程图、时序图、架构图、组织架构图或时间线，Claude 画成可编辑的图形，也能讲解整块白板。"
   },
   "fitness-coach": {
-   "name": "Fitbod AI 替代（由 Claude 驱动）",
+   "name": "Fitbod AI Alt",
    "subtitle": "排计划、练、吃、看进步",
    "replaces": "Fitbod, Strong Pro",
    "desc": "告诉 Claude 目标、训练日和器械，得到一份训练日历，练到位了自动建议加重。用键盘快速记组，上次的数值自动带出，有 RPE、休息计时和个人纪录；饮食按营养目标记录，拍照估算热量。能导入 Strong、Hevy 和 MyFitnessPal 的历史。"
   },
   "classroom": {
-   "name": "Wordwall AI 替代（由 Claude 驱动）",
+   "name": "Wordwall AI Alt",
    "subtitle": "AI 备课、课堂游戏、练习纸",
    "replaces": "Wordwall, Twinkl, MagicSchool",
    "desc": "告诉 Claude 年级、学科和主题，它会写好词汇、题目、分层阅读文章、教案和评分量表。同一份内容可以变成投影知识竞赛（分队计分）、连连看、找单词、填字游戏、随机点名转盘等，也能导出带答案的 PDF 和 Word 练习纸。"
@@ -305,79 +305,79 @@
    "desc": "一个 10 题、两分钟的测试，把你归到某种 AI 工具类型，并说出最适合你的助手。作者自己做的、方便分享的小测。"
   },
   "alt-pages": {
-   "name": "Pages AI 替代（由 Claude 驱动）",
+   "name": "Pages AI Alt",
    "subtitle": "自带 Claude 的 Pages 文档",
    "replaces": "Pages",
    "desc": "Pages 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-numbers": {
-   "name": "Numbers AI 替代（由 Claude 驱动）",
+   "name": "Numbers AI Alt",
    "subtitle": "能直接提问的 Numbers 表格",
    "replaces": "Numbers",
    "desc": "Numbers 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-keynote": {
-   "name": "Keynote AI 替代（由 Claude 驱动）",
+   "name": "Keynote AI Alt",
    "subtitle": "让 Claude 起草的 Keynote 演示",
    "replaces": "Keynote",
    "desc": "Keynote 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-mindnode": {
-   "name": "MindNode AI 替代（由 Claude 驱动）",
+   "name": "MindNode AI Alt",
    "subtitle": "Claude 帮你展开的 MindNode 导图",
    "replaces": "MindNode",
    "desc": "MindNode 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-lucidchart": {
-   "name": "Lucidchart AI 替代（由 Claude 驱动）",
+   "name": "Lucidchart AI Alt",
    "subtitle": "一句话生成流程图和图表",
    "replaces": "Lucidchart",
    "desc": "Lucidchart 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-notion": {
-   "name": "Notion AI 替代（由 Claude 驱动）",
+   "name": "Notion AI Alt",
    "subtitle": "页面、数据库，和了解它们的 AI",
    "replaces": "Notion",
    "desc": "Notion 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-evernote": {
-   "name": "Evernote AI 替代（由 Claude 驱动）",
+   "name": "Evernote AI Alt",
    "subtitle": "笔记本、剪藏和搜索",
    "replaces": "Evernote",
    "desc": "Evernote 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-bear": {
-   "name": "Bear AI 替代（由 Claude 驱动）",
+   "name": "Bear AI Alt",
    "subtitle": "带标签的 Markdown 笔记",
    "replaces": "Bear",
    "desc": "Bear 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-todoist": {
-   "name": "Todoist AI 替代（由 Claude 驱动）",
+   "name": "Todoist AI Alt",
    "subtitle": "用大白话添加的待办",
    "replaces": "Todoist",
    "desc": "Todoist 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-things": {
-   "name": "Things AI 替代（由 Claude 驱动）",
+   "name": "Things AI Alt",
    "subtitle": "今天、计划和项目",
    "replaces": "Things",
    "desc": "Things 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-fantastical": {
-   "name": "Fantastical AI 替代（由 Claude 驱动）",
+   "name": "Fantastical AI Alt",
    "subtitle": "听得懂句子的日历",
    "replaces": "Fantastical",
    "desc": "Fantastical 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-day-one": {
-   "name": "Day One AI 替代（由 Claude 驱动）",
+   "name": "Day One AI Alt",
    "subtitle": "带引导问题的私人日记",
    "replaces": "Day One",
    "desc": "Day One 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-sketch": {
-   "name": "Sketch AI 替代（由 Claude 驱动）",
+   "name": "Sketch AI Alt",
    "subtitle": "设计界面，打开 .sketch 文件",
    "replaces": "Sketch",
    "desc": "Sketch 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"

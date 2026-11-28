@@ -259,7 +259,7 @@ function fcard(a,eyebrow,blurb){
 const installable = ()=>DATA.apps.filter(a=>a.artifact&&!a.maker);
 const ours = ()=>DATA.apps.filter(a=>a.maker&&a.soon);
 const batch = ()=>DATA.apps.filter(a=>a.maker&&!a.soon);
-function tile(a){return `<div class="tile${a.soon?" soon":""}" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,84)}<b>${esc(a.target)}</b><span>${t("AI Alt","AI 替代")}</span><span>${t("(Powered by Claude)","（由 Claude 驱动）")}</span>${getBtn(a)}</div>`}
+function tile(a){return `<div class="tile${a.soon?" soon":""}" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,84)}<b>${esc(a.target)}</b><span>AI Alt</span>${getBtn(a)}</div>`}
 function swap(a){return `<div class="swap" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,56)}<div class="meta"><b>${esc(L(a,"name"))}</b><span class="was">${t("Instead of","替代")} <s>${esc(L(a,"replaces"))}</s></span><span>${esc(L(a,"subtitle"))}</span></div>${getBtn(a)}</div>`}
 function discover(){
   const apps=DATA.apps.slice().reverse();
