@@ -1,959 +1,1041 @@
 {
-  "apps": [
-    {
-      "id": "gridbloom",
-      "name": "Gridbloom",
-      "subtitle": "Arena shooter in its own window",
-      "category": "play",
-      "desc": "A small arena shooter rebuilt as an artifact and installed with its own Dock icon. The post also explains what's inside the installed app.",
-      "author": "de1mat",
-      "post": "https://x.com/de1mat/status/2125334953479315834",
-      "artifact": "",
-      "lang": "",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "geography-trainer",
-      "name": "Geography Trainer",
-      "subtitle": "Learn countries and capitals",
-      "category": "learn",
-      "desc": "An artifact Claude made for learning geography, installed as a desktop app.",
-      "author": "cjav_dev",
-      "post": "https://x.com/cjav_dev/status/2125317458038768101",
-      "artifact": "",
-      "lang": "",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "titan-colony",
-      "name": "Titan Colony",
-      "subtitle": "Build a colony over 60 years",
-      "category": "play",
-      "desc": "A planet you can install: people land on Titan and build a colony over 60 years, drawn in one shader with no libraries.",
-      "author": "maximbilan",
-      "post": "https://x.com/maximbilan/status/2125504700518928832",
-      "artifact": "",
-      "lang": "",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "todo-list",
-      "name": "To-do List",
-      "subtitle": "A simple task list",
-      "category": "work",
-      "desc": "A to-do app built in under two hours and shared with @ClaudeDevs.",
-      "author": "DavidCismas",
-      "post": "https://x.com/DavidCismas/status/2125415718673879062",
-      "artifact": "https://claude.ai/artifact/XVDvZnh6uE689MTBPf9MYo",
-      "lang": "",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "ai-architecture-lab",
-      "name": "AI Architecture Survival Lab",
-      "subtitle": "9 missions, 12 ways to break it",
-      "category": "learn",
-      "desc": "Design an AI system, then survive budget cuts, provider outages and security reviews across 9 missions and 12 failure modes.",
-      "author": "PeakGrizzly",
-      "post": "https://x.com/PeakGrizzly/status/2125432809330524466",
-      "artifact": "https://claude.ai/artifact/N78JPA38614byXSEqA3Zei",
-      "lang": "",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "podcast-flashcards",
-      "name": "Podcast Lessons",
-      "subtitle": "Flashcards from 50+ shows",
-      "category": "learn",
-      "desc": "Highlights from Acquired, Invest Like the Best, Farnam Street and 50 other shows, turned into an interactive page with flashcards.",
-      "author": "SamSirapat",
-      "post": "https://x.com/SamSirapat/status/2125467516122386560",
-      "artifact": "https://claude.ai/artifact/N8p7odNH5Y8zYuNBLrfE7X",
-      "lang": "",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "grow-one-thing",
-      "name": "Grow One Thing",
-      "subtitle": "Raise a bonsai, a chrysalis, more",
-      "category": "life",
-      "desc": "Pick one of six living things, from a chrysalis (3 days) to a bonsai (60 days), and raise it through five stages into your collection.",
-      "author": "fighthub_jp",
-      "post": "https://x.com/fighthub_jp/status/2125477701020774880",
-      "artifact": "https://claude.ai/artifact/3tMn8Y3f1hcNjEVUTwMzsX",
-      "lang": "Japanese",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "isekai-quiz",
-      "name": "Isekai Reincarnation Quiz",
-      "subtitle": "Which fantasy life awaits you",
-      "category": "play",
-      "desc": "30 pixel-art RPG scenes decide which of 16 fantasy lives you are reborn into.",
-      "author": "suke_aicopy",
-      "post": "https://x.com/suke_aicopy/status/2125443342297387077",
-      "artifact": "https://claude.ai/artifact/4x32h1UqVfe6tP54Qrm6fC",
-      "lang": "Japanese",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "tarot-love-quiz",
-      "name": "Tarot Love Type",
-      "subtitle": "320+ results, drawn as a card",
-      "category": "play",
-      "desc": "30 questions and 320+ results drawn as a tarot card, with attachment style and a compatibility check.",
-      "author": "suke_aicopy",
-      "post": "https://x.com/suke_aicopy/status/2125454175257686350",
-      "artifact": "https://claude.ai/artifact/2PdqPFbQ8aWwPMDPQAdWcG",
-      "lang": "Japanese",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "science-500",
-      "name": "500 Years of Science",
-      "subtitle": "Ranked scientific achievements",
-      "category": "learn",
-      "desc": "A ranked list of key scientific achievements of the last five centuries, up to the day before it was made.",
-      "author": "tamritzblog",
-      "post": "https://x.com/tamritzblog/status/2125198164118413378",
-      "artifact": "https://claude.ai/artifact/JzUr9QdXgYXKpyXfXnVfvf",
-      "lang": "Hebrew",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "school-site",
-      "name": "School Achievements",
-      "subtitle": "A school profile from one prompt",
-      "category": "work",
-      "desc": "A full school profile site with activities, photos, vision and staff, made from a single prompt.",
-      "author": "Atallah147",
-      "post": "https://x.com/Atallah147/status/2125494606561489142",
-      "artifact": "https://claude.ai/artifact/7xLbZEbjZvrYJK6QaHJKT4",
-      "lang": "Arabic",
-      "added": "2026-11-25"
-    },
-    {
-      "id": "signal-operator",
-      "name": "Signal Operator",
-      "subtitle": "Run every traffic light by hand",
-      "category": "play",
-      "desc": "You switch every light at one intersection by hand. Change too early and cars crash, too late and they back up; by evening there are right-turning cars, buses and ambulances. The game ends when any direction has 8 cars waiting.",
-      "author": "fighthub_jp",
-      "post": "https://x.com/fighthub_jp/status/2125545039849824687",
-      "artifact": "https://claude.ai/artifact/3tLMQDE56DHFmahcMwZ1Au",
-      "lang": "Japanese",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "exact-birthday",
-      "name": "Exact Birthday Calculator",
-      "subtitle": "Your birthday, to the orbit",
-      "category": "learn",
-      "desc": "Works out the exact moment of your birthday as a whole number of trips around the sun, not a calendar date. Made by an MIT professor for people who live in a different time zone from where they were born, or were born on February 29.",
-      "author": "fredodurand",
-      "post": "https://x.com/fredodurand/status/2125610055982866917",
-      "artifact": "https://claude.ai/artifact/FzmS8QF45CN7JmLFmeghku",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "walking-while-texting",
-      "name": "Watch Out! Walking While Texting",
-      "subtitle": "A walk with your phone out",
-      "category": "play",
-      "desc": "A short simulation about the danger of walking while looking at your phone. Free, no sign-up, works on phone or Windows; the same post links a companion game, Walk Beside Me, and the author also has Japanese versions of both.",
-      "author": "s_young_sb29",
-      "post": "https://x.com/s_young_sb29/status/2125609332205289478",
-      "artifact": "https://claude.ai/artifact/V5TFihpFWc5HLBU1vCkFnC",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "document-editor",
-      "name": "AI Document Editor",
-      "subtitle": "Edit .docx files with Claude",
-      "category": "work",
-      "desc": "Open your .docx files and keep working in a real print layout with pages, headers and footers, page numbers, section breaks, columns, a table of contents, equations, comments, footnotes and tracked changes intact. Ask Claude to draft, rewrite, shorten, change tone, proofread, translate or turn text into a table; every AI edit is a tracked change you accept or reject. Dictation, read aloud and version history are built in, and it exports back to Word, PDF, Markdown, HTML or text.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/document-editor",
-      "artifact": "https://claude.ai/artifact/NfDBTqMg5uTBSpbvMvf4Zw",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude"
-      ],
-      "ai": true,
-      "replaces": "Copilot in Word, WPS AI",
-      "batch": 1
-    },
-    {
-      "id": "spreadsheet",
-      "name": "AI Spreadsheet",
-      "subtitle": "Excel files, Claude built in",
-      "category": "work",
-      "desc": "Open .xlsx, .xls and .csv files with all sheets, formulas, formatting, charts and images. Ask questions in plain words and get the exact number plus the formula behind it. Build real PivotTables, data validation, conditional formatting, sparklines, grouped outlines and charts with trendlines, clean or classify thousands of rows with Claude, and save back to Excel with nothing missing.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/spreadsheet",
-      "artifact": "https://claude.ai/artifact/4SB49FbrDt6LG1HrKbowmG",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude"
-      ],
-      "ai": true,
-      "replaces": "Copilot in Excel, GPT for Sheets, Formula Bot",
-      "batch": 1
-    },
-    {
-      "id": "slide-maker",
-      "name": "AI Slide Maker",
-      "subtitle": "Decks from a topic or your .pptx",
-      "category": "work",
-      "desc": "Describe a talk, paste notes or drop in a .pptx, .docx or PDF, and Claude writes the slides in smart layouts and themes. Then edit like PowerPoint: shapes, pictures, tables, charts, diagrams, animations, transitions, video, slide master, sections and comments. Present with speaker notes and a pen, and export editable PowerPoint, PDF or handouts; slides you didn't touch come back exactly as they were.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/slide-maker",
-      "artifact": "https://claude.ai/artifact/CKCAhZfduiQF7XHuseNrtb",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude"
-      ],
-      "ai": true,
-      "replaces": "Copilot in PowerPoint, Gamma, Beautiful.ai",
-      "batch": 1
-    },
-    {
-      "id": "pdf-chat",
-      "name": "PDF Chat",
-      "subtitle": "Read, sign, edit and ask PDFs",
-      "category": "work",
-      "desc": "Open PDFs, Word, PowerPoint or text files and ask questions; every answer cites its pages and highlights the exact words. Highlight, comment, draw, fill forms and sign, reorder, rotate, merge and extract pages, then save a real PDF that opens in Acrobat and Preview. Summaries, outlines, table extraction to Excel, translation and read aloud are built in, and your files stay on your device.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/pdf-chat",
-      "artifact": "https://claude.ai/artifact/WDynWFxX4ePs39Ys5kovKJ",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude",
-        "Read aloud"
-      ],
-      "ai": true,
-      "replaces": "Adobe Acrobat (AI Assistant, Fill & Sign), ChatPDF",
-      "batch": 1
-    },
-    {
-      "id": "grammar-checker",
-      "name": "Grammar Checker",
-      "subtitle": "Grammar, clarity and tone fixes",
-      "category": "work",
-      "desc": "Write or paste text and get live underlines for correctness, clarity, engagement and delivery, each with an explanation and one-click Accept. Rewrite any sentence shorter, clearer, more formal or friendlier, paraphrase it in 9 modes, and set goals, voice and a house style guide. Opens and saves .docx, .md and .txt, and floats on top of other apps with Option+Shift+G.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/grammar-checker",
-      "artifact": "https://claude.ai/artifact/MnfxjBccYQ8PrxtUjnerDj",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude",
-        "Floating window",
-        "Shortcut"
-      ],
-      "ai": true,
-      "replaces": "Grammarly Premium, QuillBot, Wordtune",
-      "batch": 1
-    },
-    {
-      "id": "mind-map",
-      "name": "Mind Map",
-      "subtitle": "Opens your Xmind and MindNode maps",
-      "category": "work",
-      "desc": "Map ideas with Xmind and MindNode keyboard shortcuts in fourteen structures, including matrix, brace, tree table, timeline and fishbone, with a different structure per branch, with floating topics, zones, callouts, numbering, templates and version history. Open your .xmind, .opml, .mm and Markdown files and save back to the same file with Cmd+S. Claude can draft a whole map from a sentence or an article, expand any topic, summarize a branch or turn the map into an article.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/mind-map",
-      "artifact": "https://claude.ai/artifact/2Yo7wHmHtEqnGfvP1rpcxN",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude"
-      ],
-      "ai": true,
-      "replaces": "Xmind Pro, MindNode Plus, MindMeister",
-      "batch": 1
-    },
-    {
-      "id": "image-to-text",
-      "name": "Image to Text",
-      "subtitle": "Copy text from any image",
-      "category": "work",
-      "desc": "Paste a screenshot, drop photos or open a PDF, and get text you can edit, copy, read aloud or export. It keeps the layout, writes Markdown, turns tables into Excel or CSV, translates, and pulls receipts and business cards into fields. QR codes and barcodes are read on your computer.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/image-to-text",
-      "artifact": "https://claude.ai/artifact/VG2QZ4DAUhXRSYfyDcxHpM",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude (reads images)",
-        "Read aloud",
-        "Floating window",
-        "Shortcut"
-      ],
-      "ai": true,
-      "replaces": "TextSniper, Prizmo",
-      "batch": 1
-    },
-    {
-      "id": "translator",
-      "name": "AI Translator",
-      "subtitle": "Translate, polish and explain any text",
-      "category": "work",
-      "desc": "Paste text and Claude translates it between your two languages, polishes it so it sounds native in a natural, casual or formal tone, or explains the key words and grammar. It reads the result aloud. Installed, it floats on top and Option+Shift+T brings it up anywhere.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/translator",
-      "artifact": "https://claude.ai/artifact/4YWGk1DexyfRdcmLWD7Wfa",
-      "lang": "",
-      "added": "2026-11-25",
-      "perms": [
-        "Claude",
-        "Voice",
-        "Floating window",
-        "Shortcut"
-      ],
-      "ai": true
-    },
-    {
-      "id": "speaking-coach",
-      "name": "Speaking Coach",
-      "subtitle": "Practice speaking with feedback",
-      "category": "learn",
-      "desc": "Claude writes a short spoken passage at your level in one of 9 languages and reads it to you. Repeat it or answer its question out loud, and Claude scores what you said, corrects it and reads back a more natural version.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/speaking-coach",
-      "artifact": "https://claude.ai/artifact/UuqPyQ25QRBtGaT7E9h3ZD",
-      "lang": "",
-      "added": "2026-11-25",
-      "perms": [
-        "Claude",
-        "Voice",
-        "Dictation"
-      ],
-      "ai": true
-    },
-    {
-      "id": "pomodoro",
-      "name": "Pomodoro Timer",
-      "subtitle": "Claude plans your day into sessions",
-      "category": "work",
-      "desc": "Dump everything you need to do and Claude turns it into ordered tasks with the number of focus sessions each needs. The timer works through them, counts down in your menu bar and Dock, notifies you when a session ends, and starts or pauses from anywhere with Option+Shift+P.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/pomodoro",
-      "artifact": "https://claude.ai/artifact/34QrCwomkxG1UuEA1C8hFh",
-      "lang": "",
-      "added": "2026-11-25",
-      "perms": [
-        "Claude",
-        "Menu bar",
-        "Notifications",
-        "Shortcut"
-      ],
-      "ai": true
-    },
-    {
-      "id": "world-clock",
-      "name": "World Clock",
-      "subtitle": "Time zones and meeting planner",
-      "category": "work",
-      "desc": "Keep the cities you work with side by side, each with a day and night band. Ask in plain words, like \"best time for a call with London and Tokyo\", and Claude answers and moves the time slider there. Installed, the city you pick stays in your menu bar.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/world-clock",
-      "artifact": "https://claude.ai/artifact/3aHTJUDXhT7WrZMSKtcSry",
-      "lang": "",
-      "added": "2026-11-25",
-      "perms": [
-        "Claude",
-        "Menu bar"
-      ],
-      "ai": true
-    },
-    {
-      "id": "sticky-notes",
-      "name": "Sticky Notes",
-      "subtitle": "Notes that float on top",
-      "category": "work",
-      "desc": "Four colored sticky notes in one small window. Claude can turn a messy note into a checklist, clean up the writing, summarize it, suggest next steps or translate it, with one-click undo. Installed, it floats above every window and Option+Shift+J hides it or brings it back.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/sticky-notes",
-      "artifact": "https://claude.ai/artifact/XB1iwfcvpd3y43i14i6TMa",
-      "lang": "",
-      "added": "2026-11-25",
-      "perms": [
-        "Claude",
-        "Floating window",
-        "Shortcut"
-      ],
-      "ai": true
-    },
-    {
-      "id": "future-of-ai-deck",
-      "name": "The Future of AI",
-      "subtitle": "A 3D deck you fly through",
-      "category": "learn",
-      "desc": "A presentation on the future of AI and the intelligence explosion where every slide is a full 3D scene, joined by camera moves and sound. Takes about eight minutes to watch; the author says an early Opus 5.6 built it.",
-      "author": "fluxxrider",
-      "post": "https://x.com/fluxxrider/status/2125622238481371372",
-      "artifact": "https://claude.ai/artifact/Cy2d8Vn63CnzCtonA1LSah",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "zone-of-protection",
-      "name": "Zone of Protection",
-      "subtitle": "A 60-second hand-hygiene test",
-      "category": "learn",
-      "desc": "A 60-second hand-hygiene challenge scored like an antibiotic sensitivity plate: S, I or R.",
-      "author": "drasumant",
-      "post": "https://x.com/drasumant/status/2125575149852525054",
-      "artifact": "https://claude.ai/artifact/C5Yo7CEy9QJYw1yWN4L38U",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "mac-cleaner",
-      "name": "Mac Cleaner",
-      "subtitle": "A disk cleaner built in a chat",
-      "category": "work",
-      "desc": "A Mac cleaning app the author always wanted, built in Claude and installed as a desktop app; the post shows it running.",
-      "author": "joseamijares",
-      "post": "https://x.com/joseamijares/status/2125372164954030086",
-      "artifact": "",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "video-studio",
-      "name": "AI Video Studio",
-      "subtitle": "Topic in, MP4 out",
-      "category": "work",
-      "desc": "Describe a video or paste a script and Claude writes an animated storyboard. Edit scenes on a timeline, add built-in music or your own song with cuts snapped to the beat, burn in captions, and export MP4 or WebM in 16:9, 9:16 or 1:1.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/video-studio",
-      "artifact": "https://claude.ai/artifact/HLPce8vTS9NxzgDHg7Qa8G",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude",
-        "Read aloud"
-      ],
-      "ai": true,
-      "replaces": "Canva video, Animoto, Lumen5, Submagic",
-      "batch": 2
-    },
-    {
-      "id": "design-studio",
-      "name": "AI Design Studio",
-      "subtitle": "Screens, pages, graphics, critiques",
-      "category": "work",
-      "desc": "Describe an app or a business, or drop in a screenshot, and Claude designs mobile screens you can click through, landing pages in 2 to 3 styles, or posters and social graphics, all sharing one design system you can change live. Get a scored critique with one-click fixes, and export PNG, HTML/CSS, SVG or design tokens.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/design-studio",
-      "artifact": "https://claude.ai/artifact/1smquJDEao4CY2JmZyYQGY",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude (reads images)"
-      ],
-      "ai": true,
-      "replaces": "Uizard, Framer AI, Galileo",
-      "batch": 2
-    },
-    {
-      "id": "thinking-partner",
-      "name": "AI Thinking Partner",
-      "subtitle": "Think it through, then ship",
-      "category": "work",
-      "desc": "Paste a plan, idea or decision and Claude asks the hard questions, each with a recommended answer you can accept in one keystroke. A live map tracks resolved, open and parked questions, plus terms, decisions and risks. Export a spec, PRD, questionnaire, tickets for Linear or Jira, or a handoff brief.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/thinking-partner",
-      "artifact": "https://claude.ai/artifact/JSTkjR21LMT7q5uTrtAGxz",
-      "lang": "",
-      "added": "2026-11-26",
-      "perms": [
-        "Claude",
-        "Dictation",
-        "Read aloud"
-      ],
-      "ai": true,
-      "replaces": "ChatPRD, Notion AI",
-      "batch": 2
-    },
-    {
-      "id": "saltline",
-      "name": "Saltline",
-      "subtitle": "First-person shooter, built from scratch",
-      "category": "play",
-      "desc": "A full first-person shooter Felix Rieseberg had Fable 5.2 build from one-shot prompts. Every model, sound and texture is generated in code, with no outside assets.",
-      "author": "felixrieseberg",
-      "post": "https://x.com/felixrieseberg/status/2119925633564463609",
-      "artifact": "https://claude.ai/artifact/BGY1SztrAYcJQHSsnHHGmp",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "weird-web-demos",
-      "name": "Weird Web Demos",
-      "subtitle": "HTML-in-Canvas playground",
-      "category": "play",
-      "desc": "A set of odd, animated demos that show off HTML-in-Canvas in the Claude desktop apps, made by the engineer who switched it on. Flash-era fun in one page.",
-      "author": "felixrieseberg",
-      "post": "https://x.com/felixrieseberg/status/2122036839238492493",
-      "artifact": "https://claude.ai/artifact/7cCNqKnoFSoib9SuNLB3vk",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "desktop-shark",
-      "name": "Nori Desktop Shark",
-      "subtitle": "A shark pet for your desktop",
-      "category": "play",
-      "desc": "A small shark swims along the bottom of your screen once you install it as an app. Rub it, double-click its fin to make it leap, or right-click to toss it fish.",
-      "author": "felixrieseberg",
-      "post": "https://x.com/felixrieseberg/status/2125341947179290938",
-      "artifact": "https://claude.ai/artifact/75cGBx19aZZXjWdbqUhmy1",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "felt-texture",
-      "name": "Felt",
-      "subtitle": "Seamless felt texture generator",
-      "category": "work",
-      "desc": "Draws seamless felt-like background textures live with a shader. Pick the colour, pattern, tile size and resolution, then download a 1024 px tile.",
-      "author": "A-Marko",
-      "post": "https://www.reddit.com/r/claude/comments/1woxz0z/i_wanted_a_felt_texture_generator_to_create/",
-      "artifact": "https://claude.ai/artifact/MJCLd2d8tuoqiXk4dvPzJR",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "facade-synth",
-      "name": "Facade Synth",
-      "subtitle": "Build a street like a synth",
-      "category": "play",
-      "desc": "A synthesiser for Georgian terrace streets: turn knobs and step a sequencer where each step is one house. Randomise, mutate, snapshot and save designs as patch code.",
-      "author": "Tomasmillar",
-      "post": "https://news.ycombinator.com/item?id=50068405",
-      "artifact": "https://claude.ai/artifact/BF6MjSg1RJBsp1ZZiQX6D2",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "daisy-tube",
-      "name": "Daisy Tube",
-      "subtitle": "Make a computer sing",
-      "category": "learn",
-      "desc": "Recreates the 1961 Bell Labs voice that sang Daisy Bell. Drag the scope to shape a vowel in a 44-section vocal tube and adjust pitch, lips and breath.",
-      "author": "Ok_Nectarine_4445",
-      "post": "https://www.reddit.com/r/claude/comments/1xfa116/opus_55_recreating_original_vocaloid_program/",
-      "artifact": "https://claude.ai/artifact/B6wkzHzDYf3PWhTNhjTme1",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "gigantua",
-      "name": "Gigantua",
-      "subtitle": "Fly around a black hole",
-      "category": "learn",
-      "desc": "An interactive black hole: hover, orbit or fall in and watch light bend around it. Toggle Doppler and redshift effects, or take the guided tour with sound.",
-      "author": "robotsmakelove",
-      "post": "https://news.ycombinator.com/item?id=49864907",
-      "artifact": "https://claude.ai/artifact/XmWGFtQPgn8aJvU193Ksf8",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "warikan-roulette",
-      "name": "Warikan Roulette",
-      "subtitle": "Split the bill, spin the remainder",
-      "category": "life",
-      "desc": "A bill splitter for group dinners: mark each person as paying more, normal or less, round to 100, 500 or 1,000 yen, and let a roulette decide who covers the leftover. The result copies straight into LINE.",
-      "author": "fighthub_jp",
-      "post": "https://x.com/fighthub_jp/status/2125907440201814228",
-      "artifact": "https://claude.ai/artifact/DEkhPSG48cYwaafJy2NzG6",
-      "lang": "Japanese",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "computers-and-architecture",
-      "name": "Computers and Architectural Design",
-      "subtitle": "A slide history of design tools",
-      "category": "learn",
-      "desc": "A growing slide deck on how computers changed architectural design in Japan and around the world, starting from the era when large buildings were drawn without them. The author plans to try it as a university lecture.",
-      "author": "shuta0331",
-      "post": "https://x.com/shuta0331/status/2125592907679990026",
-      "artifact": "https://claude.ai/artifact/JymufDkhU3GMBKwS1fpzHm",
-      "lang": "Japanese",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "kit-subscriber-map",
-      "name": "Kit Subscriber Map",
-      "subtitle": "Newsletter subscribers on a globe",
-      "category": "work",
-      "desc": "Kit's founder installed an artifact that maps his newsletter subscribers around the world by count and by influence, pulling the data from his Kit account. Video in the post; no public artifact link.",
-      "author": "nathanbarry",
-      "post": "https://x.com/nathanbarry/status/2125643652802515053",
-      "artifact": "",
-      "lang": "",
-      "added": "2026-11-26"
-    },
-    {
-      "id": "job-search",
-      "name": "Job Search Kit",
-      "subtitle": "Resume, tracker, interview coach",
-      "category": "work",
-      "desc": "Build an ATS-friendly resume in six templates with a live preview that exports exactly as shown to PDF and Word. Paste a job post to get a keyword match score, a tailored version you approve edit by edit, and a cover letter. Track every application on a board and rehearse with a mock interviewer that scores each answer.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/job-search",
-      "artifact": "https://claude.ai/artifact/BMyqpJPUWeKnJS8XW4NP63",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Claude",
-        "Read aloud",
-        "Dictation"
-      ],
-      "ai": true,
-      "replaces": "Teal, Rezi, Kickresume, Final Round AI",
-      "batch": 3
-    },
-    {
-      "id": "flashcards",
-      "name": "Flashcards",
-      "subtitle": "Spaced repetition, quizzes, AI cards",
-      "category": "learn",
-      "desc": "Study decks with the same FSRS scheduler as modern Anki, or practise with Learn, Test and Match like Quizlet. Paste notes or drop a PDF, Word file or photo, and Claude writes cards or a practice quiz for you to review before adding. Import your Quizlet sets and Anki .apkg decks with their review history; everything stays on your computer with one-click backup.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/flashcards",
-      "artifact": "https://claude.ai/artifact/6ej6mpbC87g5H2WUN9WUD7",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Claude (reads images)"
-      ],
-      "ai": true,
-      "replaces": "Quizlet Plus, Knowt, Anki add-ons",
-      "batch": 3
-    },
-    {
-      "id": "rewriter",
-      "name": "Rewriter",
-      "subtitle": "Sounds like you wrote it",
-      "category": "work",
-      "desc": "Paste any text and rewrite it in 11 modes, from Standard and Natural to Shorten, Academic and your own voice, with every changed word highlighted. Click a word for synonyms or a sentence to rephrase it, and let the AI tells check find stock phrases, em dashes and \"it's not X, it's Y\" in English or Chinese, then fix them in one click. History, version compare and Word export are included, and your samples and history stay on your computer.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/rewriter",
-      "artifact": "https://claude.ai/artifact/SsYNsraS3d5ikeHpeH7UTb",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Claude",
-        "Shortcut"
-      ],
-      "ai": true,
-      "replaces": "QuillBot Premium, Wordtune",
-      "batch": 3
-    },
-    {
-      "id": "budget",
-      "name": "Budget",
-      "subtitle": "Give every dollar a job",
-      "category": "life",
-      "desc": "A zero-based budget like YNAB: assign the money you have to categories, roll it over month to month, set targets, and see overspending the moment it happens. Import your bank's CSV, OFX, QFX or QIF, or bring your YNAB, Mint, Monarch or Copilot export; Claude sorts the transactions into categories and answers questions about your spending. No bank login and no subscription; your data stays on your computer.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/budget",
-      "artifact": "https://claude.ai/artifact/D1tn28sWWYrh8tBeBLJJPV",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Claude"
-      ],
-      "ai": true,
-      "replaces": "YNAB, Monarch, Copilot Money",
-      "batch": 3
-    },
-    {
-      "id": "read-aloud",
-      "name": "Read Aloud",
-      "subtitle": "Listen to anything you read",
-      "category": "learn",
-      "desc": "Turn PDFs, EPUBs, Word files and articles into audio with word-by-word highlighting, and pick up where you left off. Skip by sentence or paragraph, change voice and speed, set a sleep timer, and bookmark passages. Claude summarizes chapters, explains hard passages and cleans up messy PDF text.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/read-aloud",
-      "artifact": "https://claude.ai/artifact/F8GPZhXf3uCMYsRKyz94xq",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Read aloud",
-        "Claude"
-      ],
-      "ai": true,
-      "replaces": "Speechify Premium, NaturalReader",
-      "batch": 3
-    },
-    {
-      "id": "homework-helper",
-      "name": "Homework Helper",
-      "subtitle": "Every answer double-checked",
-      "category": "learn",
-      "desc": "Snap, paste or type any math, physics or chemistry problem and get a step-by-step solution where every step explains why. Each answer is checked by substitution, an independent second solve, and a calculator, and you're warned when they disagree. Hint-only mode, practice problems and a mistake notebook with spaced review help you actually learn it.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/homework-helper",
-      "artifact": "https://claude.ai/artifact/HHV9EHiD8BpdFuSUc9Mz2h",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Claude (reads images)"
-      ],
-      "ai": true,
-      "replaces": "Photomath Plus, Gauth, Chegg",
-      "batch": 3
-    },
-    {
-      "id": "whiteboard",
-      "name": "Whiteboard",
-      "subtitle": "Sketch, diagram, explain with Claude",
-      "category": "work",
-      "desc": "An infinite canvas with Excalidraw's shortcuts, a hand-drawn or clean look, shapes, connectors that stay attached, sticky notes, frames, pen, align and group. Open .excalidraw files, Mermaid and images, and export PNG, SVG, PDF, Excalidraw or Mermaid. Describe a flowchart, sequence diagram, architecture, org chart or timeline and Claude draws it as shapes you can edit, or explains the board.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/whiteboard",
-      "artifact": "https://claude.ai/artifact/247Vg3t1VFBMQMKgkhbN95",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Claude (reads images)"
-      ],
-      "ai": true,
-      "replaces": "Lucidchart, Whimsical, Miro",
-      "batch": 3
-    },
-    {
-      "id": "fitness-coach",
-      "name": "Fitness Coach",
-      "subtitle": "Plan, lift, eat, progress",
-      "category": "life",
-      "desc": "Tell Claude your goal, days and equipment and get a calendar of workouts that adds weight when you earn it. Log sets fast from the keyboard with previous-set ghosts, RPE, rest timer and PRs, and track food with macro targets and photo estimates. Imports your Strong, Hevy and MyFitnessPal history.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/fitness-coach",
-      "artifact": "https://claude.ai/artifact/JsK1uH4k8jyLx88CpNzbXr",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Claude (reads images)",
-        "Notifications"
-      ],
-      "ai": true,
-      "replaces": "Fitbod, Strong Pro, MyFitnessPal Premium",
-      "batch": 3
-    },
-    {
-      "id": "classroom",
-      "name": "Classroom Activities",
-      "subtitle": "AI lessons, games and worksheets",
-      "category": "learn",
-      "desc": "Tell Claude the grade, subject and topic, and it writes vocabulary, quizzes, a reading passage with leveled versions, a lesson plan and a rubric. Turn the same content into a projector quiz show with team scores, matching, word search, crossword, wheel of names and more, or print worksheets with answer keys as PDF and Word.",
-      "author": "",
-      "maker": "Claude AppStore",
-      "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/classroom",
-      "artifact": "https://claude.ai/artifact/ANvfS8TcGMVMQ7HkMxqAtK",
-      "lang": "",
-      "added": "2026-11-27",
-      "perms": [
-        "Claude"
-      ],
-      "ai": true,
-      "replaces": "Wordwall, Twinkl, MagicSchool",
-      "batch": 3
-    },
-    {
-      "id": "leaf-blower",
-      "name": "Leaf Blower",
-      "subtitle": "A game designed by kids",
-      "category": "play",
-      "desc": "A small leaf blower game built from ideas the author's kids dictated straight into Claude. Plays in the browser, and works best installed as an app.",
-      "author": "felixrieseberg",
-      "post": "https://x.com/felixrieseberg/status/2126008112033534392",
-      "artifact": "https://claude.ai/artifact/W45hzJe83bsMDFq8iJCp3y",
-      "lang": "",
-      "added": "2026-11-27"
-    },
-    {
-      "id": "family-recipes",
-      "name": "Family Recipes",
-      "subtitle": "Photos of recipes, neatly formatted",
-      "category": "life",
-      "desc": "Snap a picture of a handwritten recipe card and Claude turns it into a clean, consistent recipe you can keep. Made to save a family's recipes.",
-      "author": "dfeinition",
-      "post": "https://x.com/dfeinition/status/2125992849468445090",
-      "artifact": "https://claude.ai/artifact/HJkFiAQzBBmLcoEj9tW6cu",
-      "lang": "",
-      "added": "2026-11-27"
-    },
-    {
-      "id": "kaun-banega-gareeb",
-      "name": "Kaun Banega Gareeb?",
-      "subtitle": "Comedy quiz: don't go broke",
-      "category": "play",
-      "desc": "A comedy quiz game where you start rich and answer questions trying not to lose it all. Built by borrowing Duolingo's look and turning it into something sillier.",
-      "author": "Rupali254",
-      "post": "https://x.com/Rupali254/status/2126028045299654949",
-      "artifact": "https://claude.ai/artifact/HWn1P8oeE9hpvsweHkigeP",
-      "lang": "",
-      "added": "2026-11-28"
-    },
-    {
-      "id": "decision-log",
-      "name": "Decision Log",
-      "subtitle": "Log decisions and their reasons",
-      "category": "work",
-      "desc": "A B2B-style tool for recording decisions along with the context and reasoning behind them, so you can look back and see why a call was made. Styled after Notion.",
-      "author": "dasSagnik1999",
-      "post": "https://x.com/dasSagnik1999/status/2125832116273598861",
-      "artifact": "https://claude.ai/artifact/5M1RiKjPRD5uDXp4pZYkFM",
-      "lang": "",
-      "added": "2026-11-28"
-    },
-    {
-      "id": "afterimage",
-      "name": "Afterimage",
-      "subtitle": "A playful dream journal",
-      "category": "life",
-      "desc": "A dream journal with a light, animated feel for writing down and revisiting your dreams. The author kept refining its motion and interactions to make it nicer to use.",
-      "author": "designirdeep",
-      "post": "https://x.com/designirdeep/status/2126237747388256664",
-      "artifact": "https://claude.ai/artifact/EKppZTWnLd3jLm4izWRNQ9",
-      "lang": "",
-      "added": "2026-11-28"
-    },
-    {
-      "id": "life-of-oxy",
-      "name": "The Life of Oxy",
-      "subtitle": "An oxygen atom's random life",
-      "category": "play",
-      "desc": "A tiny life simulator where you follow an oxygen atom through chemical reactions (O2, H2O, CuO and more); each run ends in a different fate with its own rarity and score.",
-      "author": "yuuhafuru_umi",
-      "post": "https://x.com/yuuhafuru_umi/status/2126314709892878496",
-      "artifact": "https://claude.ai/artifact/71RLfDH5Pk2m8yneFAcLH6",
-      "lang": "Japanese",
-      "added": "2026-11-28"
-    },
-    {
-      "id": "laika-mission",
-      "name": "Laika's Mission",
-      "subtitle": "A kinder space mission, sound on",
-      "category": "play",
-      "desc": "An interactive tribute imagining a NASA mission a century from now that explores space without sending animals, inspired by Laika. Best experienced with sound on.",
-      "author": "TweetsbyIsha",
-      "post": "https://x.com/TweetsbyIsha/status/2125758627252498751",
-      "artifact": "https://claude.ai/artifact/5Sx4EUeUqL5SHngvcmy2Bw",
-      "lang": "",
-      "added": "2026-11-28"
-    }
-  ],
-  "official": [
-    {
-      "title": "Announcement on X",
-      "url": "https://x.com/ClaudeDevs/status/2125315491522650299",
-      "note": "@ClaudeDevs, with a demo that turns one prompt into an installed space-junk tracker."
-    },
-    {
-      "title": "Turn artifacts into Mac and Windows apps",
-      "url": "https://claude.com/resources/articles/install-as-app",
-      "note": "Launch article: what installed apps can do and how permissions work."
-    },
-    {
-      "title": "Install an artifact as an app",
-      "url": "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app",
-      "note": "Help center guide: install, open, uninstall, permission list, limitations."
-    },
-    {
-      "title": "Artifacts admin guide for Team and Enterprise",
-      "url": "https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans",
-      "note": "Where admins turn the feature and full computer access on or off."
-    },
-    {
-      "title": "Demo apps from Felix Rieseberg",
-      "url": "https://x.com/felixrieseberg/status/2125310111149416682",
-      "note": "Launch post from the Claude Desktop team with a page of demo apps that use OS APIs, connectors and Claude."
-    }
-  ],
-  "prompts": [
-    {
-      "title": "Official example prompts",
-      "url": "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app",
-      "note": "\"Make a Pomodoro timer that lives in my menu bar\", \"remind me to stretch every hour\", \"rename the photos in a folder by date\"."
-    },
-    {
-      "title": "10 apps you can build this weekend",
-      "url": "https://x.com/pundiranusha/status/2125510269267014054",
-      "note": "Menu bar pomodoro, PR review checklist, invoice maker, habit tracker with notifications, meeting cost calculator and more."
-    },
-    {
-      "title": "Add an export button first",
-      "url": "https://x.com/YH31377807/status/2125380955255026128",
-      "note": "Ask Claude for an \"export to JSON\" button before installing, so your data isn't stuck inside an app tied to your account."
-    },
-    {
-      "title": "Personal app builder prompt",
-      "url": "https://x.com/minchoi/status/2125564860255658247",
-      "note": "Four phases: interview you about a weekly annoyance, pick and spec one app, build it as a self-contained artifact, then test it and list every permission it will ask for."
-    },
-    {
-      "title": "The nudge that keeps a timer honest",
-      "url": "https://x.com/juliusnebah/status/2125983858625540372",
-      "note": "A follow-up prompt that adds an honest nudge: if a task runs past 90 minutes the timer asks whether you're still on it, with a 4:30pm daily summary and a menu bar item. Grant notifications and the menu bar, refuse full computer access."
-    }
-  ],
-  "guides": [
-    {
-      "title": "I took apart an installed app: 404 KB",
-      "url": "https://x.com/realamlug/status/2125493255173288159",
-      "note": "Two tiny native binaries and an icon; the page renders inside Claude's own Electron process."
-    },
-    {
-      "title": "Gridbloom teardown",
-      "url": "https://x.com/de1mat/status/2125334953479315834",
-      "note": "The installed app is a launcher with none of the code inside; it opens Claude Desktop, which shows the artifact in its own window under your login."
-    },
-    {
-      "title": "How it compares with a web app shell (Chinese)",
-      "url": "https://x.com/dotey/status/2125368995746308453",
-      "note": "@dotey on why it feels like a Chrome web app and why it still needs to be online."
-    },
-    {
-      "title": "Same prompt, two results: Swift app vs installed artifact",
-      "url": "https://x.com/lvntblsn/status/2125736966624776242",
-      "note": "A menu bar Pomodoro asked for twice: the Code tab produced an 832 KB Swift app that runs without Claude but never changes; the artifact updates whenever it is edited, and the install option had not reached the account yet."
-    }
-  ]
+ "apps": [
+  {
+   "id": "gridbloom",
+   "name": "Gridbloom",
+   "subtitle": "Arena shooter in its own window",
+   "category": "play",
+   "desc": "A small arena shooter rebuilt as an artifact and installed with its own Dock icon. The post also explains what's inside the installed app.",
+   "author": "de1mat",
+   "post": "https://x.com/de1mat/status/2125334953479315834",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "geography-trainer",
+   "name": "Geography Trainer",
+   "subtitle": "Learn countries and capitals",
+   "category": "learn",
+   "desc": "An artifact Claude made for learning geography, installed as a desktop app.",
+   "author": "cjav_dev",
+   "post": "https://x.com/cjav_dev/status/2125317458038768101",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "titan-colony",
+   "name": "Titan Colony",
+   "subtitle": "Build a colony over 60 years",
+   "category": "play",
+   "desc": "A planet you can install: people land on Titan and build a colony over 60 years, drawn in one shader with no libraries.",
+   "author": "maximbilan",
+   "post": "https://x.com/maximbilan/status/2125504700518928832",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "todo-list",
+   "name": "To-do List",
+   "subtitle": "A simple task list",
+   "category": "work",
+   "desc": "A to-do app built in under two hours and shared with @ClaudeDevs.",
+   "author": "DavidCismas",
+   "post": "https://x.com/DavidCismas/status/2125415718673879062",
+   "artifact": "https://claude.ai/artifact/XVDvZnh6uE689MTBPf9MYo",
+   "lang": "",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "ai-architecture-lab",
+   "name": "AI Architecture Survival Lab",
+   "subtitle": "9 missions, 12 ways to break it",
+   "category": "learn",
+   "desc": "Design an AI system, then survive budget cuts, provider outages and security reviews across 9 missions and 12 failure modes.",
+   "author": "PeakGrizzly",
+   "post": "https://x.com/PeakGrizzly/status/2125432809330524466",
+   "artifact": "https://claude.ai/artifact/N78JPA38614byXSEqA3Zei",
+   "lang": "",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "podcast-flashcards",
+   "name": "Podcast Lessons",
+   "subtitle": "Flashcards from 50+ shows",
+   "category": "learn",
+   "desc": "Highlights from Acquired, Invest Like the Best, Farnam Street and 50 other shows, turned into an interactive page with flashcards.",
+   "author": "SamSirapat",
+   "post": "https://x.com/SamSirapat/status/2125467516122386560",
+   "artifact": "https://claude.ai/artifact/N8p7odNH5Y8zYuNBLrfE7X",
+   "lang": "",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "grow-one-thing",
+   "name": "Grow One Thing",
+   "subtitle": "Raise a bonsai, a chrysalis, more",
+   "category": "life",
+   "desc": "Pick one of six living things, from a chrysalis (3 days) to a bonsai (60 days), and raise it through five stages into your collection.",
+   "author": "fighthub_jp",
+   "post": "https://x.com/fighthub_jp/status/2125477701020774880",
+   "artifact": "https://claude.ai/artifact/3tMn8Y3f1hcNjEVUTwMzsX",
+   "lang": "Japanese",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "isekai-quiz",
+   "name": "Isekai Reincarnation Quiz",
+   "subtitle": "Which fantasy life awaits you",
+   "category": "play",
+   "desc": "30 pixel-art RPG scenes decide which of 16 fantasy lives you are reborn into.",
+   "author": "suke_aicopy",
+   "post": "https://x.com/suke_aicopy/status/2125443342297387077",
+   "artifact": "https://claude.ai/artifact/4x32h1UqVfe6tP54Qrm6fC",
+   "lang": "Japanese",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "tarot-love-quiz",
+   "name": "Tarot Love Type",
+   "subtitle": "320+ results, drawn as a card",
+   "category": "play",
+   "desc": "30 questions and 320+ results drawn as a tarot card, with attachment style and a compatibility check.",
+   "author": "suke_aicopy",
+   "post": "https://x.com/suke_aicopy/status/2125454175257686350",
+   "artifact": "https://claude.ai/artifact/2PdqPFbQ8aWwPMDPQAdWcG",
+   "lang": "Japanese",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "science-500",
+   "name": "500 Years of Science",
+   "subtitle": "Ranked scientific achievements",
+   "category": "learn",
+   "desc": "A ranked list of key scientific achievements of the last five centuries, up to the day before it was made.",
+   "author": "tamritzblog",
+   "post": "https://x.com/tamritzblog/status/2125198164118413378",
+   "artifact": "https://claude.ai/artifact/JzUr9QdXgYXKpyXfXnVfvf",
+   "lang": "Hebrew",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "school-site",
+   "name": "School Achievements",
+   "subtitle": "A school profile from one prompt",
+   "category": "work",
+   "desc": "A full school profile site with activities, photos, vision and staff, made from a single prompt.",
+   "author": "Atallah147",
+   "post": "https://x.com/Atallah147/status/2125494606561489142",
+   "artifact": "https://claude.ai/artifact/7xLbZEbjZvrYJK6QaHJKT4",
+   "lang": "Arabic",
+   "added": "2026-11-25"
+  },
+  {
+   "id": "signal-operator",
+   "name": "Signal Operator",
+   "subtitle": "Run every traffic light by hand",
+   "category": "play",
+   "desc": "You switch every light at one intersection by hand. Change too early and cars crash, too late and they back up; by evening there are right-turning cars, buses and ambulances. The game ends when any direction has 8 cars waiting.",
+   "author": "fighthub_jp",
+   "post": "https://x.com/fighthub_jp/status/2125545039849824687",
+   "artifact": "https://claude.ai/artifact/3tLMQDE56DHFmahcMwZ1Au",
+   "lang": "Japanese",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "exact-birthday",
+   "name": "Exact Birthday Calculator",
+   "subtitle": "Your birthday, to the orbit",
+   "category": "learn",
+   "desc": "Works out the exact moment of your birthday as a whole number of trips around the sun, not a calendar date. Made by an MIT professor for people who live in a different time zone from where they were born, or were born on February 29.",
+   "author": "fredodurand",
+   "post": "https://x.com/fredodurand/status/2125610055982866917",
+   "artifact": "https://claude.ai/artifact/FzmS8QF45CN7JmLFmeghku",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "walking-while-texting",
+   "name": "Watch Out! Walking While Texting",
+   "subtitle": "A walk with your phone out",
+   "category": "play",
+   "desc": "A short simulation about the danger of walking while looking at your phone. Free, no sign-up, works on phone or Windows; the same post links a companion game, Walk Beside Me, and the author also has Japanese versions of both.",
+   "author": "s_young_sb29",
+   "post": "https://x.com/s_young_sb29/status/2125609332205289478",
+   "artifact": "https://claude.ai/artifact/V5TFihpFWc5HLBU1vCkFnC",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "document-editor",
+   "name": "AI Document Editor",
+   "subtitle": "Edit .docx files with Claude",
+   "category": "work",
+   "desc": "Open your .docx files and keep working in a real print layout with pages, headers and footers, page numbers, section breaks, columns, a table of contents, equations, comments, footnotes and tracked changes intact. Ask Claude to draft, rewrite, shorten, change tone, proofread, translate or turn text into a table; every AI edit is a tracked change you accept or reject. Dictation, read aloud and version history are built in, and it exports back to Word, PDF, Markdown, HTML or text.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/document-editor",
+   "artifact": "https://claude.ai/artifact/NfDBTqMg5uTBSpbvMvf4Zw",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Copilot in Word, WPS AI",
+   "batch": 1
+  },
+  {
+   "id": "spreadsheet",
+   "name": "AI Spreadsheet",
+   "subtitle": "Excel files, Claude built in",
+   "category": "work",
+   "desc": "Open .xlsx, .xls and .csv files with all sheets, formulas, formatting, charts and images. Ask questions in plain words and get the exact number plus the formula behind it. Build real PivotTables, data validation, conditional formatting, sparklines, grouped outlines and charts with trendlines, clean or classify thousands of rows with Claude, and save back to Excel with nothing missing.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/spreadsheet",
+   "artifact": "https://claude.ai/artifact/4SB49FbrDt6LG1HrKbowmG",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Copilot in Excel, GPT for Sheets, Formula Bot",
+   "batch": 1
+  },
+  {
+   "id": "slide-maker",
+   "name": "AI Slide Maker",
+   "subtitle": "Decks from a topic or your .pptx",
+   "category": "work",
+   "desc": "Describe a talk, paste notes or drop in a .pptx, .docx or PDF, and Claude writes the slides in smart layouts and themes. Then edit like PowerPoint: shapes, pictures, tables, charts, diagrams, animations, transitions, video, slide master, sections and comments. Present with speaker notes and a pen, and export editable PowerPoint, PDF or handouts; slides you didn't touch come back exactly as they were.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/slide-maker",
+   "artifact": "https://claude.ai/artifact/CKCAhZfduiQF7XHuseNrtb",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Copilot in PowerPoint, Gamma, Beautiful.ai",
+   "batch": 1
+  },
+  {
+   "id": "pdf-chat",
+   "name": "PDF Chat",
+   "subtitle": "Read, sign, edit and ask PDFs",
+   "category": "work",
+   "desc": "Open PDFs, Word, PowerPoint or text files and ask questions; every answer cites its pages and highlights the exact words. Highlight, comment, draw, fill forms and sign, reorder, rotate, merge and extract pages, then save a real PDF that opens in Acrobat and Preview. Summaries, outlines, table extraction to Excel, translation and read aloud are built in, and your files stay on your device.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/pdf-chat",
+   "artifact": "https://claude.ai/artifact/WDynWFxX4ePs39Ys5kovKJ",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude",
+    "Read aloud"
+   ],
+   "ai": true,
+   "replaces": "Adobe Acrobat (AI Assistant, Fill & Sign), ChatPDF",
+   "batch": 1
+  },
+  {
+   "id": "grammar-checker",
+   "name": "Grammar Checker",
+   "subtitle": "Grammar, clarity and tone fixes",
+   "category": "work",
+   "desc": "Write or paste text and get live underlines for correctness, clarity, engagement and delivery, each with an explanation and one-click Accept. Rewrite any sentence shorter, clearer, more formal or friendlier, paraphrase it in 9 modes, and set goals, voice and a house style guide. Opens and saves .docx, .md and .txt, and floats on top of other apps with Option+Shift+G.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/grammar-checker",
+   "artifact": "https://claude.ai/artifact/MnfxjBccYQ8PrxtUjnerDj",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude",
+    "Floating window",
+    "Shortcut"
+   ],
+   "ai": true,
+   "replaces": "Grammarly Premium, QuillBot, Wordtune",
+   "batch": 1
+  },
+  {
+   "id": "mind-map",
+   "name": "Mind Map",
+   "subtitle": "Opens your Xmind and MindNode maps",
+   "category": "work",
+   "desc": "Map ideas with Xmind and MindNode keyboard shortcuts in fourteen structures, including matrix, brace, tree table, timeline and fishbone, with a different structure per branch, with floating topics, zones, callouts, numbering, templates and version history. Open your .xmind, .opml, .mm and Markdown files and save back to the same file with Cmd+S. Claude can draft a whole map from a sentence or an article, expand any topic, summarize a branch or turn the map into an article.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/mind-map",
+   "artifact": "https://claude.ai/artifact/2Yo7wHmHtEqnGfvP1rpcxN",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Xmind Pro, MindNode Plus, MindMeister",
+   "batch": 1
+  },
+  {
+   "id": "image-to-text",
+   "name": "Image to Text",
+   "subtitle": "Copy text from any image",
+   "category": "work",
+   "desc": "Paste a screenshot, drop photos or open a PDF, and get text you can edit, copy, read aloud or export. It keeps the layout, writes Markdown, turns tables into Excel or CSV, translates, and pulls receipts and business cards into fields. QR codes and barcodes are read on your computer.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/image-to-text",
+   "artifact": "https://claude.ai/artifact/VG2QZ4DAUhXRSYfyDcxHpM",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude (reads images)",
+    "Read aloud",
+    "Floating window",
+    "Shortcut"
+   ],
+   "ai": true,
+   "replaces": "TextSniper, Prizmo",
+   "batch": 1
+  },
+  {
+   "id": "translator",
+   "name": "AI Translator",
+   "subtitle": "Translate, polish and explain any text",
+   "category": "work",
+   "desc": "Paste text and Claude translates it between your two languages, polishes it so it sounds native in a natural, casual or formal tone, or explains the key words and grammar. It reads the result aloud. Installed, it floats on top and Option+Shift+T brings it up anywhere.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/translator",
+   "artifact": "https://claude.ai/artifact/4YWGk1DexyfRdcmLWD7Wfa",
+   "lang": "",
+   "added": "2026-11-25",
+   "perms": [
+    "Claude",
+    "Voice",
+    "Floating window",
+    "Shortcut"
+   ],
+   "ai": true
+  },
+  {
+   "id": "speaking-coach",
+   "name": "Speaking Coach",
+   "subtitle": "Practice speaking with feedback",
+   "category": "learn",
+   "desc": "Claude writes a short spoken passage at your level in one of 9 languages and reads it to you. Repeat it or answer its question out loud, and Claude scores what you said, corrects it and reads back a more natural version.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/speaking-coach",
+   "artifact": "https://claude.ai/artifact/UuqPyQ25QRBtGaT7E9h3ZD",
+   "lang": "",
+   "added": "2026-11-25",
+   "perms": [
+    "Claude",
+    "Voice",
+    "Dictation"
+   ],
+   "ai": true
+  },
+  {
+   "id": "pomodoro",
+   "name": "Pomodoro Timer",
+   "subtitle": "Claude plans your day into sessions",
+   "category": "work",
+   "desc": "Dump everything you need to do and Claude turns it into ordered tasks with the number of focus sessions each needs. The timer works through them, counts down in your menu bar and Dock, notifies you when a session ends, and starts or pauses from anywhere with Option+Shift+P.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/pomodoro",
+   "artifact": "https://claude.ai/artifact/34QrCwomkxG1UuEA1C8hFh",
+   "lang": "",
+   "added": "2026-11-25",
+   "perms": [
+    "Claude",
+    "Menu bar",
+    "Notifications",
+    "Shortcut"
+   ],
+   "ai": true
+  },
+  {
+   "id": "world-clock",
+   "name": "World Clock",
+   "subtitle": "Time zones and meeting planner",
+   "category": "work",
+   "desc": "Keep the cities you work with side by side, each with a day and night band. Ask in plain words, like \"best time for a call with London and Tokyo\", and Claude answers and moves the time slider there. Installed, the city you pick stays in your menu bar.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/world-clock",
+   "artifact": "https://claude.ai/artifact/3aHTJUDXhT7WrZMSKtcSry",
+   "lang": "",
+   "added": "2026-11-25",
+   "perms": [
+    "Claude",
+    "Menu bar"
+   ],
+   "ai": true
+  },
+  {
+   "id": "sticky-notes",
+   "name": "Sticky Notes",
+   "subtitle": "Notes that float on top",
+   "category": "work",
+   "desc": "Four colored sticky notes in one small window. Claude can turn a messy note into a checklist, clean up the writing, summarize it, suggest next steps or translate it, with one-click undo. Installed, it floats above every window and Option+Shift+J hides it or brings it back.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/sticky-notes",
+   "artifact": "https://claude.ai/artifact/XB1iwfcvpd3y43i14i6TMa",
+   "lang": "",
+   "added": "2026-11-25",
+   "perms": [
+    "Claude",
+    "Floating window",
+    "Shortcut"
+   ],
+   "ai": true
+  },
+  {
+   "id": "future-of-ai-deck",
+   "name": "The Future of AI",
+   "subtitle": "A 3D deck you fly through",
+   "category": "learn",
+   "desc": "A presentation on the future of AI and the intelligence explosion where every slide is a full 3D scene, joined by camera moves and sound. Takes about eight minutes to watch; the author says an early Opus 5.6 built it.",
+   "author": "fluxxrider",
+   "post": "https://x.com/fluxxrider/status/2125622238481371372",
+   "artifact": "https://claude.ai/artifact/Cy2d8Vn63CnzCtonA1LSah",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "zone-of-protection",
+   "name": "Zone of Protection",
+   "subtitle": "A 60-second hand-hygiene test",
+   "category": "learn",
+   "desc": "A 60-second hand-hygiene challenge scored like an antibiotic sensitivity plate: S, I or R.",
+   "author": "drasumant",
+   "post": "https://x.com/drasumant/status/2125575149852525054",
+   "artifact": "https://claude.ai/artifact/C5Yo7CEy9QJYw1yWN4L38U",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "mac-cleaner",
+   "name": "Mac Cleaner",
+   "subtitle": "A disk cleaner built in a chat",
+   "category": "work",
+   "desc": "A Mac cleaning app the author always wanted, built in Claude and installed as a desktop app; the post shows it running.",
+   "author": "joseamijares",
+   "post": "https://x.com/joseamijares/status/2125372164954030086",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "video-studio",
+   "name": "AI Video Studio",
+   "subtitle": "Topic in, MP4 out",
+   "category": "work",
+   "desc": "Describe a video or paste a script and Claude writes an animated storyboard. Edit scenes on a timeline, add built-in music or your own song with cuts snapped to the beat, burn in captions, and export MP4 or WebM in 16:9, 9:16 or 1:1.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/video-studio",
+   "artifact": "https://claude.ai/artifact/HLPce8vTS9NxzgDHg7Qa8G",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude",
+    "Read aloud"
+   ],
+   "ai": true,
+   "replaces": "Canva video, Animoto, Lumen5, Submagic",
+   "batch": 2
+  },
+  {
+   "id": "design-studio",
+   "name": "AI Design Studio",
+   "subtitle": "Screens, pages, graphics, critiques",
+   "category": "work",
+   "desc": "Describe an app or a business, or drop in a screenshot, and Claude designs mobile screens you can click through, landing pages in 2 to 3 styles, or posters and social graphics, all sharing one design system you can change live. Get a scored critique with one-click fixes, and export PNG, HTML/CSS, SVG or design tokens.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/design-studio",
+   "artifact": "https://claude.ai/artifact/1smquJDEao4CY2JmZyYQGY",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude (reads images)"
+   ],
+   "ai": true,
+   "replaces": "Uizard, Framer AI, Galileo",
+   "batch": 2
+  },
+  {
+   "id": "thinking-partner",
+   "name": "AI Thinking Partner",
+   "subtitle": "Think it through, then ship",
+   "category": "work",
+   "desc": "Paste a plan, idea or decision and Claude asks the hard questions, each with a recommended answer you can accept in one keystroke. A live map tracks resolved, open and parked questions, plus terms, decisions and risks. Export a spec, PRD, questionnaire, tickets for Linear or Jira, or a handoff brief.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/thinking-partner",
+   "artifact": "https://claude.ai/artifact/JSTkjR21LMT7q5uTrtAGxz",
+   "lang": "",
+   "added": "2026-11-26",
+   "perms": [
+    "Claude",
+    "Dictation",
+    "Read aloud"
+   ],
+   "ai": true,
+   "replaces": "ChatPRD, Notion AI",
+   "batch": 2
+  },
+  {
+   "id": "saltline",
+   "name": "Saltline",
+   "subtitle": "First-person shooter, built from scratch",
+   "category": "play",
+   "desc": "A full first-person shooter Felix Rieseberg had Fable 5.2 build from one-shot prompts. Every model, sound and texture is generated in code, with no outside assets.",
+   "author": "felixrieseberg",
+   "post": "https://x.com/felixrieseberg/status/2119925633564463609",
+   "artifact": "https://claude.ai/artifact/BGY1SztrAYcJQHSsnHHGmp",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "weird-web-demos",
+   "name": "Weird Web Demos",
+   "subtitle": "HTML-in-Canvas playground",
+   "category": "play",
+   "desc": "A set of odd, animated demos that show off HTML-in-Canvas in the Claude desktop apps, made by the engineer who switched it on. Flash-era fun in one page.",
+   "author": "felixrieseberg",
+   "post": "https://x.com/felixrieseberg/status/2122036839238492493",
+   "artifact": "https://claude.ai/artifact/7cCNqKnoFSoib9SuNLB3vk",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "desktop-shark",
+   "name": "Nori Desktop Shark",
+   "subtitle": "A shark pet for your desktop",
+   "category": "play",
+   "desc": "A small shark swims along the bottom of your screen once you install it as an app. Rub it, double-click its fin to make it leap, or right-click to toss it fish.",
+   "author": "felixrieseberg",
+   "post": "https://x.com/felixrieseberg/status/2125341947179290938",
+   "artifact": "https://claude.ai/artifact/75cGBx19aZZXjWdbqUhmy1",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "felt-texture",
+   "name": "Felt",
+   "subtitle": "Seamless felt texture generator",
+   "category": "work",
+   "desc": "Draws seamless felt-like background textures live with a shader. Pick the colour, pattern, tile size and resolution, then download a 1024 px tile.",
+   "author": "A-Marko",
+   "post": "https://www.reddit.com/r/claude/comments/1woxz0z/i_wanted_a_felt_texture_generator_to_create/",
+   "artifact": "https://claude.ai/artifact/MJCLd2d8tuoqiXk4dvPzJR",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "facade-synth",
+   "name": "Facade Synth",
+   "subtitle": "Build a street like a synth",
+   "category": "play",
+   "desc": "A synthesiser for Georgian terrace streets: turn knobs and step a sequencer where each step is one house. Randomise, mutate, snapshot and save designs as patch code.",
+   "author": "Tomasmillar",
+   "post": "https://news.ycombinator.com/item?id=50068405",
+   "artifact": "https://claude.ai/artifact/BF6MjSg1RJBsp1ZZiQX6D2",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "daisy-tube",
+   "name": "Daisy Tube",
+   "subtitle": "Make a computer sing",
+   "category": "learn",
+   "desc": "Recreates the 1961 Bell Labs voice that sang Daisy Bell. Drag the scope to shape a vowel in a 44-section vocal tube and adjust pitch, lips and breath.",
+   "author": "Ok_Nectarine_4445",
+   "post": "https://www.reddit.com/r/claude/comments/1xfa116/opus_55_recreating_original_vocaloid_program/",
+   "artifact": "https://claude.ai/artifact/B6wkzHzDYf3PWhTNhjTme1",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "gigantua",
+   "name": "Gigantua",
+   "subtitle": "Fly around a black hole",
+   "category": "learn",
+   "desc": "An interactive black hole: hover, orbit or fall in and watch light bend around it. Toggle Doppler and redshift effects, or take the guided tour with sound.",
+   "author": "robotsmakelove",
+   "post": "https://news.ycombinator.com/item?id=49864907",
+   "artifact": "https://claude.ai/artifact/XmWGFtQPgn8aJvU193Ksf8",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "warikan-roulette",
+   "name": "Warikan Roulette",
+   "subtitle": "Split the bill, spin the remainder",
+   "category": "life",
+   "desc": "A bill splitter for group dinners: mark each person as paying more, normal or less, round to 100, 500 or 1,000 yen, and let a roulette decide who covers the leftover. The result copies straight into LINE.",
+   "author": "fighthub_jp",
+   "post": "https://x.com/fighthub_jp/status/2125907440201814228",
+   "artifact": "https://claude.ai/artifact/DEkhPSG48cYwaafJy2NzG6",
+   "lang": "Japanese",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "computers-and-architecture",
+   "name": "Computers and Architectural Design",
+   "subtitle": "A slide history of design tools",
+   "category": "learn",
+   "desc": "A growing slide deck on how computers changed architectural design in Japan and around the world, starting from the era when large buildings were drawn without them. The author plans to try it as a university lecture.",
+   "author": "shuta0331",
+   "post": "https://x.com/shuta0331/status/2125592907679990026",
+   "artifact": "https://claude.ai/artifact/JymufDkhU3GMBKwS1fpzHm",
+   "lang": "Japanese",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "kit-subscriber-map",
+   "name": "Kit Subscriber Map",
+   "subtitle": "Newsletter subscribers on a globe",
+   "category": "work",
+   "desc": "Kit's founder installed an artifact that maps his newsletter subscribers around the world by count and by influence, pulling the data from his Kit account. Video in the post; no public artifact link.",
+   "author": "nathanbarry",
+   "post": "https://x.com/nathanbarry/status/2125643652802515053",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-26"
+  },
+  {
+   "id": "job-search",
+   "name": "Job Search Kit",
+   "subtitle": "Resume, tracker, interview coach",
+   "category": "work",
+   "desc": "Build an ATS-friendly resume in six templates with a live preview that exports exactly as shown to PDF and Word. Paste a job post to get a keyword match score, a tailored version you approve edit by edit, and a cover letter. Track every application on a board and rehearse with a mock interviewer that scores each answer.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/job-search",
+   "artifact": "https://claude.ai/artifact/BMyqpJPUWeKnJS8XW4NP63",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude",
+    "Read aloud",
+    "Dictation"
+   ],
+   "ai": true,
+   "replaces": "Teal, Rezi, Kickresume, Final Round AI",
+   "batch": 3
+  },
+  {
+   "id": "flashcards",
+   "name": "Flashcards",
+   "subtitle": "Spaced repetition, quizzes, AI cards",
+   "category": "learn",
+   "desc": "Study decks with the same FSRS scheduler as modern Anki, or practise with Learn, Test and Match like Quizlet. Paste notes or drop a PDF, Word file or photo, and Claude writes cards or a practice quiz for you to review before adding. Import your Quizlet sets and Anki .apkg decks with their review history; everything stays on your computer with one-click backup.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/flashcards",
+   "artifact": "https://claude.ai/artifact/6ej6mpbC87g5H2WUN9WUD7",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude (reads images)"
+   ],
+   "ai": true,
+   "replaces": "Quizlet Plus, Knowt, Anki add-ons",
+   "batch": 3
+  },
+  {
+   "id": "rewriter",
+   "name": "Rewriter",
+   "subtitle": "Sounds like you wrote it",
+   "category": "work",
+   "desc": "Paste any text and rewrite it in 11 modes, from Standard and Natural to Shorten, Academic and your own voice, with every changed word highlighted. Click a word for synonyms or a sentence to rephrase it, and let the AI tells check find stock phrases, em dashes and \"it's not X, it's Y\" in English or Chinese, then fix them in one click. History, version compare and Word export are included, and your samples and history stay on your computer.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/rewriter",
+   "artifact": "https://claude.ai/artifact/SsYNsraS3d5ikeHpeH7UTb",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude",
+    "Shortcut"
+   ],
+   "ai": true,
+   "replaces": "QuillBot Premium, Wordtune",
+   "batch": 3
+  },
+  {
+   "id": "budget",
+   "name": "Budget",
+   "subtitle": "Give every dollar a job",
+   "category": "life",
+   "desc": "A zero-based budget like YNAB: assign the money you have to categories, roll it over month to month, set targets, and see overspending the moment it happens. Import your bank's CSV, OFX, QFX or QIF, or bring your YNAB, Mint, Monarch or Copilot export; Claude sorts the transactions into categories and answers questions about your spending. No bank login and no subscription; your data stays on your computer.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/budget",
+   "artifact": "https://claude.ai/artifact/D1tn28sWWYrh8tBeBLJJPV",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "YNAB, Monarch, Copilot Money",
+   "batch": 3
+  },
+  {
+   "id": "read-aloud",
+   "name": "Read Aloud",
+   "subtitle": "Listen to anything you read",
+   "category": "learn",
+   "desc": "Turn PDFs, EPUBs, Word files and articles into audio with word-by-word highlighting, and pick up where you left off. Skip by sentence or paragraph, change voice and speed, set a sleep timer, and bookmark passages. Claude summarizes chapters, explains hard passages and cleans up messy PDF text.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/read-aloud",
+   "artifact": "https://claude.ai/artifact/F8GPZhXf3uCMYsRKyz94xq",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Read aloud",
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Speechify Premium, NaturalReader",
+   "batch": 3
+  },
+  {
+   "id": "homework-helper",
+   "name": "Homework Helper",
+   "subtitle": "Every answer double-checked",
+   "category": "learn",
+   "desc": "Snap, paste or type any math, physics or chemistry problem and get a step-by-step solution where every step explains why. Each answer is checked by substitution, an independent second solve, and a calculator, and you're warned when they disagree. Hint-only mode, practice problems and a mistake notebook with spaced review help you actually learn it.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/homework-helper",
+   "artifact": "https://claude.ai/artifact/HHV9EHiD8BpdFuSUc9Mz2h",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude (reads images)"
+   ],
+   "ai": true,
+   "replaces": "Photomath Plus, Gauth, Chegg",
+   "batch": 3
+  },
+  {
+   "id": "whiteboard",
+   "name": "Whiteboard",
+   "subtitle": "Sketch, diagram, explain with Claude",
+   "category": "work",
+   "desc": "An infinite canvas with Excalidraw's shortcuts, a hand-drawn or clean look, shapes, connectors that stay attached, sticky notes, frames, pen, align and group. Open .excalidraw files, Mermaid and images, and export PNG, SVG, PDF, Excalidraw or Mermaid. Describe a flowchart, sequence diagram, architecture, org chart or timeline and Claude draws it as shapes you can edit, or explains the board.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/whiteboard",
+   "artifact": "https://claude.ai/artifact/247Vg3t1VFBMQMKgkhbN95",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude (reads images)"
+   ],
+   "ai": true,
+   "replaces": "Lucidchart, Whimsical, Miro",
+   "batch": 3
+  },
+  {
+   "id": "fitness-coach",
+   "name": "Fitness Coach",
+   "subtitle": "Plan, lift, eat, progress",
+   "category": "life",
+   "desc": "Tell Claude your goal, days and equipment and get a calendar of workouts that adds weight when you earn it. Log sets fast from the keyboard with previous-set ghosts, RPE, rest timer and PRs, and track food with macro targets and photo estimates. Imports your Strong, Hevy and MyFitnessPal history.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/fitness-coach",
+   "artifact": "https://claude.ai/artifact/JsK1uH4k8jyLx88CpNzbXr",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude (reads images)",
+    "Notifications"
+   ],
+   "ai": true,
+   "replaces": "Fitbod, Strong Pro, MyFitnessPal Premium",
+   "batch": 3
+  },
+  {
+   "id": "classroom",
+   "name": "Classroom Activities",
+   "subtitle": "AI lessons, games and worksheets",
+   "category": "learn",
+   "desc": "Tell Claude the grade, subject and topic, and it writes vocabulary, quizzes, a reading passage with leveled versions, a lesson plan and a rubric. Turn the same content into a projector quiz show with team scores, matching, word search, crossword, wheel of names and more, or print worksheets with answer keys as PDF and Word.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/classroom",
+   "artifact": "https://claude.ai/artifact/ANvfS8TcGMVMQ7HkMxqAtK",
+   "lang": "",
+   "added": "2026-11-27",
+   "perms": [
+    "Claude"
+   ],
+   "ai": true,
+   "replaces": "Wordwall, Twinkl, MagicSchool",
+   "batch": 3
+  },
+  {
+   "id": "leaf-blower",
+   "name": "Leaf Blower",
+   "subtitle": "A game designed by kids",
+   "category": "play",
+   "desc": "A small leaf blower game built from ideas the author's kids dictated straight into Claude. Plays in the browser, and works best installed as an app.",
+   "author": "felixrieseberg",
+   "post": "https://x.com/felixrieseberg/status/2126008112033534392",
+   "artifact": "https://claude.ai/artifact/W45hzJe83bsMDFq8iJCp3y",
+   "lang": "",
+   "added": "2026-11-27"
+  },
+  {
+   "id": "family-recipes",
+   "name": "Family Recipes",
+   "subtitle": "Photos of recipes, neatly formatted",
+   "category": "life",
+   "desc": "Snap a picture of a handwritten recipe card and Claude turns it into a clean, consistent recipe you can keep. Made to save a family's recipes.",
+   "author": "dfeinition",
+   "post": "https://x.com/dfeinition/status/2125992849468445090",
+   "artifact": "https://claude.ai/artifact/HJkFiAQzBBmLcoEj9tW6cu",
+   "lang": "",
+   "added": "2026-11-27"
+  },
+  {
+   "id": "kaun-banega-gareeb",
+   "name": "Kaun Banega Gareeb?",
+   "subtitle": "Comedy quiz: don't go broke",
+   "category": "play",
+   "desc": "A comedy quiz game where you start rich and answer questions trying not to lose it all. Built by borrowing Duolingo's look and turning it into something sillier.",
+   "author": "Rupali254",
+   "post": "https://x.com/Rupali254/status/2126028045299654949",
+   "artifact": "https://claude.ai/artifact/HWn1P8oeE9hpvsweHkigeP",
+   "lang": "",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "decision-log",
+   "name": "Decision Log",
+   "subtitle": "Log decisions and their reasons",
+   "category": "work",
+   "desc": "A B2B-style tool for recording decisions along with the context and reasoning behind them, so you can look back and see why a call was made. Styled after Notion.",
+   "author": "dasSagnik1999",
+   "post": "https://x.com/dasSagnik1999/status/2125832116273598861",
+   "artifact": "https://claude.ai/artifact/5M1RiKjPRD5uDXp4pZYkFM",
+   "lang": "",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "afterimage",
+   "name": "Afterimage",
+   "subtitle": "A playful dream journal",
+   "category": "life",
+   "desc": "A dream journal with a light, animated feel for writing down and revisiting your dreams. The author kept refining its motion and interactions to make it nicer to use.",
+   "author": "designirdeep",
+   "post": "https://x.com/designirdeep/status/2126237747388256664",
+   "artifact": "https://claude.ai/artifact/EKppZTWnLd3jLm4izWRNQ9",
+   "lang": "",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "life-of-oxy",
+   "name": "The Life of Oxy",
+   "subtitle": "An oxygen atom's random life",
+   "category": "play",
+   "desc": "A tiny life simulator where you follow an oxygen atom through chemical reactions (O2, H2O, CuO and more); each run ends in a different fate with its own rarity and score.",
+   "author": "yuuhafuru_umi",
+   "post": "https://x.com/yuuhafuru_umi/status/2126314709892878496",
+   "artifact": "https://claude.ai/artifact/71RLfDH5Pk2m8yneFAcLH6",
+   "lang": "Japanese",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "laika-mission",
+   "name": "Laika's Mission",
+   "subtitle": "A kinder space mission, sound on",
+   "category": "play",
+   "desc": "An interactive tribute imagining a NASA mission a century from now that explores space without sending animals, inspired by Laika. Best experienced with sound on.",
+   "author": "TweetsbyIsha",
+   "post": "https://x.com/TweetsbyIsha/status/2125758627252498751",
+   "artifact": "https://claude.ai/artifact/5Sx4EUeUqL5SHngvcmy2Bw",
+   "lang": "",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "japanese-conjugation",
+   "name": "Japanese Conjugation Visualizer",
+   "subtitle": "See Japanese verbs conjugate",
+   "category": "learn",
+   "desc": "An interactive view of how Japanese verb conjugation works: the six bases arranged on a hexagon, showing how the vowel shifts with each following form. It does the morphological analysis with AI, with a heavier offline dictionary mode as a fallback.",
+   "author": "habakari101",
+   "post": "https://x.com/habakari101/status/2125800079684710671",
+   "artifact": "https://claude.ai/artifact/Er5YULJUXg58L2NsEVUMcv",
+   "lang": "Japanese",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "calculus-in-motion",
+   "name": "Calculus in Motion",
+   "subtitle": "Watch derivative and integral",
+   "category": "learn",
+   "desc": "A 3D visualization of why differentiation and integration are inverse operations. Instead of just reading the formulas, you move the graph through space to feel the relationship, and can step through it slowly yourself.",
+   "author": "habakari101",
+   "post": "https://x.com/habakari101/status/2126506079295283305",
+   "artifact": "https://claude.ai/artifact/VUKuE6q36fkrvRkJFZXGCS",
+   "lang": "Japanese",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "adding-past-ten",
+   "name": "Adding Past Ten",
+   "subtitle": "Practice sums over ten",
+   "category": "learn",
+   "desc": "A small practice tool a parent made for a child learning to add when the sum crosses ten. Simple and focused, meant to be handed to a kid working on the same thing.",
+   "author": "sikakkar",
+   "post": "https://x.com/sikakkar/status/2126511508972855767",
+   "artifact": "https://claude.ai/artifact/MwJeCrhkWxv8p1eyWnN1Tq",
+   "lang": "",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "lvti-liverpool-quiz",
+   "name": "LVTI Liverpool Quiz",
+   "subtitle": "Which Liverpool player are you",
+   "category": "play",
+   "desc": "A 30-question personality quiz that matches you to the Liverpool FC player you most resemble, and even tells you which player you'd clash with. A football-fan spin on the MBTI format.",
+   "author": "MitsuLIV",
+   "post": "https://x.com/MitsuLIV/status/2126463657739714602",
+   "artifact": "https://claude.ai/artifact/XsJiW9GJ7jURD8d4dK8BRY",
+   "lang": "Japanese",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "guess-the-red",
+   "name": "Guess the Red",
+   "subtitle": "Name the Liverpool player",
+   "category": "play",
+   "desc": "A guessing game where you work out which Liverpool player is being described. The author kept adding fixes and replay features to make it last longer.",
+   "author": "MitsuLIV",
+   "post": "https://x.com/MitsuLIV/status/2125770947647214014",
+   "artifact": "https://claude.ai/artifact/8wy1Z6t8b1ydgrobeaFP6h",
+   "lang": "Japanese",
+   "added": "2026-11-28"
+  },
+  {
+   "id": "which-ai-tool",
+   "name": "Which AI Tool",
+   "subtitle": "Find your AI tool type",
+   "category": "play",
+   "desc": "A 10-question, two-minute quiz that sorts you into an AI-tool type and names the assistant that fits you. Made by the author as a quick, shareable diagnostic.",
+   "author": "EveSte3",
+   "post": "https://x.com/EveSte3/status/2126515185581982012",
+   "artifact": "https://claude.ai/artifact/3LB4QUL4iN9hAwhwR8ypDi",
+   "lang": "Japanese",
+   "added": "2026-11-28"
+  }
+ ],
+ "official": [
+  {
+   "title": "Announcement on X",
+   "url": "https://x.com/ClaudeDevs/status/2125315491522650299",
+   "note": "@ClaudeDevs, with a demo that turns one prompt into an installed space-junk tracker."
+  },
+  {
+   "title": "Turn artifacts into Mac and Windows apps",
+   "url": "https://claude.com/resources/articles/install-as-app",
+   "note": "Launch article: what installed apps can do and how permissions work."
+  },
+  {
+   "title": "Install an artifact as an app",
+   "url": "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app",
+   "note": "Help center guide: install, open, uninstall, permission list, limitations."
+  },
+  {
+   "title": "Artifacts admin guide for Team and Enterprise",
+   "url": "https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans",
+   "note": "Where admins turn the feature and full computer access on or off."
+  },
+  {
+   "title": "Demo apps from Felix Rieseberg",
+   "url": "https://x.com/felixrieseberg/status/2125310111149416682",
+   "note": "Launch post from the Claude Desktop team with a page of demo apps that use OS APIs, connectors and Claude."
+  }
+ ],
+ "prompts": [
+  {
+   "title": "Official example prompts",
+   "url": "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app",
+   "note": "\"Make a Pomodoro timer that lives in my menu bar\", \"remind me to stretch every hour\", \"rename the photos in a folder by date\"."
+  },
+  {
+   "title": "10 apps you can build this weekend",
+   "url": "https://x.com/pundiranusha/status/2125510269267014054",
+   "note": "Menu bar pomodoro, PR review checklist, invoice maker, habit tracker with notifications, meeting cost calculator and more."
+  },
+  {
+   "title": "Add an export button first",
+   "url": "https://x.com/YH31377807/status/2125380955255026128",
+   "note": "Ask Claude for an \"export to JSON\" button before installing, so your data isn't stuck inside an app tied to your account."
+  },
+  {
+   "title": "Personal app builder prompt",
+   "url": "https://x.com/minchoi/status/2125564860255658247",
+   "note": "Four phases: interview you about a weekly annoyance, pick and spec one app, build it as a self-contained artifact, then test it and list every permission it will ask for."
+  },
+  {
+   "title": "The nudge that keeps a timer honest",
+   "url": "https://x.com/juliusnebah/status/2125983858625540372",
+   "note": "A follow-up prompt that adds an honest nudge: if a task runs past 90 minutes the timer asks whether you're still on it, with a 4:30pm daily summary and a menu bar item. Grant notifications and the menu bar, refuse full computer access."
+  },
+  {
+   "title": "Make an artifact look like a real desktop app",
+   "url": "https://x.com/samvllaco/status/2126402026703864185",
+   "note": "A paste-in restyle prompt to run before you Install as app: drop the centered card and fill the window, add a 48px top bar, use one accent color, a tight 4/8/12/16/24/32 spacing scale, and no gradients or emoji."
+  }
+ ],
+ "guides": [
+  {
+   "title": "I took apart an installed app: 404 KB",
+   "url": "https://x.com/realamlug/status/2125493255173288159",
+   "note": "Two tiny native binaries and an icon; the page renders inside Claude's own Electron process."
+  },
+  {
+   "title": "Gridbloom teardown",
+   "url": "https://x.com/de1mat/status/2125334953479315834",
+   "note": "The installed app is a launcher with none of the code inside; it opens Claude Desktop, which shows the artifact in its own window under your login."
+  },
+  {
+   "title": "How it compares with a web app shell (Chinese)",
+   "url": "https://x.com/dotey/status/2125368995746308453",
+   "note": "@dotey on why it feels like a Chrome web app and why it still needs to be online."
+  },
+  {
+   "title": "Same prompt, two results: Swift app vs installed artifact",
+   "url": "https://x.com/lvntblsn/status/2125736966624776242",
+   "note": "A menu bar Pomodoro asked for twice: the Code tab produced an 832 KB Swift app that runs without Claude but never changes; the artifact updates whenever it is edited, and the install option had not reached the account yet."
+  },
+  {
+   "title": "If 'Install as app' is missing, restart Claude",
+   "url": "https://x.com/tiptoes41474065/status/2126461777450049775",
+   "note": "One user only saw the Install as app option after fully quitting Claude from the tray and reopening it."
+  }
+ ]
 }

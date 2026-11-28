@@ -1,341 +1,373 @@
 {
-  "apps": {
-    "gridbloom": {
-      "subtitle": "有独立窗口的竞技场射击游戏",
-      "desc": "一个改造成工件的小型竞技场射击游戏，装好后在 Dock 里有自己的图标。帖子里还拆解了装好的 app 里面到底有什么。"
-    },
-    "geography-trainer": {
-      "subtitle": "记国家和首都",
-      "desc": "用 Claude 做的地理学习工件，装成了桌面 app。"
-    },
-    "titan-colony": {
-      "subtitle": "花 60 年建一座殖民地",
-      "desc": "一颗可以安装的星球：人类登陆土卫六，在 60 年里建起殖民地，整个画面只用一个着色器画成，没用任何库。"
-    },
-    "todo-list": {
-      "subtitle": "简单的待办清单",
-      "desc": "不到两小时做出来、分享给 @ClaudeDevs 的待办 app。"
-    },
-    "ai-architecture-lab": {
-      "subtitle": "9 个任务，12 种出错方式",
-      "desc": "设计一个 AI 系统，然后扛过预算削减、服务商宕机和安全审查，一共 9 个任务、12 种故障。"
-    },
-    "podcast-flashcards": {
-      "subtitle": "50 多档播客做成的抽认卡",
-      "desc": "把 Acquired、Invest Like the Best、Farnam Street 等 50 多档播客的精华做成互动页面和抽认卡。"
-    },
-    "grow-one-thing": {
-      "subtitle": "养一盆盆景、一只蛹等",
-      "desc": "从 6 种生物里选一种，从蛹（3 天）到盆景（60 天），养过五个阶段后收进你的收藏。"
-    },
-    "isekai-quiz": {
-      "subtitle": "测测你会转生成什么",
-      "desc": "30 个像素风 RPG 场景，决定你转生到 16 种奇幻人生里的哪一种。"
-    },
-    "tarot-love-quiz": {
-      "subtitle": "320 多种结果，抽成一张牌",
-      "desc": "30 道题、320 多种结果，以塔罗牌形式呈现，附带依恋类型和配对检测。"
-    },
-    "science-500": {
-      "subtitle": "科学成就排行",
-      "desc": "过去五个世纪重要科学成就的排行榜，一直排到做它的前一天。"
-    },
-    "school-site": {
-      "subtitle": "一句话生成学校介绍站",
-      "desc": "一句提示词生成的完整学校介绍网站，有活动、照片、愿景和教职员。"
-    },
-    "signal-operator": {
-      "subtitle": "亲手控制每一盏红绿灯",
-      "desc": "你手动切换一个路口的每一盏灯。切早了撞车，切晚了堵车；到了傍晚还有右转车、公交和救护车。任何方向排到 8 辆车游戏就结束。"
-    },
-    "exact-birthday": {
-      "subtitle": "按地球公转算的生日",
-      "desc": "把你的生日算成绕太阳整数圈的精确时刻，而不是日历日期。MIT 教授做的，适合住在和出生地不同时区、或 2 月 29 日出生的人。"
-    },
-    "walking-while-texting": {
-      "subtitle": "边走路边看手机",
-      "desc": "一个关于边走路边看手机有多危险的小模拟。免费、不用注册，手机电脑都能玩；同一条帖子还有姊妹游戏 Walk Beside Me，作者也做了日文版。"
-    },
-    "document-editor": {
-      "name": "AI 文档",
-      "subtitle": "用 Claude 编辑 .docx 文件",
-      "replaces": "Word 里的 Copilot, WPS AI",
-      "desc": "打开你的 .docx 文件，在真实的分页视图里继续写：页面、页眉页脚、页码、分节、分栏、目录、公式、批注、脚注和修订都原样保留。让 Claude 起草、改写、缩写、换语气、校对、翻译，或把文字变成表格；每处 AI 修改都是一条修订，由你接受或拒绝。自带听写、朗读和版本历史，可以导出回 Word、PDF、Markdown、HTML 或纯文本。"
-    },
-    "spreadsheet": {
-      "name": "AI 表格",
-      "subtitle": "Excel 文件，内置 Claude",
-      "replaces": "Excel 里的 Copilot, GPT for Sheets, Formula Bot",
-      "desc": "打开 .xlsx、.xls 和 .csv 文件，所有工作表、公式、格式、图表和图片都在。用大白话提问，得到准确数字和背后的公式。能做真正的数据透视表、数据验证、条件格式、迷你图、分组和带趋势线的图表，用 Claude 清洗或分类成千上万行，保存回 Excel 时什么都不丢。"
-    },
-    "slide-maker": {
-      "name": "AI 幻灯片",
-      "subtitle": "从一个主题或你的 .pptx 做出演示",
-      "replaces": "PowerPoint 里的 Copilot, Gamma, Beautiful.ai",
-      "desc": "描述一场演讲、粘贴笔记，或者拖进 .pptx、.docx、PDF，Claude 用智能版式和主题写好幻灯片。然后像 PowerPoint 一样编辑：形状、图片、表格、图表、图示、动画、切换、视频、母版、分节和批注。带演讲者备注和画笔放映，导出可编辑的 PowerPoint、PDF 或讲义；你没动过的幻灯片原样导出。"
-    },
-    "pdf-chat": {
-      "name": "PDF 对话",
-      "subtitle": "阅读、签名、编辑和提问 PDF",
-      "replaces": "Adobe Acrobat（AI 助手、填写和签名）, ChatPDF",
-      "desc": "打开 PDF、Word、PowerPoint 或文本文件直接提问，每个回答都标出页码并高亮原文。可以高亮、批注、画图、填表和签名，重新排序、旋转、合并和提取页面，保存出的真 PDF 能在 Acrobat 和预览里打开。内置摘要、大纲、表格导出到 Excel、翻译和朗读，文件只留在你的设备上。"
-    },
-    "grammar-checker": {
-      "name": "语法检查",
-      "subtitle": "改语法、改清晰度、改语气",
-      "replaces": "Grammarly Premium, QuillBot, Wordtune",
-      "desc": "写或粘贴文字，实时标出正确性、清晰度、吸引力和表达方面的问题，每条都有解释，一键接受。任何句子都能改得更短、更清楚、更正式或更亲切，有 9 种改写模式，还能设目标、语气和团队用语规范。能打开和保存 .docx、.md、.txt，按 Option+Shift+G 浮在其他 app 上面。"
-    },
-    "mind-map": {
-      "name": "思维导图",
-      "subtitle": "打开你的 Xmind 和 MindNode 导图",
-      "replaces": "Xmind Pro, MindNode Plus, MindMeister",
-      "desc": "用 Xmind 和 MindNode 的快捷键画导图，有十四种结构，包括矩阵、括号图、树形表格、时间线和鱼骨图，每个分支能用不同结构；还有自由主题、区域、标注、编号、模板和版本历史。打开你的 .xmind、.opml、.mm 和 Markdown 文件，按 Cmd+S 存回原文件。Claude 能从一句话或一篇文章画出整张导图、展开任意主题、总结一个分支，或把导图写成文章。"
-    },
-    "image-to-text": {
-      "name": "图片转文字",
-      "subtitle": "从任意图片里复制文字",
-      "replaces": "TextSniper, Prizmo",
-      "desc": "粘贴截图、拖入照片或打开 PDF，得到可以编辑、复制、朗读或导出的文字。保留排版、生成 Markdown、把表格变成 Excel 或 CSV、翻译，还能把小票和名片拆成字段。二维码和条形码在本机识别。"
-    },
-    "translator": {
-      "name": "AI 翻译",
-      "subtitle": "翻译、润色和讲解任何文字",
-      "desc": "粘贴文字，Claude 在你的两种语言之间翻译，按自然、口语或正式的语气润色到像母语一样，或者讲解关键词和语法。可以朗读结果。装好后它浮在最上层，在任何地方按 Option+Shift+T 唤出。"
-    },
-    "speaking-coach": {
-      "name": "口语教练",
-      "subtitle": "练口语，马上得到反馈",
-      "desc": "Claude 按你的水平用 9 种语言之一写一小段口语材料并读给你听。你跟读或大声回答它的问题，Claude 给你打分、纠错，并读一遍更地道的说法。"
-    },
-    "pomodoro": {
-      "name": "番茄钟",
-      "subtitle": "Claude 把你的一天排成番茄",
-      "desc": "把要做的事一股脑倒进来，Claude 排成有先后的任务，并算好每项要几个番茄。计时器按顺序走，在菜单栏和 Dock 里倒计时，番茄结束时通知你，在任何地方按 Option+Shift+P 开始或暂停。"
-    },
-    "world-clock": {
-      "name": "世界时钟",
-      "subtitle": "时区和会议时间规划",
-      "desc": "把常打交道的城市并排放着，每个都有昼夜条。用大白话问，比如“和伦敦、东京开会什么时间最好”，Claude 回答并把时间滑块拖过去。装好后，你选的城市会常驻菜单栏。"
-    },
-    "sticky-notes": {
-      "name": "便签",
-      "subtitle": "浮在最上层的便签",
-      "desc": "一个小窗口里四张彩色便签。Claude 能把乱糟糟的便签变成清单、整理文字、总结、建议下一步或翻译，一键撤销。装好后它浮在所有窗口上面，按 Option+Shift+J 隐藏或唤回。"
-    },
-    "future-of-ai-deck": {
-      "subtitle": "可以飞着看的 3D 演示",
-      "desc": "一份讲 AI 未来和智能爆炸的演示，每页都是完整的 3D 场景，用镜头运动和音效串起来。看完大约 8 分钟；作者说是早期的 Opus 5.6 做的。"
-    },
-    "zone-of-protection": {
-      "subtitle": "60 秒手卫生测试",
-      "desc": "一个 60 秒的手卫生挑战，像抗生素药敏试验一样按 S、I、R 打分。"
-    },
-    "mac-cleaner": {
-      "subtitle": "聊天里做出来的磁盘清理工具",
-      "desc": "作者一直想要的 Mac 清理 app，在 Claude 里做出来并装成了桌面 app；帖子里有运行画面。"
-    },
-    "video-studio": {
-      "name": "AI 视频工作室",
-      "subtitle": "输入主题，导出 MP4",
-      "replaces": "Canva 视频, Animoto, Lumen5, Submagic",
-      "desc": "描述一个视频或粘贴脚本，Claude 写好带动画的分镜。在时间轴上编辑场景，加内置音乐或你自己的歌并自动卡点，烧录字幕，导出 16:9、9:16 或 1:1 的 MP4 或 WebM。"
-    },
-    "design-studio": {
-      "name": "AI 设计工作室",
-      "subtitle": "界面、网页、海报、设计点评",
-      "replaces": "Uizard, Framer AI, Galileo",
-      "desc": "描述一个 app 或一门生意，或拖入一张截图，Claude 就能设计可点击的手机界面、2 到 3 种风格的落地页，或海报和社交配图，所有设计共用一套可实时修改的设计规范。还能给设计打分点评并一键修改，导出 PNG、HTML/CSS、SVG 或设计令牌。"
-    },
-    "thinking-partner": {
-      "name": "AI 思考搭档",
-      "subtitle": "想清楚，再动手",
-      "replaces": "ChatPRD, Notion AI",
-      "desc": "粘贴一个计划、想法或决定，Claude 会提出关键问题，每个都附推荐答案，一键接受。实时地图记录已解决、待定和搁置的问题，以及术语、决定和风险。可导出需求说明、PRD、问卷、可导入 Linear 或 Jira 的任务单，或交接文档。"
-    },
-    "saltline": {
-      "subtitle": "从零做出的第一人称射击游戏",
-      "desc": "Felix Rieseberg 让 Fable 5.2 只靠一次性提示词做出的完整第一人称射击游戏，模型、音效、贴图全部用代码生成，没有外部素材。"
-    },
-    "weird-web-demos": {
-      "subtitle": "HTML-in-Canvas 演示合集",
-      "desc": "打开 Claude 桌面端 HTML-in-Canvas 功能的工程师亲手做的一组怪诞动画演示，像回到 Flash 年代。"
-    },
-    "desktop-shark": {
-      "subtitle": "桌面上的小鲨鱼宠物",
-      "desc": "装成 app 后，一条小鲨鱼会在屏幕底部游来游去。摸它会发呆，双击鱼鳍会跳起来，右键可以喂鱼。"
-    },
-    "felt-texture": {
-      "subtitle": "无缝毛毡纹理生成器",
-      "desc": "用着色器实时生成无缝的毛毡质感背景。选颜色、花纹、平铺尺寸和分辨率，直接下载 1024 像素贴图。"
-    },
-    "facade-synth": {
-      "subtitle": "像玩合成器一样盖街道",
-      "desc": "把乔治亚式联排街道做成合成器：拧旋钮、走音序器，每一步是一栋房子。可随机、变异、存快照，设计存成补丁代码。"
-    },
-    "daisy-tube": {
-      "subtitle": "让电脑唱歌",
-      "desc": "重现 1961 年贝尔实验室第一次让电脑唱《Daisy Bell》的声音。拖动示波器在 44 节声道管里捏出元音，调音高、嘴唇和气息。"
-    },
-    "gigantua": {
-      "subtitle": "绕着黑洞飞",
-      "desc": "可交互的黑洞：悬停、环绕或掉进去，看光线怎么弯曲。能开关多普勒和红移效果，也能跟着带声音的导览看。"
-    },
-    "warikan-roulette": {
-      "subtitle": "AA 算账，零头转盘定",
-      "desc": "聚餐分账工具：给每个人选多付、正常或少付，按 100、500 或 1000 日元取整，剩下的零头用转盘决定谁出。结果可以直接复制贴到 LINE。"
-    },
-    "computers-and-architecture": {
-      "subtitle": "计算机与建筑设计史幻灯片",
-      "desc": "一套还在增补的幻灯片，讲计算机怎样改变了日本和世界的建筑设计，从不靠计算机画大型建筑的年代讲起。作者打算拿它在大学课上试讲。"
-    },
-    "kit-subscriber-map": {
-      "subtitle": "把订阅者放到地球上",
-      "desc": "Kit 创始人装的一个工件：从自己的 Kit 账号取数据，按人数和影响力把全球的 newsletter 订阅者画在地图上。原帖有视频，没有公开的工件链接。"
-    },
-    "job-search": {
-      "name": "求职套件",
-      "subtitle": "简历、投递跟踪、面试教练",
-      "replaces": "Teal, Rezi, Kickresume, Final Round AI",
-      "desc": "用 6 个能通过 ATS 筛选的模板写简历，所见即所得，导出 PDF 和 Word 直接投。粘贴职位描述，得到关键词匹配分、逐条由你确认的定制版简历和求职信。用看板跟踪每一份申请，再和会给每个回答打分的模拟面试官练一练。"
-    },
-    "flashcards": {
-      "name": "闪卡",
-      "subtitle": "间隔复习、测验、AI 出卡",
-      "replaces": "Quizlet Plus, Knowt, Anki add-ons",
-      "desc": "用和新版 Anki 一样的 FSRS 算法复习，也能像 Quizlet 那样用学习、测试、配对模式练习。粘贴笔记或拖入 PDF、Word、照片，Claude 写好卡片或测验，你审核后再加入。能导入 Quizlet 和 Anki .apkg 牌组连同复习记录；数据只在你的电脑上，一键备份。"
-    },
-    "rewriter": {
-      "name": "改写",
-      "subtitle": "读起来像你自己写的",
-      "replaces": "QuillBot Premium, Wordtune",
-      "desc": "粘贴任意文字，用 11 种模式改写，从标准、自然到精简、学术，以及你自己的语气，改动的词都会标出来。点一个词换同义词，点一句话换说法；AI 痕迹检查能找出英文和中文里的套话、破折号、“不是 X 而是 Y”，一键改掉。带历史记录、版本对比和 Word 导出，样本和历史只存在你的电脑上。"
-    },
-    "budget": {
-      "name": "记账预算",
-      "subtitle": "给每一块钱安排用途",
-      "replaces": "YNAB, Monarch, Copilot Money",
-      "desc": "和 YNAB 一样的零基预算：把手上的钱分到各个分类，按月结转，设目标，超支马上看得到。导入银行的 CSV、OFX、QFX、QIF，或 YNAB、Mint、Monarch、Copilot 的导出文件，也能读支付宝和微信账单；Claude 帮你给交易分类，回答花钱的问题。不用登录银行，不用订阅，数据只在你的电脑上。"
-    },
-    "read-aloud": {
-      "name": "朗读",
-      "subtitle": "什么都能听",
-      "replaces": "Speechify Premium, NaturalReader",
-      "desc": "把 PDF、EPUB、Word 和文章变成有声书，逐词高亮，下次从上次的地方接着听。按句、按段跳读，换声音和语速，设睡眠定时，加书签。Claude 能总结章节、解释难懂的段落、清理乱糟糟的 PDF 文字。"
-    },
-    "homework-helper": {
-      "name": "作业助手",
-      "subtitle": "每个答案都核对过",
-      "replaces": "Photomath Plus, Gauth, Chegg",
-      "desc": "拍照、粘贴或输入数学、物理、化学题，得到分步解答，每一步都讲清为什么。每个答案都经过代回检验、独立重解和计算器三重核对，对不上会提醒你。仅提示模式、同类练习和按间隔复习的错题本，帮你真正学会。"
-    },
-    "whiteboard": {
-      "name": "白板",
-      "subtitle": "画草图、出图表、让 Claude 讲解",
-      "replaces": "Lucidchart, Whimsical, Miro",
-      "desc": "无限画布，快捷键和 Excalidraw 一样，手绘或简洁风格任选，有图形、吸附的连线、便签、框架、画笔、对齐和编组。能打开 .excalidraw 文件、Mermaid 和图片，导出 PNG、SVG、PDF、Excalidraw 或 Mermaid。描述一张流程图、时序图、架构图、组织架构图或时间线，Claude 画成可编辑的图形，也能讲解整块白板。"
-    },
-    "fitness-coach": {
-      "name": "健身教练",
-      "subtitle": "排计划、练、吃、看进步",
-      "replaces": "Fitbod, Strong Pro, MyFitnessPal Premium",
-      "desc": "告诉 Claude 目标、训练日和器械，得到一份训练日历，练到位了自动建议加重。用键盘快速记组，上次的数值自动带出，有 RPE、休息计时和个人纪录；饮食按营养目标记录，拍照估算热量。能导入 Strong、Hevy 和 MyFitnessPal 的历史。"
-    },
-    "classroom": {
-      "name": "课堂活动",
-      "subtitle": "AI 备课、课堂游戏、练习纸",
-      "replaces": "Wordwall, Twinkl, MagicSchool",
-      "desc": "告诉 Claude 年级、学科和主题，它会写好词汇、题目、分层阅读文章、教案和评分量表。同一份内容可以变成投影知识竞赛（分队计分）、连连看、找单词、填字游戏、随机点名转盘等，也能导出带答案的 PDF 和 Word 练习纸。"
-    },
-    "leaf-blower": {
-      "subtitle": "孩子出主意做的小游戏",
-      "desc": "作者让孩子直接对着 Claude 说想玩什么游戏，做出来的吹落叶小游戏。浏览器里能玩，装成 app 更好玩。"
-    },
-    "family-recipes": {
-      "subtitle": "手写菜谱拍照整理",
-      "desc": "给手写菜谱拍张照，Claude 把它整理成统一、清楚的格式保存下来。作者用它来留住家里的菜谱。"
-    },
-    "kaun-banega-gareeb": {
-      "subtitle": "搞笑问答：别把钱输光",
-      "desc": "一款搞笑问答游戏，一开始你很有钱，答题时尽量别全亏光。作者借用 Duolingo 的界面风格，做成了更搞怪的样子。"
-    },
-    "decision-log": {
-      "subtitle": "记录决策和背后的理由",
-      "desc": "一个偏 B2B 的工具，把每个决策连同当时的背景和推理一起记下来，方便日后回看当初为什么这么定。界面仿 Notion。"
-    },
-    "afterimage": {
-      "subtitle": "轻盈好玩的梦境日记",
-      "desc": "一个带动画、手感轻盈的梦境日记，用来记录和回看自己做过的梦。作者不断打磨它的动效和交互，让它用起来更舒服。"
-    },
-    "life-of-oxy": {
-      "subtitle": "一个氧原子的随机一生",
-      "desc": "一个迷你人生模拟器，你跟着一个氧原子经历各种化学反应（O2、H2O、CuO 等），每一局都走向不同结局，各有稀有度和分数。"
-    },
-    "laika-mission": {
-      "subtitle": "更温柔的太空任务，记得开声音",
-      "desc": "一个互动小作品，设想一百年后的 NASA 任务：不再把动物送上天也能探索太空，灵感来自莱卡。开着声音体验更好。"
-    }
+ "apps": {
+  "gridbloom": {
+   "subtitle": "有独立窗口的竞技场射击游戏",
+   "desc": "一个改造成工件的小型竞技场射击游戏，装好后在 Dock 里有自己的图标。帖子里还拆解了装好的 app 里面到底有什么。"
   },
-  "official": {
-    "https://x.com/ClaudeDevs/status/2125315491522650299": {
-      "title": "X 上的发布公告",
-      "note": "@ClaudeDevs 发布，演示了一句提示词变成一个装好的太空垃圾追踪器。"
-    },
-    "https://claude.com/resources/articles/install-as-app": {
-      "title": "把工件变成 Mac 和 Windows app",
-      "note": "发布文章：装好的 app 能做什么，权限怎么管。"
-    },
-    "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app": {
-      "title": "把工件安装为 app",
-      "note": "帮助中心指南：安装、打开、卸载、权限列表和限制。"
-    },
-    "https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans": {
-      "title": "Team 和 Enterprise 的工件管理指南",
-      "note": "管理员在哪里开关这个功能和完整电脑访问权限。"
-    },
-    "https://x.com/felixrieseberg/status/2125310111149416682": {
-      "title": "Felix Rieseberg 的演示 app",
-      "note": "Claude 桌面端团队的发布帖，附一页用到系统接口、连接器和 Claude 的演示 app。"
-    }
+  "geography-trainer": {
+   "subtitle": "记国家和首都",
+   "desc": "用 Claude 做的地理学习工件，装成了桌面 app。"
   },
-  "prompts": {
-    "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app": {
-      "title": "官方示例提示词",
-      "note": "“做一个住在菜单栏里的番茄钟”“每小时提醒我伸展一下”“按日期重命名一个文件夹里的照片”。"
-    },
-    "https://x.com/pundiranusha/status/2125510269267014054": {
-      "title": "这个周末就能做的 10 个 app",
-      "note": "菜单栏番茄钟、PR 审查清单、发票生成器、带通知的习惯追踪、会议成本计算器等。"
-    },
-    "https://x.com/YH31377807/status/2125380955255026128": {
-      "title": "先加一个导出按钮",
-      "note": "安装前先让 Claude 加一个“导出为 JSON”的按钮，免得数据困在绑定你账号的 app 里。"
-    },
-    "https://x.com/minchoi/status/2125564860255658247": {
-      "title": "个人 app 生成提示词",
-      "note": "分四步：问你每周烦心的一件事，选定一个 app 写需求，做成独立的工件，再测试并列出它会申请的所有权限。"
-    },
-    "https://x.com/juliusnebah/status/2125983858625540372": {
-      "title": "让番茄钟保持诚实的追加提示词",
-      "note": "一条追加提示词：某个任务超过 90 分钟就弹通知问你是不是还在做，外加每天 4:30 的当日汇总和一个菜单栏小图标。允许通知和菜单栏，拒绝完全访问电脑。"
-    }
+  "titan-colony": {
+   "subtitle": "花 60 年建一座殖民地",
+   "desc": "一颗可以安装的星球：人类登陆土卫六，在 60 年里建起殖民地，整个画面只用一个着色器画成，没用任何库。"
   },
-  "guides": {
-    "https://x.com/realamlug/status/2125493255173288159": {
-      "title": "拆开一个装好的 app：只有 404 KB",
-      "note": "两个很小的原生程序加一个图标；页面其实在 Claude 自己的 Electron 进程里渲染。"
-    },
-    "https://x.com/de1mat/status/2125334953479315834": {
-      "title": "拆解 Gridbloom",
-      "note": "装好的 app 只是个启动器，里面没有代码；它打开 Claude 桌面端，用你的登录在独立窗口里显示工件。"
-    },
-    "https://x.com/dotey/status/2125368995746308453": {
-      "title": "和网页套壳 app 有什么区别",
-      "note": "@dotey 讲为什么它用起来像 Chrome 网页 app，以及为什么仍然需要联网。"
-    },
-    "https://x.com/lvntblsn/status/2125736966624776242": {
-      "title": "同一句提示词两种结果：Swift app 对比安装的工件",
-      "note": "同样要一个菜单栏番茄钟：Code 标签页做出 832 KB 的 Swift app，不依赖 Claude 能跑但不会再变；工件每次编辑都会更新，只是当时账号还没开放安装选项。"
-    }
+  "todo-list": {
+   "subtitle": "简单的待办清单",
+   "desc": "不到两小时做出来、分享给 @ClaudeDevs 的待办 app。"
+  },
+  "ai-architecture-lab": {
+   "subtitle": "9 个任务，12 种出错方式",
+   "desc": "设计一个 AI 系统，然后扛过预算削减、服务商宕机和安全审查，一共 9 个任务、12 种故障。"
+  },
+  "podcast-flashcards": {
+   "subtitle": "50 多档播客做成的抽认卡",
+   "desc": "把 Acquired、Invest Like the Best、Farnam Street 等 50 多档播客的精华做成互动页面和抽认卡。"
+  },
+  "grow-one-thing": {
+   "subtitle": "养一盆盆景、一只蛹等",
+   "desc": "从 6 种生物里选一种，从蛹（3 天）到盆景（60 天），养过五个阶段后收进你的收藏。"
+  },
+  "isekai-quiz": {
+   "subtitle": "测测你会转生成什么",
+   "desc": "30 个像素风 RPG 场景，决定你转生到 16 种奇幻人生里的哪一种。"
+  },
+  "tarot-love-quiz": {
+   "subtitle": "320 多种结果，抽成一张牌",
+   "desc": "30 道题、320 多种结果，以塔罗牌形式呈现，附带依恋类型和配对检测。"
+  },
+  "science-500": {
+   "subtitle": "科学成就排行",
+   "desc": "过去五个世纪重要科学成就的排行榜，一直排到做它的前一天。"
+  },
+  "school-site": {
+   "subtitle": "一句话生成学校介绍站",
+   "desc": "一句提示词生成的完整学校介绍网站，有活动、照片、愿景和教职员。"
+  },
+  "signal-operator": {
+   "subtitle": "亲手控制每一盏红绿灯",
+   "desc": "你手动切换一个路口的每一盏灯。切早了撞车，切晚了堵车；到了傍晚还有右转车、公交和救护车。任何方向排到 8 辆车游戏就结束。"
+  },
+  "exact-birthday": {
+   "subtitle": "按地球公转算的生日",
+   "desc": "把你的生日算成绕太阳整数圈的精确时刻，而不是日历日期。MIT 教授做的，适合住在和出生地不同时区、或 2 月 29 日出生的人。"
+  },
+  "walking-while-texting": {
+   "subtitle": "边走路边看手机",
+   "desc": "一个关于边走路边看手机有多危险的小模拟。免费、不用注册，手机电脑都能玩；同一条帖子还有姊妹游戏 Walk Beside Me，作者也做了日文版。"
+  },
+  "document-editor": {
+   "name": "AI 文档",
+   "subtitle": "用 Claude 编辑 .docx 文件",
+   "replaces": "Word 里的 Copilot, WPS AI",
+   "desc": "打开你的 .docx 文件，在真实的分页视图里继续写：页面、页眉页脚、页码、分节、分栏、目录、公式、批注、脚注和修订都原样保留。让 Claude 起草、改写、缩写、换语气、校对、翻译，或把文字变成表格；每处 AI 修改都是一条修订，由你接受或拒绝。自带听写、朗读和版本历史，可以导出回 Word、PDF、Markdown、HTML 或纯文本。"
+  },
+  "spreadsheet": {
+   "name": "AI 表格",
+   "subtitle": "Excel 文件，内置 Claude",
+   "replaces": "Excel 里的 Copilot, GPT for Sheets, Formula Bot",
+   "desc": "打开 .xlsx、.xls 和 .csv 文件，所有工作表、公式、格式、图表和图片都在。用大白话提问，得到准确数字和背后的公式。能做真正的数据透视表、数据验证、条件格式、迷你图、分组和带趋势线的图表，用 Claude 清洗或分类成千上万行，保存回 Excel 时什么都不丢。"
+  },
+  "slide-maker": {
+   "name": "AI 幻灯片",
+   "subtitle": "从一个主题或你的 .pptx 做出演示",
+   "replaces": "PowerPoint 里的 Copilot, Gamma, Beautiful.ai",
+   "desc": "描述一场演讲、粘贴笔记，或者拖进 .pptx、.docx、PDF，Claude 用智能版式和主题写好幻灯片。然后像 PowerPoint 一样编辑：形状、图片、表格、图表、图示、动画、切换、视频、母版、分节和批注。带演讲者备注和画笔放映，导出可编辑的 PowerPoint、PDF 或讲义；你没动过的幻灯片原样导出。"
+  },
+  "pdf-chat": {
+   "name": "PDF 对话",
+   "subtitle": "阅读、签名、编辑和提问 PDF",
+   "replaces": "Adobe Acrobat（AI 助手、填写和签名）, ChatPDF",
+   "desc": "打开 PDF、Word、PowerPoint 或文本文件直接提问，每个回答都标出页码并高亮原文。可以高亮、批注、画图、填表和签名，重新排序、旋转、合并和提取页面，保存出的真 PDF 能在 Acrobat 和预览里打开。内置摘要、大纲、表格导出到 Excel、翻译和朗读，文件只留在你的设备上。"
+  },
+  "grammar-checker": {
+   "name": "语法检查",
+   "subtitle": "改语法、改清晰度、改语气",
+   "replaces": "Grammarly Premium, QuillBot, Wordtune",
+   "desc": "写或粘贴文字，实时标出正确性、清晰度、吸引力和表达方面的问题，每条都有解释，一键接受。任何句子都能改得更短、更清楚、更正式或更亲切，有 9 种改写模式，还能设目标、语气和团队用语规范。能打开和保存 .docx、.md、.txt，按 Option+Shift+G 浮在其他 app 上面。"
+  },
+  "mind-map": {
+   "name": "思维导图",
+   "subtitle": "打开你的 Xmind 和 MindNode 导图",
+   "replaces": "Xmind Pro, MindNode Plus, MindMeister",
+   "desc": "用 Xmind 和 MindNode 的快捷键画导图，有十四种结构，包括矩阵、括号图、树形表格、时间线和鱼骨图，每个分支能用不同结构；还有自由主题、区域、标注、编号、模板和版本历史。打开你的 .xmind、.opml、.mm 和 Markdown 文件，按 Cmd+S 存回原文件。Claude 能从一句话或一篇文章画出整张导图、展开任意主题、总结一个分支，或把导图写成文章。"
+  },
+  "image-to-text": {
+   "name": "图片转文字",
+   "subtitle": "从任意图片里复制文字",
+   "replaces": "TextSniper, Prizmo",
+   "desc": "粘贴截图、拖入照片或打开 PDF，得到可以编辑、复制、朗读或导出的文字。保留排版、生成 Markdown、把表格变成 Excel 或 CSV、翻译，还能把小票和名片拆成字段。二维码和条形码在本机识别。"
+  },
+  "translator": {
+   "name": "AI 翻译",
+   "subtitle": "翻译、润色和讲解任何文字",
+   "desc": "粘贴文字，Claude 在你的两种语言之间翻译，按自然、口语或正式的语气润色到像母语一样，或者讲解关键词和语法。可以朗读结果。装好后它浮在最上层，在任何地方按 Option+Shift+T 唤出。"
+  },
+  "speaking-coach": {
+   "name": "口语教练",
+   "subtitle": "练口语，马上得到反馈",
+   "desc": "Claude 按你的水平用 9 种语言之一写一小段口语材料并读给你听。你跟读或大声回答它的问题，Claude 给你打分、纠错，并读一遍更地道的说法。"
+  },
+  "pomodoro": {
+   "name": "番茄钟",
+   "subtitle": "Claude 把你的一天排成番茄",
+   "desc": "把要做的事一股脑倒进来，Claude 排成有先后的任务，并算好每项要几个番茄。计时器按顺序走，在菜单栏和 Dock 里倒计时，番茄结束时通知你，在任何地方按 Option+Shift+P 开始或暂停。"
+  },
+  "world-clock": {
+   "name": "世界时钟",
+   "subtitle": "时区和会议时间规划",
+   "desc": "把常打交道的城市并排放着，每个都有昼夜条。用大白话问，比如“和伦敦、东京开会什么时间最好”，Claude 回答并把时间滑块拖过去。装好后，你选的城市会常驻菜单栏。"
+  },
+  "sticky-notes": {
+   "name": "便签",
+   "subtitle": "浮在最上层的便签",
+   "desc": "一个小窗口里四张彩色便签。Claude 能把乱糟糟的便签变成清单、整理文字、总结、建议下一步或翻译，一键撤销。装好后它浮在所有窗口上面，按 Option+Shift+J 隐藏或唤回。"
+  },
+  "future-of-ai-deck": {
+   "subtitle": "可以飞着看的 3D 演示",
+   "desc": "一份讲 AI 未来和智能爆炸的演示，每页都是完整的 3D 场景，用镜头运动和音效串起来。看完大约 8 分钟；作者说是早期的 Opus 5.6 做的。"
+  },
+  "zone-of-protection": {
+   "subtitle": "60 秒手卫生测试",
+   "desc": "一个 60 秒的手卫生挑战，像抗生素药敏试验一样按 S、I、R 打分。"
+  },
+  "mac-cleaner": {
+   "subtitle": "聊天里做出来的磁盘清理工具",
+   "desc": "作者一直想要的 Mac 清理 app，在 Claude 里做出来并装成了桌面 app；帖子里有运行画面。"
+  },
+  "video-studio": {
+   "name": "AI 视频工作室",
+   "subtitle": "输入主题，导出 MP4",
+   "replaces": "Canva 视频, Animoto, Lumen5, Submagic",
+   "desc": "描述一个视频或粘贴脚本，Claude 写好带动画的分镜。在时间轴上编辑场景，加内置音乐或你自己的歌并自动卡点，烧录字幕，导出 16:9、9:16 或 1:1 的 MP4 或 WebM。"
+  },
+  "design-studio": {
+   "name": "AI 设计工作室",
+   "subtitle": "界面、网页、海报、设计点评",
+   "replaces": "Uizard, Framer AI, Galileo",
+   "desc": "描述一个 app 或一门生意，或拖入一张截图，Claude 就能设计可点击的手机界面、2 到 3 种风格的落地页，或海报和社交配图，所有设计共用一套可实时修改的设计规范。还能给设计打分点评并一键修改，导出 PNG、HTML/CSS、SVG 或设计令牌。"
+  },
+  "thinking-partner": {
+   "name": "AI 思考搭档",
+   "subtitle": "想清楚，再动手",
+   "replaces": "ChatPRD, Notion AI",
+   "desc": "粘贴一个计划、想法或决定，Claude 会提出关键问题，每个都附推荐答案，一键接受。实时地图记录已解决、待定和搁置的问题，以及术语、决定和风险。可导出需求说明、PRD、问卷、可导入 Linear 或 Jira 的任务单，或交接文档。"
+  },
+  "saltline": {
+   "subtitle": "从零做出的第一人称射击游戏",
+   "desc": "Felix Rieseberg 让 Fable 5.2 只靠一次性提示词做出的完整第一人称射击游戏，模型、音效、贴图全部用代码生成，没有外部素材。"
+  },
+  "weird-web-demos": {
+   "subtitle": "HTML-in-Canvas 演示合集",
+   "desc": "打开 Claude 桌面端 HTML-in-Canvas 功能的工程师亲手做的一组怪诞动画演示，像回到 Flash 年代。"
+  },
+  "desktop-shark": {
+   "subtitle": "桌面上的小鲨鱼宠物",
+   "desc": "装成 app 后，一条小鲨鱼会在屏幕底部游来游去。摸它会发呆，双击鱼鳍会跳起来，右键可以喂鱼。"
+  },
+  "felt-texture": {
+   "subtitle": "无缝毛毡纹理生成器",
+   "desc": "用着色器实时生成无缝的毛毡质感背景。选颜色、花纹、平铺尺寸和分辨率，直接下载 1024 像素贴图。"
+  },
+  "facade-synth": {
+   "subtitle": "像玩合成器一样盖街道",
+   "desc": "把乔治亚式联排街道做成合成器：拧旋钮、走音序器，每一步是一栋房子。可随机、变异、存快照，设计存成补丁代码。"
+  },
+  "daisy-tube": {
+   "subtitle": "让电脑唱歌",
+   "desc": "重现 1961 年贝尔实验室第一次让电脑唱《Daisy Bell》的声音。拖动示波器在 44 节声道管里捏出元音，调音高、嘴唇和气息。"
+  },
+  "gigantua": {
+   "subtitle": "绕着黑洞飞",
+   "desc": "可交互的黑洞：悬停、环绕或掉进去，看光线怎么弯曲。能开关多普勒和红移效果，也能跟着带声音的导览看。"
+  },
+  "warikan-roulette": {
+   "subtitle": "AA 算账，零头转盘定",
+   "desc": "聚餐分账工具：给每个人选多付、正常或少付，按 100、500 或 1000 日元取整，剩下的零头用转盘决定谁出。结果可以直接复制贴到 LINE。"
+  },
+  "computers-and-architecture": {
+   "subtitle": "计算机与建筑设计史幻灯片",
+   "desc": "一套还在增补的幻灯片，讲计算机怎样改变了日本和世界的建筑设计，从不靠计算机画大型建筑的年代讲起。作者打算拿它在大学课上试讲。"
+  },
+  "kit-subscriber-map": {
+   "subtitle": "把订阅者放到地球上",
+   "desc": "Kit 创始人装的一个工件：从自己的 Kit 账号取数据，按人数和影响力把全球的 newsletter 订阅者画在地图上。原帖有视频，没有公开的工件链接。"
+  },
+  "job-search": {
+   "name": "求职套件",
+   "subtitle": "简历、投递跟踪、面试教练",
+   "replaces": "Teal, Rezi, Kickresume, Final Round AI",
+   "desc": "用 6 个能通过 ATS 筛选的模板写简历，所见即所得，导出 PDF 和 Word 直接投。粘贴职位描述，得到关键词匹配分、逐条由你确认的定制版简历和求职信。用看板跟踪每一份申请，再和会给每个回答打分的模拟面试官练一练。"
+  },
+  "flashcards": {
+   "name": "闪卡",
+   "subtitle": "间隔复习、测验、AI 出卡",
+   "replaces": "Quizlet Plus, Knowt, Anki add-ons",
+   "desc": "用和新版 Anki 一样的 FSRS 算法复习，也能像 Quizlet 那样用学习、测试、配对模式练习。粘贴笔记或拖入 PDF、Word、照片，Claude 写好卡片或测验，你审核后再加入。能导入 Quizlet 和 Anki .apkg 牌组连同复习记录；数据只在你的电脑上，一键备份。"
+  },
+  "rewriter": {
+   "name": "改写",
+   "subtitle": "读起来像你自己写的",
+   "replaces": "QuillBot Premium, Wordtune",
+   "desc": "粘贴任意文字，用 11 种模式改写，从标准、自然到精简、学术，以及你自己的语气，改动的词都会标出来。点一个词换同义词，点一句话换说法；AI 痕迹检查能找出英文和中文里的套话、破折号、“不是 X 而是 Y”，一键改掉。带历史记录、版本对比和 Word 导出，样本和历史只存在你的电脑上。"
+  },
+  "budget": {
+   "name": "记账预算",
+   "subtitle": "给每一块钱安排用途",
+   "replaces": "YNAB, Monarch, Copilot Money",
+   "desc": "和 YNAB 一样的零基预算：把手上的钱分到各个分类，按月结转，设目标，超支马上看得到。导入银行的 CSV、OFX、QFX、QIF，或 YNAB、Mint、Monarch、Copilot 的导出文件，也能读支付宝和微信账单；Claude 帮你给交易分类，回答花钱的问题。不用登录银行，不用订阅，数据只在你的电脑上。"
+  },
+  "read-aloud": {
+   "name": "朗读",
+   "subtitle": "什么都能听",
+   "replaces": "Speechify Premium, NaturalReader",
+   "desc": "把 PDF、EPUB、Word 和文章变成有声书，逐词高亮，下次从上次的地方接着听。按句、按段跳读，换声音和语速，设睡眠定时，加书签。Claude 能总结章节、解释难懂的段落、清理乱糟糟的 PDF 文字。"
+  },
+  "homework-helper": {
+   "name": "作业助手",
+   "subtitle": "每个答案都核对过",
+   "replaces": "Photomath Plus, Gauth, Chegg",
+   "desc": "拍照、粘贴或输入数学、物理、化学题，得到分步解答，每一步都讲清为什么。每个答案都经过代回检验、独立重解和计算器三重核对，对不上会提醒你。仅提示模式、同类练习和按间隔复习的错题本，帮你真正学会。"
+  },
+  "whiteboard": {
+   "name": "白板",
+   "subtitle": "画草图、出图表、让 Claude 讲解",
+   "replaces": "Lucidchart, Whimsical, Miro",
+   "desc": "无限画布，快捷键和 Excalidraw 一样，手绘或简洁风格任选，有图形、吸附的连线、便签、框架、画笔、对齐和编组。能打开 .excalidraw 文件、Mermaid 和图片，导出 PNG、SVG、PDF、Excalidraw 或 Mermaid。描述一张流程图、时序图、架构图、组织架构图或时间线，Claude 画成可编辑的图形，也能讲解整块白板。"
+  },
+  "fitness-coach": {
+   "name": "健身教练",
+   "subtitle": "排计划、练、吃、看进步",
+   "replaces": "Fitbod, Strong Pro, MyFitnessPal Premium",
+   "desc": "告诉 Claude 目标、训练日和器械，得到一份训练日历，练到位了自动建议加重。用键盘快速记组，上次的数值自动带出，有 RPE、休息计时和个人纪录；饮食按营养目标记录，拍照估算热量。能导入 Strong、Hevy 和 MyFitnessPal 的历史。"
+  },
+  "classroom": {
+   "name": "课堂活动",
+   "subtitle": "AI 备课、课堂游戏、练习纸",
+   "replaces": "Wordwall, Twinkl, MagicSchool",
+   "desc": "告诉 Claude 年级、学科和主题，它会写好词汇、题目、分层阅读文章、教案和评分量表。同一份内容可以变成投影知识竞赛（分队计分）、连连看、找单词、填字游戏、随机点名转盘等，也能导出带答案的 PDF 和 Word 练习纸。"
+  },
+  "leaf-blower": {
+   "subtitle": "孩子出主意做的小游戏",
+   "desc": "作者让孩子直接对着 Claude 说想玩什么游戏，做出来的吹落叶小游戏。浏览器里能玩，装成 app 更好玩。"
+  },
+  "family-recipes": {
+   "subtitle": "手写菜谱拍照整理",
+   "desc": "给手写菜谱拍张照，Claude 把它整理成统一、清楚的格式保存下来。作者用它来留住家里的菜谱。"
+  },
+  "kaun-banega-gareeb": {
+   "subtitle": "搞笑问答：别把钱输光",
+   "desc": "一款搞笑问答游戏，一开始你很有钱，答题时尽量别全亏光。作者借用 Duolingo 的界面风格，做成了更搞怪的样子。"
+  },
+  "decision-log": {
+   "subtitle": "记录决策和背后的理由",
+   "desc": "一个偏 B2B 的工具，把每个决策连同当时的背景和推理一起记下来，方便日后回看当初为什么这么定。界面仿 Notion。"
+  },
+  "afterimage": {
+   "subtitle": "轻盈好玩的梦境日记",
+   "desc": "一个带动画、手感轻盈的梦境日记，用来记录和回看自己做过的梦。作者不断打磨它的动效和交互，让它用起来更舒服。"
+  },
+  "life-of-oxy": {
+   "subtitle": "一个氧原子的随机一生",
+   "desc": "一个迷你人生模拟器，你跟着一个氧原子经历各种化学反应（O2、H2O、CuO 等），每一局都走向不同结局，各有稀有度和分数。"
+  },
+  "laika-mission": {
+   "subtitle": "更温柔的太空任务，记得开声音",
+   "desc": "一个互动小作品，设想一百年后的 NASA 任务：不再把动物送上天也能探索太空，灵感来自莱卡。开着声音体验更好。"
+  },
+  "japanese-conjugation": {
+   "subtitle": "看日语动词如何活用",
+   "desc": "一个展示日语动词活用规律的互动页面：把六个活用段排成六边形，呈现后接形式不同时元音如何变化。形态素分析用 AI 完成，也保留了更笨重的离线词典模式作为备用。"
+  },
+  "calculus-in-motion": {
+   "subtitle": "动起来看微分和积分",
+   "desc": "一个三维可视化，讲清微分和积分互为逆运算这件事。不再只是看公式，而是在空间里拖动图像去感受两者的关系，也可以自己慢慢逐步操作。"
+  },
+  "adding-past-ten": {
+   "subtitle": "练习超过十的加法",
+   "desc": "一位家长给正在学“进位加法”的孩子做的小练习工具。简单、专注，适合直接丢给同样在学这块的小朋友用。"
+  },
+  "lvti-liverpool-quiz": {
+   "subtitle": "你最像哪位利物浦球员",
+   "desc": "一个 30 题的性格测试，算出你最像哪位利物浦球员，还会告诉你和谁最合不来。给球迷的 MBTI 玩法。"
+  },
+  "guess-the-red": {
+   "subtitle": "猜出这位利物浦球员",
+   "desc": "一个猜球员的小游戏，根据描述猜出是哪位利物浦球员。作者不断加修正和可重复玩的要素，让它更耐玩。"
+  },
+  "which-ai-tool": {
+   "subtitle": "测测你适合哪个 AI 工具",
+   "desc": "一个 10 题、两分钟的测试，把你归到某种 AI 工具类型，并说出最适合你的助手。作者自己做的、方便分享的小测。"
   }
+ },
+ "official": {
+  "https://x.com/ClaudeDevs/status/2125315491522650299": {
+   "title": "X 上的发布公告",
+   "note": "@ClaudeDevs 发布，演示了一句提示词变成一个装好的太空垃圾追踪器。"
+  },
+  "https://claude.com/resources/articles/install-as-app": {
+   "title": "把工件变成 Mac 和 Windows app",
+   "note": "发布文章：装好的 app 能做什么，权限怎么管。"
+  },
+  "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app": {
+   "title": "把工件安装为 app",
+   "note": "帮助中心指南：安装、打开、卸载、权限列表和限制。"
+  },
+  "https://support.claude.com/en/articles/16994751-artifacts-admin-guide-for-team-and-enterprise-plans": {
+   "title": "Team 和 Enterprise 的工件管理指南",
+   "note": "管理员在哪里开关这个功能和完整电脑访问权限。"
+  },
+  "https://x.com/felixrieseberg/status/2125310111149416682": {
+   "title": "Felix Rieseberg 的演示 app",
+   "note": "Claude 桌面端团队的发布帖，附一页用到系统接口、连接器和 Claude 的演示 app。"
+  }
+ },
+ "prompts": {
+  "https://support.claude.com/en/articles/18516354-install-an-artifact-as-an-app": {
+   "title": "官方示例提示词",
+   "note": "“做一个住在菜单栏里的番茄钟”“每小时提醒我伸展一下”“按日期重命名一个文件夹里的照片”。"
+  },
+  "https://x.com/pundiranusha/status/2125510269267014054": {
+   "title": "这个周末就能做的 10 个 app",
+   "note": "菜单栏番茄钟、PR 审查清单、发票生成器、带通知的习惯追踪、会议成本计算器等。"
+  },
+  "https://x.com/YH31377807/status/2125380955255026128": {
+   "title": "先加一个导出按钮",
+   "note": "安装前先让 Claude 加一个“导出为 JSON”的按钮，免得数据困在绑定你账号的 app 里。"
+  },
+  "https://x.com/minchoi/status/2125564860255658247": {
+   "title": "个人 app 生成提示词",
+   "note": "分四步：问你每周烦心的一件事，选定一个 app 写需求，做成独立的工件，再测试并列出它会申请的所有权限。"
+  },
+  "https://x.com/juliusnebah/status/2125983858625540372": {
+   "title": "让番茄钟保持诚实的追加提示词",
+   "note": "一条追加提示词：某个任务超过 90 分钟就弹通知问你是不是还在做，外加每天 4:30 的当日汇总和一个菜单栏小图标。允许通知和菜单栏，拒绝完全访问电脑。"
+  },
+  "https://x.com/samvllaco/status/2126402026703864185": {
+   "title": "让工件看起来像真正的桌面 app",
+   "note": "Install as app 之前粘进去的改版提示词：去掉居中卡片、让内容铺满窗口，加一条 48px 顶栏，只用一种强调色，间距只取 4/8/12/16/24/32，不要渐变和表情符号。"
+  }
+ },
+ "guides": {
+  "https://x.com/realamlug/status/2125493255173288159": {
+   "title": "拆开一个装好的 app：只有 404 KB",
+   "note": "两个很小的原生程序加一个图标；页面其实在 Claude 自己的 Electron 进程里渲染。"
+  },
+  "https://x.com/de1mat/status/2125334953479315834": {
+   "title": "拆解 Gridbloom",
+   "note": "装好的 app 只是个启动器，里面没有代码；它打开 Claude 桌面端，用你的登录在独立窗口里显示工件。"
+  },
+  "https://x.com/dotey/status/2125368995746308453": {
+   "title": "和网页套壳 app 有什么区别",
+   "note": "@dotey 讲为什么它用起来像 Chrome 网页 app，以及为什么仍然需要联网。"
+  },
+  "https://x.com/lvntblsn/status/2125736966624776242": {
+   "title": "同一句提示词两种结果：Swift app 对比安装的工件",
+   "note": "同样要一个菜单栏番茄钟：Code 标签页做出 832 KB 的 Swift app，不依赖 Claude 能跑但不会再变；工件每次编辑都会更新，只是当时账号还没开放安装选项。"
+  },
+  "https://x.com/tiptoes41474065/status/2126461777450049775": {
+   "title": "找不到 Install as app 就重启 Claude",
+   "note": "有用户是把 Claude 从托盘里彻底退出再重新打开后，才出现 Install as app 这个选项的。"
+  }
+ }
 }
