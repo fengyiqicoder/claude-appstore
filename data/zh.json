@@ -304,24 +304,6 @@
    "subtitle": "测测你适合哪个 AI 工具",
    "desc": "一个 10 题、两分钟的测试，把你归到某种 AI 工具类型，并说出最适合你的助手。作者自己做的、方便分享的小测。"
   },
-  "alt-pages": {
-   "name": "Pages AI 替代",
-   "subtitle": "自带 Claude 的 Pages 文档",
-   "replaces": "Pages",
-   "desc": "Pages 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
-  "alt-numbers": {
-   "name": "Numbers AI 替代",
-   "subtitle": "能直接提问的 Numbers 表格",
-   "replaces": "Numbers",
-   "desc": "Numbers 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
-  "alt-keynote": {
-   "name": "Keynote AI 替代",
-   "subtitle": "让 Claude 起草的 Keynote 演示",
-   "replaces": "Keynote",
-   "desc": "Keynote 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
   "alt-mindnode": {
    "name": "MindNode AI 替代",
    "subtitle": "Claude 帮你展开的 MindNode 导图",
