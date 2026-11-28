@@ -98,7 +98,6 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **Numbers AI Alt** - Numbers spreadsheets you can ask questions. Planned, not available yet.
 - **Keynote AI Alt** - Keynote decks drafted by Claude. Planned, not available yet.
 - **MindNode AI Alt** - MindNode maps, expanded by Claude. Planned, not available yet.
-- **Figma AI Alt** - Design screens on an open canvas. Planned, not available yet.
 - **Lucidchart AI Alt** - Flowcharts and diagrams from a sentence. Planned, not available yet.
 - **Notion AI Alt** - Pages, databases and an AI that knows them. Planned, not available yet.
 - **Evernote AI Alt** - Notebooks, web clips and search. Planned, not available yet.
@@ -109,7 +108,6 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **Fantastical AI Alt** - A calendar that understands sentences. Planned, not available yet.
 - **Paste AI Alt** - Clipboard history you can search. Planned, not available yet.
 - **Raycast AI Alt** - A launcher with Claude one key away. Planned, not available yet.
-- **Magnet AI Alt** - Snap windows into halves and thirds. Planned, not available yet.
 - **Otter AI Alt** - Meeting notes from your voice. Planned, not available yet.
 - **Sketch AI Alt** - Design screens and open .sketch files. Planned, not available yet.
 

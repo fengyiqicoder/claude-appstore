@@ -328,12 +328,6 @@
    "replaces": "MindNode",
    "desc": "MindNode 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
-  "alt-figma": {
-   "name": "Figma AI 替代",
-   "subtitle": "在画布上设计界面",
-   "replaces": "Figma",
-   "desc": "Figma 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
   "alt-lucidchart": {
    "name": "Lucidchart AI 替代",
    "subtitle": "一句话生成流程图和图表",
@@ -405,12 +399,6 @@
    "subtitle": "一键唤出 Claude 的启动器",
    "replaces": "Raycast",
    "desc": "Raycast 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
-  "alt-magnet": {
-   "name": "Magnet AI 替代",
-   "subtitle": "把窗口吸附成二分、三分",
-   "replaces": "Magnet",
-   "desc": "Magnet 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-otter": {
    "name": "Otter AI 替代",

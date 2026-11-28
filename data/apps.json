@@ -1088,24 +1088,6 @@
    "rank": 36
   },
   {
-   "id": "alt-figma",
-   "name": "Figma AI Alt",
-   "subtitle": "Design screens on an open canvas",
-   "category": "work",
-   "desc": "A free AI alternative to Figma that runs on your Claude plan. Planned; not available yet.",
-   "author": "",
-   "maker": "Claude AppStore",
-   "post": "https://github.com/fengyiqicoder/claude-appstore",
-   "artifact": "",
-   "lang": "",
-   "added": "2026-11-28",
-   "ai": true,
-   "replaces": "Figma",
-   "target": "Figma",
-   "soon": true,
-   "rank": 12
-  },
-  {
    "id": "alt-lucidchart",
    "name": "Lucidchart AI Alt",
    "subtitle": "Flowcharts and diagrams from a sentence",
@@ -1320,24 +1302,6 @@
    "target": "Raycast",
    "soon": true,
    "rank": 25
-  },
-  {
-   "id": "alt-magnet",
-   "name": "Magnet AI Alt",
-   "subtitle": "Snap windows into halves and thirds",
-   "category": "work",
-   "desc": "A free AI alternative to Magnet that runs on your Claude plan. Planned; not available yet.",
-   "author": "",
-   "maker": "Claude AppStore",
-   "post": "https://github.com/fengyiqicoder/claude-appstore",
-   "artifact": "",
-   "lang": "",
-   "added": "2026-11-28",
-   "ai": true,
-   "replaces": "Magnet",
-   "target": "Magnet",
-   "soon": true,
-   "rank": 30
   },
   {
    "id": "alt-otter",
