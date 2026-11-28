@@ -36,7 +36,7 @@ ALT = f'<link rel="alternate" hreflang="en" href="{STORE}/"><link rel="alternate
 def site_head(lang):
     zh = lang == "zh"
     title = "Claude AppStore：别再为 App 付费了" if zh else "Claude AppStore: Stop paying for apps"
-    desc = ("Word、Excel、PowerPoint、Acrobat、Grammarly、Xmind、Canva、Notion 等软件的免费 AI 进阶之选，跑在你已有的 Claude 套餐上，装到 Mac 或 Windows 就能用。" if zh
+    desc = ("Word、Excel、PowerPoint、Acrobat、Grammarly、Xmind、Canva、Notion 等软件的免费 AI 替代，跑在你已有的 Claude 套餐上，装到 Mac 或 Windows 就能用。" if zh
             else "Free AI alternatives to Word, Excel, PowerPoint, Acrobat, Grammarly, Xmind, Canva and more. They run on the Claude plan you already have and install on your Mac or Windows.")
     # Chinese browsers landing on the English page go to /zh/ unless they chose English
     redirect = "" if zh else """<script>try{if(/^zh/i.test(navigator.language||"")&&!/[?&]lang=en/.test(location.search)&&localStorage.getItem("lang")!=="en")location.replace("zh/"+location.hash)}catch(e){}</script>"""

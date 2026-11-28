@@ -188,9 +188,9 @@ const LX=(sec,x,k)=>(ZH&&ZHD[sec]?.[x.url]?.[k])||x[k];
 document.documentElement.lang=ZH?"zh-CN":"en";
 const CATS = {
   play:{name:t("Play","娱乐"), blurb:t("Games, quizzes and toys people built with Claude.","大家用 Claude 做的游戏、测验和小玩具。"), icon:'<path d="M6 9h12a4 4 0 0 1 4 4v1a3 3 0 0 1-5.4 1.8L15 14H9l-1.6 1.8A3 3 0 0 1 2 14v-1a4 4 0 0 1 4-4z" fill="currentColor"/>'},
-  learn:{name:t("Learn","学习"), blurb:t("Free alternatives to study apps, plus trainers and labs from the community.","学习类软件的免费进阶之选，加上社区做的练习器和实验室。"), icon:'<path d="M12 4 1 9l11 5 9-4.1V16h2V9z" fill="currentColor"/><path d="M5 12.5V16c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2z" fill="currentColor"/>'},
-  work:{name:t("Work","效率"), blurb:t("Free alternatives to the office, writing and design apps you pay for.","你正在付费的办公、写作和设计软件的免费进阶之选。"), icon:'<rect x="3" y="7" width="18" height="13" rx="2.5" fill="currentColor"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" fill="none" stroke="currentColor" stroke-width="2"/>'},
-  life:{name:t("Life","生活"), blurb:t("Free alternatives to budgeting, fitness and journaling apps.","记账、健身和日记类软件的免费进阶之选。"), icon:'<path d="M12 21C6 16 3 12.5 3 9a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1c0 3.5-3 7-9 12z" fill="currentColor"/>'}
+  learn:{name:t("Learn","学习"), blurb:t("Free alternatives to study apps, plus trainers and labs from the community.","学习类软件的免费替代，加上社区做的练习器和实验室。"), icon:'<path d="M12 4 1 9l11 5 9-4.1V16h2V9z" fill="currentColor"/><path d="M5 12.5V16c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.5l-7 3.2z" fill="currentColor"/>'},
+  work:{name:t("Work","效率"), blurb:t("Free alternatives to the office, writing and design apps you pay for.","你正在付费的办公、写作和设计软件的免费替代。"), icon:'<rect x="3" y="7" width="18" height="13" rx="2.5" fill="currentColor"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  life:{name:t("Life","生活"), blurb:t("Free alternatives to budgeting, fitness and journaling apps.","记账、健身和日记类软件的免费替代。"), icon:'<path d="M12 21C6 16 3 12.5 3 9a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1c0 3.5-3 7-9 12z" fill="currentColor"/>'}
 };
 const NAV = [
   ["discover",t("Discover","发现"),'<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm3.5 6.5-2 5-5 2 2-5z" fill="currentColor"/>'],
@@ -259,7 +259,7 @@ function fcard(a,eyebrow,blurb){
 const installable = ()=>DATA.apps.filter(a=>a.artifact&&!a.maker);
 const ours = ()=>DATA.apps.filter(a=>a.maker&&a.soon);
 const batch = ()=>DATA.apps.filter(a=>a.maker&&!a.soon);
-function tile(a){return `<div class="tile${a.soon?" soon":""}" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,84)}<b>${esc(a.target)}</b><span>${t("AI Replacement","AI 进阶之选")}</span>${getBtn(a)}</div>`}
+function tile(a){return `<div class="tile${a.soon?" soon":""}" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,84)}<b>${esc(a.target)}</b><span>${t("AI Alt","AI 替代")}</span>${getBtn(a)}</div>`}
 function swap(a){return `<div class="swap" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,56)}<div class="meta"><b>${esc(L(a,"name"))}</b><span class="was">${t("Instead of","替代")} <s>${esc(L(a,"replaces"))}</s></span><span>${esc(L(a,"subtitle"))}</span></div>${getBtn(a)}</div>`}
 function discover(){
   const apps=DATA.apps.slice().reverse();
@@ -273,7 +273,7 @@ function discover(){
     <p>An AI word processor, spreadsheet and slide maker that open your Office files, plus PDF chat, a grammar checker, mind maps and image-to-text. They run on the Claude plan you already have and install on your Mac or Windows, with nothing extra to subscribe to.</p>
     <div class="ctas"><a class="cta pri" href="#cancel" data-jump="cancel">See what you can cancel</a><a class="cta sec" href="${esc(STORE_ARTIFACT)}" target="_blank" rel="noopener">Install the store in Claude</a></div>
     <div class="instead"><span>No longer needed:</span><s>Copilot in Word, Excel and PowerPoint</s><s>Gamma</s><s>Acrobat AI Assistant</s><s>Grammarly Premium</s><s>Xmind Pro</s><s>TextSniper</s></div></section>`):"";
-  return `${hero}<div><h1>${t("Discover","发现")}</h1><p class="lede">${t(`Free AI alternatives to the apps you pay for. They run on your own Claude plan and install on your Mac or Windows: open one in Claude Desktop, then choose <b>Install as app</b>.`,`你正在付费的那些软件的免费 AI 进阶之选。它们跑在你自己的 Claude 套餐上，能装到 Mac 或 Windows：在 Claude 桌面端打开，然后选<b>安装为 app</b>。`)}</p></div>
+  return `${hero}<div><h1>${t("Discover","发现")}</h1><p class="lede">${t(`Free AI alternatives to the apps you pay for. They run on your own Claude plan and install on your Mac or Windows: open one in Claude Desktop, then choose <b>Install as app</b>.`,`你正在付费的那些软件的免费 AI 替代。它们跑在你自己的 Claude 套餐上，能装到 Mac 或 Windows：在 Claude 桌面端打开，然后选<b>安装为 app</b>。`)}</p></div>
   <section class="sec" id="cancel"><div class="tiles">${DATA.apps.filter(a=>a.target&&!a.offhome).sort((x,y)=>(x.rank||999)-(y.rank||999)).map(tile).join("")}</div></section>
   <section class="sec"><div class="sec-head"><h2>${t("Ready to install","可以直接安装")}</h2><span class="lede" style="margin:0">${t(`${inst.length} from the community`,`社区分享的 ${inst.length} 个`)}</span></div>${grid(inst)}</section>
   ${Object.entries(CATS).map(([k,c])=>{const l=DATA.apps.filter(a=>a.category===k&&!a.soon).sort((x,y)=>(y.maker?1:0)-(x.maker?1:0));return l.length?`<section class="sec"><div class="sec-head"><h2>${c.name}</h2><a href="#${k}">${t("See all","查看全部")}</a></div>${grid(l.slice(0,6))}</section>`:""}).join("")}
@@ -284,7 +284,7 @@ function catView(k){const c=CATS[k];const l=DATA.apps.filter(a=>a.category===k);
   const live=l.filter(a=>a.maker&&!a.soon),soon=l.filter(a=>a.soon),com=l.filter(a=>!a.maker);
   const sec=(title,note,list)=>list.length?`<section class="sec"><div class="sec-head"><h2>${title}</h2><span class="lede" style="margin:0">${note}</span></div>${grid(list)}</section>`:"";
   return `<div><h1>${c.name}</h1><p class="lede">${c.blurb}</p></div>
-  ${sec(t("Free alternatives","免费的进阶之选"),t("Run on your Claude plan","跑在你自己的 Claude 套餐上"),live)}
+  ${sec(t("Free alternatives","免费替代"),t("Run on your Claude plan","跑在你自己的 Claude 套餐上"),live)}
   ${sec(t("Coming soon","即将推出"),t("Alternatives we are building next","接下来要做的"),soon)}
   ${sec(t("From the community","社区分享"),t(`${com.length} shared by their creators`,`作者们分享的 ${com.length} 个`),com)}`}
 function guides(){
