@@ -319,7 +319,8 @@
    "replaces": "TextSniper, Prizmo",
    "batch": 1,
    "target": "TextSniper",
-   "rank": 40
+   "rank": 40,
+   "offhome": true
   },
   {
    "id": "translator",
@@ -364,7 +365,8 @@
    "ai": true,
    "target": "ELSA Speak",
    "replaces": "ELSA Speak Pro",
-   "rank": 38
+   "rank": 38,
+   "offhome": true
   },
   {
    "id": "pomodoro",
@@ -387,7 +389,8 @@
    "ai": true,
    "target": "Be Focused",
    "replaces": "Be Focused Pro, Session",
-   "rank": 39
+   "rank": 39,
+   "offhome": true
   },
   {
    "id": "world-clock",
@@ -408,7 +411,8 @@
    "ai": true,
    "target": "Dato",
    "replaces": "Dato",
-   "rank": 45
+   "rank": 45,
+   "offhome": true
   },
   {
    "id": "sticky-notes",
@@ -430,7 +434,8 @@
    "ai": true,
    "target": "Stickies",
    "replaces": "Stickies, Quick Note",
-   "rank": 34
+   "rank": 34,
+   "offhome": true
   },
   {
    "id": "future-of-ai-deck",
@@ -488,7 +493,8 @@
    "replaces": "Canva video, Animoto, Lumen5, Submagic",
    "batch": 2,
    "target": "Lumen5",
-   "rank": 42
+   "rank": 42,
+   "offhome": true
   },
   {
    "id": "design-studio",
@@ -532,7 +538,8 @@
    "replaces": "ChatPRD, Notion AI",
    "batch": 2,
    "target": "ChatPRD",
-   "rank": 44
+   "rank": 44,
+   "offhome": true
   },
   {
    "id": "saltline",
@@ -675,7 +682,8 @@
    "replaces": "Teal, Rezi, Kickresume, Final Round AI",
    "batch": 3,
    "target": "Teal",
-   "rank": 43
+   "rank": 43,
+   "offhome": true
   },
   {
    "id": "flashcards",
@@ -739,7 +747,8 @@
    "replaces": "YNAB, Monarch, Copilot Money",
    "batch": 3,
    "target": "YNAB",
-   "rank": 33
+   "rank": 33,
+   "offhome": true
   },
   {
    "id": "read-aloud",
@@ -825,7 +834,8 @@
    "replaces": "Fitbod, Strong Pro",
    "batch": 3,
    "target": "Fitbod",
-   "rank": 37
+   "rank": 37,
+   "offhome": true
   },
   {
    "id": "classroom",
@@ -846,7 +856,8 @@
    "replaces": "Wordwall, Twinkl, MagicSchool",
    "batch": 3,
    "target": "Wordwall",
-   "rank": 41
+   "rank": 41,
+   "offhome": true
   },
   {
    "id": "leaf-blower",
@@ -1075,24 +1086,6 @@
    "target": "MindNode",
    "soon": true,
    "rank": 36
-  },
-  {
-   "id": "alt-quizlet",
-   "name": "Quizlet AI Alt",
-   "subtitle": "Study sets, Learn and Test modes",
-   "category": "learn",
-   "desc": "A free AI alternative to Quizlet that runs on your Claude plan. Planned; not available yet.",
-   "author": "",
-   "maker": "Claude AppStore",
-   "post": "https://github.com/fengyiqicoder/claude-appstore",
-   "artifact": "",
-   "lang": "",
-   "added": "2026-11-28",
-   "ai": true,
-   "replaces": "Quizlet",
-   "target": "Quizlet",
-   "soon": true,
-   "rank": 16
   },
   {
    "id": "alt-figma",
@@ -1365,11 +1358,11 @@
    "rank": 22
   },
   {
-   "id": "alt-duolingo",
-   "name": "Duolingo AI Alt",
-   "subtitle": "Short daily language lessons",
-   "category": "learn",
-   "desc": "A free AI alternative to Duolingo that runs on your Claude plan. Planned; not available yet.",
+   "id": "alt-sketch",
+   "name": "Sketch AI Alt",
+   "subtitle": "Design screens and open .sketch files",
+   "category": "work",
+   "desc": "A free AI alternative to Sketch that runs on your Claude plan. Planned; not available yet.",
    "author": "",
    "maker": "Claude AppStore",
    "post": "https://github.com/fengyiqicoder/claude-appstore",
@@ -1377,10 +1370,10 @@
    "lang": "",
    "added": "2026-11-28",
    "ai": true,
-   "replaces": "Duolingo",
-   "target": "Duolingo",
+   "replaces": "Sketch",
+   "target": "Sketch",
    "soon": true,
-   "rank": 8
+   "rank": 12.5
   }
  ],
  "official": [

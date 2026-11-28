@@ -328,12 +328,6 @@
    "replaces": "MindNode",
    "desc": "MindNode 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
-  "alt-quizlet": {
-   "name": "Quizlet AI 替代",
-   "subtitle": "学习集、学习模式和测试模式",
-   "replaces": "Quizlet",
-   "desc": "Quizlet 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
   "alt-figma": {
    "name": "Figma AI 替代",
    "subtitle": "在画布上设计界面",
@@ -424,11 +418,11 @@
    "replaces": "Otter",
    "desc": "Otter 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
-  "alt-duolingo": {
-   "name": "Duolingo AI 替代",
-   "subtitle": "每天几分钟的语言课",
-   "replaces": "Duolingo",
-   "desc": "Duolingo 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
+  "alt-sketch": {
+   "name": "Sketch AI 替代",
+   "subtitle": "设计界面，打开 .sketch 文件",
+   "replaces": "Sketch",
+   "desc": "Sketch 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   }
  },
  "official": {

@@ -68,8 +68,6 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **[Japanese Conjugation Visualizer](https://claude.ai/artifact/Er5YULJUXg58L2NsEVUMcv)** - An interactive view of how Japanese verb conjugation works: the six bases arranged on a hexagon, showing how the vowel shifts with each following form. It does the morphological analysis with AI, with a heavier offline dictionary mode as a fallback. Japanese. ([post](https://x.com/habakari101/status/2125800079684710671) by [@habakari101](https://x.com/habakari101))
 - **[Calculus in Motion](https://claude.ai/artifact/VUKuE6q36fkrvRkJFZXGCS)** - A 3D visualization of why differentiation and integration are inverse operations. Instead of just reading the formulas, you move the graph through space to feel the relationship, and can step through it slowly yourself. Japanese. ([post](https://x.com/habakari101/status/2126506079295283305) by [@habakari101](https://x.com/habakari101))
 - **[Adding Past Ten](https://claude.ai/artifact/MwJeCrhkWxv8p1eyWnN1Tq)** - A small practice tool a parent made for a child learning to add when the sum crosses ten. Simple and focused, meant to be handed to a kid working on the same thing. ([post](https://x.com/sikakkar/status/2126511508972855767) by [@sikakkar](https://x.com/sikakkar))
-- **Quizlet AI Alt** - Study sets, Learn and Test modes. Planned, not available yet.
-- **Duolingo AI Alt** - Short daily language lessons. Planned, not available yet.
 
 ## Work
 
@@ -113,6 +111,7 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **Raycast AI Alt** - A launcher with Claude one key away. Planned, not available yet.
 - **Magnet AI Alt** - Snap windows into halves and thirds. Planned, not available yet.
 - **Otter AI Alt** - Meeting notes from your voice. Planned, not available yet.
+- **Sketch AI Alt** - Design screens and open .sketch files. Planned, not available yet.
 
 ## Life
 
