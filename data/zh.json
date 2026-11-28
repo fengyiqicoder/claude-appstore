@@ -334,12 +334,6 @@
    "replaces": "Lucidchart",
    "desc": "Lucidchart 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
-  "alt-myfitnesspal": {
-   "name": "MyFitnessPal AI 替代",
-   "subtitle": "拍照估算的饮食记录",
-   "replaces": "MyFitnessPal",
-   "desc": "MyFitnessPal 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
   "alt-notion": {
    "name": "Notion AI 替代",
    "subtitle": "页面、数据库，和了解它们的 AI",
@@ -370,12 +364,6 @@
    "replaces": "Things",
    "desc": "Things 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
-  "alt-trello": {
-   "name": "Trello AI 替代",
-   "subtitle": "看板、列表和卡片",
-   "replaces": "Trello",
-   "desc": "Trello 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
   "alt-fantastical": {
    "name": "Fantastical AI 替代",
    "subtitle": "听得懂句子的日历",
@@ -387,12 +375,6 @@
    "subtitle": "带引导问题的私人日记",
    "replaces": "Day One",
    "desc": "Day One 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
-  },
-  "alt-otter": {
-   "name": "Otter AI 替代",
-   "subtitle": "把说的话变成会议纪要",
-   "replaces": "Otter",
-   "desc": "Otter 的免费 AI 替代，跑在你自己的 Claude 套餐上。已列入计划，还不能用。"
   },
   "alt-sketch": {
    "name": "Sketch AI 替代",

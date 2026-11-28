@@ -1106,24 +1106,6 @@
    "rank": 26
   },
   {
-   "id": "alt-myfitnesspal",
-   "name": "MyFitnessPal AI Alt",
-   "subtitle": "Food log with photo estimates",
-   "category": "life",
-   "desc": "A free AI alternative to MyFitnessPal that runs on your Claude plan. Planned; not available yet.",
-   "author": "",
-   "maker": "Claude AppStore",
-   "post": "https://github.com/fengyiqicoder/claude-appstore",
-   "artifact": "",
-   "lang": "",
-   "added": "2026-11-28",
-   "ai": true,
-   "replaces": "MyFitnessPal",
-   "target": "MyFitnessPal",
-   "soon": true,
-   "rank": 18
-  },
-  {
    "id": "alt-notion",
    "name": "Notion AI Alt",
    "subtitle": "Pages, databases and an AI that knows them",
@@ -1214,24 +1196,6 @@
    "rank": 28
   },
   {
-   "id": "alt-trello",
-   "name": "Trello AI Alt",
-   "subtitle": "Boards, lists and cards",
-   "category": "work",
-   "desc": "A free AI alternative to Trello that runs on your Claude plan. Planned; not available yet.",
-   "author": "",
-   "maker": "Claude AppStore",
-   "post": "https://github.com/fengyiqicoder/claude-appstore",
-   "artifact": "",
-   "lang": "",
-   "added": "2026-11-28",
-   "ai": true,
-   "replaces": "Trello",
-   "target": "Trello",
-   "soon": true,
-   "rank": 13
-  },
-  {
    "id": "alt-fantastical",
    "name": "Fantastical AI Alt",
    "subtitle": "A calendar that understands sentences",
@@ -1266,24 +1230,6 @@
    "target": "Day One",
    "soon": true,
    "rank": 32
-  },
-  {
-   "id": "alt-otter",
-   "name": "Otter AI Alt",
-   "subtitle": "Meeting notes from your voice",
-   "category": "work",
-   "desc": "A free AI alternative to Otter that runs on your Claude plan. Planned; not available yet.",
-   "author": "",
-   "maker": "Claude AppStore",
-   "post": "https://github.com/fengyiqicoder/claude-appstore",
-   "artifact": "",
-   "lang": "",
-   "added": "2026-11-28",
-   "ai": true,
-   "replaces": "Otter",
-   "target": "Otter",
-   "soon": true,
-   "rank": 22
   },
   {
    "id": "alt-sketch",

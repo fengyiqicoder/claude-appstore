@@ -104,9 +104,7 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **Bear AI Alt** - Markdown notes with tags. Planned, not available yet.
 - **Todoist AI Alt** - Tasks you add in plain words. Planned, not available yet.
 - **Things AI Alt** - Today, Upcoming and projects. Planned, not available yet.
-- **Trello AI Alt** - Boards, lists and cards. Planned, not available yet.
 - **Fantastical AI Alt** - A calendar that understands sentences. Planned, not available yet.
-- **Otter AI Alt** - Meeting notes from your voice. Planned, not available yet.
 - **Sketch AI Alt** - Design screens and open .sketch files. Planned, not available yet.
 
 ## Life
@@ -117,7 +115,6 @@ Every entry links to the creator's own post. Entries with a linked name are publ
 - **[Fitbod AI Alt](https://claude.ai/artifact/JsK1uH4k8jyLx88CpNzbXr)** - Tell Claude your goal, days and equipment and get a calendar of workouts that adds weight when you earn it. Log sets fast from the keyboard with previous-set ghosts, RPE, rest timer and PRs, and track food with macro targets and photo estimates. Imports your Strong, Hevy and MyFitnessPal history. ([source](https://github.com/fengyiqicoder/claude-appstore/tree/main/apps/fitness-coach), made by this repo)
 - **[Family Recipes](https://claude.ai/artifact/HJkFiAQzBBmLcoEj9tW6cu)** - Snap a picture of a handwritten recipe card and Claude turns it into a clean, consistent recipe you can keep. Made to save a family's recipes. ([post](https://x.com/dfeinition/status/2125992849468445090) by [@dfeinition](https://x.com/dfeinition))
 - **[Afterimage](https://claude.ai/artifact/EKppZTWnLd3jLm4izWRNQ9)** - A dream journal with a light, animated feel for writing down and revisiting your dreams. The author kept refining its motion and interactions to make it nicer to use. ([post](https://x.com/designirdeep/status/2126237747388256664) by [@designirdeep](https://x.com/designirdeep))
-- **MyFitnessPal AI Alt** - Food log with photo estimates. Planned, not available yet.
 - **Day One AI Alt** - A private journal with prompts. Planned, not available yet.
 
 ## Prompts and ideas
