@@ -186,7 +186,8 @@
    "ai": true,
    "replaces": "Copilot in Word, WPS AI",
    "batch": 1,
-   "target": "Word"
+   "target": "Word",
+   "rank": 1
   },
   {
    "id": "spreadsheet",
@@ -206,7 +207,8 @@
    "ai": true,
    "replaces": "Copilot in Excel, GPT for Sheets, Formula Bot",
    "batch": 1,
-   "target": "Excel"
+   "target": "Excel",
+   "rank": 2
   },
   {
    "id": "slide-maker",
@@ -226,7 +228,8 @@
    "ai": true,
    "replaces": "Copilot in PowerPoint, Gamma, Beautiful.ai",
    "batch": 1,
-   "target": "PowerPoint"
+   "target": "PowerPoint",
+   "rank": 3
   },
   {
    "id": "pdf-chat",
@@ -247,7 +250,8 @@
    "ai": true,
    "replaces": "Adobe Acrobat (AI Assistant, Fill & Sign), ChatPDF",
    "batch": 1,
-   "target": "Acrobat"
+   "target": "Acrobat",
+   "rank": 4
   },
   {
    "id": "grammar-checker",
@@ -269,7 +273,8 @@
    "ai": true,
    "replaces": "Grammarly Premium, QuillBot, Wordtune",
    "batch": 1,
-   "target": "Grammarly"
+   "target": "Grammarly",
+   "rank": 7
   },
   {
    "id": "mind-map",
@@ -289,7 +294,8 @@
    "ai": true,
    "replaces": "Xmind Pro, MindNode Plus, MindMeister",
    "batch": 1,
-   "target": "Xmind"
+   "target": "Xmind",
+   "rank": 27
   },
   {
    "id": "image-to-text",
@@ -312,7 +318,8 @@
    "ai": true,
    "replaces": "TextSniper, Prizmo",
    "batch": 1,
-   "target": "TextSniper"
+   "target": "TextSniper",
+   "rank": 40
   },
   {
    "id": "translator",
@@ -334,7 +341,8 @@
    ],
    "ai": true,
    "target": "DeepL",
-   "replaces": "DeepL Pro"
+   "replaces": "DeepL Pro",
+   "rank": 15
   },
   {
    "id": "speaking-coach",
@@ -355,7 +363,8 @@
    ],
    "ai": true,
    "target": "ELSA Speak",
-   "replaces": "ELSA Speak Pro"
+   "replaces": "ELSA Speak Pro",
+   "rank": 38
   },
   {
    "id": "pomodoro",
@@ -377,7 +386,8 @@
    ],
    "ai": true,
    "target": "Be Focused",
-   "replaces": "Be Focused Pro, Session"
+   "replaces": "Be Focused Pro, Session",
+   "rank": 39
   },
   {
    "id": "world-clock",
@@ -397,7 +407,8 @@
    ],
    "ai": true,
    "target": "Dato",
-   "replaces": "Dato"
+   "replaces": "Dato",
+   "rank": 45
   },
   {
    "id": "sticky-notes",
@@ -418,7 +429,8 @@
    ],
    "ai": true,
    "target": "Stickies",
-   "replaces": "Stickies, Quick Note"
+   "replaces": "Stickies, Quick Note",
+   "rank": 34
   },
   {
    "id": "future-of-ai-deck",
@@ -475,7 +487,8 @@
    "ai": true,
    "replaces": "Canva video, Animoto, Lumen5, Submagic",
    "batch": 2,
-   "target": "Lumen5"
+   "target": "Lumen5",
+   "rank": 42
   },
   {
    "id": "design-studio",
@@ -495,7 +508,8 @@
    "ai": true,
    "replaces": "Canva Pro, Uizard, Framer AI",
    "batch": 2,
-   "target": "Canva"
+   "target": "Canva",
+   "rank": 5
   },
   {
    "id": "thinking-partner",
@@ -517,7 +531,8 @@
    "ai": true,
    "replaces": "ChatPRD, Notion AI",
    "batch": 2,
-   "target": "ChatPRD"
+   "target": "ChatPRD",
+   "rank": 44
   },
   {
    "id": "saltline",
@@ -659,7 +674,8 @@
    "ai": true,
    "replaces": "Teal, Rezi, Kickresume, Final Round AI",
    "batch": 3,
-   "target": "Teal"
+   "target": "Teal",
+   "rank": 43
   },
   {
    "id": "flashcards",
@@ -679,7 +695,8 @@
    "ai": true,
    "replaces": "Anki add-ons, Knowt",
    "batch": 3,
-   "target": "Anki"
+   "target": "Anki",
+   "rank": 20
   },
   {
    "id": "rewriter",
@@ -700,7 +717,8 @@
    "ai": true,
    "replaces": "QuillBot Premium, Wordtune",
    "batch": 3,
-   "target": "QuillBot"
+   "target": "QuillBot",
+   "rank": 24
   },
   {
    "id": "budget",
@@ -720,7 +738,8 @@
    "ai": true,
    "replaces": "YNAB, Monarch, Copilot Money",
    "batch": 3,
-   "target": "YNAB"
+   "target": "YNAB",
+   "rank": 33
   },
   {
    "id": "read-aloud",
@@ -741,7 +760,8 @@
    "ai": true,
    "replaces": "Speechify Premium, NaturalReader",
    "batch": 3,
-   "target": "Speechify"
+   "target": "Speechify",
+   "rank": 23
   },
   {
    "id": "homework-helper",
@@ -761,7 +781,8 @@
    "ai": true,
    "replaces": "Photomath Plus, Gauth, Chegg",
    "batch": 3,
-   "target": "Photomath"
+   "target": "Photomath",
+   "rank": 21
   },
   {
    "id": "whiteboard",
@@ -781,7 +802,8 @@
    "ai": true,
    "replaces": "Miro, Whimsical",
    "batch": 3,
-   "target": "Miro"
+   "target": "Miro",
+   "rank": 19
   },
   {
    "id": "fitness-coach",
@@ -802,7 +824,8 @@
    "ai": true,
    "replaces": "Fitbod, Strong Pro",
    "batch": 3,
-   "target": "Fitbod"
+   "target": "Fitbod",
+   "rank": 37
   },
   {
    "id": "classroom",
@@ -822,7 +845,8 @@
    "ai": true,
    "replaces": "Wordwall, Twinkl, MagicSchool",
    "batch": 3,
-   "target": "Wordwall"
+   "target": "Wordwall",
+   "rank": 41
   },
   {
    "id": "leaf-blower",
@@ -995,7 +1019,8 @@
    "ai": true,
    "replaces": "Pages",
    "target": "Pages",
-   "soon": true
+   "soon": true,
+   "rank": 9
   },
   {
    "id": "alt-numbers",
@@ -1012,7 +1037,8 @@
    "ai": true,
    "replaces": "Numbers",
    "target": "Numbers",
-   "soon": true
+   "soon": true,
+   "rank": 11
   },
   {
    "id": "alt-keynote",
@@ -1029,7 +1055,8 @@
    "ai": true,
    "replaces": "Keynote",
    "target": "Keynote",
-   "soon": true
+   "soon": true,
+   "rank": 10
   },
   {
    "id": "alt-mindnode",
@@ -1046,7 +1073,8 @@
    "ai": true,
    "replaces": "MindNode",
    "target": "MindNode",
-   "soon": true
+   "soon": true,
+   "rank": 36
   },
   {
    "id": "alt-quizlet",
@@ -1063,7 +1091,8 @@
    "ai": true,
    "replaces": "Quizlet",
    "target": "Quizlet",
-   "soon": true
+   "soon": true,
+   "rank": 16
   },
   {
    "id": "alt-figma",
@@ -1080,7 +1109,8 @@
    "ai": true,
    "replaces": "Figma",
    "target": "Figma",
-   "soon": true
+   "soon": true,
+   "rank": 12
   },
   {
    "id": "alt-lucidchart",
@@ -1097,7 +1127,8 @@
    "ai": true,
    "replaces": "Lucidchart",
    "target": "Lucidchart",
-   "soon": true
+   "soon": true,
+   "rank": 26
   },
   {
    "id": "alt-myfitnesspal",
@@ -1114,7 +1145,8 @@
    "ai": true,
    "replaces": "MyFitnessPal",
    "target": "MyFitnessPal",
-   "soon": true
+   "soon": true,
+   "rank": 18
   },
   {
    "id": "alt-notion",
@@ -1131,7 +1163,8 @@
    "ai": true,
    "replaces": "Notion",
    "target": "Notion",
-   "soon": true
+   "soon": true,
+   "rank": 6
   },
   {
    "id": "alt-evernote",
@@ -1148,7 +1181,8 @@
    "ai": true,
    "replaces": "Evernote",
    "target": "Evernote",
-   "soon": true
+   "soon": true,
+   "rank": 14
   },
   {
    "id": "alt-bear",
@@ -1165,7 +1199,8 @@
    "ai": true,
    "replaces": "Bear",
    "target": "Bear",
-   "soon": true
+   "soon": true,
+   "rank": 29
   },
   {
    "id": "alt-todoist",
@@ -1182,7 +1217,8 @@
    "ai": true,
    "replaces": "Todoist",
    "target": "Todoist",
-   "soon": true
+   "soon": true,
+   "rank": 17
   },
   {
    "id": "alt-things",
@@ -1199,7 +1235,8 @@
    "ai": true,
    "replaces": "Things",
    "target": "Things",
-   "soon": true
+   "soon": true,
+   "rank": 28
   },
   {
    "id": "alt-trello",
@@ -1216,7 +1253,8 @@
    "ai": true,
    "replaces": "Trello",
    "target": "Trello",
-   "soon": true
+   "soon": true,
+   "rank": 13
   },
   {
    "id": "alt-fantastical",
@@ -1233,7 +1271,8 @@
    "ai": true,
    "replaces": "Fantastical",
    "target": "Fantastical",
-   "soon": true
+   "soon": true,
+   "rank": 31
   },
   {
    "id": "alt-day-one",
@@ -1250,7 +1289,8 @@
    "ai": true,
    "replaces": "Day One",
    "target": "Day One",
-   "soon": true
+   "soon": true,
+   "rank": 32
   },
   {
    "id": "alt-paste",
@@ -1267,7 +1307,8 @@
    "ai": true,
    "replaces": "Paste",
    "target": "Paste",
-   "soon": true
+   "soon": true,
+   "rank": 35
   },
   {
    "id": "alt-raycast",
@@ -1284,7 +1325,8 @@
    "ai": true,
    "replaces": "Raycast",
    "target": "Raycast",
-   "soon": true
+   "soon": true,
+   "rank": 25
   },
   {
    "id": "alt-magnet",
@@ -1301,7 +1343,8 @@
    "ai": true,
    "replaces": "Magnet",
    "target": "Magnet",
-   "soon": true
+   "soon": true,
+   "rank": 30
   },
   {
    "id": "alt-otter",
@@ -1318,7 +1361,8 @@
    "ai": true,
    "replaces": "Otter",
    "target": "Otter",
-   "soon": true
+   "soon": true,
+   "rank": 22
   },
   {
    "id": "alt-duolingo",
@@ -1335,7 +1379,8 @@
    "ai": true,
    "replaces": "Duolingo",
    "target": "Duolingo",
-   "soon": true
+   "soon": true,
+   "rank": 8
   }
  ],
  "official": [
