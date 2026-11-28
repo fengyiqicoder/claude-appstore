@@ -91,7 +91,7 @@ h2{font:500 22px/1.2 var(--display);margin:0;letter-spacing:-.01em}
 .tile b{font-weight:600;font-size:14px;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tile>span:not(.get){font-size:12px;color:var(--muted)}
 .tile>span.pw{font-size:11px;color:var(--accent);opacity:.9}
-.item .meta span.pw{font-size:11px;color:var(--accent);opacity:.9}
+.item.alt .meta b{white-space:normal;line-height:1.25}
 .tile .get{margin-top:9px;padding:6px 14px;font-size:12px}
 .tile.soon .icon{opacity:.55;filter:saturate(.7)}
 @media (max-width:720px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 4px}.tile .icon{width:64px!important;height:64px!important}}
@@ -247,7 +247,7 @@ function getBtn(a,cls=""){
     : `<a class="get view ${cls}" href="${esc(a.post)}" target="_blank" rel="noopener" aria-label="${t("View","查看")} ${esc(L(a,"name"))}">${t("View","查看")}</a>`;
 }
 function row(a){
-  return `<div class="item">${iconHTML(a,52)}<div class="meta" data-open="${a.id}" role="link" tabindex="0"><b>${esc(L(a,"name"))}${a.ai&&!a.target?' <span class="ai">✦ Claude</span>':""}</b>${a.target?`<span class="pw">${t("Powered by Claude","由 Claude 驱动")}</span>`:""}<span>${esc(L(a,"subtitle"))}</span></div>${getBtn(a)}</div>`;
+  return `<div class="item${a.target?" alt":""}">${iconHTML(a,52)}<div class="meta" data-open="${a.id}" role="link" tabindex="0"><b>${esc(L(a,"name"))}${a.ai&&!a.target?' <span class="ai">✦ Claude</span>':""}</b><span>${esc(L(a,"subtitle"))}</span></div>${getBtn(a)}</div>`;
 }
 function grid(list){return list.length?`<div class="grid">${list.map(row).join("")}</div>`:`<p class="empty">${t("Nothing here yet.","这里还没有 app。")} <a href="https://github.com/fengyiqicoder/claude-appstore/issues/new" target="_blank" rel="noopener">${t("Submit an app","提交一个")}</a>.</p>`}
 function fcard(a,eyebrow,blurb){
@@ -259,7 +259,7 @@ function fcard(a,eyebrow,blurb){
 const installable = ()=>DATA.apps.filter(a=>a.artifact&&!a.maker);
 const ours = ()=>DATA.apps.filter(a=>a.maker&&a.soon);
 const batch = ()=>DATA.apps.filter(a=>a.maker&&!a.soon);
-function tile(a){return `<div class="tile${a.soon?" soon":""}" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,84)}<b>${esc(a.target)}</b><span>${t("AI Alt","AI 替代")}</span><span class="pw">${t("Powered by Claude","由 Claude 驱动")}</span>${getBtn(a)}</div>`}
+function tile(a){return `<div class="tile${a.soon?" soon":""}" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,84)}<b>${esc(a.target)}</b><span>${t("AI Alt","AI 替代")}</span><span>${t("(Powered by Claude)","（由 Claude 驱动）")}</span>${getBtn(a)}</div>`}
 function swap(a){return `<div class="swap" data-open="${a.id}" role="link" tabindex="0">${iconHTML(a,56)}<div class="meta"><b>${esc(L(a,"name"))}</b><span class="was">${t("Instead of","替代")} <s>${esc(L(a,"replaces"))}</s></span><span>${esc(L(a,"subtitle"))}</span></div>${getBtn(a)}</div>`}
 function discover(){
   const apps=DATA.apps.slice().reverse();
@@ -308,7 +308,7 @@ function detail(id){
   const langs={Japanese:"日语",Hebrew:"希伯来语",Arabic:"阿拉伯语",Chinese:"中文",Korean:"韩语",Spanish:"西班牙语",French:"法语",German:"德语"};
   const lang=a.lang?(ZH?langs[a.lang]||a.lang:a.lang):(ZH?(a.maker?"中文、英文":"英文"):"English");
   return `<a class="back" href="#${a.category}">‹ ${c.name}</a>
-  <div class="dhead">${iconHTML(a,128)}<div class="meta"><h1>${esc(L(a,"name"))}</h1>${a.ai?`<span class="ai">✦ ${t("Powered by Claude","由 Claude 驱动")}</span>`:""}<p>${esc(L(a,"subtitle"))}</p>${getBtn(a)}</div></div>
+  <div class="dhead">${iconHTML(a,128)}<div class="meta"><h1>${esc(L(a,"name"))}</h1>${a.ai&&!a.target?`<span class="ai">✦ ${t("Powered by Claude","由 Claude 驱动")}</span>`:""}<p>${esc(L(a,"subtitle"))}</p>${getBtn(a)}</div></div>
   <div class="facts"><div><small>${t("Category","分类")}</small><b>${c.name}</b></div><div><small>${t("Language","语言")}</small><b>${esc(lang)}</b></div><div><small>${t("Developer","开发者")}</small><b>${a.maker?esc(a.maker):`<a href="${esc(authorUrl(a))}" target="_blank" rel="noopener">@${esc(a.author)}</a>`}</b></div><div><small>${t("Price","价格")}</small><b>${t("Free","免费")}</b></div>${a.replaces?`<div><small>${t("Replaces","替代")}</small><b title="${esc(L(a,"replaces"))}">${esc(L(a,"replaces").split(",")[0])}</b></div>`:""}<div style="display:none"><small>Added</small><b>${esc(a.added.slice(5).replace("-","/"))}</b></div></div>
   <section class="sec"><h2>${t("About","简介")}</h2><p class="prose">${esc(L(a,"desc"))}</p>${a.soon?"":`<p class="prose"><a href="${esc(a.post)}" target="_blank" rel="noopener">${a.maker?t("View the source on GitHub ›","在 GitHub 上看源码 ›"):t(`See the creator's post on ${postSite(a)} ›`,`看作者在 ${postSite(a)} 上的帖子 ›`)}</a></p>`}</section>
   ${a.perms?`<section class="sec"><h2>${t("Permissions","权限")}</h2><p class="prose">${ZH?`使用前会先征得你同意：${a.perms.map(p=>esc(PERM_ZH[p]||p)).join("、")}。它只打开你选的文件，从不运行程序。${a.ai?"向 Claude 发的请求计入你自己套餐的用量，和聊天一样。":""}`:`It asks before it uses: ${a.perms.map(esc).join(", ")}. It only opens files you pick and never runs programs.${a.ai?" Requests to Claude count toward your own plan's usage, the same as chatting.":""}`}</p></section>`:""}
