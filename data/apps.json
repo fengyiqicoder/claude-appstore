@@ -170,7 +170,7 @@
   },
   {
    "id": "document-editor",
-   "name": "AI Document Editor",
+   "name": "Word AI Alternative",
    "subtitle": "Edit .docx files with Claude",
    "category": "work",
    "desc": "Open your .docx files and keep working in a real print layout with pages, headers and footers, page numbers, section breaks, columns, a table of contents, equations, comments, footnotes and tracked changes intact. Ask Claude to draft, rewrite, shorten, change tone, proofread, translate or turn text into a table; every AI edit is a tracked change you accept or reject. Dictation, read aloud and version history are built in, and it exports back to Word, PDF, Markdown, HTML or text.",
@@ -185,11 +185,12 @@
    ],
    "ai": true,
    "replaces": "Copilot in Word, WPS AI",
-   "batch": 1
+   "batch": 1,
+   "target": "Word"
   },
   {
    "id": "spreadsheet",
-   "name": "AI Spreadsheet",
+   "name": "Excel AI Alternative",
    "subtitle": "Excel files, Claude built in",
    "category": "work",
    "desc": "Open .xlsx, .xls and .csv files with all sheets, formulas, formatting, charts and images. Ask questions in plain words and get the exact number plus the formula behind it. Build real PivotTables, data validation, conditional formatting, sparklines, grouped outlines and charts with trendlines, clean or classify thousands of rows with Claude, and save back to Excel with nothing missing.",
@@ -204,11 +205,12 @@
    ],
    "ai": true,
    "replaces": "Copilot in Excel, GPT for Sheets, Formula Bot",
-   "batch": 1
+   "batch": 1,
+   "target": "Excel"
   },
   {
    "id": "slide-maker",
-   "name": "AI Slide Maker",
+   "name": "PowerPoint AI Alternative",
    "subtitle": "Decks from a topic or your .pptx",
    "category": "work",
    "desc": "Describe a talk, paste notes or drop in a .pptx, .docx or PDF, and Claude writes the slides in smart layouts and themes. Then edit like PowerPoint: shapes, pictures, tables, charts, diagrams, animations, transitions, video, slide master, sections and comments. Present with speaker notes and a pen, and export editable PowerPoint, PDF or handouts; slides you didn't touch come back exactly as they were.",
@@ -223,11 +225,12 @@
    ],
    "ai": true,
    "replaces": "Copilot in PowerPoint, Gamma, Beautiful.ai",
-   "batch": 1
+   "batch": 1,
+   "target": "PowerPoint"
   },
   {
    "id": "pdf-chat",
-   "name": "PDF Chat",
+   "name": "Acrobat AI Alternative",
    "subtitle": "Read, sign, edit and ask PDFs",
    "category": "work",
    "desc": "Open PDFs, Word, PowerPoint or text files and ask questions; every answer cites its pages and highlights the exact words. Highlight, comment, draw, fill forms and sign, reorder, rotate, merge and extract pages, then save a real PDF that opens in Acrobat and Preview. Summaries, outlines, table extraction to Excel, translation and read aloud are built in, and your files stay on your device.",
@@ -243,11 +246,12 @@
    ],
    "ai": true,
    "replaces": "Adobe Acrobat (AI Assistant, Fill & Sign), ChatPDF",
-   "batch": 1
+   "batch": 1,
+   "target": "Acrobat"
   },
   {
    "id": "grammar-checker",
-   "name": "Grammar Checker",
+   "name": "Grammarly AI Alternative",
    "subtitle": "Grammar, clarity and tone fixes",
    "category": "work",
    "desc": "Write or paste text and get live underlines for correctness, clarity, engagement and delivery, each with an explanation and one-click Accept. Rewrite any sentence shorter, clearer, more formal or friendlier, paraphrase it in 9 modes, and set goals, voice and a house style guide. Opens and saves .docx, .md and .txt, and floats on top of other apps with Option+Shift+G.",
@@ -264,11 +268,12 @@
    ],
    "ai": true,
    "replaces": "Grammarly Premium, QuillBot, Wordtune",
-   "batch": 1
+   "batch": 1,
+   "target": "Grammarly"
   },
   {
    "id": "mind-map",
-   "name": "Mind Map",
+   "name": "Xmind AI Alternative",
    "subtitle": "Opens your Xmind and MindNode maps",
    "category": "work",
    "desc": "Map ideas with Xmind and MindNode keyboard shortcuts in fourteen structures, including matrix, brace, tree table, timeline and fishbone, with a different structure per branch, with floating topics, zones, callouts, numbering, templates and version history. Open your .xmind, .opml, .mm and Markdown files and save back to the same file with Cmd+S. Claude can draft a whole map from a sentence or an article, expand any topic, summarize a branch or turn the map into an article.",
@@ -283,11 +288,12 @@
    ],
    "ai": true,
    "replaces": "Xmind Pro, MindNode Plus, MindMeister",
-   "batch": 1
+   "batch": 1,
+   "target": "Xmind"
   },
   {
    "id": "image-to-text",
-   "name": "Image to Text",
+   "name": "TextSniper AI Alternative",
    "subtitle": "Copy text from any image",
    "category": "work",
    "desc": "Paste a screenshot, drop photos or open a PDF, and get text you can edit, copy, read aloud or export. It keeps the layout, writes Markdown, turns tables into Excel or CSV, translates, and pulls receipts and business cards into fields. QR codes and barcodes are read on your computer.",
@@ -305,11 +311,12 @@
    ],
    "ai": true,
    "replaces": "TextSniper, Prizmo",
-   "batch": 1
+   "batch": 1,
+   "target": "TextSniper"
   },
   {
    "id": "translator",
-   "name": "AI Translator",
+   "name": "DeepL AI Alternative",
    "subtitle": "Translate, polish and explain any text",
    "category": "work",
    "desc": "Paste text and Claude translates it between your two languages, polishes it so it sounds native in a natural, casual or formal tone, or explains the key words and grammar. It reads the result aloud. Installed, it floats on top and Option+Shift+T brings it up anywhere.",
@@ -325,11 +332,13 @@
     "Floating window",
     "Shortcut"
    ],
-   "ai": true
+   "ai": true,
+   "target": "DeepL",
+   "replaces": "DeepL Pro"
   },
   {
    "id": "speaking-coach",
-   "name": "Speaking Coach",
+   "name": "ELSA Speak AI Alternative",
    "subtitle": "Practice speaking with feedback",
    "category": "learn",
    "desc": "Claude writes a short spoken passage at your level in one of 9 languages and reads it to you. Repeat it or answer its question out loud, and Claude scores what you said, corrects it and reads back a more natural version.",
@@ -344,11 +353,13 @@
     "Voice",
     "Dictation"
    ],
-   "ai": true
+   "ai": true,
+   "target": "ELSA Speak",
+   "replaces": "ELSA Speak Pro"
   },
   {
    "id": "pomodoro",
-   "name": "Pomodoro Timer",
+   "name": "Be Focused AI Alternative",
    "subtitle": "Claude plans your day into sessions",
    "category": "work",
    "desc": "Dump everything you need to do and Claude turns it into ordered tasks with the number of focus sessions each needs. The timer works through them, counts down in your menu bar and Dock, notifies you when a session ends, and starts or pauses from anywhere with Option+Shift+P.",
@@ -364,11 +375,13 @@
     "Notifications",
     "Shortcut"
    ],
-   "ai": true
+   "ai": true,
+   "target": "Be Focused",
+   "replaces": "Be Focused Pro, Session"
   },
   {
    "id": "world-clock",
-   "name": "World Clock",
+   "name": "Dato AI Alternative",
    "subtitle": "Time zones and meeting planner",
    "category": "work",
    "desc": "Keep the cities you work with side by side, each with a day and night band. Ask in plain words, like \"best time for a call with London and Tokyo\", and Claude answers and moves the time slider there. Installed, the city you pick stays in your menu bar.",
@@ -382,11 +395,13 @@
     "Claude",
     "Menu bar"
    ],
-   "ai": true
+   "ai": true,
+   "target": "Dato",
+   "replaces": "Dato"
   },
   {
    "id": "sticky-notes",
-   "name": "Sticky Notes",
+   "name": "Stickies AI Alternative",
    "subtitle": "Notes that float on top",
    "category": "work",
    "desc": "Four colored sticky notes in one small window. Claude can turn a messy note into a checklist, clean up the writing, summarize it, suggest next steps or translate it, with one-click undo. Installed, it floats above every window and Option+Shift+J hides it or brings it back.",
@@ -401,7 +416,9 @@
     "Floating window",
     "Shortcut"
    ],
-   "ai": true
+   "ai": true,
+   "target": "Stickies",
+   "replaces": "Stickies, Quick Note"
   },
   {
    "id": "future-of-ai-deck",
@@ -441,7 +458,7 @@
   },
   {
    "id": "video-studio",
-   "name": "AI Video Studio",
+   "name": "Lumen5 AI Alternative",
    "subtitle": "Topic in, MP4 out",
    "category": "work",
    "desc": "Describe a video or paste a script and Claude writes an animated storyboard. Edit scenes on a timeline, add built-in music or your own song with cuts snapped to the beat, burn in captions, and export MP4 or WebM in 16:9, 9:16 or 1:1.",
@@ -457,11 +474,12 @@
    ],
    "ai": true,
    "replaces": "Canva video, Animoto, Lumen5, Submagic",
-   "batch": 2
+   "batch": 2,
+   "target": "Lumen5"
   },
   {
    "id": "design-studio",
-   "name": "AI Design Studio",
+   "name": "Canva AI Alternative",
    "subtitle": "Screens, pages, graphics, critiques",
    "category": "work",
    "desc": "Describe an app or a business, or drop in a screenshot, and Claude designs mobile screens you can click through, landing pages in 2 to 3 styles, or posters and social graphics, all sharing one design system you can change live. Get a scored critique with one-click fixes, and export PNG, HTML/CSS, SVG or design tokens.",
@@ -475,12 +493,13 @@
     "Claude (reads images)"
    ],
    "ai": true,
-   "replaces": "Uizard, Framer AI, Galileo",
-   "batch": 2
+   "replaces": "Canva Pro, Uizard, Framer AI",
+   "batch": 2,
+   "target": "Canva"
   },
   {
    "id": "thinking-partner",
-   "name": "AI Thinking Partner",
+   "name": "ChatPRD AI Alternative",
    "subtitle": "Think it through, then ship",
    "category": "work",
    "desc": "Paste a plan, idea or decision and Claude asks the hard questions, each with a recommended answer you can accept in one keystroke. A live map tracks resolved, open and parked questions, plus terms, decisions and risks. Export a spec, PRD, questionnaire, tickets for Linear or Jira, or a handoff brief.",
@@ -497,7 +516,8 @@
    ],
    "ai": true,
    "replaces": "ChatPRD, Notion AI",
-   "batch": 2
+   "batch": 2,
+   "target": "ChatPRD"
   },
   {
    "id": "saltline",
@@ -621,7 +641,7 @@
   },
   {
    "id": "job-search",
-   "name": "Job Search Kit",
+   "name": "Teal AI Alternative",
    "subtitle": "Resume, tracker, interview coach",
    "category": "work",
    "desc": "Build an ATS-friendly resume in six templates with a live preview that exports exactly as shown to PDF and Word. Paste a job post to get a keyword match score, a tailored version you approve edit by edit, and a cover letter. Track every application on a board and rehearse with a mock interviewer that scores each answer.",
@@ -638,11 +658,12 @@
    ],
    "ai": true,
    "replaces": "Teal, Rezi, Kickresume, Final Round AI",
-   "batch": 3
+   "batch": 3,
+   "target": "Teal"
   },
   {
    "id": "flashcards",
-   "name": "Flashcards",
+   "name": "Anki AI Alternative",
    "subtitle": "Spaced repetition, quizzes, AI cards",
    "category": "learn",
    "desc": "Study decks with the same FSRS scheduler as modern Anki, or practise with Learn, Test and Match like Quizlet. Paste notes or drop a PDF, Word file or photo, and Claude writes cards or a practice quiz for you to review before adding. Import your Quizlet sets and Anki .apkg decks with their review history; everything stays on your computer with one-click backup.",
@@ -656,12 +677,13 @@
     "Claude (reads images)"
    ],
    "ai": true,
-   "replaces": "Quizlet Plus, Knowt, Anki add-ons",
-   "batch": 3
+   "replaces": "Anki add-ons, Knowt",
+   "batch": 3,
+   "target": "Anki"
   },
   {
    "id": "rewriter",
-   "name": "Rewriter",
+   "name": "QuillBot AI Alternative",
    "subtitle": "Sounds like you wrote it",
    "category": "work",
    "desc": "Paste any text and rewrite it in 11 modes, from Standard and Natural to Shorten, Academic and your own voice, with every changed word highlighted. Click a word for synonyms or a sentence to rephrase it, and let the AI tells check find stock phrases, em dashes and \"it's not X, it's Y\" in English or Chinese, then fix them in one click. History, version compare and Word export are included, and your samples and history stay on your computer.",
@@ -677,11 +699,12 @@
    ],
    "ai": true,
    "replaces": "QuillBot Premium, Wordtune",
-   "batch": 3
+   "batch": 3,
+   "target": "QuillBot"
   },
   {
    "id": "budget",
-   "name": "Budget",
+   "name": "YNAB AI Alternative",
    "subtitle": "Give every dollar a job",
    "category": "life",
    "desc": "A zero-based budget like YNAB: assign the money you have to categories, roll it over month to month, set targets, and see overspending the moment it happens. Import your bank's CSV, OFX, QFX or QIF, or bring your YNAB, Mint, Monarch or Copilot export; Claude sorts the transactions into categories and answers questions about your spending. No bank login and no subscription; your data stays on your computer.",
@@ -696,11 +719,12 @@
    ],
    "ai": true,
    "replaces": "YNAB, Monarch, Copilot Money",
-   "batch": 3
+   "batch": 3,
+   "target": "YNAB"
   },
   {
    "id": "read-aloud",
-   "name": "Read Aloud",
+   "name": "Speechify AI Alternative",
    "subtitle": "Listen to anything you read",
    "category": "learn",
    "desc": "Turn PDFs, EPUBs, Word files and articles into audio with word-by-word highlighting, and pick up where you left off. Skip by sentence or paragraph, change voice and speed, set a sleep timer, and bookmark passages. Claude summarizes chapters, explains hard passages and cleans up messy PDF text.",
@@ -716,11 +740,12 @@
    ],
    "ai": true,
    "replaces": "Speechify Premium, NaturalReader",
-   "batch": 3
+   "batch": 3,
+   "target": "Speechify"
   },
   {
    "id": "homework-helper",
-   "name": "Homework Helper",
+   "name": "Photomath AI Alternative",
    "subtitle": "Every answer double-checked",
    "category": "learn",
    "desc": "Snap, paste or type any math, physics or chemistry problem and get a step-by-step solution where every step explains why. Each answer is checked by substitution, an independent second solve, and a calculator, and you're warned when they disagree. Hint-only mode, practice problems and a mistake notebook with spaced review help you actually learn it.",
@@ -735,11 +760,12 @@
    ],
    "ai": true,
    "replaces": "Photomath Plus, Gauth, Chegg",
-   "batch": 3
+   "batch": 3,
+   "target": "Photomath"
   },
   {
    "id": "whiteboard",
-   "name": "Whiteboard",
+   "name": "Miro AI Alternative",
    "subtitle": "Sketch, diagram, explain with Claude",
    "category": "work",
    "desc": "An infinite canvas with Excalidraw's shortcuts, a hand-drawn or clean look, shapes, connectors that stay attached, sticky notes, frames, pen, align and group. Open .excalidraw files, Mermaid and images, and export PNG, SVG, PDF, Excalidraw or Mermaid. Describe a flowchart, sequence diagram, architecture, org chart or timeline and Claude draws it as shapes you can edit, or explains the board.",
@@ -753,12 +779,13 @@
     "Claude (reads images)"
    ],
    "ai": true,
-   "replaces": "Lucidchart, Whimsical, Miro",
-   "batch": 3
+   "replaces": "Miro, Whimsical",
+   "batch": 3,
+   "target": "Miro"
   },
   {
    "id": "fitness-coach",
-   "name": "Fitness Coach",
+   "name": "Fitbod AI Alternative",
    "subtitle": "Plan, lift, eat, progress",
    "category": "life",
    "desc": "Tell Claude your goal, days and equipment and get a calendar of workouts that adds weight when you earn it. Log sets fast from the keyboard with previous-set ghosts, RPE, rest timer and PRs, and track food with macro targets and photo estimates. Imports your Strong, Hevy and MyFitnessPal history.",
@@ -773,12 +800,13 @@
     "Notifications"
    ],
    "ai": true,
-   "replaces": "Fitbod, Strong Pro, MyFitnessPal Premium",
-   "batch": 3
+   "replaces": "Fitbod, Strong Pro",
+   "batch": 3,
+   "target": "Fitbod"
   },
   {
    "id": "classroom",
-   "name": "Classroom Activities",
+   "name": "Wordwall AI Alternative",
    "subtitle": "AI lessons, games and worksheets",
    "category": "learn",
    "desc": "Tell Claude the grade, subject and topic, and it writes vocabulary, quizzes, a reading passage with leveled versions, a lesson plan and a rubric. Turn the same content into a projector quiz show with team scores, matching, word search, crossword, wheel of names and more, or print worksheets with answer keys as PDF and Word.",
@@ -793,7 +821,8 @@
    ],
    "ai": true,
    "replaces": "Wordwall, Twinkl, MagicSchool",
-   "batch": 3
+   "batch": 3,
+   "target": "Wordwall"
   },
   {
    "id": "leaf-blower",
@@ -950,6 +979,363 @@
    "artifact": "https://claude.ai/artifact/3LB4QUL4iN9hAwhwR8ypDi",
    "lang": "Japanese",
    "added": "2026-11-28"
+  },
+  {
+   "id": "alt-pages",
+   "name": "Pages AI Alternative",
+   "subtitle": "Pages documents with Claude built in",
+   "category": "work",
+   "desc": "A free alternative to Pages that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Pages",
+   "target": "Pages",
+   "soon": true
+  },
+  {
+   "id": "alt-numbers",
+   "name": "Numbers AI Alternative",
+   "subtitle": "Numbers spreadsheets you can ask questions",
+   "category": "work",
+   "desc": "A free alternative to Numbers that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Numbers",
+   "target": "Numbers",
+   "soon": true
+  },
+  {
+   "id": "alt-keynote",
+   "name": "Keynote AI Alternative",
+   "subtitle": "Keynote decks drafted by Claude",
+   "category": "work",
+   "desc": "A free alternative to Keynote that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Keynote",
+   "target": "Keynote",
+   "soon": true
+  },
+  {
+   "id": "alt-mindnode",
+   "name": "MindNode AI Alternative",
+   "subtitle": "MindNode maps, expanded by Claude",
+   "category": "work",
+   "desc": "A free alternative to MindNode that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "MindNode",
+   "target": "MindNode",
+   "soon": true
+  },
+  {
+   "id": "alt-quizlet",
+   "name": "Quizlet AI Alternative",
+   "subtitle": "Study sets, Learn and Test modes",
+   "category": "learn",
+   "desc": "A free alternative to Quizlet that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Quizlet",
+   "target": "Quizlet",
+   "soon": true
+  },
+  {
+   "id": "alt-figma",
+   "name": "Figma AI Alternative",
+   "subtitle": "Design screens on an open canvas",
+   "category": "work",
+   "desc": "A free alternative to Figma that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Figma",
+   "target": "Figma",
+   "soon": true
+  },
+  {
+   "id": "alt-lucidchart",
+   "name": "Lucidchart AI Alternative",
+   "subtitle": "Flowcharts and diagrams from a sentence",
+   "category": "work",
+   "desc": "A free alternative to Lucidchart that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Lucidchart",
+   "target": "Lucidchart",
+   "soon": true
+  },
+  {
+   "id": "alt-myfitnesspal",
+   "name": "MyFitnessPal AI Alternative",
+   "subtitle": "Food log with photo estimates",
+   "category": "life",
+   "desc": "A free alternative to MyFitnessPal that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "MyFitnessPal",
+   "target": "MyFitnessPal",
+   "soon": true
+  },
+  {
+   "id": "alt-notion",
+   "name": "Notion AI Alternative",
+   "subtitle": "Pages, databases and an AI that knows them",
+   "category": "work",
+   "desc": "A free alternative to Notion that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Notion",
+   "target": "Notion",
+   "soon": true
+  },
+  {
+   "id": "alt-evernote",
+   "name": "Evernote AI Alternative",
+   "subtitle": "Notebooks, web clips and search",
+   "category": "work",
+   "desc": "A free alternative to Evernote that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Evernote",
+   "target": "Evernote",
+   "soon": true
+  },
+  {
+   "id": "alt-bear",
+   "name": "Bear AI Alternative",
+   "subtitle": "Markdown notes with tags",
+   "category": "work",
+   "desc": "A free alternative to Bear that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Bear",
+   "target": "Bear",
+   "soon": true
+  },
+  {
+   "id": "alt-todoist",
+   "name": "Todoist AI Alternative",
+   "subtitle": "Tasks you add in plain words",
+   "category": "work",
+   "desc": "A free alternative to Todoist that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Todoist",
+   "target": "Todoist",
+   "soon": true
+  },
+  {
+   "id": "alt-things",
+   "name": "Things AI Alternative",
+   "subtitle": "Today, Upcoming and projects",
+   "category": "work",
+   "desc": "A free alternative to Things that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Things",
+   "target": "Things",
+   "soon": true
+  },
+  {
+   "id": "alt-trello",
+   "name": "Trello AI Alternative",
+   "subtitle": "Boards, lists and cards",
+   "category": "work",
+   "desc": "A free alternative to Trello that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Trello",
+   "target": "Trello",
+   "soon": true
+  },
+  {
+   "id": "alt-fantastical",
+   "name": "Fantastical AI Alternative",
+   "subtitle": "A calendar that understands sentences",
+   "category": "work",
+   "desc": "A free alternative to Fantastical that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Fantastical",
+   "target": "Fantastical",
+   "soon": true
+  },
+  {
+   "id": "alt-day-one",
+   "name": "Day One AI Alternative",
+   "subtitle": "A private journal with prompts",
+   "category": "life",
+   "desc": "A free alternative to Day One that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Day One",
+   "target": "Day One",
+   "soon": true
+  },
+  {
+   "id": "alt-paste",
+   "name": "Paste AI Alternative",
+   "subtitle": "Clipboard history you can search",
+   "category": "work",
+   "desc": "A free alternative to Paste that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Paste",
+   "target": "Paste",
+   "soon": true
+  },
+  {
+   "id": "alt-raycast",
+   "name": "Raycast AI Alternative",
+   "subtitle": "A launcher with Claude one key away",
+   "category": "work",
+   "desc": "A free alternative to Raycast that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Raycast",
+   "target": "Raycast",
+   "soon": true
+  },
+  {
+   "id": "alt-magnet",
+   "name": "Magnet AI Alternative",
+   "subtitle": "Snap windows into halves and thirds",
+   "category": "work",
+   "desc": "A free alternative to Magnet that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Magnet",
+   "target": "Magnet",
+   "soon": true
+  },
+  {
+   "id": "alt-otter",
+   "name": "Otter AI Alternative",
+   "subtitle": "Meeting notes from your voice",
+   "category": "work",
+   "desc": "A free alternative to Otter that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Otter",
+   "target": "Otter",
+   "soon": true
+  },
+  {
+   "id": "alt-duolingo",
+   "name": "Duolingo AI Alternative",
+   "subtitle": "Short daily language lessons",
+   "category": "learn",
+   "desc": "A free alternative to Duolingo that runs on your Claude plan. Planned; not available yet.",
+   "author": "",
+   "maker": "Claude AppStore",
+   "post": "https://github.com/fengyiqicoder/claude-appstore",
+   "artifact": "",
+   "lang": "",
+   "added": "2026-11-28",
+   "ai": true,
+   "replaces": "Duolingo",
+   "target": "Duolingo",
+   "soon": true
   }
  ],
  "official": [

@@ -64,6 +64,8 @@ CATS = [("play", "Play"), ("learn", "Learn"), ("work", "Work"), ("life", "Life")
 def entry(a):
     name = f"[{a['name']}]({a['artifact']})" if a["artifact"] else a["name"]
     lang = f" {a['lang']}." if a["lang"] else ""
+    if a.get("soon"):
+        return f"- **{a['name']}** - {a['subtitle']}. Planned, not available yet."
     if a.get("maker"):
         return f"- **{name}** - {a['desc']} ([source]({a['post']}), made by this repo)"
     site = "Hacker News" if "news.ycombinator.com" in a["post"] else "Reddit" if "reddit.com" in a["post"] else "X"
